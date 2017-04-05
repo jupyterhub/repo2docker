@@ -23,4 +23,6 @@ echo "---> Installing application source..."
 cp -Rf /tmp/src/. ./
 
 echo "---> Building application from source..."
-${APP_DIR}/venv/bin/pip install --no-cache-dir -r requirements.txt
+if [ -f requirements.txt ]; then
+    ${APP_DIR}/venv/bin/pip install --no-cache-dir -r requirements.txt
+fi
