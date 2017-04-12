@@ -6,9 +6,13 @@ LABEL io.openshift.s2i.scripts-url=image:///usr/libexec/s2i
 
 ENV APP_DIR /srv/app
 
-RUN apt-get update
-RUN apt-get install --yes python3 python3-venv tar git
-
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+            python3 \
+            python3-venv \
+            tar \
+            git && \
+    apt-get purge && apt-get clean
 
 RUN adduser --disabled-password --gecos "Default Jupyter user" jovyan
 
