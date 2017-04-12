@@ -25,7 +25,7 @@ USER jovyan
 RUN python3 -m venv venv
 
 # FIXME: Specify actual versions here
-RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir jupyter jupyterhub
+RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir notebook==5.0.0 jupyterhub==0.7.2
 
 COPY ./s2i/bin/ /usr/libexec/s2i
 
