@@ -5,6 +5,7 @@ MAINTAINER Yuvi Panda <yuvipanda@gmail.com>
 LABEL io.openshift.s2i.scripts-url=image:///usr/libexec/s2i
 
 ENV APP_DIR /srv/app
+ENV PATH ${APP_DIR}/venv/bin:$PATH
 
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
