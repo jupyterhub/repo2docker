@@ -17,14 +17,13 @@ RUN apt-get update && \
 
 RUN adduser --disabled-password --gecos "Default Jupyter user" jovyan
 
-RUN mkdir -p ${APP_DIR} && chown -R jovyan:jovyan /srv/app
+RUN mkdir -p ${APP_DIR} && chown -R jovyan:jovyan ${APP_DIR}
 
-WORKDIR ${APP_DIR}
+WORKDIR /home/jovyan
 
 USER jovyan
-RUN python3 -m venv venv
+RUN python3 -m venv ${APP_DIR}/venv
 
-# FIXME: Specify actual versions here
 RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir notebook==5.0.0 jupyterhub==0.7.2
 
 COPY ./s2i/bin/ /usr/libexec/s2i
