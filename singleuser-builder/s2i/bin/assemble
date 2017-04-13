@@ -1,13 +1,12 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 'ubuntu1610-python35-venv' image.
+# S2I assemble script for the jupyterhub/singleuser-builder image.
 # The 'assemble' script builds your application source so that it is ready to run.
 #
 # For more information refer to the documentation:
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-# If the 'ubuntu1610-python35-venv' assemble script is executed with the '-h' flag, print the usage.
 if [[ "$1" == "-h" ]]; then
 	exec /usr/libexec/s2i/usage
 fi

@@ -1,11 +1,12 @@
 
-IMAGE_NAME = ubuntu1610-python35-venv
+IMAGE_NAME = jupyterhub/singleuser-builder
+VERSION = $(shell cat version)
 
 .PHONY: build
 build:
-	docker build -t $(IMAGE_NAME) .
+	docker build -t $(IMAGE_NAME):$(VERSION) .
 
 .PHONY: test
 test:
-	docker build -t $(IMAGE_NAME)-candidate .
-	IMAGE_NAME=$(IMAGE_NAME)-candidate test/run
+	docker build -t $(IMAGE_NAME)-candidate:$(VERSION) .
+	IMAGE_NAME=$(IMAGE_NAME)-candidate:$(VERSION) test/run
