@@ -24,7 +24,7 @@ WORKDIR /home/jovyan
 USER jovyan
 RUN python3 -m venv ${APP_DIR}/venv
 
-RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir notebook==5.0.0 jupyterhub==0.7.2
+RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir notebook==5.0.0 jupyterhub==0.7.2 ipywidgets==5.2.3
 
 COPY ./s2i/bin/ /usr/libexec/s2i
 
