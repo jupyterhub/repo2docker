@@ -13,15 +13,11 @@ fi
 
 # Restore artifacts from the previous build (if they exist).
 #
-if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
-  echo "---> Restoring build artifacts..."
-  mv /tmp/artifacts/. ./
-fi
-
 echo "---> Installing application source..."
-cp -Rf /tmp/src/. ./
+mkdir -p ${APP_DIR}/src
+cp -Rf /tmp/src/. ${APP_DIR}/src
 
 echo "---> Building application from source..."
-if [ -f requirements.txt ]; then
-    ${APP_DIR}/venv/bin/pip install --no-cache-dir -r requirements.txt
+if [ -f ${APP_DIR}/src/requirements.txt ]; then
+    ${APP_DIR}/venv/bin/pip install --no-cache-dir -r ${APP_DIR}/src/requirements.txt
 fi
