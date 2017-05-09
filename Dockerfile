@@ -12,5 +12,7 @@ RUN apt-get update && \
 COPY install-s2i.bash /usr/local/bin/install-s2i.bash
 RUN /usr/local/bin/install-s2i.bash
 
-RUN pip3 install --no-cache-dir git+https://github.com/yuvipanda/builder@e7d51c3
+RUN mkdir /tmp/src
+ADD . /tmp/src
+RUN pip3 install /tmp/src
 
