@@ -1,12 +1,7 @@
-
-IMAGE_NAME = jupyterhub/singleuser-builder
+IMAGE_PREFIX = jupyterhub/singleuser-builder-venv-
 VERSION = $(shell cat version)
 
 .PHONY: build
 build:
-	docker build -t $(IMAGE_NAME):$(VERSION) .
-
-.PHONY: test
-test:
-	docker build -t $(IMAGE_NAME)-candidate:$(VERSION) .
-	IMAGE_NAME=$(IMAGE_NAME)-candidate:$(VERSION) test/run
+	docker build -t $(IMAGE_PREFIX)3.5:$(VERSION) . -f Dockerfile
+	docker build -t $(IMAGE_PREFIX)2.7:$(VERSION) . -f Dockerfile.py2
