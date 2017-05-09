@@ -22,8 +22,8 @@ class BuildPack(LoggingConfigurable):
 
 class PythonBuildPack(BuildPack):
     runtime_builder_map = Dict({
-        'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.1.2',
-        'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.1.2',
+        'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.1.3',
+        'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.1.3',
     })
 
     runtime = Unicode(
