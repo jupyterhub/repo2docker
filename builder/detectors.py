@@ -1,6 +1,8 @@
 import os
 import subprocess
 
+import docker
+
 from traitlets import Unicode, Dict
 from traitlets.config import LoggingConfigurable
 
@@ -18,6 +20,21 @@ class BuildPack(LoggingConfigurable):
         """
         pass
 
+
+
+class DockerBuildPack(BuildPack):
+    def detect(self, workdir):
+        return os.path.exists(os.path.join(workdir, 'Dockerfile'))
+
+    def build(self, workdir, output_image_spec):
+        client = docker.APIClient(base_url='unix://var/run/docker.sock', version='auto')
+        for progress in client.build(
+                path=workdir,
+                tag=output_image_spec,
+                decode=True
+        ):
+            # FIXME: Properly stream back useful information only
+            pass
 
 
 class PythonBuildPack(BuildPack):

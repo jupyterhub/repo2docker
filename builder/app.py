@@ -9,7 +9,7 @@ import docker
 import subprocess
 
 
-from .detectors import BuildPack, PythonBuildPack
+from .detectors import BuildPack, PythonBuildPack, DockerBuildPack
 
 class Builder(Application):
     config_file = Unicode(
@@ -42,7 +42,7 @@ class Builder(Application):
 
     buildpacks = List(
         None,
-        [PythonBuildPack],
+        [DockerBuildPack, PythonBuildPack],
         config=True
     )
 
@@ -77,6 +77,10 @@ class Builder(Application):
             bp = bp_class()
             if bp.detect(output_path):
                 bp.build(output_path, self.output_image_spec)
+                break
+        else:
+            raise Exception("No compatible builders found")
+
 
         client = docker.from_env(version='1.23')
         for line in client.images.push(self.output_image_spec, stream=True):
