@@ -1,0 +1,23 @@
+node_modules
+*.py[co]
+*~
+.cache
+.DS_Store
+build
+dist
+docs/_build
+docs/source/_static/rest-api
+.ipynb_checkpoints
+# ignore config file at the top-level of the repo
+# but not sub-dirs
+/jupyterhub_config.py
+jupyterhub_cookie_secret
+jupyterhub.sqlite
+share/jupyter/hub/static/components
+share/jupyter/hub/static/css/style.min.css
+share/jupyter/hub/static/css/style.min.css.map
+*.egg-info
+MANIFEST
+.coverage
+htmlcov
+
