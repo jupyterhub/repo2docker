@@ -78,7 +78,7 @@ class Builder(Application):
             if bp.detect(output_path):
                 bp.build(output_path, self.output_image_spec)
 
-        client = docker.from_env(version='1.24')
+        client = docker.from_env(version='1.23')
         for line in client.images.push(self.output_image_spec, stream=True):
             progress = json.loads(line.decode('utf-8'))
             print(progress['status'])
