@@ -4,4 +4,4 @@ dependencies:
 - ipykernel==4.6.0
 - ipywidgets==6.0.0
 - pip:
-    jupyterhub==0.7.2
+    - jupyterhub==0.7.2
