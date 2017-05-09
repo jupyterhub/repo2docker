@@ -25,8 +25,9 @@ ADD install-miniconda.bash /usr/local/bin/install-miniconda.bash
 RUN /usr/local/bin/install-miniconda.bash
 
 USER $NB_USER
-RUN pip install --no-cache-dir notebook==5.0.0 jupyterhub==0.7.2 ipywidgets==5.2.3 && \
-    jupyter nbextension enable --py widgetsnbextension
+ADD environment.yml .
+RUN conda env create --quiet -n base
+RUN rm environment.yml
 
 COPY ./s2i/bin/ /usr/libexec/s2i
 

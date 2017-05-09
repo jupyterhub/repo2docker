@@ -1,0 +1,7 @@
+name: base
+dependencies:
+- notebook==5.0.0
+- ipykernel==4.6.0
+- ipywidgets==6.0.0
+- pip:
+    jupyterhub==0.7.2
