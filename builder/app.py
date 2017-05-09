@@ -81,7 +81,7 @@ class Builder(Application):
         client = docker.from_env(version='1.23')
         for line in client.images.push(self.output_image_spec, stream=True):
             progress = json.loads(line.decode('utf-8'))
-            print(progress['status'])
+            print(progress)
 
 if __name__ == '__main__':
     f = Builder()
