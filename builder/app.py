@@ -67,6 +67,23 @@ class Builder(Application):
         self.load_config_file(self.config_file)
 
     def run(self):
+        # HACK: Try to just pull this and see if that works.
+        # if it does, then just bail.
+        # WHAT WE REALLY WANT IS TO NOT DO ANY WORK IF THE IMAGE EXISTS
+        client = docker.APIClient(base_url='unix://var/run/docker.sock', version='auto')
+
+        try:
+            repo, tag = self.output_image_spec.split(':')
+            for line in client.pull(
+                    repository=repo,
+                    tag=tag,
+                    stream=True,
+            ):
+                print(json.loads(line.decode('utf-8')))
+            return
+        except docker.errors.ImageNotFound:
+            pass
+
         output_path = os.path.join(self.git_workdir, self.build_name)
         self.fetch(
             self.source_url,
@@ -82,8 +99,7 @@ class Builder(Application):
             raise Exception("No compatible builders found")
 
 
-        client = docker.from_env(version='1.23')
-        for line in client.images.push(self.output_image_spec, stream=True):
+        for line in client.push(self.output_image_spec, stream=True):
             progress = json.loads(line.decode('utf-8'))
             print(progress)
 
