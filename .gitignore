@@ -20,4 +20,7 @@ share/jupyter/hub/static/css/style.min.css.map
 MANIFEST
 .coverage
 htmlcov
-
+bin/
+lib/
+include/
+share/
