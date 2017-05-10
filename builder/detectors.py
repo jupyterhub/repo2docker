@@ -39,8 +39,8 @@ class DockerBuildPack(BuildPack):
 
 class PythonBuildPack(BuildPack):
     runtime_builder_map = Dict({
-        'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.1.4',
-        'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.1.4',
+        'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.1.5',
+        'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.1.5',
     })
 
     runtime = Unicode(
