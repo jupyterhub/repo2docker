@@ -6,8 +6,25 @@ import docker
 from traitlets import Unicode, Dict
 from traitlets.config import LoggingConfigurable
 
+import logging
+from pythonjsonlogger import jsonlogger
+
+from .utils import execute_cmd
+
 
 class BuildPack(LoggingConfigurable):
+    name = Unicode()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # FIXME: Not sure why this needs to be repeated - shouldn't configuring Application be enough?
+        logHandler = logging.StreamHandler()
+        formatter = jsonlogger.JsonFormatter()
+        logHandler.setFormatter(formatter)
+        # Need to reset existing handlers, or we repeat messages
+        self.log.handlers = []
+        self.log.addHandler(logHandler)
+        self.log.setLevel(logging.INFO)
+
     def detect(self, workdir):
         """
         Return True if app in workdir can be built with this buildpack
@@ -23,6 +40,7 @@ class BuildPack(LoggingConfigurable):
 
 
 class DockerBuildPack(BuildPack):
+    name = Unicode('Dockerfile')
     def detect(self, workdir):
         return os.path.exists(os.path.join(workdir, 'Dockerfile'))
 
@@ -33,11 +51,12 @@ class DockerBuildPack(BuildPack):
                 tag=output_image_spec,
                 decode=True
         ):
-            # FIXME: Properly stream back useful information only
-            pass
+            if 'stream' in progress:
+                self.log.info(progress['stream'].rstrip(), extra=dict(phase='building'))
 
 
 class PythonBuildPack(BuildPack):
+    name = Unicode('python-pip')
     runtime_builder_map = Dict({
         'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.1.5',
         'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.1.5',
@@ -65,4 +84,5 @@ class PythonBuildPack(BuildPack):
             self.runtime_builder_map[self.runtime],
             output_image_spec
         ]
-        subprocess.check_call(cmd)
+        for line in execute_cmd(cmd):
+            self.log.info(line, extra=dict(phase='building', builder=self.name))

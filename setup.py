@@ -5,7 +5,8 @@ setup(
     version='0.1',
     install_requires=[
         'docker',
-        'traitlets'
+        'traitlets',
+        'python-json-logger'
     ],
     author='Yuvi Panda',
     author_email='yuvipanda@gmail.com',
