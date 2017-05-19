@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 
 import docker
@@ -84,5 +85,9 @@ class PythonBuildPack(BuildPack):
             self.runtime_builder_map[self.runtime],
             output_image_spec
         ]
-        for line in execute_cmd(cmd):
-            self.log.info(line, extra=dict(phase='building', builder=self.name))
+        try:
+            for line in execute_cmd(cmd):
+                self.log.info(line, extra=dict(phase='building', builder=self.name))
+        except subprocess.CalledProcessError:
+            self.log.error('Failed to build image!', extra=dict(phase='failed'))
+            sys.exit(1)

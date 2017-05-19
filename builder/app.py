@@ -1,3 +1,4 @@
+import sys
 import json
 import os
 import time
@@ -33,6 +34,12 @@ class Builder(Application):
         config=True
     )
 
+    source_ref = Unicode(
+        'master',
+        allow_none=True,
+        config=True
+    )
+
     output_image_spec = Unicode(
         None,
         allow_none=True,
@@ -52,6 +59,7 @@ class Builder(Application):
 
     aliases = Dict({
         'source': 'Builder.source_url',
+        'ref': 'Builder.source_ref',
         'output': 'Builder.output_image_spec',
         'f': 'Builder.config_file',
         'n': 'Builder.build_name'
@@ -59,8 +67,19 @@ class Builder(Application):
 
 
     def fetch(self, url, ref, output_path):
-        for line in execute_cmd(['git', 'clone', '--depth', '1', url, output_path]):
-            self.log.info(line, extra=dict(phase='fetching'))
+        try:
+            for line in execute_cmd(['git', 'clone', url, output_path]):
+                self.log.info(line, extra=dict(phase='fetching'))
+        except subprocess.CalledProcessError:
+            self.log.error('Failed to clone repository!', extra=dict(phase='failed'))
+            sys.exit(1)
+
+        try:
+            for line in execute_cmd(['git', '--git-dir', os.path.join(output_path, '.git'), 'checkout', ref]):
+                self.log.info(line, extra=dict(phase='fetching'))
+        except subprocess.CalledProcessError:
+            self.log.error('Failed to check out ref %s', ref, extra=dict(phase='failed'))
+            sys.exit(1)
 
     def initialize(self, *args, **kwargs):
         super().initialize(*args, **kwargs)
@@ -104,7 +123,8 @@ class Builder(Application):
                 bp.build(output_path, self.output_image_spec)
                 break
         else:
-            raise Exception("No compatible builders found")
+            self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))
+            sys.exit(1)
 
         # Build a progress setup for each layer, and only emit per-layer info every 1.5s
         layers = {}
