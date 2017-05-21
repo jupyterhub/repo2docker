@@ -1,4 +1,4 @@
-FROM ubuntu:16.10
+FROM ubuntu:17.04
 
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
