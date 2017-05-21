@@ -81,6 +81,7 @@ class PythonBuildPack(BuildPack):
         cmd = [
             's2i',
             'build',
+            '--exclude', '""',
             workdir,
             self.runtime_builder_map[self.runtime],
             output_image_spec
