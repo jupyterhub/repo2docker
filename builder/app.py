@@ -108,10 +108,13 @@ class Builder(Application):
             ):
                 progress = json.loads(line.decode('utf-8'))
                 if 'error' in progress:
+                    # pull failed, proceed to build
                     break
             else:
+                # image exists, nothing to build
                 return
         except docker.errors.ImageNotFound:
+            # image not found, proceed to build
             pass
 
         output_path = os.path.join(self.git_workdir, self.build_name)
