@@ -3,11 +3,13 @@ import json
 import os
 import time
 import logging
+import uuid
+import shutil
 from pythonjsonlogger import jsonlogger
 
 
-from traitlets.config import Application, LoggingConfigurable, Unicode, Dict, List
-from traitlets import Type
+from traitlets.config import Application, LoggingConfigurable
+from traitlets import Type, Bool, Unicode, Dict, List
 import docker
 from docker.utils import kwargs_from_env
 
@@ -20,12 +22,6 @@ from .utils import execute_cmd
 class Builder(Application):
     config_file = Unicode(
         'builder_config.py',
-        config=True
-    )
-
-    build_name = Unicode(
-        None,
-        allow_none=True,
         config=True
     )
 
@@ -58,12 +54,22 @@ class Builder(Application):
         config=True
     )
 
+    cleanup_checkout = Bool(
+        True,
+        config=True,
+        help="""
+        Set to True to clean up the checked out directory after building is done.
+
+        Will only clean up after a successful build - failed builds will still leave their
+        checkouts intact.
+        """
+    )
+
     aliases = Dict({
         'source': 'Builder.source_url',
         'ref': 'Builder.source_ref',
         'output': 'Builder.output_image_spec',
         'f': 'Builder.config_file',
-        'n': 'Builder.build_name'
     })
 
 
@@ -117,7 +123,8 @@ class Builder(Application):
             # image not found, proceed to build
             pass
 
-        output_path = os.path.join(self.git_workdir, self.build_name)
+
+        output_path = os.path.join(self.git_workdir, str(uuid.uuid4()))
         self.fetch(
             self.source_url,
             self.source_ref,
@@ -147,6 +154,8 @@ class Builder(Application):
             if time.time() - last_emit_time > 1.5:
                 self.log.info('Pushing image', extra=dict(progress=layers, phase='pushing'))
                 last_emit_time = time.time()
+
+        shutil.rmtree(output_path)
 
 
 if __name__ == '__main__':
