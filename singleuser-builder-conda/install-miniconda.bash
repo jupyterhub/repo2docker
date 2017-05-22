@@ -1,31 +1,35 @@
 #!/bin/bash
 # This downloads and installs a pinned version of miniconda
-set -e
+set -ex
 
-CONDA_VERSION=4.2.12
+cd $(dirname $0)
+CONDA_VERSION=4.3.14
 URL="https://repo.continuum.io/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh"
-INSTALLER_PATH=/usr/local/sbin/miniconda-installer
+INSTALLER_PATH=/tmp/miniconda-installer.sh
 
 wget --quiet $URL -O ${INSTALLER_PATH}
 chmod +x ${INSTALLER_PATH}
 
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
-MD5SUM="d0c7c71cc5659e54ab51f2005a8d96f3"
+MD5SUM="fc6fc37479e3e3fcf3f9ba52cae98991"
 
 if ! echo "${MD5SUM}  ${INSTALLER_PATH}" | md5sum  --quiet -c -; then
     echo "md5sum mismatch for ${INSTALLER_PATH}, exiting!"
     exit 1
 fi
 
-${INSTALLER_PATH} -f -b -p ${CONDA_DIR}
+bash ${INSTALLER_PATH} -b -p ${CONDA_DIR}
 
 # Allow easy direct installs from conda forge
 ${CONDA_DIR}/bin/conda config --system --add channels conda-forge
 
-# Do not attempt to auto update conda
+# Do not attempt to auto update conda or dependencies
 ${CONDA_DIR}/bin/conda config --system --set auto_update_conda false
+${CONDA_DIR}/bin/conda config --system --set update_dependencies false
+${CONDA_DIR}/bin/conda config --system --set show_channel_urls true
 
+${CONDA_DIR}/bin/conda env update -n root -f /tmp/environment.yml
 # Clean things out!
 ${CONDA_DIR}/bin/conda clean -tipsy
 

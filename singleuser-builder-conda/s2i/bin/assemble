@@ -19,7 +19,8 @@ cp -Rf /tmp/src/. .
 
 echo "---> Building application from source..."
 if [ -f environment.yml ]; then
-    conda env update -n base -f environment.yml
+    conda env update -n root -f environment.yml
+    conda clean -tipsy
 elif [ -f requirements.txt ]; then
     pip install -r requirements.txt
 fi
