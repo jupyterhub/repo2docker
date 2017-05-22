@@ -12,7 +12,7 @@ import docker
 
 import subprocess
 
-from .detectors import BuildPack, PythonBuildPack, DockerBuildPack
+from .detectors import BuildPack, PythonBuildPack, DockerBuildPack, CondaBuildPack
 from .utils import execute_cmd
 
 
@@ -53,7 +53,7 @@ class Builder(Application):
 
     buildpacks = List(
         None,
-        [DockerBuildPack, PythonBuildPack],
+        [DockerBuildPack, CondaBuildPack, PythonBuildPack],
         config=True
     )
 
