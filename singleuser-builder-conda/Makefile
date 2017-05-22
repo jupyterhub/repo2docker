@@ -1,5 +1,5 @@
 
-IMAGE_NAME = jupyterhub/singleuser-builder-miniconda
+IMAGE_NAME = jupyterhub/singleuser-builder-conda
 VERSION = $(shell cat version)
 
 .PHONY: build

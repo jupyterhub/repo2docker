@@ -13,22 +13,21 @@ RUN apt-get update && \
             git && \
     apt-get purge && apt-get clean
 
-ENV CONDA_DIR /opt/conda
-ENV PATH $CONDA_DIR/envs/base/bin:$CONDA_DIR/bin/:$PATH
-ENV NB_USER jovyan
+ENV CONDA_DIR=/opt/conda \
+    PATH=/opt/conda/bin:$PATH \
+    NB_USER=jovyan \
+    HOME=/home/jovyan
 
 RUN adduser --disabled-password --gecos "Default Jupyter user" ${NB_USER}
 
-WORKDIR /home/${NB_USER}
-ADD install-miniconda.bash /usr/local/bin/install-miniconda.bash
+WORKDIR $HOME
+ADD install-miniconda.bash /tmp/
+ADD environment.yml /tmp/
 
-RUN /usr/local/bin/install-miniconda.bash
+RUN bash /tmp/install-miniconda.bash && \
+    rm /tmp/install-miniconda.bash /tmp/environment.yml
 
 USER $NB_USER
-ADD environment.yml .
-RUN conda env create --quiet -n base && conda clean -tipsy
-RUN rm environment.yml
-
 COPY ./s2i/bin/ /usr/libexec/s2i
 
 EXPOSE 8888
