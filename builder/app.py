@@ -9,10 +9,11 @@ from pythonjsonlogger import jsonlogger
 from traitlets.config import Application, LoggingConfigurable, Unicode, Dict, List
 from traitlets import Type
 import docker
+from docker.utils import kwargs_from_env
 
 import subprocess
 
-from .detectors import BuildPack, PythonBuildPack, DockerBuildPack
+from .detectors import BuildPack, PythonBuildPack, DockerBuildPack, CondaBuildPack
 from .utils import execute_cmd
 
 
@@ -53,7 +54,7 @@ class Builder(Application):
 
     buildpacks = List(
         None,
-        [DockerBuildPack, PythonBuildPack],
+        [DockerBuildPack, CondaBuildPack, PythonBuildPack],
         config=True
     )
 
@@ -96,19 +97,25 @@ class Builder(Application):
         # HACK: Try to just pull this and see if that works.
         # if it does, then just bail.
         # WHAT WE REALLY WANT IS TO NOT DO ANY WORK IF THE IMAGE EXISTS
-        client = docker.APIClient(base_url='unix://var/run/docker.sock', version='auto')
+        client = docker.APIClient(version='auto', **kwargs_from_env())
 
         repo, tag = self.output_image_spec.split(':')
-        for line in client.pull(
-                repository=repo,
-                tag=tag,
-                stream=True,
-        ):
-            progress = json.loads(line.decode('utf-8'))
-            if 'error' in progress:
-                break
-        else:
-            return
+        try:
+            for line in client.pull(
+                    repository=repo,
+                    tag=tag,
+                    stream=True,
+            ):
+                progress = json.loads(line.decode('utf-8'))
+                if 'error' in progress:
+                    # pull failed, proceed to build
+                    break
+            else:
+                # image exists, nothing to build
+                return
+        except docker.errors.ImageNotFound:
+            # image not found, proceed to build
+            pass
 
         output_path = os.path.join(self.git_workdir, self.build_name)
         self.fetch(
