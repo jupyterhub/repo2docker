@@ -9,6 +9,7 @@ from pythonjsonlogger import jsonlogger
 from traitlets.config import Application, LoggingConfigurable, Unicode, Dict, List
 from traitlets import Type
 import docker
+from docker.utils import kwargs_from_env
 
 import subprocess
 
@@ -96,7 +97,7 @@ class Builder(Application):
         # HACK: Try to just pull this and see if that works.
         # if it does, then just bail.
         # WHAT WE REALLY WANT IS TO NOT DO ANY WORK IF THE IMAGE EXISTS
-        client = docker.APIClient(base_url='unix://var/run/docker.sock', version='auto')
+        client = docker.APIClient(version='auto', **kwargs_from_env())
 
         repo, tag = self.output_image_spec.split(':')
         for line in client.pull(
