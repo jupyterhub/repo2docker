@@ -75,7 +75,7 @@ class Builder(Application):
             sys.exit(1)
 
         try:
-            for line in execute_cmd(['git', '--git-dir', os.path.join(output_path, '.git'), 'checkout', ref]):
+            for line in execute_cmd(['git', '--git-dir', os.path.join(output_path, '.git'), 'reset', '--hard', ref]):
                 self.log.info(line, extra=dict(phase='fetching'))
         except subprocess.CalledProcessError:
             self.log.error('Failed to check out ref %s', ref, extra=dict(phase='failed'))
@@ -113,7 +113,7 @@ class Builder(Application):
         output_path = os.path.join(self.git_workdir, self.build_name)
         self.fetch(
             self.source_url,
-            'master',
+            self.source_ref,
             output_path
         )
         for bp_class in self.buildpacks:
