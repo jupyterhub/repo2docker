@@ -120,7 +120,7 @@ class Builder(Application):
             bp = bp_class()
             if bp.detect(output_path):
                 self.log.info('Using %s builder', bp.name, extra=dict(phase='building'))
-                bp.build(output_path, self.output_image_spec)
+                bp.build(output_path, self.source_ref, self.output_image_spec)
                 break
         else:
             self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))

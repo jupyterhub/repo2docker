@@ -32,7 +32,7 @@ class BuildPack(LoggingConfigurable):
         """
         pass
 
-    def build(self, workdir, output_image_spec):
+    def build(self, workdir, ref, output_image_spec):
         """
         Run a command that will take workdir and produce an image ready to be pushed
         """
@@ -45,7 +45,7 @@ class DockerBuildPack(BuildPack):
     def detect(self, workdir):
         return os.path.exists(os.path.join(workdir, 'Dockerfile'))
 
-    def build(self, workdir, output_image_spec):
+    def build(self, workdir, ref, output_image_spec):
         client = docker.APIClient(base_url='unix://var/run/docker.sock', version='auto')
         for progress in client.build(
                 path=workdir,
@@ -77,11 +77,15 @@ class PythonBuildPack(BuildPack):
                 pass
             return True
 
-    def build(self, workdir, output_image_spec):
+    def build(self, workdir, ref, output_image_spec):
+        # Note: Ideally we'd just copy from workdir here, rather than clone and check out again
+        # However, setting just --copy and not specifying a ref seems to check out master for
+        # some reason. Investigate deeper FIXME
         cmd = [
             's2i',
             'build',
             '--exclude', '""',
+            '--ref', ref,
             workdir,
             self.runtime_builder_map[self.runtime],
             output_image_spec
