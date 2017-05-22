@@ -1,0 +1,33 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the jupyterhub/singleuser-builder image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+echo "---> Installing application source..."
+mkdir -p ${APP_DIR}/src
+cp -Rf /tmp/src/. ${APP_DIR}/src
+
+# HACK: We copy it to current directory too, since people wanna see the
+# notebooks and stuff in there. Figure out a way to tweak this?
+cp -Rf /tmp/src/. .
+
+echo "---> Building application from source..."
+if [ -f ${APP_DIR}/src/requirements.txt ]; then
+    # HACK: If numpy is present in requirements.txt, install it first!
+    # This is because some packages (tiffiles *cough*) need numpy to be fully installed
+    # for their setup.py to work, and this... causes all sorts of problems.
+    if grep --quiet numpy ${APP_DIR}/src/requirements.txt; then
+        ${APP_DIR}/venv/bin/pip install $(grep numpy ${APP_DIR}/src/requirements.txt)
+    fi
+    ${APP_DIR}/venv/bin/pip install --no-cache-dir -r ${APP_DIR}/src/requirements.txt
+fi
