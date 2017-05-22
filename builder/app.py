@@ -100,16 +100,19 @@ class Builder(Application):
         client = docker.APIClient(version='auto', **kwargs_from_env())
 
         repo, tag = self.output_image_spec.split(':')
-        for line in client.pull(
-                repository=repo,
-                tag=tag,
-                stream=True,
-        ):
-            progress = json.loads(line.decode('utf-8'))
-            if 'error' in progress:
-                break
-        else:
-            return
+        try:
+            for line in client.pull(
+                    repository=repo,
+                    tag=tag,
+                    stream=True,
+            ):
+                progress = json.loads(line.decode('utf-8'))
+                if 'error' in progress:
+                    break
+            else:
+                return
+        except docker.errors.ImageNotFound:
+            pass
 
         output_path = os.path.join(self.git_workdir, self.build_name)
         self.fetch(
