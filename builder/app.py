@@ -69,6 +69,7 @@ class Builder(Application):
         'source': 'Builder.source_url',
         'ref': 'Builder.source_ref',
         'output': 'Builder.output_image_spec',
+        'clean': 'Builder.cleanup_checkout',
         'f': 'Builder.config_file',
     })
 
@@ -155,7 +156,8 @@ class Builder(Application):
                 self.log.info('Pushing image', extra=dict(progress=layers, phase='pushing'))
                 last_emit_time = time.time()
 
-        shutil.rmtree(output_path)
+        if self.cleanup_checkout:
+            shutil.rmtree(output_path)
 
 
 if __name__ == '__main__':
