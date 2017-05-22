@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='builder',
+    name='jupyter-repo2docker',
     version='0.1',
     install_requires=[
         'docker',

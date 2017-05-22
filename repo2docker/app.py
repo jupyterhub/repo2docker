@@ -19,9 +19,9 @@ from .detectors import BuildPack, PythonBuildPack, DockerBuildPack, CondaBuildPa
 from .utils import execute_cmd
 
 
-class Builder(Application):
+class Repo2Docker(Application):
     config_file = Unicode(
-        'builder_config.py',
+        'repo2docker_config.py',
         config=True
     )
 
@@ -66,11 +66,11 @@ class Builder(Application):
     )
 
     aliases = Dict({
-        'source': 'Builder.source_url',
-        'ref': 'Builder.source_ref',
-        'output': 'Builder.output_image_spec',
-        'clean': 'Builder.cleanup_checkout',
-        'f': 'Builder.config_file',
+        'source': 'Repo2Docker.source_url',
+        'ref': 'Repo2Docker.source_ref',
+        'output': 'Repo2Docker.output_image_spec',
+        'clean': 'Repo2Docker.cleanup_checkout',
+        'f': 'Repo2Docker.config_file',
     })
 
 
@@ -161,6 +161,6 @@ class Builder(Application):
 
 
 if __name__ == '__main__':
-    f = Builder()
+    f = Repo2Docker()
     f.initialize()
     f.run()
