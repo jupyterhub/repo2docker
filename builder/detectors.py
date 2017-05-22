@@ -65,12 +65,12 @@ class S2IBuildPack(BuildPack):
             'build',
             '--exclude', '""',
             '--ref', ref,
-            workdir,
+            '.',
             build_image,
             output_image_spec,
         ]
         try:
-            for line in execute_cmd(cmd):
+            for line in execute_cmd(cmd, cwd=workdir):
                 self.log.info(line, extra=dict(phase='building', builder=self.name))
         except subprocess.CalledProcessError:
             self.log.error('Failed to build image!', extra=dict(phase='failed'))
