@@ -67,7 +67,7 @@ class Repo2Docker(Application):
     )
 
     buildpacks = List(
-        None,
+        Type(BuildPack),
         [DockerBuildPack, CondaBuildPack, PythonBuildPack],
         config=True,
         help="""
