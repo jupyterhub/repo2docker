@@ -28,30 +28,51 @@ class Repo2Docker(Application):
     source_url = Unicode(
         None,
         allow_none=True,
-        config=True
+        config=True,
+        help="""
+        URL to the git repository to clone.
+        """
     )
 
     source_ref = Unicode(
         'master',
         allow_none=True,
-        config=True
+        config=True,
+        help="""
+        The git ref in the git repository to build.
+
+        Can be a tag, ref or branch.
+        """
     )
 
     output_image_spec = Unicode(
         None,
         allow_none=True,
-        config=True
+        config=True,
+        help="""
+        The spec of the image to build.
+
+        Should be the same as the value passed to `-t` param of docker build.
+        """
     )
 
     git_workdir = Unicode(
-        "/tmp/git",
-        config=True
+        "/tmp",
+        config=True,
+        help="""
+        The directory to use to check out git repositories into.
+
+        Should be somewhere ephemeral, such as /tmp
+        """
     )
 
     buildpacks = List(
         None,
         [DockerBuildPack, CondaBuildPack, PythonBuildPack],
-        config=True
+        config=True,
+        help="""
+        Ordered list of BuildPacks to try to use to build a git repository.
+        """
     )
 
     cleanup_checkout = Bool(
