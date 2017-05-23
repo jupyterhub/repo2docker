@@ -28,16 +28,18 @@ class Repo2Docker(Application):
         """
     )
 
-    source_url = Unicode(
-        None,
+    repo = Unicode(
+        '.',
         allow_none=True,
         config=True,
         help="""
-        URL to the git repository to clone.
+        The git repository to clone.
+
+        Could be a https URL, or a file path.
         """
     )
 
-    source_ref = Unicode(
+    ref = Unicode(
         'master',
         allow_none=True,
         config=True,
@@ -90,8 +92,8 @@ class Repo2Docker(Application):
     )
 
     aliases = Dict({
-        'source': 'Repo2Docker.source_url',
-        'ref': 'Repo2Docker.source_ref',
+        'repo': 'Repo2Docker.repo',
+        'ref': 'Repo2Docker.ref',
         'image': 'Repo2Docker.output_image_spec',
         'clean': 'Repo2Docker.cleanup_checkout',
         'f': 'Repo2Docker.config_file',
@@ -151,15 +153,15 @@ class Repo2Docker(Application):
 
         checkout_path = os.path.join(self.git_workdir, str(uuid.uuid4()))
         self.fetch(
-            self.source_url,
-            self.source_ref,
+            self.repo,
+            self.ref,
             checkout_path
         )
         for bp_class in self.buildpacks:
             bp = bp_class()
             if bp.detect(checkout_path):
                 self.log.info('Using %s builder', bp.name, extra=dict(phase='building'))
-                bp.build(checkout_path, self.source_ref, self.output_image_spec)
+                bp.build(checkout_path, self.ref, self.output_image_spec)
                 break
         else:
             self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))
