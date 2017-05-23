@@ -180,8 +180,13 @@ class Repo2Docker(Application):
             ports={'8888/tcp': 8888},
             detach=True
         )
-        for line in container.logs(stream=True):
-            self.log.info(line.decode('utf-8').rstrip(), extra=dict(phase='running'))
+        try:
+            for line in container.logs(stream=True):
+                self.log.info(line.decode('utf-8').rstrip(), extra=dict(phase='running'))
+        finally:
+            self.log.info('Stopping container...', extra=dict(phase='running'))
+            container.kill()
+            container.remove()
 
     def start(self):
         # HACK: Try to just pull this and see if that works.
