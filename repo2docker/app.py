@@ -22,7 +22,10 @@ from .utils import execute_cmd
 class Repo2Docker(Application):
     config_file = Unicode(
         'repo2docker_config.py',
-        config=True
+        config=True,
+        help="""
+        Path to read traitlets configuration file from.
+        """
     )
 
     source_url = Unicode(
