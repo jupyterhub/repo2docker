@@ -1,3 +1,11 @@
+"""repo2docker: convert git repositories into jupyter-suitable docker images
+
+Images produced by repo2docker can be used with Jupyter notebooks standalone or via JupyterHub.
+
+Usage:
+
+    python -m repo2docker https://github.com/you/your-repo
+"""
 import sys
 import json
 import os
@@ -18,9 +26,13 @@ import subprocess
 
 from .detectors import BuildPack, PythonBuildPack, DockerBuildPack, CondaBuildPack
 from .utils import execute_cmd
-
+from . import __version__
 
 class Repo2Docker(Application):
+    name = 'jupyter-repo2docker'
+    version = __version__
+    description = __doc__
+    
     config_file = Unicode(
         'repo2docker_config.py',
         config=True,
@@ -36,7 +48,7 @@ class Repo2Docker(Application):
         help="""
         The git repository to clone.
 
-        Could be a https URL, or a file path.
+        Could be a git URL or a file path.
         """
     )
 
@@ -148,6 +160,14 @@ class Repo2Docker(Application):
         self.log.addHandler(logHandler)
         self.log.setLevel(logging.INFO)
         self.load_config_file(self.config_file)
+
+        if len(self.extra_args) == 1:
+            # accept repo as a positional arg
+            self.repo = self.extra_args[0]
+        elif len(self.extra_args) > 1:
+            print("%s accepts at most one positional argument." % self.name, file=sys.stderr)
+            print("See python -m repo2docker --help for usage", file=sys.stderr)
+            self.exit(1)
 
         if self.output_image_spec is None:
             # Attempt to set a sane default!
