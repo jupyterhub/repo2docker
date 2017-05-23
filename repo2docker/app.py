@@ -6,6 +6,7 @@ import logging
 import uuid
 import shutil
 from pythonjsonlogger import jsonlogger
+import escapism
 
 
 from traitlets.config import Application, LoggingConfigurable
@@ -125,6 +126,12 @@ class Repo2Docker(Application):
         self.log.addHandler(logHandler)
         self.log.setLevel(logging.INFO)
         self.load_config_file(self.config_file)
+
+        if self.output_image_spec is None:
+            # Attempt to set a sane default!
+            # HACK: Provide something more descriptive?
+            self.output_image_spec = escapism.escape(self.repo).lower() + ':' + self.ref.lower()
+
 
     def run(self):
         # HACK: Try to just pull this and see if that works.
