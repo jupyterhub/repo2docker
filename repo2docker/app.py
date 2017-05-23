@@ -30,7 +30,7 @@ class Repo2Docker(Application):
     )
 
     repo = Unicode(
-        '.',
+        os.getcwd(),
         allow_none=True,
         config=True,
         help="""
