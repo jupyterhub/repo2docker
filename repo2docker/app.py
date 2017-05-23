@@ -105,6 +105,8 @@ class Repo2Docker(Application):
         config=True,
         help="""
         Run the image after it is built, if the build succeeds.
+
+        DANGEROUS WHEN DONE IN A CLOUD ENVIRONMENT! ONLY USE LOCALLY!
         """
     )
 
@@ -177,7 +179,7 @@ class Repo2Docker(Application):
         client = docker.from_env(version='auto')
         container = client.containers.run(
             self.output_image_spec,
-            ports={'8888/tcp': 8888},
+            network_mode='host',
             detach=True
         )
         try:
