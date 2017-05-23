@@ -6,7 +6,8 @@ setup(
     install_requires=[
         'docker',
         'traitlets',
-        'python-json-logger'
+        'python-json-logger',
+        'escapism'
     ],
     author='Yuvi Panda',
     author_email='yuvipanda@gmail.com',
