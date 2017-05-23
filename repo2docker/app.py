@@ -92,11 +92,20 @@ class Repo2Docker(Application):
         """
     )
 
+    push = Bool(
+        False,
+        config=True,
+        help="""
+        If the image should be pushed after it is built.
+        """
+    )
+
     aliases = Dict({
         'repo': 'Repo2Docker.repo',
         'ref': 'Repo2Docker.ref',
         'image': 'Repo2Docker.output_image_spec',
         'clean': 'Repo2Docker.cleanup_checkout',
+        'push': 'Repo2Docker.push',
         'f': 'Repo2Docker.config_file',
     })
 
@@ -174,20 +183,25 @@ class Repo2Docker(Application):
             self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))
             sys.exit(1)
 
-        # Build a progress setup for each layer, and only emit per-layer info every 1.5s
-        layers = {}
-        last_emit_time = time.time()
-        for line in client.push(self.output_image_spec, stream=True):
-            progress = json.loads(line.decode('utf-8'))
-            if 'id' not in progress:
-                continue
-            if 'progressDetail' in progress and progress['progressDetail']:
-                layers[progress['id']] = progress['progressDetail']
-            else:
-                layers[progress['id']] = progress['status']
-            if time.time() - last_emit_time > 1.5:
-                self.log.info('Pushing image', extra=dict(progress=layers, phase='pushing'))
-                last_emit_time = time.time()
+        if self.push:
+            # Build a progress setup for each layer, and only emit per-layer info every 1.5s
+            layers = {}
+            last_emit_time = time.time()
+            for line in client.push(self.output_image_spec, stream=True):
+                progress = json.loads(line.decode('utf-8'))
+                if 'error' in progress:
+                    self.log.error(progress['error'], extra=dict(phase='failed'))
+                    sys.exit(1)
+                if 'id' not in progress:
+                    continue
+                if 'progressDetail' in progress and progress['progressDetail']:
+                    layers[progress['id']] = progress['progressDetail']
+                else:
+                    layers[progress['id']] = progress['status']
+                if time.time() - last_emit_time > 1.5:
+                    self.log.info('Pushing image', extra=dict(progress=layers, phase='pushing'))
+                    last_emit_time = time.time()
+
 
         if self.cleanup_checkout:
             shutil.rmtree(checkout_path)
