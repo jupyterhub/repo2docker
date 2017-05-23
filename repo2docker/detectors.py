@@ -56,6 +56,10 @@ class DockerBuildPack(BuildPack):
 
 
 class S2IBuildPack(BuildPack):
+    # Simple subclasses of S2IBuildPack must set build_image,
+    # either via config or during `detect()`
+    build_image = Unicode('')
+    
     def s2i_build(self, workdir, ref, output_image_spec, build_image):
         # Note: Ideally we'd just copy from workdir here, rather than clone and check out again
         # However, setting just --copy and not specifying a ref seems to check out master for
@@ -75,6 +79,9 @@ class S2IBuildPack(BuildPack):
         except subprocess.CalledProcessError:
             self.log.error('Failed to build image!', extra=dict(phase='failed'))
             sys.exit(1)
+    
+    def build(self, workdir, ref, output_image_spec):
+        return self.s2i_build(workdir, ref, output_image_spec, self.build_image)
 
 
 class CondaBuildPack(S2IBuildPack):
@@ -85,9 +92,6 @@ class CondaBuildPack(S2IBuildPack):
 
     def detect(self, workdir):
         return os.path.exists(os.path.join(workdir, 'environment.yml'))
-
-    def build(self, workdir, ref, output_image_spec):
-        return self.s2i_build(workdir, ref, output_image_spec, self.build_image)
 
 
 class PythonBuildPack(S2IBuildPack):
@@ -110,7 +114,5 @@ class PythonBuildPack(S2IBuildPack):
                     self.runtime = f.read().strip()
             except FileNotFoundError:
                 pass
+            self.build_image = self.runtime_builder_map[self.runtime]
             return True
-
-    def build(self, workdir, ref, output_image_spec):
-        return self.s2i_build(workdir, ref, output_image_spec, self.runtime_builder_map[self.runtime])
