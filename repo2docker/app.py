@@ -89,7 +89,7 @@ class Repo2Docker(Application):
     aliases = Dict({
         'source': 'Repo2Docker.source_url',
         'ref': 'Repo2Docker.source_ref',
-        'output': 'Repo2Docker.output_image_spec',
+        'image': 'Repo2Docker.output_image_spec',
         'clean': 'Repo2Docker.cleanup_checkout',
         'f': 'Repo2Docker.config_file',
     })
