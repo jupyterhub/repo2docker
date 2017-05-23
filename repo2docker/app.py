@@ -179,7 +179,7 @@ class Repo2Docker(Application):
         client = docker.from_env(version='auto')
         container = client.containers.run(
             self.output_image_spec,
-            network_mode='host',
+            ports={'8888/tcp': None},
             detach=True
         )
         try:
