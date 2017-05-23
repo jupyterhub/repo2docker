@@ -182,6 +182,12 @@ class Repo2Docker(Application):
             ports={'8888/tcp': None},
             detach=True
         )
+        while container.status == 'created':
+            time.sleep(0.5)
+            container.reload()
+
+        host_port = container.attrs['NetworkSettings']['Ports']['8888/tcp'][0]['HostPort']
+        self.log.info('Port 8888 mapped to port %s on the machine docker is running on', host_port, extra=dict(phase='running'))
         try:
             for line in container.logs(stream=True):
                 self.log.info(line.decode('utf-8').rstrip(), extra=dict(phase='running'))
