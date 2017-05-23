@@ -186,7 +186,3 @@ class Repo2Docker(Application):
             shutil.rmtree(checkout_path)
 
 
-if __name__ == '__main__':
-    f = Repo2Docker()
-    f.initialize()
-    f.run()

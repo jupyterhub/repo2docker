@@ -12,4 +12,9 @@ setup(
     author_email='yuvipanda@gmail.com',
     license='BSD',
     packages=find_packages(),
+    entry_points={
+        'console_scripts': [
+            'jupyter-repo2docker = repo2docker.__main__:main'
+        ]
+    },
 )
