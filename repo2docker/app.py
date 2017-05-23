@@ -95,16 +95,16 @@ class Repo2Docker(Application):
     })
 
 
-    def fetch(self, url, ref, output_path):
+    def fetch(self, url, ref, checkout_path):
         try:
-            for line in execute_cmd(['git', 'clone', url, output_path]):
+            for line in execute_cmd(['git', 'clone', url, checkout_path]):
                 self.log.info(line, extra=dict(phase='fetching'))
         except subprocess.CalledProcessError:
             self.log.error('Failed to clone repository!', extra=dict(phase='failed'))
             sys.exit(1)
 
         try:
-            for line in execute_cmd(['git', 'reset', '--hard', ref], output_path):
+            for line in execute_cmd(['git', 'reset', '--hard', ref], checkout_path):
                 self.log.info(line, extra=dict(phase='fetching'))
         except subprocess.CalledProcessError:
             self.log.error('Failed to check out ref %s', ref, extra=dict(phase='failed'))
@@ -146,17 +146,17 @@ class Repo2Docker(Application):
             pass
 
 
-        output_path = os.path.join(self.git_workdir, str(uuid.uuid4()))
+        checkout_path = os.path.join(self.git_workdir, str(uuid.uuid4()))
         self.fetch(
             self.source_url,
             self.source_ref,
-            output_path
+            checkout_path
         )
         for bp_class in self.buildpacks:
             bp = bp_class()
-            if bp.detect(output_path):
+            if bp.detect(checkout_path):
                 self.log.info('Using %s builder', bp.name, extra=dict(phase='building'))
-                bp.build(output_path, self.source_ref, self.output_image_spec)
+                bp.build(checkout_path, self.source_ref, self.output_image_spec)
                 break
         else:
             self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))
@@ -178,7 +178,7 @@ class Repo2Docker(Application):
                 last_emit_time = time.time()
 
         if self.cleanup_checkout:
-            shutil.rmtree(output_path)
+            shutil.rmtree(checkout_path)
 
 
 if __name__ == '__main__':
