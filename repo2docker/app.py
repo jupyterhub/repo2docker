@@ -100,15 +100,26 @@ class Repo2Docker(Application):
         """
     )
 
+    run = Bool(
+        True,
+        config=True,
+        help="""
+        Run the image after it is built, if the build succeeds.
+        """
+    )
+
     aliases = Dict({
         'repo': 'Repo2Docker.repo',
         'ref': 'Repo2Docker.ref',
         'image': 'Repo2Docker.output_image_spec',
-        'clean': 'Repo2Docker.cleanup_checkout',
-        'push': 'Repo2Docker.push',
         'f': 'Repo2Docker.config_file',
     })
 
+    flags = Dict({
+        'no-clean': ({'Repo2Docker': {'cleanup_checkout': False}}, 'Do not clean up git checkout'),
+        'no-run': ({'Repo2Docker': {'run': False}}, 'Do not run built container image'),
+        'push': ({'Repo2Docker': {'push': True}}, 'Push built image to a docker registry'),
+    })
 
     def fetch(self, url, ref, checkout_path):
         try:
@@ -142,7 +153,37 @@ class Repo2Docker(Application):
             self.output_image_spec = escapism.escape(self.repo).lower() + ':' + self.ref.lower()
 
 
-    def run(self):
+    def push_image(self):
+        client = docker.APIClient(version='auto', **kwargs_from_env())
+        # Build a progress setup for each layer, and only emit per-layer info every 1.5s
+        layers = {}
+        last_emit_time = time.time()
+        for line in client.push(self.output_image_spec, stream=True):
+            progress = json.loads(line.decode('utf-8'))
+            if 'error' in progress:
+                self.log.error(progress['error'], extra=dict(phase='failed'))
+                sys.exit(1)
+            if 'id' not in progress:
+                continue
+            if 'progressDetail' in progress and progress['progressDetail']:
+                layers[progress['id']] = progress['progressDetail']
+            else:
+                layers[progress['id']] = progress['status']
+            if time.time() - last_emit_time > 1.5:
+                self.log.info('Pushing image', extra=dict(progress=layers, phase='pushing'))
+                last_emit_time = time.time()
+
+    def run_image(self):
+        client = docker.from_env(version='auto')
+        container = client.containers.run(
+            self.output_image_spec,
+            ports={'8888/tcp': 8888},
+            detach=True
+        )
+        for line in container.logs(stream=True):
+            self.log.info(line.decode('utf-8').rstrip(), extra=dict(phase='running'))
+
+    def start(self):
         # HACK: Try to just pull this and see if that works.
         # if it does, then just bail.
         # WHAT WE REALLY WANT IS TO NOT DO ANY WORK IF THE IMAGE EXISTS
@@ -183,27 +224,14 @@ class Repo2Docker(Application):
             self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))
             sys.exit(1)
 
-        if self.push:
-            # Build a progress setup for each layer, and only emit per-layer info every 1.5s
-            layers = {}
-            last_emit_time = time.time()
-            for line in client.push(self.output_image_spec, stream=True):
-                progress = json.loads(line.decode('utf-8'))
-                if 'error' in progress:
-                    self.log.error(progress['error'], extra=dict(phase='failed'))
-                    sys.exit(1)
-                if 'id' not in progress:
-                    continue
-                if 'progressDetail' in progress and progress['progressDetail']:
-                    layers[progress['id']] = progress['progressDetail']
-                else:
-                    layers[progress['id']] = progress['status']
-                if time.time() - last_emit_time > 1.5:
-                    self.log.info('Pushing image', extra=dict(progress=layers, phase='pushing'))
-                    last_emit_time = time.time()
-
-
         if self.cleanup_checkout:
             shutil.rmtree(checkout_path)
+
+        if self.push:
+            self.push_image()
+
+        if self.run:
+            self.run_image()
+
 
 
