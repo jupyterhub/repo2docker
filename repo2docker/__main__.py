@@ -1,5 +1,9 @@
 from .app import Repo2Docker
 
-if __name__ == '__main__':
+def main():
     f = Repo2Docker()
+    f.initialize()
     f.run()
+
+if __name__ == '__main__':
+    main()
