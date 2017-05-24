@@ -1,1 +1,9 @@
 .#*
+dist
+build
+*.tar.gz
+*.egg-info
+*.py[co]
+__pycache__
+
+repo2docker/s2i

@@ -12,6 +12,7 @@ from pythonjsonlogger import jsonlogger
 
 from .utils import execute_cmd
 
+here = os.path.abspath(os.path.dirname(__file__))
 
 class BuildPack(LoggingConfigurable):
     name = Unicode()
@@ -73,8 +74,12 @@ class S2IBuildPack(BuildPack):
             build_image,
             output_image_spec,
         ]
+        env = os.environ.copy()
+        # add bundled s2i to *end* of PATH,
+        # in case user doesn't have s2i
+        env['PATH'] = os.pathsep.join([env.get('PATH') or os.defpath, here])
         try:
-            for line in execute_cmd(cmd, cwd=workdir):
+            for line in execute_cmd(cmd, cwd=workdir, env=env):
                 self.log.info(line, extra=dict(phase='building', builder=self.name))
         except subprocess.CalledProcessError:
             self.log.error('Failed to build image!', extra=dict(phase='failed'))

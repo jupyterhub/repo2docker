@@ -12,6 +12,8 @@ RUN apt-get update && \
 COPY install-s2i.bash /usr/local/bin/install-s2i.bash
 RUN /usr/local/bin/install-s2i.bash
 
+RUN pip3 install --upgrade pip wheel
+
 RUN mkdir /tmp/src
 ADD . /tmp/src
 RUN pip3 install /tmp/src
