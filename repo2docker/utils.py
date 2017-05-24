@@ -1,3 +1,4 @@
+from functools import partial
 import subprocess
 
 def execute_cmd(cmd, capture=False, **kwargs):
@@ -15,10 +16,22 @@ def execute_cmd(cmd, capture=False, **kwargs):
         if ret != 0:
             raise subprocess.CalledProcessError(ret, cmd)
         return
-
+    
+    buf = []
+    def flush():
+        line = b''.join(buf).decode('utf8', 'replace')
+        buf[:] = []
+        return line
+    
+    c_last = ''
     try:
-        for line in iter(proc.stdout.readline, b''):
-            yield line.decode('utf8', 'replace')
+        for c in iter(partial(proc.stdout.read, 1), b''):
+            if c_last == b'\r' and buf and c != b'\n':
+                yield flush()
+            buf.append(c)
+            if c == b'\n':
+                yield flush()
+            c_last = c
     finally:
         ret = proc.wait()
         if ret != 0:
