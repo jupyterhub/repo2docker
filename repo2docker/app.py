@@ -197,17 +197,17 @@ class Repo2Docker(Application):
 
     def run_image(self):
         client = docker.from_env(version='auto')
+        port = self._get_free_port()
         container = client.containers.run(
             self.output_image_spec,
-            ports={'8888/tcp': None},
-            detach=True
+            ports={'%s/tcp' % port: port},
+            detach=True,
+            command=['jupyter', 'notebook', '--ip', '0.0.0.0', '--port', str(port)],
         )
         while container.status == 'created':
             time.sleep(0.5)
             container.reload()
 
-        host_port = container.attrs['NetworkSettings']['Ports']['8888/tcp'][0]['HostPort']
-        self.log.info('Port 8888 mapped to port %s on the machine docker is running on', host_port, extra=dict(phase='running'))
         try:
             for line in container.logs(stream=True):
                 self.log.info(line.decode('utf-8').rstrip(), extra=dict(phase='running'))
@@ -215,6 +215,17 @@ class Repo2Docker(Application):
             self.log.info('Stopping container...', extra=dict(phase='running'))
             container.kill()
             container.remove()
+
+    def _get_free_port(self):
+        """
+        Hacky method to get a free random port on local host
+        """
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(("",0))
+        port = s.getsockname()[1]
+        s.close()
+        return port
 
     def image_exists(self):
         client = docker.from_env(version='auto')
