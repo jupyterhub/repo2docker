@@ -72,6 +72,24 @@ if sys.platform in checksums:
 else:
     print("I don't know how to bundle s2i for %s" % sys.platform)
 
+cmdclass = {}
+try:
+    from wheel.bdist_wheel import bdist_wheel
+    from wheel.pep425tags import get_platform
+except ImportError:
+    # no wheel
+    pass
+else:
+    # apply current platform tag
+    # because we bundle platform-specific s2i binaries
+    class PlatformBDistWheel(bdist_wheel):
+        def initialize_options(self):
+            super(PlatformBDistWheel, self).initialize_options()
+            if self.plat_name is None:
+                self.plat_name = get_platform()
+
+    cmdclass['bdist_wheel'] = PlatformBDistWheel
+
 setup(
     name='jupyter-repo2docker',
     version='0.1',
@@ -84,6 +102,7 @@ setup(
     author='Yuvi Panda',
     author_email='yuvipanda@gmail.com',
     license='BSD',
+    cmdclass=cmdclass,
     package_data={
         'repo2docker': ['s2i'],
     },
