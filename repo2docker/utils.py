@@ -12,11 +12,16 @@ def execute_cmd(cmd, capture=False, **kwargs):
     proc = subprocess.Popen(cmd, **kwargs)
 
     if not capture:
+        # not capturing output, let the subprocesses talk directly to the terminal
         ret = proc.wait()
         if ret != 0:
             raise subprocess.CalledProcessError(ret, cmd)
         return
     
+    # Capture output for logging.
+    # Each line will be yielded as text.
+    # This should behave the same as .readline(), but splits on `\r` OR `\n`,
+    # not just `\n`.
     buf = []
     def flush():
         line = b''.join(buf).decode('utf8', 'replace')
