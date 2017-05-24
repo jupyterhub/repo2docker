@@ -144,7 +144,7 @@ class Repo2Docker(Application):
             sys.exit(1)
 
         try:
-            for line in execute_cmd(['git', 'reset', '--hard', ref], checkout_path):
+            for line in execute_cmd(['git', 'reset', '--hard', ref], cwd=checkout_path):
                 self.log.info(line, extra=dict(phase='fetching'))
         except subprocess.CalledProcessError:
             self.log.error('Failed to check out ref %s', ref, extra=dict(phase='failed'))
