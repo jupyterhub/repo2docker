@@ -75,7 +75,9 @@ class S2IBuildPack(BuildPack):
             output_image_spec,
         ]
         env = os.environ.copy()
-        env['PATH'] = os.pathsep.join([here, env.get('PATH') or os.defpath])
+        # add bundled s2i to *end* of PATH,
+        # in case user doesn't have s2i
+        env['PATH'] = os.pathsep.join([env.get('PATH') or os.defpath, here])
         try:
             for line in execute_cmd(cmd, cwd=workdir, env=env):
                 self.log.info(line, extra=dict(phase='building', builder=self.name))
