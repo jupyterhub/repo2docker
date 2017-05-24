@@ -79,4 +79,6 @@ repos.
 3. Once everything above is done, you should be able to build a repo by
    specifying a source repo URL with this command:
 
-    python -m repo2docker https://github.com/yourname/your-repo
+   ```bash
+   python -m repo2docker https://github.com/yourname/your-repo
+   ```
