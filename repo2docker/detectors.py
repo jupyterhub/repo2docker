@@ -4,7 +4,7 @@ import subprocess
 
 import docker
 
-from traitlets import Unicode, Dict
+from traitlets import Unicode, Dict, Bool
 from traitlets.config import LoggingConfigurable
 
 import logging
@@ -16,16 +16,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 class BuildPack(LoggingConfigurable):
     name = Unicode()
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # FIXME: Not sure why this needs to be repeated - shouldn't configuring Application be enough?
-        logHandler = logging.StreamHandler()
-        formatter = jsonlogger.JsonFormatter()
-        logHandler.setFormatter(formatter)
-        # Need to reset existing handlers, or we repeat messages
-        self.log.handlers = []
-        self.log.addHandler(logHandler)
-        self.log.setLevel(logging.INFO)
+    capture = Bool(False, help="Capture output for logging")
 
     def detect(self, workdir):
         """
@@ -53,7 +44,7 @@ class DockerBuildPack(BuildPack):
                 decode=True
         ):
             if 'stream' in progress:
-                self.log.info(progress['stream'].rstrip(), extra=dict(phase='building'))
+                self.log.info(progress['stream'], extra=dict(phase='building'))
 
 
 class S2IBuildPack(BuildPack):
@@ -79,7 +70,7 @@ class S2IBuildPack(BuildPack):
         # in case user doesn't have s2i
         env['PATH'] = os.pathsep.join([env.get('PATH') or os.defpath, here])
         try:
-            for line in execute_cmd(cmd, cwd=workdir, env=env):
+            for line in execute_cmd(cmd, cwd=workdir, env=env, capture=self.capture):
                 self.log.info(line, extra=dict(phase='building', builder=self.name))
         except subprocess.CalledProcessError:
             self.log.error('Failed to build image!', extra=dict(phase='failed'))

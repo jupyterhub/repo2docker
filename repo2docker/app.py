@@ -18,7 +18,7 @@ import escapism
 
 
 from traitlets.config import Application, LoggingConfigurable
-from traitlets import Type, Bool, Unicode, Dict, List
+from traitlets import Type, Bool, Unicode, Dict, List, default
 import docker
 from docker.utils import kwargs_from_env
 
@@ -40,6 +40,10 @@ class Repo2Docker(Application):
         Path to read traitlets configuration file from.
         """
     )
+    
+    @default('log_level')
+    def _default_log_level(self):
+        return logging.INFO
 
     repo = Unicode(
         os.getcwd(),
@@ -121,6 +125,13 @@ class Repo2Docker(Application):
         DANGEROUS WHEN DONE IN A CLOUD ENVIRONMENT! ONLY USE LOCALLY!
         """
     )
+    json_logs = Bool(
+        False,
+        config=True,
+        help="""
+        Enable JSON logging for easier consumption by external services.
+        """
+    )
 
     aliases = Dict({
         'repo': 'Repo2Docker.repo',
@@ -133,18 +144,21 @@ class Repo2Docker(Application):
         'no-clean': ({'Repo2Docker': {'cleanup_checkout': False}}, 'Do not clean up git checkout'),
         'no-run': ({'Repo2Docker': {'run': False}}, 'Do not run built container image'),
         'push': ({'Repo2Docker': {'push': True}}, 'Push built image to a docker registry'),
+        'json-logs': ({'Repo2Docker': {'json_logs': True}}, 'Enable JSON logging'),
     })
 
     def fetch(self, url, ref, checkout_path):
         try:
-            for line in execute_cmd(['git', 'clone', url, checkout_path]):
+            for line in execute_cmd(['git', 'clone', url, checkout_path],
+                                    capture=self.json_logs):
                 self.log.info(line, extra=dict(phase='fetching'))
         except subprocess.CalledProcessError:
             self.log.error('Failed to clone repository!', extra=dict(phase='failed'))
             sys.exit(1)
 
         try:
-            for line in execute_cmd(['git', 'reset', '--hard', ref], cwd=checkout_path):
+            for line in execute_cmd(['git', 'reset', '--hard', ref], cwd=checkout_path,
+                                    capture=self.json_logs):
                 self.log.info(line, extra=dict(phase='fetching'))
         except subprocess.CalledProcessError:
             self.log.error('Failed to check out ref %s', ref, extra=dict(phase='failed'))
@@ -152,14 +166,21 @@ class Repo2Docker(Application):
 
     def initialize(self, *args, **kwargs):
         super().initialize(*args, **kwargs)
-        logHandler = logging.StreamHandler()
-        formatter = jsonlogger.JsonFormatter()
-        logHandler.setFormatter(formatter)
-        # Need to reset existing handlers, or we repeat messages
-        self.log.handlers = []
-        self.log.addHandler(logHandler)
-        self.log.setLevel(logging.INFO)
         self.load_config_file(self.config_file)
+
+        if self.json_logs:
+            # Need to reset existing handlers, or we repeat messages
+            logHandler = logging.StreamHandler()
+            formatter = jsonlogger.JsonFormatter()
+            logHandler.setFormatter(formatter)
+            self.log.handlers = []
+            self.log.addHandler(logHandler)
+            self.log.setLevel(logging.INFO)
+        else:
+            # due to json logger stuff above,
+            # our log messages include carriage returns, newlines, etc.
+            # remove the additional newline from the stream handler
+            self.log.handlers[0].terminator = ''
 
         if len(self.extra_args) == 1:
             # accept repo as a positional arg
@@ -192,7 +213,7 @@ class Repo2Docker(Application):
             else:
                 layers[progress['id']] = progress['status']
             if time.time() - last_emit_time > 1.5:
-                self.log.info('Pushing image', extra=dict(progress=layers, phase='pushing'))
+                self.log.info('Pushing image\n', extra=dict(progress=layers, phase='pushing'))
                 last_emit_time = time.time()
 
     def run_image(self):
@@ -210,9 +231,9 @@ class Repo2Docker(Application):
 
         try:
             for line in container.logs(stream=True):
-                self.log.info(line.decode('utf-8').rstrip(), extra=dict(phase='running'))
+                self.log.info(line.decode('utf-8'), extra=dict(phase='running'))
         finally:
-            self.log.info('Stopping container...', extra=dict(phase='running'))
+            self.log.info('Stopping container...\n', extra=dict(phase='running'))
             container.kill()
             container.remove()
 
@@ -247,9 +268,9 @@ class Repo2Docker(Application):
                 checkout_path
             )
             for bp_class in self.buildpacks:
-                bp = bp_class()
+                bp = bp_class(parent=self, log=self.log, capture=self.json_logs)
                 if bp.detect(checkout_path):
-                    self.log.info('Using %s builder', bp.name, extra=dict(phase='building'))
+                    self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
                     bp.build(checkout_path, self.ref, self.output_image_spec)
                     break
             else:
