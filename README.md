@@ -37,3 +37,7 @@ method to use, and how to invoke that build method.
 The `s2i-builders` directory contains builder images which can be used to
 provide custom `conda` and `venv` environments suitable for running
 **JupyterHub**.
+
+## Documentation
+
+[Creating a new builder](builder.md)
