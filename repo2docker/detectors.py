@@ -3,6 +3,7 @@ import sys
 import subprocess
 
 import docker
+from docker.utils import kwargs_from_env
 
 from traitlets import Unicode, Dict, Bool
 from traitlets.config import LoggingConfigurable
@@ -37,7 +38,7 @@ class DockerBuildPack(BuildPack):
         return os.path.exists(os.path.join(workdir, 'Dockerfile'))
 
     def build(self, workdir, ref, output_image_spec):
-        client = docker.APIClient(base_url='unix://var/run/docker.sock', version='auto')
+        client = docker.APIClient(version='auto', **kwargs_from_env())
         for progress in client.build(
                 path=workdir,
                 tag=output_image_spec,
