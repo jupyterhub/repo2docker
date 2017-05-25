@@ -50,7 +50,44 @@ class DockerBuildPack(BuildPack):
                 else:
                     sys.stdout.write(progress['stream'])
 
-_legacybinder_docker_appendix = """
+_legacy_binder_docker_appendix = """
+USER root
+COPY . /home/main/notebooks
+RUN chown -R main:main /home/main/notebooks
+USER main
+WORKDIR /home/main/notebooks
+ENV PATH /home/main/anaconda2/envs/python3/bin:$PATH
+RUN conda install -n python3 notebook==5.0.0 ipykernel==4.6.0 && \
+    pip install jupyterhub==0.7.2 && \
+    conda remove -n python3 nb_conda_kernels && \
+    conda install -n root ipykernel==4.6.0 && \
+    /home/main/anaconda2/envs/python3/bin/ipython kernel install --sys-prefix && \
+    /home/main/anaconda2/bin/ipython kernel install --prefix=/home/main/anaconda2/envs/python3
+ENV JUPYTER_PATH /home/main/anaconda2/share/jupyter:$JUPYTER_PATH
+CMD jupyter notebook --ip 0.0.0.0
+"""
+
+class LegacyBinderDockerBuildPack(DockerBuildPack):
+    
+    name = Unicode('Legacy Binder Dockerfile')
+    def detect(self, workdir):
+        dockerfile = os.path.join(workdir, 'Dockerfile')
+        if not os.path.exists(dockerfile):
+            return False
+        with open(dockerfile, 'r') as f:
+            for line in f:
+                if line.startswith('FROM'):
+                    if 'andrewosh/binder-base' in line.split('#')[0].lower():
+                        self.amend_dockerfile(dockerfile)
+                        return True
+                    else:
+                        return False
+        # No FROM?!
+        return False
+
+    def amend_dockerfile(self, dockerfile):
+        with open(dockerfile, 'a') as f:
+            f.write(_legacy_binder_docker_appendix)
 
 
 class S2IBuildPack(BuildPack):
