@@ -24,7 +24,10 @@ from docker.utils import kwargs_from_env
 
 import subprocess
 
-from .detectors import BuildPack, PythonBuildPack, DockerBuildPack, CondaBuildPack
+from .detectors import (
+    BuildPack, PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
+    CondaBuildPack,
+)
 from .utils import execute_cmd
 from . import __version__
 
@@ -90,7 +93,7 @@ class Repo2Docker(Application):
 
     buildpacks = List(
         Type(BuildPack),
-        [DockerBuildPack, CondaBuildPack, PythonBuildPack],
+        [LegacyBinderDockerBuildPack, DockerBuildPack, CondaBuildPack, PythonBuildPack],
         config=True,
         help="""
         Ordered list of BuildPacks to try to use to build a git repository.

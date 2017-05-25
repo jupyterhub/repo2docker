@@ -1,8 +1,10 @@
 import os
 import sys
 import subprocess
+from textwrap import dedent
 
 import docker
+from docker.utils import kwargs_from_env
 
 from traitlets import Unicode, Dict, Bool
 from traitlets.config import LoggingConfigurable
@@ -37,14 +39,58 @@ class DockerBuildPack(BuildPack):
         return os.path.exists(os.path.join(workdir, 'Dockerfile'))
 
     def build(self, workdir, ref, output_image_spec):
-        client = docker.APIClient(base_url='unix://var/run/docker.sock', version='auto')
+        client = docker.APIClient(version='auto', **kwargs_from_env())
         for progress in client.build(
                 path=workdir,
                 tag=output_image_spec,
                 decode=True
         ):
             if 'stream' in progress:
-                self.log.info(progress['stream'], extra=dict(phase='building'))
+                if self.capture:
+                    self.log.info(progress['stream'], extra=dict(phase='building'))
+                else:
+                    sys.stdout.write(progress['stream'])
+
+
+class LegacyBinderDockerBuildPack(DockerBuildPack):
+    
+    name = Unicode('Legacy Binder Dockerfile')
+    dockerfile_appendix = Unicode(dedent(r"""
+    USER root
+    COPY . /home/main/notebooks
+    RUN chown -R main:main /home/main/notebooks
+    USER main
+    WORKDIR /home/main/notebooks
+    ENV PATH /home/main/anaconda2/envs/python3/bin:$PATH
+    RUN conda install -n python3 notebook==5.0.0 ipykernel==4.6.0 && \
+        pip install jupyterhub==0.7.2 && \
+        conda remove -n python3 nb_conda_kernels && \
+        conda install -n root ipykernel==4.6.0 && \
+        /home/main/anaconda2/envs/python3/bin/ipython kernel install --sys-prefix && \
+        /home/main/anaconda2/bin/ipython kernel install --prefix=/home/main/anaconda2/envs/python3
+    ENV JUPYTER_PATH /home/main/anaconda2/share/jupyter:$JUPYTER_PATH
+    CMD jupyter notebook --ip 0.0.0.0
+    """), config=True)
+    
+    def detect(self, workdir):
+        dockerfile = os.path.join(workdir, 'Dockerfile')
+        if not os.path.exists(dockerfile):
+            return False
+        with open(dockerfile, 'r') as f:
+            for line in f:
+                if line.startswith('FROM'):
+                    if 'andrewosh/binder-base' in line.split('#')[0].lower():
+                        self.amend_dockerfile(dockerfile)
+                        return True
+                    else:
+                        return False
+        # No FROM?!
+        return False
+
+    def amend_dockerfile(self, dockerfile):
+        print(self.dockerfile_appendix)
+        with open(dockerfile, 'a') as f:
+            f.write(self.dockerfile_appendix)
 
 
 class S2IBuildPack(BuildPack):
