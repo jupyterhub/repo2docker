@@ -45,7 +45,12 @@ class DockerBuildPack(BuildPack):
                 decode=True
         ):
             if 'stream' in progress:
-                self.log.info(progress['stream'], extra=dict(phase='building'))
+                if self.capture:
+                    self.log.info(progress['stream'], extra=dict(phase='building'))
+                else:
+                    sys.stdout.write(progress['stream'])
+
+_legacybinder_docker_appendix = """
 
 
 class S2IBuildPack(BuildPack):
