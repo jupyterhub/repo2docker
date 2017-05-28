@@ -53,8 +53,9 @@ class DockerBuildPack(BuildPack):
 
 
 class LegacyBinderDockerBuildPack(DockerBuildPack):
-    
+
     name = Unicode('Legacy Binder Dockerfile')
+
     dockerfile_appendix = Unicode(dedent(r"""
     USER root
     COPY . /home/main/notebooks
@@ -71,7 +72,7 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     ENV JUPYTER_PATH /home/main/anaconda2/share/jupyter:$JUPYTER_PATH
     CMD jupyter notebook --ip 0.0.0.0
     """), config=True)
-    
+
     def detect(self, workdir):
         dockerfile = os.path.join(workdir, 'Dockerfile')
         if not os.path.exists(dockerfile):
@@ -88,7 +89,6 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
         return False
 
     def amend_dockerfile(self, dockerfile):
-        print(self.dockerfile_appendix)
         with open(dockerfile, 'a') as f:
             f.write(self.dockerfile_appendix)
 
