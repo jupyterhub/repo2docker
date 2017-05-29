@@ -10,8 +10,16 @@ RUN apt-get update && \
             tar \
             ca-certificates \
             bzip2 \
-            git && \
+            git \
+            locales && \
     apt-get purge && apt-get clean
+
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen
+
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
 
 ENV CONDA_DIR=/opt/conda \
     PATH=/opt/conda/bin:$PATH \
