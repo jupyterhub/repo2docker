@@ -6,7 +6,5 @@ VERSION = $(shell cat version)
 build:
 	docker build -t $(IMAGE_NAME):$(VERSION) .
 
-.PHONY: test
-test:
-	docker build -t $(IMAGE_NAME)-candidate:$(VERSION) .
-	IMAGE_NAME=$(IMAGE_NAME)-candidate:$(VERSION) test/run
+push:
+	docker push "$(IMAGE_NAME):$(VERSION)"
