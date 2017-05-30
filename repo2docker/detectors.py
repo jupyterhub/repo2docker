@@ -158,3 +158,10 @@ class PythonBuildPack(S2IBuildPack):
                 pass
             self.build_image = self.runtime_builder_map[self.runtime]
             return True
+
+class DefaultBuildPack(S2IBuildPack):
+    build_image = Unicode('jupyterhub/singleuser-builder-venv-3.5:v0.2.0')
+    name = Unicode('default')
+    def detect(self, workdir):
+        return True
+
