@@ -8,3 +8,8 @@ __pycache__
 MANIFEST
 
 repo2docker/s2i
+
+bin/
+lib/
+share/
+include/
