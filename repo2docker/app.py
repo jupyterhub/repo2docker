@@ -43,7 +43,7 @@ class Repo2Docker(Application):
         Path to read traitlets configuration file from.
         """
     )
-    
+
     @default('log_level')
     def _default_log_level(self):
         return logging.INFO
@@ -251,43 +251,29 @@ class Repo2Docker(Application):
         s.close()
         return port
 
-    def image_exists(self):
-        client = docker.from_env(version='auto')
-        # HACK: Try to just pull this and see if that works.
-        # if it does, then just bail.
-        # WHAT WE REALLY WANT IS TO NOT DO ANY WORK IF THE IMAGE EXISTS
-        try:
-            image = client.images.pull(self.output_image_spec)
-            return True
-        except docker.errors.ImageNotFound:
-            return False
-
     def start(self):
-        if not self.image_exists():
-            checkout_path = os.path.join(self.git_workdir, str(uuid.uuid4()))
-            self.fetch(
-                self.repo,
-                self.ref,
-                checkout_path
-            )
-            for bp_class in self.buildpacks:
-                bp = bp_class(parent=self, log=self.log, capture=self.json_logs)
-                if bp.detect(checkout_path):
-                    self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
-                    bp.build(checkout_path, self.ref, self.output_image_spec)
-                    break
-            else:
-                self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))
-                sys.exit(1)
+        checkout_path = os.path.join(self.git_workdir, str(uuid.uuid4()))
+        self.fetch(
+            self.repo,
+            self.ref,
+            checkout_path
+        )
 
-            if self.cleanup_checkout:
-                shutil.rmtree(checkout_path)
+        for bp_class in self.buildpacks:
+            bp = bp_class(parent=self, log=self.log, capture=self.json_logs)
+            if bp.detect(checkout_path):
+                self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
+                bp.build(checkout_path, self.ref, self.output_image_spec)
+                break
+        else:
+            self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))
+            sys.exit(1)
+
+        if self.cleanup_checkout:
+            shutil.rmtree(checkout_path)
 
         if self.push:
             self.push_image()
 
         if self.run:
             self.run_image()
-
-
-
