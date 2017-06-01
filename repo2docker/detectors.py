@@ -160,7 +160,7 @@ class PythonBuildPack(S2IBuildPack):
             return True
 
 class DefaultBuildPack(S2IBuildPack):
-    build_image = Unicode('jupyterhub/singleuser-builder-venv-3.5:v0.2.0')
+    build_image = Unicode('jupyterhub/singleuser-builder-venv-3.5:v0.2.1')
     name = Unicode('default')
     def detect(self, workdir):
         return True
