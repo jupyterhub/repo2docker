@@ -140,8 +140,8 @@ class PythonBuildPack(S2IBuildPack):
     """Build Pack for installing from a pip requirements.txt using S2I"""
     name = Unicode('python-pip')
     runtime_builder_map = Dict({
-        'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.2.0',
-        'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.2.0',
+        'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.2.1',
+        'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.2.1',
     })
 
     runtime = Unicode(

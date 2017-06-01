@@ -8,9 +8,14 @@ ENV APP_DIR /srv/app
 ENV PATH ${APP_DIR}/venv/bin:$PATH
 
 RUN apt-get update && \
-    apt-get install --yes --no-install-recommends \
+    apt-get install --yes \
             python3 \
             python3-venv \
+            python3-dev \
+            build-essential \
+            pkg-config \
+            libfreetype6-dev \
+            libpng-dev \
             tar \
             git \
             locales && \
