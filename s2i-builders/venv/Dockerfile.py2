@@ -8,10 +8,13 @@ ENV APP_DIR /srv/app
 ENV PATH ${APP_DIR}/venv/bin:$PATH
 
 RUN apt-get update && \
-    apt-get install --yes --no-install-recommends \
+    apt-get install --yes \
             python \
             python-dev \
             build-essential \
+            pkg-config \
+            libfreetype6-dev \
+            libpng-dev \
             virtualenv \
             tar \
             git \
@@ -34,8 +37,9 @@ WORKDIR /home/jovyan
 USER jovyan
 RUN virtualenv ${APP_DIR}/venv
 
-RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir notebook==5.0.0 git+https://github.com/yuvipanda/jupyterhub-legacy-singleuser@master ipywidgets==5.2.3 && \
-    ${APP_DIR}/venv/bin/jupyter nbextension enable --py widgetsnbextension
+RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir notebook==5.0.0 git+https://github.com/yuvipanda/jupyterhub-legacy-singleuser@master ipywidgets==5.2.3 jupyterlab==0.22.1 && \
+    ${APP_DIR}/venv/bin/jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+    ${APP_DIR}/venv/bin/jupyter serverextension enable --py jupyterlab --sys-prefix
 
 COPY ./s2i/bin/ /usr/libexec/s2i
 

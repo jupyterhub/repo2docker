@@ -121,7 +121,7 @@ class S2IBuildPack(BuildPack):
         except subprocess.CalledProcessError:
             self.log.error('Failed to build image!', extra=dict(phase='failed'))
             sys.exit(1)
-    
+
     def build(self, workdir, ref, output_image_spec):
         return self.s2i_build(workdir, ref, output_image_spec, self.build_image)
 
@@ -130,7 +130,7 @@ class CondaBuildPack(S2IBuildPack):
     """Build Pack for installing from a conda environment.yml using S2I"""
 
     name = Unicode('conda')
-    build_image = Unicode('jupyterhub/singleuser-builder-conda:v0.2.0', config=True)
+    build_image = Unicode('jupyterhub/singleuser-builder-conda:v0.2.1', config=True)
 
     def detect(self, workdir):
         return os.path.exists(os.path.join(workdir, 'environment.yml'))
@@ -140,8 +140,8 @@ class PythonBuildPack(S2IBuildPack):
     """Build Pack for installing from a pip requirements.txt using S2I"""
     name = Unicode('python-pip')
     runtime_builder_map = Dict({
-        'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.2.0',
-        'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.2.0',
+        'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.2.1',
+        'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.2.1',
     })
 
     runtime = Unicode(
@@ -160,7 +160,7 @@ class PythonBuildPack(S2IBuildPack):
             return True
 
 class DefaultBuildPack(S2IBuildPack):
-    build_image = Unicode('jupyterhub/singleuser-builder-venv-3.5:v0.2.0')
+    build_image = Unicode('jupyterhub/singleuser-builder-venv-3.5:v0.2.1')
     name = Unicode('default')
     def detect(self, workdir):
         return True

@@ -8,9 +8,14 @@ ENV APP_DIR /srv/app
 ENV PATH ${APP_DIR}/venv/bin:$PATH
 
 RUN apt-get update && \
-    apt-get install --yes --no-install-recommends \
+    apt-get install --yes \
             python3 \
             python3-venv \
+            python3-dev \
+            build-essential \
+            pkg-config \
+            libfreetype6-dev \
+            libpng-dev \
             tar \
             git \
             locales && \
@@ -32,8 +37,10 @@ WORKDIR /home/jovyan
 USER jovyan
 RUN python3 -m venv ${APP_DIR}/venv
 
-RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir notebook==5.0.0 jupyterhub==0.7.2 ipywidgets==5.2.3 && \
-    ${APP_DIR}/venv/bin/jupyter nbextension enable --py widgetsnbextension
+RUN ${APP_DIR}/venv/bin/pip install --no-cache-dir notebook==5.0.0 jupyterhub==0.7.2 ipywidgets==5.2.3 jupyterlab==0.22.1 && \
+    ${APP_DIR}/venv/bin/jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+    ${APP_DIR}/venv/bin/jupyter serverextension enable --py jupyterlab --sys-prefix
+
 
 COPY ./s2i/bin/ /usr/libexec/s2i
 
