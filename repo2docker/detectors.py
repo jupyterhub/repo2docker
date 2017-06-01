@@ -121,7 +121,7 @@ class S2IBuildPack(BuildPack):
         except subprocess.CalledProcessError:
             self.log.error('Failed to build image!', extra=dict(phase='failed'))
             sys.exit(1)
-    
+
     def build(self, workdir, ref, output_image_spec):
         return self.s2i_build(workdir, ref, output_image_spec, self.build_image)
 
@@ -130,7 +130,7 @@ class CondaBuildPack(S2IBuildPack):
     """Build Pack for installing from a conda environment.yml using S2I"""
 
     name = Unicode('conda')
-    build_image = Unicode('jupyterhub/singleuser-builder-conda:v0.2.0', config=True)
+    build_image = Unicode('jupyterhub/singleuser-builder-conda:v0.2.1', config=True)
 
     def detect(self, workdir):
         return os.path.exists(os.path.join(workdir, 'environment.yml'))
