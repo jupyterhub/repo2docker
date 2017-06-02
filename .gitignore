@@ -13,3 +13,7 @@ bin/
 lib/
 share/
 include/
+
+# Documentation
+docs/build/
+docs/source/generated/

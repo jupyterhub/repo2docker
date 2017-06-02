@@ -35,7 +35,13 @@ import recommonmark.parser
 # ones.
 extensions = [
     'jupyter_alabaster_theme',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
 ]
+
+# Extension config
+autosummary_generate = True
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
