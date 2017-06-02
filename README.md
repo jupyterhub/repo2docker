@@ -40,4 +40,4 @@ provide custom `conda` and `venv` environments suitable for running
 
 ## Documentation
 
-[Creating a new builder](builder.md)
+[Creating a new builder](docs/source/builder.md)
