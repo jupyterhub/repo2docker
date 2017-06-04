@@ -142,6 +142,7 @@ class PythonBuildPack(S2IBuildPack):
     runtime_builder_map = Dict({
         'python-2.7': 'jupyterhub/singleuser-builder-venv-2.7:v0.2.1',
         'python-3.5': 'jupyterhub/singleuser-builder-venv-3.5:v0.2.1',
+        'python-3.6': 'jupyterhub/singleuser-builder-venv-3.6:v0.2.1',
     })
 
     runtime = Unicode(
