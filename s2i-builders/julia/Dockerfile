@@ -36,7 +36,7 @@ RUN mkdir -p ${APP_DIR} && chown -R jovyan:jovyan ${APP_DIR}
 
 # Install Julia
 ENV JULIA_PATH /usr/local/julia
-ENV JULIA_VERSION 0.5.2
+ENV JULIA_VERSION 0.6.0
 
 RUN mkdir $JULIA_PATH  && \
     curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
@@ -55,7 +55,7 @@ ENV PATH ${APP_DIR}/venv/bin:$PATH:${JULIA_PATH}/bin
 ENV JULIA_PKGDIR ${APP_DIR}/.julia
 
 RUN julia -e 'Pkg.init(); Pkg.add("IJulia")' && \
-    mv ${HOME}/.local/share/jupyter/kernels/julia-0.5/ ${APP_DIR}/venv/share/jupyter/kernels/julia-0.5
+    mv ${HOME}/.local/share/jupyter/kernels/julia-0.6/ ${APP_DIR}/venv/share/jupyter/kernels/julia-0.6
 
 
 COPY ./s2i/bin/ /usr/libexec/s2i
