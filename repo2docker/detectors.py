@@ -68,7 +68,8 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
         conda remove -n python3 nb_conda_kernels && \
         conda install -n root ipykernel==4.6.0 && \
         /home/main/anaconda2/envs/python3/bin/ipython kernel install --sys-prefix && \
-        /home/main/anaconda2/bin/ipython kernel install --prefix=/home/main/anaconda2/envs/python3
+        /home/main/anaconda2/bin/ipython kernel install --prefix=/home/main/anaconda2/envs/python3 && \
+        /home/main/anaconda2/bin/ipython kernel install --sys-prefix
     ENV JUPYTER_PATH /home/main/anaconda2/share/jupyter:$JUPYTER_PATH
     CMD jupyter notebook --ip 0.0.0.0
     """), config=True)
