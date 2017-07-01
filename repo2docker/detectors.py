@@ -98,7 +98,7 @@ class S2IBuildPack(BuildPack):
     # Simple subclasses of S2IBuildPack must set build_image,
     # either via config or during `detect()`
     build_image = Unicode('')
-    
+
     def s2i_build(self, workdir, ref, output_image_spec, build_image):
         # Note: Ideally we'd just copy from workdir here, rather than clone and check out again
         # However, setting just --copy and not specifying a ref seems to check out master for
@@ -139,7 +139,7 @@ class CondaBuildPack(S2IBuildPack):
 
 class JuliaBuildPack(S2IBuildPack):
     name = Unicode('julia')
-    build_image = Unicode('jupyterhub/singleuser-builder-julia:v0.2.1', config=True)
+    build_image = Unicode('jupyterhub/singleuser-builder-julia:v0.2.2', config=True)
 
     def detect(self, workdir):
         return os.path.exists(os.path.join(workdir, 'REQUIRE'))

@@ -6,7 +6,9 @@ LABEL io.openshift.s2i.scripts-url=image:///usr/libexec/s2i
 
 ENV APP_DIR /srv/app
 ENV JULIA_PATH /usr/local/julia
-ENV PATH ${APP_DIR}/venv/bin:$PATH
+ENV JULIA_PKGDIR ${APP_DIR}/.julia
+ENV JUPYTER ${APP_DIR}/venv/bin/jupyter
+ENV PATH ${APP_DIR}/venv/bin:$PATH:${JULIA_PATH}/bin
 
 RUN apt-get update && \
     apt-get install --yes \
@@ -49,10 +51,6 @@ RUN python3 -m venv ${APP_DIR}/venv
 RUN pip install --no-cache-dir notebook==5.0.0 jupyterhub==0.7.2 ipywidgets==5.2.3 jupyterlab==0.22.1 && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     jupyter serverextension enable --py jupyterlab --sys-prefix
-
-ENV JUPYTER ${APP_DIR}/venv/bin/jupyter
-ENV PATH ${APP_DIR}/venv/bin:$PATH:${JULIA_PATH}/bin
-ENV JULIA_PKGDIR ${APP_DIR}/.julia
 
 RUN julia -e 'Pkg.init(); Pkg.add("IJulia")' && \
     mv ${HOME}/.local/share/jupyter/kernels/julia-0.6/ ${APP_DIR}/venv/share/jupyter/kernels/julia-0.6
