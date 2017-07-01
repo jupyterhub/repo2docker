@@ -13,3 +13,7 @@ repo2docker/s2i
 lib/
 share/
 include/
+
+# Documentation
+docs/build/
+docs/source/generated/
