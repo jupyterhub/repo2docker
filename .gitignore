@@ -9,7 +9,7 @@ MANIFEST
 
 repo2docker/s2i
 
-bin/
+^bin/
 lib/
 share/
 include/

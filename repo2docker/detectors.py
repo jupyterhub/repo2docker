@@ -139,7 +139,7 @@ class CondaBuildPack(S2IBuildPack):
 
 class JuliaBuildPack(S2IBuildPack):
     name = Unicode('julia')
-    build_image = Unicode('jupyterhub/singleuser-builder-julia:v0.2.2', config=True)
+    build_image = Unicode('jupyterhub/singleuser-builder-julia:v0.2.3', config=True)
 
     def detect(self, workdir):
         return os.path.exists(os.path.join(workdir, 'REQUIRE'))
