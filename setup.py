@@ -92,7 +92,7 @@ else:
 
 setup(
     name='jupyter-repo2docker',
-    version='0.2.6',
+    version='0.2.8',
     install_requires=[
         'docker',
         'traitlets',
