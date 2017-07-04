@@ -26,10 +26,21 @@ import subprocess
 
 from .detectors import (
     BuildPack, PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, DefaultBuildPack, JuliaBuildPack
+    CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
 )
 from .utils import execute_cmd
 from . import __version__
+
+
+def c(args):
+    """
+    Shortcut to compose many buildpacks together
+    """
+    image = args[0]()
+    for arg in args[1:]:
+        image = image.compose_with(arg())
+    return image
+
 
 class Repo2Docker(Application):
     name = 'jupyter-repo2docker'
@@ -92,8 +103,18 @@ class Repo2Docker(Application):
     )
 
     buildpacks = List(
-        Type(BuildPack),
-        [LegacyBinderDockerBuildPack, DockerBuildPack, CondaBuildPack, PythonBuildPack, JuliaBuildPack, DefaultBuildPack],
+        [
+            (LegacyBinderDockerBuildPack, ),
+            (DockerBuildPack, ),
+
+            (BaseImage, CondaBuildPack, JuliaBuildPack),
+            (BaseImage, CondaBuildPack),
+
+            (BaseImage, PythonBuildPack, Python2BuildPack, JuliaBuildPack),
+            (BaseImage, PythonBuildPack, JuliaBuildPack),
+            (BaseImage, PythonBuildPack, Python2BuildPack),
+            (BaseImage, PythonBuildPack),
+        ],
         config=True,
         help="""
         Ordered list of BuildPacks to try to use to build a git repository.
@@ -259,15 +280,20 @@ class Repo2Docker(Application):
             checkout_path
         )
 
-        for bp_class in self.buildpacks:
-            bp = bp_class(parent=self, log=self.log, capture=self.json_logs)
-            if bp.detect(checkout_path):
+        os.chdir(checkout_path)
+        for bp_spec in self.buildpacks:
+            bp = c(bp_spec)
+            if bp.detect():
                 self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
-                bp.build(checkout_path, self.ref, self.output_image_spec)
-                break
-        else:
-            self.log.error('Could not figure out how to build this repository! Tell us?', extra=dict(phase='failed'))
-            sys.exit(1)
+                for l in bp.build(self.output_image_spec):
+                    if 'stream' in l:
+                        self.log.info(l['stream'], extra=dict(phase='building'))
+                    elif 'error' in l:
+                        self.log.info(l['error'], extra=dict(phase='failure'))
+                        sys.exit(1)
+                    else:
+                        self.log.info(json.dumps(l), extra=dict(phase='failure'))
+                        sys.exit(1)
 
         if self.cleanup_checkout:
             shutil.rmtree(checkout_path)

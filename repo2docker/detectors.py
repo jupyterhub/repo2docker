@@ -324,15 +324,7 @@ class BuildPack(LoggingConfigurable):
                 custom_context=True,
                 decode=True
         ):
-            if 'stream' in line:
-                print(line['stream'], end='')
-            elif 'error' in line:
-                print(line['error'], end='')
-                break
-            else:
-                raise ValueError("Unexpected return from docker builder: {}".format(json.dumps(line)))
-        else:
-            print("Built image", image_spec)
+            yield line
 
 
 class BaseImage(BuildPack):
@@ -677,31 +669,3 @@ class LegacyBinderDockerBuildPack(BuildPack):
             pass
 
         return False
-
-def c(*args):
-    image = args[0]()
-    for arg in args[1:]:
-        image = image.compose_with(arg())
-    return image
-
-def main():
-    images = [
-        LegacyBinderDockerBuildPack(),
-        DockerBuildPack(),
-
-        c(BaseImage, CondaBuildPack, JuliaBuildPack),
-        c(BaseImage, CondaBuildPack),
-
-        c(BaseImage, PythonBuildPack, Python2BuildPack, JuliaBuildPack),
-        c(BaseImage, PythonBuildPack, JuliaBuildPack),
-        c(BaseImage, PythonBuildPack, Python2BuildPack),
-        c(BaseImage, PythonBuildPack),
-    ]
-
-    for i in images:
-        if i.detect():
-            i.build('wat')
-            break
-
-
-main()
