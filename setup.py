@@ -97,7 +97,8 @@ setup(
         'docker',
         'traitlets',
         'python-json-logger',
-        'escapism'
+        'escapism',
+        'jinja2'
     ],
     author='Yuvi Panda',
     author_email='yuvipanda@gmail.com',
