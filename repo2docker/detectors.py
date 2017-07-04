@@ -4,6 +4,7 @@ Generates a variety of Dockerfiles based on an input matrix
 import textwrap
 from traitlets.config import LoggingConfigurable
 from traitlets import Unicode, Set, List, Dict, Tuple, Bool, default
+from textwrap import dedent
 import jinja2
 import tarfile
 import io
@@ -637,7 +638,7 @@ class DockerBuildPack(BuildPack):
         with open('Dockerfile') as f:
             return f.read()
 
-class LegacyBinderDockerBuildPack(DockerBuildPack):
+class LegacyBinderDockerBuildPack(BuildPack):
 
     name = 'Legacy Binder Dockerfile'
 
@@ -663,7 +664,7 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
         with open('Dockerfile') as f:
             return f.read() + self.dockerfile_appendix
 
-    def detect(self, workdir):
+    def detect(self):
         try:
             with open('Dockerfile', 'r') as f:
                 for line in f:
