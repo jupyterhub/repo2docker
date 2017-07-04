@@ -294,6 +294,7 @@ class Repo2Docker(Application):
                     else:
                         self.log.info(json.dumps(l), extra=dict(phase='failure'))
                         sys.exit(1)
+                break
 
         if self.cleanup_checkout:
             shutil.rmtree(checkout_path)
