@@ -600,7 +600,7 @@ class JuliaBuildPack(BuildPack):
             # HACK: Can't seem to tell IJulia to install in sys-prefix
             # FIXME: Find way to get it to install under /srv and not $HOME?
             r"""
-            julia -e 'Pkg.init(); Pkg.add("IJulia")' && \
+            julia -e 'Pkg.init(); Pkg.add("IJulia"); using IJulia;' && \
             mv ${HOME}/.local/share/jupyter/kernels/julia-0.6  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-0.6
             """
         )
@@ -610,9 +610,16 @@ class JuliaBuildPack(BuildPack):
     def setup_assembly(self):
         return [(
             "${NB_USER}",
+            # Pre-compile all libraries if they've opted into it. `using {libraryname}` does the
+            # right thing
             r"""
             cat REQUIRE >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
-            julia -e "Pkg.resolve()"
+            julia -e ' \
+               Pkg.resolve(); \
+               for pkg in keys(Pkg.Reqs.parse("REQUIRE")) \
+                eval(:(using $(Symbol(pkg)))) \
+               end \
+            '
             """
         )]
 
