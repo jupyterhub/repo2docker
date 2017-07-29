@@ -45,6 +45,15 @@ RUN adduser --disabled-password \
 WORKDIR ${HOME}
 
 RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+       {% for package in base_packages -%}
+       {{ package }} \
+       {% endfor -%}
+    && apt-get purge && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
     apt-get install --yes \
        {% for package in packages -%}
        {{ package }} \
@@ -127,6 +136,64 @@ class BuildPack(LoggingConfigurable):
         are usually installed as apt packages.
         """
     )
+
+    base_packages = Set(
+        {
+            # Utils!
+            "git",
+            "tar",
+            "curl",
+            "wget",
+            "less",
+            # Include everything from the popular buildpack-deps docker image
+            "autoconf",
+            "automake",
+            "bzip2",
+            "file",
+            "g++",
+            "gcc",
+            "imagemagick",
+            "libbz2-dev",
+            "libc6-dev",
+            "libcurl4-openssl-dev",
+            "libdb-dev",
+            "libevent-dev",
+            "libffi-dev",
+            "libgdbm-dev",
+            "libgeoip-dev",
+            "libglib2.0-dev",
+            "libjpeg-dev",
+            "libkrb5-dev",
+            "liblzma-dev",
+            "libmagickcore-dev",
+            "libmagickwand-dev",
+            "libncurses-dev",
+            "libpng-dev",
+            "libpq-dev",
+            "libreadline-dev",
+            "libsqlite3-dev",
+            "libssl-dev",
+            "libtool",
+            "libwebp-dev",
+            "libxml2-dev",
+            "libxslt-dev",
+            "libyaml-dev",
+            "make",
+            "patch",
+            "xz-utils",
+            "zlib1g-dev",
+        },
+        help="""
+        Base set of apt packages that are installed for all images.
+
+        These contain useful images that are commonly used by a lot of images,
+        where it would be useful to share a base docker image layer that contains
+        them.
+
+        These would be installed with a --no-install-recommends option.
+        """
+    )
+
     env = List(
         [],
         help="""
@@ -242,6 +309,7 @@ class BuildPack(LoggingConfigurable):
         labels.update(other.labels)
         result.labels = labels
         result.packages = self.packages.union(other.packages)
+        result.base_packages = self.base_packages.union(other.base_packages)
         result.path = self.path + other.path
         # FIXME: Deduplicate Env
         result.env = self.env + other.env
@@ -294,7 +362,8 @@ class BuildPack(LoggingConfigurable):
             labels=self.labels,
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
-            build_script_files=self.build_script_files
+            build_script_files=self.build_script_files,
+            base_packages=self.base_packages
         )
 
     def build(self, image_spec):
@@ -330,21 +399,6 @@ class BuildPack(LoggingConfigurable):
 class BaseImage(BuildPack):
     name = "repo2docker"
     version = "0.1"
-    packages = {
-        # Utils!
-        "git",
-        "tar",
-        "curl",
-        "wget",
-        "less",
-        # Build tools
-        "build-essential",
-        "pkg-config",
-    }
-
-    labels = {
-        "io.openshift.s2i.scripts-url": "image:///usr/libexec/s2i"
-    }
 
     env = [
         ("APP_BASE", "/srv")
