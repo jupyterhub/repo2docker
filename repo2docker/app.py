@@ -269,11 +269,12 @@ class Repo2Docker(Application):
             for line in container.logs(stream=True):
                 self.log.info(line.decode('utf-8'), extra=dict(phase='running'))
         finally:
-            # FIXME: We should pass the container's exit code back out!
             self.log.info('Stopping container...\n', extra=dict(phase='running'))
             if container.status == 'running':
                 container.kill()
+            exit_code = container.attrs['State']['ExitCode']
             container.remove()
+            sys.exit(exit_code)
 
     def _get_free_port(self):
         """
