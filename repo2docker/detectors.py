@@ -349,7 +349,7 @@ class BuildPack(LoggingConfigurable):
         last_user = 'root'
         for user, script in self.assemble_scripts:
             if last_user != user:
-                build_script_directives.append("USER {}".format(user))
+                assemble_script_directives.append("USER {}".format(user))
                 last_user = user
             assemble_script_directives.append("RUN {}".format(
                 textwrap.dedent(script.strip('\n'))
@@ -363,7 +363,7 @@ class BuildPack(LoggingConfigurable):
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.build_script_files,
-            base_packages=self.base_packages
+            base_packages=sorted(self.base_packages)
         )
 
     def build(self, image_spec):
@@ -378,7 +378,7 @@ class BuildPack(LoggingConfigurable):
             io.BytesIO(dockerfile)
         )
 
-        for src in self.build_script_files:
+        for src in sorted(self.build_script_files):
             tar.add(src)
 
         tar.add('.', 'src/')
