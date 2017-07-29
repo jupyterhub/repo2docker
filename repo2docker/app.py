@@ -205,6 +205,8 @@ class Repo2Docker(Application):
             # our log messages include carriage returns, newlines, etc.
             # remove the additional newline from the stream handler
             self.log.handlers[0].terminator = ''
+            # We don't want a [Repo2Docker] on all messages
+            self.log.handlers[0].formatter = logging.Formatter(fmt='%(message)s')
 
         if len(self.extra_args) == 1:
             # accept repo as a positional arg
