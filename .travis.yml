@@ -10,4 +10,6 @@ install:
   - pip install pytest-xdist
 
 script:
-  - pytest -v tests/*
+  # Run at least 4 tests in parallel. These tests are all fully
+  # parallelizable
+  - pytest -v -n4 tests/*
