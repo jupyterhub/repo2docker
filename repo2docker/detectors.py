@@ -476,13 +476,9 @@ class PythonBuildPack(BuildPack):
                 notebook==5.0.0 \
                 jupyterhub==0.7.2 \
                 ipywidgets==6.0.0 \
-                jupyterlab==0.24.1 \
-                nbgoogleanalytics==0.1.0 && \
+                jupyterlab==0.24.1 && \
             jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-            jupyter serverextension enable --py jupyterlab --sys-prefix && \
-            jupyter nbextension install --py nbgoogleanalytics --sys-prefix && \
-            jupyter nbextension enable --py nbgoogleanalytics --sys-prefix && \
-            jupyter serverextension enable --py nbgoogleanalytics --sys-prefix
+            jupyter serverextension enable --py jupyterlab --sys-prefix
             """
         )
     ]
