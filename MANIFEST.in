@@ -1,7 +1,3 @@
-exclude repo2docker/s2i
-include Dockerfile
 include *.md
 include LICENSE
 include setup.cfg
-
-graft s2i-builders
