@@ -9,6 +9,7 @@ import jinja2
 import tarfile
 import io
 import os
+import stat
 import re
 import json
 import docker
@@ -108,6 +109,12 @@ LABEL {{k}}={{v}}
 
 # We always want containers to run as non-root
 USER ${NB_USER}
+
+{% if post_build_scripts -%}
+{% for s in post_build_scripts -%}
+RUN ./{{ s }}
+{% endfor %}
+{% endif -%}
 """
 
 
@@ -286,6 +293,19 @@ class BuildPack(LoggingConfigurable):
         """
     )
 
+    post_build_scripts = List(
+        [],
+        help="""
+        An ordered list of executable scripts that should be executed after build.
+
+        Is run as a non-root user, and must be executable. Used for doing things
+        that are currently not supported by other means!
+
+        The scripts should be as deterministic as possible - running it twice
+        should not produce different results!
+        """
+    )
+
     name = Unicode(
         help="""
         Name of the BuildPack!
@@ -315,6 +335,7 @@ class BuildPack(LoggingConfigurable):
         result.env = self.env + other.env
         result.build_scripts = self.build_scripts + other.build_scripts
         result.assemble_scripts = self.assemble_scripts + other.assemble_scripts
+        result.post_build_scripts = self.post_build_scripts + other.post_build_scripts
 
         build_script_files = {}
         build_script_files.update(self.build_script_files)
@@ -363,7 +384,8 @@ class BuildPack(LoggingConfigurable):
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.build_script_files,
-            base_packages=sorted(self.base_packages)
+            base_packages=sorted(self.base_packages),
+            post_build_scripts=self.post_build_scripts,
         )
 
     def build(self, image_spec):
@@ -434,6 +456,12 @@ class BaseImage(BuildPack):
             pass
         return assemble_scripts
 
+    @default('post_build_scripts')
+    def setup_post_build_scripts(self):
+        if os.path.exists('postBuild'):
+            if stat.S_IXUSR & os.stat('postBuild')[stat.ST_MODE]:
+                return ['postBuild']
+        return []
 
 class PythonBuildPack(BuildPack):
     name = "python3.5"
