@@ -292,9 +292,10 @@ class Repo2Docker(Application):
                         self.log.info(l['error'], extra=dict(phase='failure'))
                         sys.exit(1)
                     else:
-                        self.log.info(json.dumps(l), extra=dict(phase='failure'))
-                        sys.exit(1)
+                        self.log.info(json.dumps(l), extra=dict(phase='building'))
                 break
+        else:
+            raise Exception("No builder found!")
 
         if self.cleanup_checkout:
             shutil.rmtree(checkout_path)
