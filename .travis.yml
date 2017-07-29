@@ -1,0 +1,13 @@
+language: python
+sudo: required
+services:
+  - docker
+python:
+  - 3.5
+
+install:
+  - pip install -e .
+  - pip install pytest-xdist
+
+script:
+  - pytest -v tests/*
