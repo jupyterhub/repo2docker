@@ -54,6 +54,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+{% if packages -%}
 RUN apt-get update && \
     apt-get install --yes \
        {% for package in packages -%}
@@ -62,6 +63,7 @@ RUN apt-get update && \
     && apt-get purge && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+{% endif -%}
 
 EXPOSE 8888
 
@@ -362,8 +364,21 @@ class BuildPack(LoggingConfigurable):
             io.BytesIO(dockerfile)
         )
 
+        def _filter_tar(tar):
+            # We need to unset these for build_script_files we copy into tar
+            # Otherwise they seem to vary each time, preventing effective use
+            # of the cache!
+            # https://github.com/docker/docker-py/pull/1582 is related
+            tar.uname = ''
+            tar.gname = ''
+            tar.uid = 1000
+            tar.gid = 1000
+            return tar
+
         for src in sorted(self.build_script_files):
-            tar.add(src)
+            src_parts = src.split('/')
+            src_path = os.path.join(os.path.dirname(__file__), 'files', *src_parts)
+            tar.add(src_path, src, filter=_filter_tar)
 
         tar.add('.', 'src/')
 
@@ -512,8 +527,8 @@ class CondaBuildPack(BuildPack):
     path = ['${CONDA_DIR}/bin']
 
     build_script_files = {
-        os.path.join(os.path.dirname(__file__), 'files', 'conda', 'install-miniconda.bash'): '/tmp/install-miniconda.bash',
-        os.path.join(os.path.dirname(__file__), 'files', 'conda', 'environment.yml'): '/tmp/environment.yml',
+        'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
+        'conda/environment.yml': '/tmp/environment.yml'
     }
 
     build_scripts = [
@@ -536,6 +551,11 @@ class CondaBuildPack(BuildPack):
                 conda env update -n root -f environment.yml && \
                 conda clean -tipsy
                 """
+            ))
+        if os.path.exists('requirements.txt'):
+            assembly_scripts.append((
+                '${NB_USER}',
+                'pip install --no-cache-dir -r requirements.txt'
             ))
         return assembly_scripts
 
