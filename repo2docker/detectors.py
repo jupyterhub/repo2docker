@@ -686,7 +686,7 @@ class DockerBuildPack(BuildPack):
         ):
             yield line
 
-class LegacyBinderDockerBuildPack(BuildPack):
+class LegacyBinderDockerBuildPack(DockerBuildPack):
 
     name = 'Legacy Binder Dockerfile'
 

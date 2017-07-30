@@ -324,6 +324,8 @@ class Repo2Docker(Application):
             elif 'error' in l:
                 self.log.info(l['error'], extra=dict(phase='failure'))
                 sys.exit(1)
+            elif 'status' in l:
+                    self.log.info('Fetching base image...\r', extra=dict(phase='building'))
             else:
                 self.log.info(json.dumps(l), extra=dict(phase='building'))
 
