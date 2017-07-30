@@ -9,17 +9,20 @@ success.
 """
 import pytest
 import subprocess
+import yaml
+import shlex
 
 def pytest_collect_file(parent, path):
     if path.basename == 'verify':
-        return Repo(path, parent)
+        return LocalRepo(path, parent)
+    elif path.basename.endswith('.repos.yaml'):
+        return RemoteRepoList(path, parent)
 
-class Repo(pytest.File):
+class LocalRepo(pytest.File):
     def collect(self):
-        yield RepoTest(self.fspath.basename, self, self.fspath)
+        yield LocalRepoTest(self.fspath.basename, self, self.fspath)
 
-
-class RepoTest(pytest.Item):
+class LocalRepoTest(pytest.Item):
     def __init__(self, name, parent, path):
         super().__init__(name, parent)
         self.path = path
@@ -30,3 +33,27 @@ class RepoTest(pytest.Item):
             str(self.path.dirname),
             './verify'
         ])
+
+
+class RemoteRepoList(pytest.File):
+    def collect(self):
+        with self.fspath.open() as f:
+            repos = yaml.safe_load(f)
+        for repo in repos:
+            yield RemoteRepoTest(repo['name'], self, repo['url'], repo['ref'], repo['verify'])
+
+
+class RemoteRepoTest(pytest.Item):
+    def __init__(self, name, parent, url, ref, verify):
+        super().__init__(name, parent)
+        self.url = url
+        self.ref = ref
+        self.verify = verify
+
+    def runtest(self):
+        subprocess.check_call([
+            'jupyter-repo2docker',
+            '--ref', self.ref,
+            self.url,
+            '--',
+        ] + shlex.split(self.verify))
