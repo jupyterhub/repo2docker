@@ -15,7 +15,7 @@ import json
 import docker
 
 TEMPLATE = r"""
-FROM ubuntu:17.04
+FROM buildpack-deps:zesty
 
 # Set up locales properly
 RUN apt-get update && \
@@ -147,49 +147,10 @@ class BuildPack(LoggingConfigurable):
     base_packages = Set(
         {
             # Utils!
-            "git",
             "tar",
             "curl",
             "wget",
             "less",
-            "ca-certificates",
-            # Include everything from the popular buildpack-deps docker image
-            "autoconf",
-            "automake",
-            "bzip2",
-            "file",
-            "g++",
-            "gcc",
-            "imagemagick",
-            "libbz2-dev",
-            "libc6-dev",
-            "libcurl4-openssl-dev",
-            "libdb-dev",
-            "libevent-dev",
-            "libffi-dev",
-            "libgdbm-dev",
-            "libgeoip-dev",
-            "libglib2.0-dev",
-            "libjpeg-dev",
-            "libkrb5-dev",
-            "liblzma-dev",
-            "libmagickcore-dev",
-            "libmagickwand-dev",
-            "libncurses-dev",
-            "libpng-dev",
-            "libpq-dev",
-            "libreadline-dev",
-            "libsqlite3-dev",
-            "libssl-dev",
-            "libtool",
-            "libwebp-dev",
-            "libxml2-dev",
-            "libxslt-dev",
-            "libyaml-dev",
-            "make",
-            "patch",
-            "xz-utils",
-            "zlib1g-dev",
         },
         help="""
         Base set of apt packages that are installed for all images.
