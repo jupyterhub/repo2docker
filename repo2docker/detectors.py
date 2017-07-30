@@ -380,7 +380,7 @@ class BuildPack(LoggingConfigurable):
             src_path = os.path.join(os.path.dirname(__file__), 'files', *src_parts)
             tar.add(src_path, src, filter=_filter_tar)
 
-        tar.add('.', 'src/')
+        tar.add('.', 'src/', filter=_filter_tar)
 
         tar.close()
         tarf.seek(0)
