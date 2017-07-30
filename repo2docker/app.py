@@ -278,8 +278,9 @@ class Repo2Docker(Application):
             for line in container.logs(stream=True):
                 self.log.info(line.decode('utf-8'), extra=dict(phase='running'))
         finally:
-            self.log.info('Stopping container...\n', extra=dict(phase='running'))
+            container.reload()
             if container.status == 'running':
+                self.log.info('Stopping container...\n', extra=dict(phase='running'))
                 container.kill()
             exit_code = container.attrs['State']['ExitCode']
             container.remove()
