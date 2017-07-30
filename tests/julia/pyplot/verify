@@ -2,7 +2,8 @@
 using PyPlot
 
 # Make sure we are re-using the same conda python
-if PyCall.python != "/srv/conda/bin/python"
+if PyCall.libpython != "/srv/conda/lib/libpython3.6m"
+    println("Not re-using conda python! Using " * PyCall.libpython * " instead")
     exit(1)
 end
 
