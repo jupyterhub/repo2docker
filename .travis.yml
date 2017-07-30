@@ -18,3 +18,4 @@ env:
   - REPO_TYPE=conda
   - REPO_TYPE=venv
   - REPO_TYPE=julia
+  - REPO_TYPE=dockerfile

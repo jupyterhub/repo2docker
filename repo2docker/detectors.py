@@ -677,6 +677,15 @@ class DockerBuildPack(BuildPack):
         with open('Dockerfile') as f:
             return f.read()
 
+    def build(self, image_spec):
+        client = docker.APIClient(version='auto', **docker.utils.kwargs_from_env())
+        for line in client.build(
+                path=os.getcwd(),
+                tag=image_spec,
+                decode=True
+        ):
+            yield line
+
 class LegacyBinderDockerBuildPack(BuildPack):
 
     name = 'Legacy Binder Dockerfile'
