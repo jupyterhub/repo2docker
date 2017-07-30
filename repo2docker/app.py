@@ -19,7 +19,7 @@ import escapism
 
 
 from traitlets.config import Application, LoggingConfigurable
-from traitlets import Type, Bool, Unicode, Dict, List, default
+from traitlets import Type, Bool, Unicode, Dict, List, default, Tuple
 import docker
 from docker.utils import kwargs_from_env
 
@@ -80,6 +80,15 @@ class Repo2Docker(Application):
         Ordered list of BuildPacks to try to use to build a git repository.
         """
     )
+
+    default_buildpack = Tuple(
+        (BaseImage, PythonBuildPack),
+        config=True,
+        help="""
+        The build pack to use when no buildpacks are found
+        """
+    )
+
 
     cleanup_checkout = Bool(
         True,
@@ -299,21 +308,23 @@ class Repo2Docker(Application):
             )
 
         os.chdir(checkout_path)
+        picked_buildpack = c(self.default_buildpack)
+
         for bp_spec in self.buildpacks:
             bp = c(bp_spec)
             if bp.detect():
-                self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
-                for l in bp.build(self.output_image_spec):
-                    if 'stream' in l:
-                        self.log.info(l['stream'], extra=dict(phase='building'))
-                    elif 'error' in l:
-                        self.log.info(l['error'], extra=dict(phase='failure'))
-                        sys.exit(1)
-                    else:
-                        self.log.info(json.dumps(l), extra=dict(phase='building'))
+                picked_buildpack = bp
                 break
-        else:
-            raise Exception("No builder found!")
+
+        self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
+        for l in picked_buildpack.build(self.output_image_spec):
+            if 'stream' in l:
+                self.log.info(l['stream'], extra=dict(phase='building'))
+            elif 'error' in l:
+                self.log.info(l['error'], extra=dict(phase='failure'))
+                sys.exit(1)
+            else:
+                self.log.info(json.dumps(l), extra=dict(phase='building'))
 
         if self.repo_type != 'local' and self.cleanup_checkout:
             shutil.rmtree(checkout_path)

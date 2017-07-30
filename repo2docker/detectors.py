@@ -537,7 +537,7 @@ class PythonBuildPack(BuildPack):
         return []
 
     def detect(self):
-        return os.path.exists('requirements.txt') and super()
+        return os.path.exists('requirements.txt') and super().detect()
 
 class CondaBuildPack(BuildPack):
     name = "conda"
