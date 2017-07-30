@@ -352,7 +352,7 @@ class BuildPack(LoggingConfigurable):
 
     def build(self, image_spec):
         tarf = io.BytesIO()
-        tar = tarfile.open(fileobj=tarf, mode='x')
+        tar = tarfile.open(fileobj=tarf, mode='w')
         dockerfile_tarinfo = tarfile.TarInfo("Dockerfile")
         dockerfile = self.render().encode('utf-8')
         dockerfile_tarinfo.size = len(dockerfile)
