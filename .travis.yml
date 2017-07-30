@@ -7,7 +7,7 @@ python:
 
 install:
   - pip install -e .
-  - pip install pytest-xdist
+  - pip install pytest-xdist pyyaml
 
 script:
   # Run at least 4 tests in parallel. These tests are all fully
@@ -19,3 +19,4 @@ env:
   - REPO_TYPE=venv
   - REPO_TYPE=julia
   - REPO_TYPE=dockerfile
+  - REPO_TYPE=external/*
