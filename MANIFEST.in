@@ -1,3 +1,4 @@
 include *.md
 include LICENSE
 include setup.cfg
+include repo2docker/files/*

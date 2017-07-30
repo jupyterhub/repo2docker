@@ -152,6 +152,7 @@ class BuildPack(LoggingConfigurable):
             "curl",
             "wget",
             "less",
+            "ca-certificates",
             # Include everything from the popular buildpack-deps docker image
             "autoconf",
             "automake",
@@ -550,8 +551,8 @@ class CondaBuildPack(BuildPack):
     path = ['${CONDA_DIR}/bin']
 
     build_script_files = {
-        'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
-        'conda/environment.yml': '/tmp/environment.yml'
+        os.path.join(os.path.dirname(__file__), 'files', 'conda', 'install-miniconda.bash'): '/tmp/install-miniconda.bash',
+        os.path.join(os.path.dirname(__file__), 'files', 'conda', 'environment.yml'): '/tmp/environment.yml',
     }
 
     build_scripts = [

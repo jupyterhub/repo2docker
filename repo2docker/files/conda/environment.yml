@@ -1,0 +1,9 @@
+dependencies:
+  - python==3.6.1
+  - notebook==5.0.0
+  - ipython==6.0.0
+  - ipykernel==4.6.0
+  - ipywidgets==6.0.0
+  - jupyterlab==0.22.1
+  - pip:
+    - jupyterhub==0.7.2
