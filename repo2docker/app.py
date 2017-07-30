@@ -89,36 +89,6 @@ class Repo2Docker(Application):
         """
     )
 
-
-    cleanup_checkout = Bool(
-        True,
-        config=True,
-        help="""
-        Set to True to clean up the checked out directory after building is done.
-
-        Will only clean up after a successful build - failed builds will still leave their
-        checkouts intact.
-        """
-    )
-
-    push = Bool(
-        False,
-        config=True,
-        help="""
-        If the image should be pushed after it is built.
-        """
-    )
-
-    run = Bool(
-        True,
-        config=True,
-        help="""
-        Run the image after it is built, if the build succeeds.
-
-        DANGEROUS WHEN DONE IN A CLOUD ENVIRONMENT! ONLY USE LOCALLY!
-        """
-    )
-
     def fetch(self, url, ref, checkout_path):
         try:
             for line in execute_cmd(['git', 'clone', url, checkout_path],
@@ -182,6 +152,13 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
+            '--no-clean',
+            dest='clean',
+            action='store_false',
+            help="Don't clean up remote checkouts after we are done"
+        )
+
+        argparser.add_argument(
             'cmd',
             nargs='*',
             help='Custom command to run after building container'
@@ -199,10 +176,12 @@ class Repo2Docker(Application):
             self.repo_type = 'local'
             self.repo = args.repo
             self.ref = None
+            self.cleanup_checkout = False
         else:
             self.repo_type = 'remote'
             self.repo = args.repo
             self.ref = args.ref
+            self.cleanup_checkout = args.clean
 
         if args.json_logs:
             # Need to reset existing handlers, or we repeat messages
@@ -329,7 +308,7 @@ class Repo2Docker(Application):
             else:
                 self.log.info(json.dumps(l), extra=dict(phase='building'))
 
-        if self.repo_type != 'local' and self.cleanup_checkout:
+        if self.cleanup_checkout:
             shutil.rmtree(checkout_path)
 
         if self.push:
