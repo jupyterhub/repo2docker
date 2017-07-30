@@ -266,7 +266,7 @@ class Repo2Docker(Application):
             ports = {}
         container = client.containers.run(
             self.output_image_spec,
-            ports={},
+            ports=ports,
             detach=True,
             command=run_cmd
         )
