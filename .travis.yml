@@ -19,5 +19,4 @@ env:
   - REPO_TYPE=venv
   - REPO_TYPE=julia
   - REPO_TYPE=dockerfile
-  - REPO_TYPE=external/datasci.repos.yaml
-  - REPO_TYPE=external/reproductions.repos.yaml
+  - REPO_TYPE=external/*
