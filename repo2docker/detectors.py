@@ -54,6 +54,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+{% if packages -%}
 RUN apt-get update && \
     apt-get install --yes \
        {% for package in packages -%}
@@ -62,6 +63,7 @@ RUN apt-get update && \
     && apt-get purge && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+{% endif -%}
 
 EXPOSE 8888
 
