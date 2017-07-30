@@ -12,7 +12,7 @@ install:
 script:
   # Run at least 4 tests in parallel. These tests are all fully
   # parallelizable
-  - pytest -v -n4 tests/${REPO_TYPE}
+  - pytest -s -v -n4 tests/${REPO_TYPE}
 
 env:
   - REPO_TYPE=conda
