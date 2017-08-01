@@ -186,14 +186,18 @@ epub_exclude_files = ['search.html']
 
 # Build the repo2docker test syntax
 from glob import glob
+import numpy as np
 import os
 s = ''
+FILE_ORDER_PREFERENCE = ['System', 'Python', 'Julia', 'Docker', 'Misc']
+FILES_DICT = {ii: [] for ii in FILE_ORDER_PREFERENCE}
 for folder, _, files in os.walk(os.path.join('..', '..', 'tests')):
     if 'README.rst' not in files:
         continue
     header = files.pop(files.index('README.rst'))
     with open(os.path.join(folder, header), 'r') as ff:
-        s += ff.read() + '\n'
+        this_s = ff.read() + '\n'
+        title = this_s.split('\n')[0]
     for ifile in files:
         filename = os.path.basename(ifile)
         if filename == 'verify':
@@ -201,10 +205,15 @@ for folder, _, files in os.walk(os.path.join('..', '..', 'tests')):
         with open(os.path.join(folder, ifile), 'r') as ff:
             lines = ff.readlines()
         lines = ['   ' + line for line in lines]
-        this_s = '``{}``\n{}\n\n**Contents**::\n\n'.format(
-            filename, '~' * (len(filename) + 4))
+        this_s += 'File: ``{}``\n{}\n\n**Contents**::\n\n'.format(
+            filename, '~' * (len(filename) + 10))
         this_s += '\n'.join(lines)
         this_s += '\n\n'
-        s += this_s
+        usename = [ii for ii in FILE_ORDER_PREFERENCE if ii in title]
+        usename = 'Misc' if len(usename) == 0 else usename[0]
+        FILES_DICT[usename].append(this_s)
+for key in FILE_ORDER_PREFERENCE:
+    for istring in FILES_DICT[key]:
+        s += istring
 with open('./generated/test_file_text.txt', 'w') as ff:
     ff.write(s)
