@@ -215,5 +215,5 @@ for folder, _, files in os.walk(os.path.join('..', '..', 'tests')):
 for key in FILE_ORDER_PREFERENCE:
     for istring in FILES_DICT[key]:
         s += istring
-with open('./generated/test_file_text.txt', 'w') as ff:
+with open('./test_file_text.txt', 'w') as ff:
     ff.write(s)
