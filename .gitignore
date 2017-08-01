@@ -13,3 +13,7 @@ repo2docker/s2i
 lib/
 share/
 include/
+
+# Docs
+generated/
+test_file_text.txt
