@@ -185,8 +185,6 @@ epub_copyright = copyright
 epub_exclude_files = ['search.html']
 
 # Build the repo2docker test syntax
-from glob import glob
-import numpy as np
 import os
 s = ''
 FILE_ORDER_PREFERENCE = ['System', 'Python', 'Julia', 'Docker', 'Misc']
