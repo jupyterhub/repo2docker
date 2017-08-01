@@ -18,3 +18,8 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+Build Syntax
+============
+
+.. include:: generated/test_file_text.txt

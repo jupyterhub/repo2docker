@@ -183,3 +183,28 @@ epub_copyright = copyright
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
+
+# Build the repo2docker test syntax
+from glob import glob
+import os
+s = ''
+for folder, _, files in os.walk(os.path.join('..', '..', 'tests')):
+    if 'README.rst' not in files:
+        continue
+    header = files.pop(files.index('README.rst'))
+    with open(os.path.join(folder, header), 'r') as ff:
+        s += ff.read() + '\n'
+    for ifile in files:
+        filename = os.path.basename(ifile)
+        if filename == 'verify':
+            continue
+        with open(os.path.join(folder, ifile), 'r') as ff:
+            lines = ff.readlines()
+        lines = ['   ' + line for line in lines]
+        this_s = '``{}``\n{}\n\n**Contents**::\n\n'.format(
+            filename, '~' * (len(filename) + 4))
+        this_s += '\n'.join(lines)
+        this_s += '\n\n'
+        s += this_s
+with open('./generated/test_file_text.txt', 'w') as ff:
+    ff.write(s)
