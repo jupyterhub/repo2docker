@@ -149,10 +149,12 @@ class BuildPack(LoggingConfigurable):
     base_packages = Set(
         {
             # Utils!
-            "tar",
-            "curl",
-            "wget",
             "less",
+
+            # FIXME: Use npm from nodesource!
+            # Everything seems to depend on npm these days, unfortunately.
+            "npm",
+            "nodejs-legacy"
         },
         help="""
         Base set of apt packages that are installed for all images.
