@@ -145,6 +145,12 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
+            '--print-dockerfile',
+            help="Print dockerfile contents to stdout",
+            action='store_true',
+        )
+
+        argparser.add_argument(
             '--no-run',
             dest='run',
             action='store_false',
@@ -156,6 +162,13 @@ class Repo2Docker(Application):
             dest='clean',
             action='store_false',
             help="Don't clean up remote checkouts after we are done"
+        )
+
+        argparser.add_argument(
+            '--no-build',
+            dest='build',
+            action='store_false',
+            help="Do not actually build the image. Useful in conjugation with --print-dockerfile."
         )
 
         argparser.add_argument(
@@ -209,6 +222,13 @@ class Repo2Docker(Application):
         self.push = args.push
         self.run = args.run
         self.json_logs = args.json_logs
+
+        self.print_dockerfile = args.print_dockerfile
+        self.build = args.build
+        if not self.build:
+            # Can't push nor run if we aren't building
+            self.run = False
+            self.push = False
 
         self.run_cmd = args.cmd
 
@@ -296,17 +316,21 @@ class Repo2Docker(Application):
                 picked_buildpack = bp
                 break
 
-        self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
-        for l in picked_buildpack.build(self.output_image_spec):
-            if 'stream' in l:
-                self.log.info(l['stream'], extra=dict(phase='building'))
-            elif 'error' in l:
-                self.log.info(l['error'], extra=dict(phase='failure'))
-                sys.exit(1)
-            elif 'status' in l:
-                    self.log.info('Fetching base image...\r', extra=dict(phase='building'))
-            else:
-                self.log.info(json.dumps(l), extra=dict(phase='building'))
+        if self.print_dockerfile:
+            self.log.info(picked_buildpack.render(), extra=dict(phase='building'))
+
+        if self.build:
+            self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
+            for l in picked_buildpack.build(self.output_image_spec):
+                if 'stream' in l:
+                    self.log.info(l['stream'], extra=dict(phase='building'))
+                elif 'error' in l:
+                    self.log.info(l['error'], extra=dict(phase='failure'))
+                    sys.exit(1)
+                elif 'status' in l:
+                        self.log.info('Fetching base image...\r', extra=dict(phase='building'))
+                else:
+                    self.log.info(json.dumps(l), extra=dict(phase='building'))
 
         if self.cleanup_checkout:
             shutil.rmtree(checkout_path)
