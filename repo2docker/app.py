@@ -145,8 +145,8 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
-            '--print-dockerfile',
-            help="Print dockerfile contents to stdout",
+            '--debug',
+            help="Turn on debug logging",
             action='store_true',
         )
 
@@ -181,6 +181,9 @@ class Repo2Docker(Application):
 
     def initialize(self):
         args = self.get_argparser().parse_args()
+
+        if args.debug:
+            self.log_level = logging.DEBUG
 
         self.load_config_file(args.config)
 
@@ -223,7 +226,6 @@ class Repo2Docker(Application):
         self.run = args.run
         self.json_logs = args.json_logs
 
-        self.print_dockerfile = args.print_dockerfile
         self.build = args.build
         if not self.build:
             # Can't push nor run if we aren't building
@@ -316,8 +318,7 @@ class Repo2Docker(Application):
                 picked_buildpack = bp
                 break
 
-        if self.print_dockerfile:
-            self.log.info(picked_buildpack.render(), extra=dict(phase='building'))
+        self.log.debug(picked_buildpack.render(), extra=dict(phase='building'))
 
         if self.build:
             self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
