@@ -1,10 +1,8 @@
-from __future__ import print_function
-
 from setuptools import setup, find_packages
 
 setup(
     name='jupyter-repo2docker',
-    version='0.3',
+    version='0.4',
     install_requires=[
         'docker',
         'traitlets',
