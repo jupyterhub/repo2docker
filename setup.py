@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='jupyter-repo2docker',
-    version='0.4',
+    version='0.4.1',
     install_requires=[
         'docker',
         'traitlets',
