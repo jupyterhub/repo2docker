@@ -168,7 +168,7 @@ class Repo2Docker(Application):
             '--no-build',
             dest='build',
             action='store_false',
-            help="Do not actually build the image. Useful in conjugation with --print-dockerfile."
+            help="Do not actually build the image. Useful in conjunction with --debug."
         )
 
         argparser.add_argument(
