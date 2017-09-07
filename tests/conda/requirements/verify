@@ -4,4 +4,9 @@ import sys
 assert sys.version_info[:2] == (3, 6)
 
 import numpy
-import there
+try:
+    import there
+except ImportError:
+    print('ok')
+else:
+    raise Exception("'there' shouldn't have been installed from requirements.txt")
