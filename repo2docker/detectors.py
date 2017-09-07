@@ -707,6 +707,7 @@ class JuliaBuildPack(BuildPack):
 
 class DockerBuildPack(BuildPack):
     name = "Dockerfile"
+    dockerfile = "Dockerfile"
 
     def detect(self):
         return os.path.exists('Dockerfile')
@@ -719,6 +720,7 @@ class DockerBuildPack(BuildPack):
         client = docker.APIClient(version='auto', **docker.utils.kwargs_from_env())
         for line in client.build(
                 path=os.getcwd(),
+                dockerfile=self.dockerfile,
                 tag=image_spec,
                 buildargs={
                     'JUPYTERHUB_VERSION': self.jupyterhub_version,
@@ -730,6 +732,7 @@ class DockerBuildPack(BuildPack):
 class LegacyBinderDockerBuildPack(DockerBuildPack):
 
     name = 'Legacy Binder Dockerfile'
+    dockerfile = '._binder.Dockerfile'
 
     dockerfile_appendix = Unicode(dedent(r"""
     USER root
@@ -753,6 +756,11 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     def render(self):
         with open('Dockerfile') as f:
             return f.read() + self.dockerfile_appendix
+
+    def build(self, image_spec):
+        with open(self.dockerfile, 'w') as f:
+            f.write(self.render())
+        return super().build(image_spec)
 
     def detect(self):
         try:
