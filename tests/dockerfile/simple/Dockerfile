@@ -1,4 +1,7 @@
-FROM alpine:3.5
+FROM python:3.5
+
+ARG JUPYTERHUB_VERSION
+RUN pip3 install jupyterhub==$JUPYTERHUB_VERSION
 
 ENTRYPOINT "/bin/sh"
 
