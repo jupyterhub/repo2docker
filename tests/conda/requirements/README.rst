@@ -1,8 +1,8 @@
-Python - Mixed Requirements
----------------------------
+Conda - Mixed Requirements
+--------------------------
 
 An ``environment.yml`` takes precedence over ``requirements.txt``.
-To install files into a conda environment with pip, use the ``pip`` key in ``environment.yml``:
+To install Python packages into a conda environment with pip, use the ``pip`` key in ``environment.yml``:
 
 .. sourcecode:: yaml
 
