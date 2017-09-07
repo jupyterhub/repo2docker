@@ -33,13 +33,13 @@ from .utils import execute_cmd
 from . import __version__
 
 
-def c(args):
+def compose(buildpacks, parent=None):
     """
     Shortcut to compose many buildpacks together
     """
-    image = args[0]()
-    for arg in args[1:]:
-        image = image.compose_with(arg())
+    image = buildpacks[0](parent=parent)
+    for buildpack in buildpacks[1:]:
+        image = image.compose_with(buildpack(parent=parent))
     return image
 
 
@@ -310,10 +310,10 @@ class Repo2Docker(Application):
             )
 
         os.chdir(checkout_path)
-        picked_buildpack = c(self.default_buildpack)
+        picked_buildpack = compose(self.default_buildpack, parent=self)
 
         for bp_spec in self.buildpacks:
-            bp = c(bp_spec)
+            bp = compose(bp_spec, parent=self)
             if bp.detect():
                 picked_buildpack = bp
                 break
