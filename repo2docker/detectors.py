@@ -149,8 +149,12 @@ class BuildPack(LoggingConfigurable):
         and the Hub itself should have the same version number.
         """
     )
+    @default('jupyterhub_version')
+    def _jupyterhub_version_default(self):
+        """Allow setting JUPYTERHUB_VERSION via env"""
+        return os.environ.get('JUPYTERHUB_VERSION') or '0.7.2'
+
     packages = Set(
-        set(),
         help="""
         List of packages that are installed in this BuildPack by default.
 
