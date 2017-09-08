@@ -65,6 +65,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 {% endif -%}
 
+# make JUPYTERHUB_VERSION a build argument
+ARG JUPYTERHUB_VERSION=0.7.2
+
 EXPOSE 8888
 
 {% if env -%}
@@ -136,8 +139,22 @@ class BuildPack(LoggingConfigurable):
     and there are *some* general guarantees of ordering.
 
     """
+
+    jupyterhub_version = Unicode(
+        '0.7.2',
+        config=True,
+        help="""JupyterHub version to install.
+
+        In general, the JupyterHub version in the image
+        and the Hub itself should have the same version number.
+        """
+    )
+    @default('jupyterhub_version')
+    def _jupyterhub_version_default(self):
+        """Allow setting JUPYTERHUB_VERSION via env"""
+        return os.environ.get('JUPYTERHUB_VERSION') or '0.7.2'
+
     packages = Set(
-        set(),
         help="""
         List of packages that are installed in this BuildPack by default.
 
@@ -392,7 +409,10 @@ class BuildPack(LoggingConfigurable):
                 fileobj=tarf,
                 tag=image_spec,
                 custom_context=True,
-                decode=True
+                buildargs={
+                    'JUPYTERHUB_VERSION': self.jupyterhub_version,
+                },
+                decode=True,
         ):
             yield line
 
@@ -481,7 +501,7 @@ class PythonBuildPack(BuildPack):
             r"""
             pip install --no-cache-dir \
                 notebook==5.0.0 \
-                jupyterhub==0.7.2 \
+                jupyterhub==${JUPYTERHUB_VERSION} \
                 ipywidgets==6.0.0 \
                 jupyterlab==0.24.1 && \
             jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
@@ -691,6 +711,7 @@ class JuliaBuildPack(BuildPack):
 
 class DockerBuildPack(BuildPack):
     name = "Dockerfile"
+    dockerfile = "Dockerfile"
 
     def detect(self):
         return os.path.exists('Dockerfile')
@@ -703,14 +724,19 @@ class DockerBuildPack(BuildPack):
         client = docker.APIClient(version='auto', **docker.utils.kwargs_from_env())
         for line in client.build(
                 path=os.getcwd(),
+                dockerfile=self.dockerfile,
                 tag=image_spec,
-                decode=True
+                buildargs={
+                    'JUPYTERHUB_VERSION': self.jupyterhub_version,
+                },
+                decode=True,
         ):
             yield line
 
 class LegacyBinderDockerBuildPack(DockerBuildPack):
 
     name = 'Legacy Binder Dockerfile'
+    dockerfile = '._binder.Dockerfile'
 
     dockerfile_appendix = Unicode(dedent(r"""
     USER root
@@ -719,10 +745,11 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     USER main
     WORKDIR /home/main/notebooks
     ENV PATH /home/main/anaconda2/envs/python3/bin:$PATH
-    RUN conda install -n python3 notebook==5.0.0 ipykernel==4.6.0 && \
-        pip install jupyterhub==0.7.2 && \
-        conda remove -n python3 nb_conda_kernels && \
-        conda install -n root ipykernel==4.6.0 && \
+    ARG JUPYTERHUB_VERSION
+    RUN conda install -yq -n python3 notebook==5.0.0 ipykernel==4.6.0 && \
+        pip install --no-cache-dir jupyterhub==${JUPYTERHUB_VERSION} && \
+        conda remove -yq -n python3 nb_conda_kernels && \
+        conda install -yq -n root ipykernel==4.6.0 && \
         /home/main/anaconda2/envs/python3/bin/ipython kernel install --sys-prefix && \
         /home/main/anaconda2/bin/ipython kernel install --prefix=/home/main/anaconda2/envs/python3 && \
         /home/main/anaconda2/bin/ipython kernel install --sys-prefix
@@ -733,6 +760,11 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     def render(self):
         with open('Dockerfile') as f:
             return f.read() + self.dockerfile_appendix
+
+    def build(self, image_spec):
+        with open(self.dockerfile, 'w') as f:
+            f.write(self.render())
+        return super().build(image_spec)
 
     def detect(self):
         try:
