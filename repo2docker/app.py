@@ -334,7 +334,7 @@ class Repo2Docker(Application):
                     self.log.info(json.dumps(l), extra=dict(phase='building'))
 
         if self.cleanup_checkout:
-            shutil.rmtree(checkout_path)
+            shutil.rmtree(checkout_path, ignore_errors=True)
 
         if self.push:
             self.push_image()
