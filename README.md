@@ -52,6 +52,15 @@ After building (it might take a while!), it should output in your terminal somet
 If you copy paste that URL into your browser you will see a Jupyter Notebook with the
 contents of the repository you had just built!
 
+### Displaying the image Dockerfile
+Repo2Docker will generate a Dockerfile that composes the created Docker image.
+To see the contents of this Dockerfile without building the image use `--debug` and `--no-build`
+flags like so:
+
+```bash
+jupyter-repo2docker --debug --no-build https://github.com/jakevdp/PythonDataScienceHandbook
+```
+
 ## Repository specifications
 
 Repo2Docker looks for various files in the repository being built to figure out how to build it.
