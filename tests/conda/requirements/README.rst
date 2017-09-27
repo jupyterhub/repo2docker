@@ -1,5 +1,12 @@
-Python - Mixed Requirements
----------------------------
+Conda - Mixed Requirements
+--------------------------
 
-You can specify both a ``requirements.txt`` and an ``environment.yml`` file,
-and both of these will be used to build your environment.
+An ``environment.yml`` takes precedence over ``requirements.txt``.
+To install Python packages into a conda environment with pip, use the ``pip`` key in ``environment.yml``:
+
+.. sourcecode:: yaml
+
+    dependencies:
+      - numpy
+      - pip:
+        - tornado
