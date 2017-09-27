@@ -554,11 +554,6 @@ class CondaBuildPack(BuildPack):
                 conda clean -tipsy
                 """
             ))
-        elif os.path.exists('requirements.txt'):
-            assembly_scripts.append((
-                '${NB_USER}',
-                'pip install --no-cache-dir -r requirements.txt'
-            ))
         return assembly_scripts
 
     def detect(self):
