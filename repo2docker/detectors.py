@@ -503,7 +503,7 @@ class PythonBuildPack(BuildPack):
                 notebook==5.0.0 \
                 jupyterhub==${JUPYTERHUB_VERSION} \
                 ipywidgets==6.0.0 \
-                jupyterlab==0.24.1 && \
+                jupyterlab==0.27 && \
             jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
             jupyter serverextension enable --py jupyterlab --sys-prefix
             """
