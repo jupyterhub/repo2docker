@@ -332,8 +332,8 @@ class BuildPack(LoggingConfigurable):
 
     def binder_path(self, path):
         """Locate a file"""
-        if os.path.exists('.binder'):
-            return os.path.join('.binder', path)
+        if os.path.exists('binder'):
+            return os.path.join('binder', path)
         else:
             return path
 
