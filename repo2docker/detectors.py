@@ -330,6 +330,13 @@ class BuildPack(LoggingConfigurable):
         result.components = (self, ) + self.components + (other, ) + other.components
         return result
 
+    def binder_path(self, path):
+        """Locate a file"""
+        if os.path.exists('.binder'):
+            return os.path.join('.binder', path)
+        else:
+            return path
+
     def detect(self):
         return all([p.detect() for p in self.components])
 
@@ -457,9 +464,10 @@ class BaseImage(BuildPack):
 
     @default('post_build_scripts')
     def setup_post_build_scripts(self):
-        if os.path.exists('postBuild'):
-            if stat.S_IXUSR & os.stat('postBuild')[stat.ST_MODE]:
-                return ['postBuild']
+        post_build = self.binder_path('postBuild')
+        if os.path.exists(post_build):
+            if stat.S_IXUSR & os.stat(post_build)[stat.ST_MODE]:
+                return [post_build]
         return []
 
 class PythonBuildPack(BuildPack):
@@ -520,18 +528,18 @@ class PythonBuildPack(BuildPack):
         # will be installed in python3 venv. This is less of a
         # surprise than requiring python2 to be requirements2.txt tho.
         try:
-            with open('runtime.txt') as f:
+            with open(self.binder_path('runtime.txt')) as f:
                 runtime = f.read().strip()
         except FileNotFoundError:
             runtime = 'python-3.5'
         if runtime == 'python-2.7':
-            requirements_file = 'requirements3.txt'
+            requirements_file = self.binder_path('requirements3.txt')
         else:
-            requirements_file = 'requirements.txt'
+            requirements_file = self.binder_path('requirements.txt')
         if os.path.exists(requirements_file):
             return [(
                 '${NB_USER}',
-                'pip3 install --no-cache-dir -r {}'.format(requirements_file)
+                'pip3 install --no-cache-dir -r "{}"'.format(requirements_file)
             )]
         return []
 
@@ -566,18 +574,19 @@ class CondaBuildPack(BuildPack):
     @default('assemble_scripts')
     def setup_assembly(self):
         assembly_scripts = []
-        if os.path.exists('environment.yml'):
+        environment_yml = self.binder_path('environment.yml')
+        if os.path.exists(environment_yml):
             assembly_scripts.append((
                 '${NB_USER}',
                 r"""
-                conda env update -n root -f environment.yml && \
+                conda env update -n root -f "{}" && \
                 conda clean -tipsy
-                """
+                """.format(environment_yml)
             ))
         return assembly_scripts
 
     def detect(self):
-        return os.path.exists('environment.yml') and super().detect()
+        return os.path.exists(self.binder_path('environment.yml')) and super().detect()
 
 
 class Python2BuildPack(BuildPack):
@@ -632,14 +641,13 @@ class Python2BuildPack(BuildPack):
         ]
 
     def detect(self):
-        if os.path.exists('requirements.txt'):
-            try:
-                with open('runtime.txt') as f:
-                    runtime = f.read().strip()
-                if runtime == 'python-2.7':
-                    return True
-            except FileNotFoundError:
-                return False
+        requirements_txt = self.binder_path('requirements.txt')
+        runtime_txt = self.binder_path('runtime.txt')
+        if os.path.exists(requirements_txt) and os.path.exists(runtime_txt):
+            with open(runtime_txt) as f:
+                runtime = f.read().strip()
+            if runtime == 'python-2.7':
+                return True
         return False
 
 class JuliaBuildPack(BuildPack):
@@ -685,23 +693,24 @@ class JuliaBuildPack(BuildPack):
 
     @default('assemble_scripts')
     def setup_assembly(self):
+        require = self.binder_path('REQUIRE')
         return [(
             "${NB_USER}",
             # Pre-compile all libraries if they've opted into it. `using {libraryname}` does the
             # right thing
             r"""
-            cat REQUIRE >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
+            cat "%s" >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
             julia -e ' \
                Pkg.resolve(); \
                for pkg in keys(Pkg.Reqs.parse("REQUIRE")) \
                 eval(:(using $(Symbol(pkg)))) \
                end \
             '
-            """
+            """ % require
         )]
 
     def detect(self):
-        return os.path.exists('REQUIRE') and super()
+        return os.path.exists(self.binder_path('REQUIRE')) and super()
 
 
 class DockerBuildPack(BuildPack):
@@ -709,17 +718,18 @@ class DockerBuildPack(BuildPack):
     dockerfile = "Dockerfile"
 
     def detect(self):
-        return os.path.exists('Dockerfile')
+        return os.path.exists(self.binder_path('Dockerfile'))
 
     def render(self):
-        with open('Dockerfile') as f:
+        Dockerfile = self.binder_path('Dockerfile')
+        with open(Dockerfile) as f:
             return f.read()
 
     def build(self, image_spec):
         client = docker.APIClient(version='auto', **docker.utils.kwargs_from_env())
         for line in client.build(
                 path=os.getcwd(),
-                dockerfile=self.dockerfile,
+                dockerfile=self.binder_path(self.dockerfile),
                 tag=image_spec,
                 buildargs={
                     'JUPYTERHUB_VERSION': self.jupyterhub_version,

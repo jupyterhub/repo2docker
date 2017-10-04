@@ -7,6 +7,9 @@ build
 __pycache__
 MANIFEST
 
+.DS_Store
+.cache
+
 repo2docker/s2i
 
 ^bin/
