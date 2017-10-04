@@ -1,4 +1,4 @@
 Binder Directory
 ----------------
 
-top-level Dockerfile will be ignored if .binder/Dockerfile exists.
+top-level Dockerfile will be ignored if binder directory exists.
