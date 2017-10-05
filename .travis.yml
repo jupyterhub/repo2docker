@@ -14,11 +14,12 @@ jobs:
       script:
         - pytest -s -v -n4 tests/${REPO_TYPE}
       env:
-        - REPO_TYPE=conda
-        - REPO_TYPE=venv
-        - REPO_TYPE=julia
-        - REPO_TYPE=dockerfile
-        - REPO_TYPE=external/*
+        matrix:
+          - REPO_TYPE=conda
+          - REPO_TYPE=venv
+          - REPO_TYPE=julia
+          - REPO_TYPE=dockerfile
+          - REPO_TYPE=external/*
     - stage: deploy
       script: skip
       if: type = push
