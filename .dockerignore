@@ -1,1 +1,23 @@
-.gitignore
+.#*
+dist
+build
+*.tar.gz
+*.egg-info
+*.py[co]
+__pycache__
+MANIFEST
+
+.DS_Store
+.cache
+
+repo2docker/s2i
+
+^bin/
+lib/
+lib64/
+share/
+include/
+
+# Docs
+generated/
+test_file_text.txt
