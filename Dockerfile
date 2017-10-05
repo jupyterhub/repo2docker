@@ -1,12 +1,5 @@
-FROM ubuntu:17.04
+FROM python:3.6.3-alpine3.6
 
-RUN apt-get update && \
-    apt-get install --yes --no-install-recommends \
-            python3 \
-            python3-pip \
-            python3-setuptools \
-            git && \
-    apt-get clean && apt-get purge
 
 RUN mkdir /tmp/src
 ADD . /tmp/src
