@@ -14,6 +14,7 @@ repo2docker/s2i
 
 ^bin/
 lib/
+lib64/
 share/
 include/
 
