@@ -3,7 +3,7 @@ Generates a variety of Dockerfiles based on an input matrix
 """
 import textwrap
 from traitlets.config import LoggingConfigurable
-from traitlets import Unicode, Set, List, Dict, Tuple, Bool, default
+from traitlets import Unicode, Set, List, Dict, Tuple, default
 from textwrap import dedent
 import jinja2
 import tarfile
@@ -11,7 +11,6 @@ import io
 import os
 import stat
 import re
-import json
 import docker
 
 TEMPLATE = r"""
@@ -466,8 +465,9 @@ class BaseImage(BuildPack):
     def setup_post_build_scripts(self):
         post_build = self.binder_path('postBuild')
         if os.path.exists(post_build):
-            if stat.S_IXUSR & os.stat(post_build)[stat.ST_MODE]:
-                return [post_build]
+            if not stat.S_IXUSR & os.stat(post_build).st_mode:
+                raise ValueError("%s is not executable" % post_build)
+            return [post_build]
         return []
 
 class PythonBuildPack(BuildPack):
