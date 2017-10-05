@@ -8,11 +8,11 @@ install:
 - pip install -e .
 - pip install pytest-xdist pyyaml
 
+script:
+  - pytest -s -v -n4 tests/${REPO_TYPE}
+
 jobs:
   include:
-    - stage: test
-      script:
-        - pytest -s -v -n4 tests/${REPO_TYPE}
     - stage: deploy
       script: skip
       if: type = push
