@@ -34,6 +34,8 @@ The core feature of repo2docker is to fetch a repo (from github or locally), bui
 image based on the specifications found in the repo & optionally launch a local Jupyter Notebook
 you can use to explore it.
 
+**Note that Docker needs to be running on your machine for this to work.**
+
 Example:
 
 ```bash

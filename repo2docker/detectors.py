@@ -121,6 +121,7 @@ RUN ./{{ s }}
 {% endif -%}
 """
 
+DOC_URL = "http://repo2docker.readthedocs.io/en/latest/samples.html"
 
 class BuildPack(LoggingConfigurable):
     """
@@ -466,7 +467,8 @@ class BaseImage(BuildPack):
         post_build = self.binder_path('postBuild')
         if os.path.exists(post_build):
             if not stat.S_IXUSR & os.stat(post_build).st_mode:
-                raise ValueError("%s is not executable" % post_build)
+                raise ValueError("%s is not executable, see %s for help." % (
+                                 post_build, DOC_URL+'#system-post-build-scripts'))
             return [post_build]
         return []
 

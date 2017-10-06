@@ -188,19 +188,23 @@ epub_exclude_files = ['search.html']
 import os
 s = ''
 FILE_ORDER_PREFERENCE = ['System', 'Python', 'Julia', 'Docker', 'Misc']
+SKIP_FOLDERS = ['binder-dir']
 FILES_DICT = {ii: [] for ii in FILE_ORDER_PREFERENCE}
-for folder, _, files in os.walk(os.path.join('..', '..', 'tests')):
-    if 'README.rst' not in files:
+for root, _, files in os.walk(os.path.join('..', '..', 'tests')):
+    depth = len(root.split('/')) - 3
+    if 'README.rst' not in files or depth > 2:
+        continue
+    if any(folder in root for folder in SKIP_FOLDERS):
         continue
     header = files.pop(files.index('README.rst'))
-    with open(os.path.join(folder, header), 'r') as ff:
+    with open(os.path.join(root, header), 'r') as ff:
         this_s = ff.read() + '\n'
         title = this_s.split('\n')[0]
     for ifile in files:
         filename = os.path.basename(ifile)
         if filename == 'verify':
             continue
-        with open(os.path.join(folder, ifile), 'r') as ff:
+        with open(os.path.join(root, ifile), 'r') as ff:
             lines = ff.readlines()
         lines = ['   ' + line for line in lines]
         this_s += 'File: ``{}``\n{}\n\n**Contents**::\n\n'.format(
@@ -209,7 +213,7 @@ for folder, _, files in os.walk(os.path.join('..', '..', 'tests')):
         this_s += '\n\n'
         usename = [ii for ii in FILE_ORDER_PREFERENCE if ii in title]
         usename = 'Misc' if len(usename) == 0 else usename[0]
-        FILES_DICT[usename].append(this_s)
+    FILES_DICT[usename].append(this_s)
 for key in FILE_ORDER_PREFERENCE:
     for istring in FILES_DICT[key]:
         s += istring
