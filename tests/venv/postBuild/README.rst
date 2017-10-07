@@ -8,7 +8,12 @@ Jupyter extension.
 
 .. note::
 
-   This file needs to be executable in order to work with ``repo2docker``. The
-   easiest way to do this is to run the following command with ``git``::
+   This file needs to be executable in order to work with ``repo2docker``. If
+   you're on Linux or macOS, run::
+
+       chmod +x postBuild
+
+   If you're on windows, you can accomplish the same behavior with this
+   ``git`` command::
 
        git update-index --chmod=+x postBuild
