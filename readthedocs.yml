@@ -2,4 +2,4 @@ name: repo2docker
 type: sphinx
 python:
   version: 3
-requirements_file: doc/doc-requirements.txt
+requirements_file: docs/doc-requirements.txt
