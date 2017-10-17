@@ -179,6 +179,17 @@ class Repo2Docker(Application):
 
         return argparser
 
+    def json_excepthook(self, etype, evalue, traceback):
+        """Called on an uncaught exception when using json logging
+
+        Avoids non-JSON output on errors when using --json-logs
+        """
+        self.log.error("Error during build: %s", evalue,
+            exc_info=(etype, evalue, traceback),
+            extra=dict(phase='failed'),
+        )
+
+
     def initialize(self):
         args = self.get_argparser().parse_args()
 
@@ -200,6 +211,8 @@ class Repo2Docker(Application):
             self.cleanup_checkout = args.clean
 
         if args.json_logs:
+            # register JSON excepthook to avoid non-JSON output on errors
+            sys.excepthook = self.json_excepthook
             # Need to reset existing handlers, or we repeat messages
             logHandler = logging.StreamHandler()
             formatter = jsonlogger.JsonFormatter()
