@@ -510,10 +510,10 @@ class PythonBuildPack(BuildPack):
             "${NB_USER}",
             r"""
             pip install --no-cache-dir \
-                notebook==5.0.0 \
+                notebook==5.2.0 \
                 jupyterhub==${JUPYTERHUB_VERSION} \
                 ipywidgets==6.0.0 \
-                jupyterlab==0.27 && \
+                jupyterlab==0.28 && \
             jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
             jupyter serverextension enable --py jupyterlab --sys-prefix
             """
