@@ -4,4 +4,4 @@ dependencies:
   - ipython==6.0.0
   - ipykernel==4.6.0
   - ipywidgets==6.0.0
-  - jupyterlab==0.27
+  - jupyterlab==0.28
