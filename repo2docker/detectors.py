@@ -701,14 +701,14 @@ class JuliaBuildPack(BuildPack):
             # Pre-compile all libraries if they've opted into it. `using {libraryname}` does the
             # right thing
             r"""
-            cat "%s" >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
+            cat "%(require)s" >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
             julia -e ' \
                Pkg.resolve(); \
-               for pkg in keys(Pkg.Reqs.parse("%s")) \
+               for pkg in keys(Pkg.Reqs.parse("%(require)s")) \
                 eval(:(using $(Symbol(pkg)))) \
                end \
             '
-            """ % require
+            """ % { "require" : require }
         )]
 
     def detect(self):
