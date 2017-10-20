@@ -704,7 +704,7 @@ class JuliaBuildPack(BuildPack):
             cat "%s" >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
             julia -e ' \
                Pkg.resolve(); \
-               for pkg in keys(Pkg.Reqs.parse("REQUIRE")) \
+               for pkg in keys(Pkg.Reqs.parse("%s")) \
                 eval(:(using $(Symbol(pkg)))) \
                end \
             '
