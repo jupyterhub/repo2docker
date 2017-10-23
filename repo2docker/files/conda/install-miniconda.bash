@@ -30,7 +30,7 @@ ${CONDA_DIR}/bin/conda config --system --set update_dependencies false
 ${CONDA_DIR}/bin/conda config --system --set show_channel_urls true
 
 ${CONDA_DIR}/bin/conda env update -n root -f /tmp/environment.yml
-${CONDA_DIR}/bin/pip install --no-cache-dir jupyterhub==${JUPYTERHUB_VERSION}
+
 # Clean things out!
 ${CONDA_DIR}/bin/conda clean -tipsy
 
