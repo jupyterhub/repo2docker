@@ -1,6 +1,7 @@
 """repo2docker: convert git repositories into jupyter-suitable docker images
 
-Images produced by repo2docker can be used with Jupyter notebooks standalone or via JupyterHub.
+Images produced by repo2docker can be used with Jupyter notebooks standalone,
+with BinderHub, or with JupyterHub.
 
 Usage:
 
