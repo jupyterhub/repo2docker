@@ -103,42 +103,42 @@ of a Dockerfile will cause all other building behavior to not be triggered.
 
 ## Design
 
-`repo2docker` has two primary use cases, which drive most design decisions.
+Two primary use cases for `repo2docker` drive most design decisions:
 
-1. Automated image building with projects like
+1. Automated image building used by projects like
    [BinderHub](http://github.com/jupyterhub/binderhub)
-2. Manual image building + running using the `jupyter-repo2docker` commandline
-   client on user's interactive workstations.
+2. Manual image building and running the image from the command line client,
+   `jupyter-repo2docker`, by users interactively on their workstations
 
-We enumerate some of these design principles here. This is not an exhaustive
+We share our guiding design principles here. This is not an exhaustive
 list :)
 
 ### Deterministic output
 
 The core of `repo2docker` can be considered a
 [deterministic algorithm](https://en.wikipedia.org/wiki/Deterministic_algorithm).
-It takes as input a directory which has a repository checked out, and
+When given an input directory which has a particular repository checked out, it 
 deterministically produces a Dockerfile based on the contents of the directory.
-So if we run repo2docker on the the same directory multiple times, we get the
+So if we run `repo2docker` on the same directory multiple times, we get the
 exact same Dockerfile output.
 
 This provides a few advantages:
 
-1. We can cache the built artifacts based on the identity of the repository we are
-   building. For example, if we had already run repo2docker on a git repository
-   at a particular commit hash, we know we can just re-use the old output, since
-   we know it is going to be the same. This provides massive performance &
-   architectural advantages when building additional tools (like BinderHub) on
-   top of repo2docker.
+1. Reuse of cached built artifacts based on a repository's identity increases
+   efficiency and reliability. For example, if we had already run `reop2docker`
+   on a git repository at a particular commit hash, we know we can just re-use
+   the old output, since we know it is going to be the same. This provides
+   massive performance & architectural advantages when building additional
+   tools (like BinderHub) on top of `reop2docker`.
 2. We produce Dockerfiles that have as much in common as possible across
-   multiple repos, enabling better use of the Docker build cache. This also
-   provides massive performance advantages.
+   multiple repositories, enabling better use of the Docker build cache. This
+   also provides massive performance advantages.
 
-### Unix principles
+### Unix principles "do one thing well"
 
 `repo2docker` should do one thing, and do it well. This one thing is:
 
-> Given a repository (of some sort), deterministically build a docker image from
+> Given a repository, deterministically build a docker image from
 > it.
 
 There's also some convenience code (to run the built image) for users, but
@@ -151,8 +151,9 @@ is a highly recommended quick read.
 
 ### Composability
 
-The prime reason `repo2docker` exists (rather than just using something
-like [s2i](https://github.com/openshift/source-to-image)) is we want to support
+Although other projects, like
+[s2i](https://github.com/openshift/source-to-image), exist to convert source to
+Docker images, `repo2docker` provides the additional functionality to support
 *composable* environments. We want to easily have an image with
 Python3+Julia+R-3.2 environments, rather than just one single language
 environment. While generally one language environment per container works well,
@@ -160,7 +161,7 @@ in many scientific / datascience computing environments you need multiple
 languages working together to get anything done. So all buildpacks are
 composable, and need to be able to work well with other languages.
 
-### [Pareto principle](https://en.wikipedia.org/wiki/Pareto_principle)
+### [Pareto principle](https://en.wikipedia.org/wiki/Pareto_principle) (The 80-20 Rule)
 
 Roughly speaking, we want to support 80% of use cases, and provide an escape
 hatch (raw Dockerfiles) for the other 20%. We explicitly want to provide support
@@ -169,5 +170,5 @@ well.
 
 An easy process for getting support for more languages here is to demonstrate
 their value with Dockerfiles that other people can use, and then show that this
-pattern is popular enough to be included inside repo2docker. Remember that 'yes'
+pattern is popular enough to be included inside `reop2docker`. Remember that 'yes'
 is forever (very hard to remove features!), but 'no' is only temporary!
