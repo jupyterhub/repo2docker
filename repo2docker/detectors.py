@@ -398,9 +398,7 @@ class BuildPack(LoggingConfigurable):
                 fileobj=tarf,
                 tag=image_spec,
                 custom_context=True,
-                buildargs={
-                    'JUPYTERHUB_VERSION': self.jupyterhub_version,
-                },
+                buildargs={},
                 decode=True,
         ):
             yield line
@@ -714,9 +712,7 @@ class DockerBuildPack(BuildPack):
                 path=os.getcwd(),
                 dockerfile=self.binder_path(self.dockerfile),
                 tag=image_spec,
-                buildargs={
-                    'JUPYTERHUB_VERSION': self.jupyterhub_version,
-                },
+                buildargs={},
                 decode=True,
         ):
             yield line
