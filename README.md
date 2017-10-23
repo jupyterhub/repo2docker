@@ -2,7 +2,8 @@
 
 
 [![Build Status](https://travis-ci.org/jupyter/repo2docker.svg?branch=master)](https://travis-ci.org/jupyter/repo2docker)
-
+[![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
+ 
 **jupyter-repo2docker** is a tool to build, run and push docker images from source code repositories.
 
 
