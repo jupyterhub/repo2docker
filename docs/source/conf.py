@@ -43,6 +43,9 @@ source_parsers = {
     '.md': 'recommonmark.parser.CommonMarkParser',
 }
 
+def setup(app):
+    app.add_stylesheet('custom.css')  # may also be an URL
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
@@ -84,6 +87,9 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
+# Jupyter Logo
+html_logo = '_static/images/logo.svg'
+html_favicon = '_static/images/favicon.ico'
 
 # -- Options for HTML output ----------------------------------------------
 
