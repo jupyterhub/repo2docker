@@ -152,7 +152,7 @@ class Repo2Docker(Application):
 
         argparser.add_argument(
             'cmd',
-            action='append',
+            nargs=argparse.REMAINDER,
             help='Custom command to run after building container'
         )
 
