@@ -24,6 +24,15 @@
 # For conversion from markdown to html
 import recommonmark.parser
 
+# Get correct paths
+import sys
+import os
+from os.path import dirname
+docs = dirname(dirname(__file__))
+root = dirname(docs)
+sys.path.insert(0, root)
+sys.path.insert(0, os.path.join(docs, 'sphinxext'))
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -35,6 +44,8 @@ import recommonmark.parser
 # ones.
 extensions = [
     'jupyter_alabaster_theme',
+    'sphinx.ext.autodoc',
+    'autodoc_traits'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

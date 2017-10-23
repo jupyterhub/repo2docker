@@ -21,7 +21,7 @@ Call repo2docker with following command::
 
   jupyter-repo2docker <path-or-url-to-git-repo>
 
-See the :ref:`api` for more detail on invoking this command.
+See the :doc:`api` for more detail on invoking this command.
 
 Site Contents
 -------------
