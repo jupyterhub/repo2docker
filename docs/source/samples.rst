@@ -1,3 +1,5 @@
+.. _sample_build_files:
+
 Sample build files
 ==================
 
