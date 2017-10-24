@@ -138,16 +138,22 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
-            '--push',
-            dest='push',
-            action='store_true',
-            help='Push docker image to repository'
-        )
-
-        argparser.add_argument(
             '--debug',
             help="Turn on debug logging",
             action='store_true',
+        )
+
+        argparser.add_argument(
+            '--no-build',
+            dest='build',
+            action='store_false',
+            help="Do not actually build the image. Useful in conjunction with --debug."
+        )
+
+        argparser.add_argument(
+            'cmd',
+            nargs=argparse.REMAINDER,
+            help='Custom command to run after building container'
         )
 
         argparser.add_argument(
@@ -165,16 +171,10 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
-            '--no-build',
-            dest='build',
-            action='store_false',
-            help="Do not actually build the image. Useful in conjunction with --debug."
-        )
-
-        argparser.add_argument(
-            'cmd',
-            nargs='*',
-            help='Custom command to run after building container'
+            '--push',
+            dest='push',
+            action='store_true',
+            help='Push docker image to repository'
         )
 
         return argparser
