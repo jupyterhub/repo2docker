@@ -14,6 +14,7 @@ import logging
 import uuid
 import shutil
 import argparse
+import tempfile
 from pythonjsonlogger import jsonlogger
 import escapism
 
@@ -53,10 +54,10 @@ class Repo2Docker(Application):
         return logging.INFO
 
     git_workdir = Unicode(
-        "/tmp",
+        tempfile.mkdtemp(prefix='repo2docker'),
         config=True,
         help="""
-        The directory to use to check out git repositories into.
+        Working directory to check out git repositories to.
 
         Should be somewhere ephemeral, such as /tmp
         """
@@ -315,7 +316,7 @@ class Repo2Docker(Application):
         if self.repo_type == 'local':
             checkout_path = self.repo
         else:
-            checkout_path = os.path.join(self.git_workdir, str(uuid.uuid4()))
+            checkout_path = self.git_workdir
             self.fetch(
                 self.repo,
                 self.ref,
