@@ -420,6 +420,7 @@ class BuildPack(LoggingConfigurable):
                     'JUPYTERHUB_VERSION': self.jupyterhub_version,
                 },
                 decode=True,
+                rm=True,
         ):
             yield line
 
@@ -737,6 +738,7 @@ class DockerBuildPack(BuildPack):
                     'JUPYTERHUB_VERSION': self.jupyterhub_version,
                 },
                 decode=True,
+                rm=True,
         ):
             yield line
 
