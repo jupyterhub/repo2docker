@@ -11,4 +11,5 @@ Site Contents
    :maxdepth: 2
 
    design
+   faq
    samples
