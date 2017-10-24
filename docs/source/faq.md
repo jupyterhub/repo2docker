@@ -6,8 +6,10 @@ If you have a question & have found an answer, send a PR to add it here!
 
 ## Can I use repo2docker to bootstrap my own Dockerfile?
 
+No, you can't.
+
 If you pass the `--debug` flag to `repo2docker`, it outputs the intermediate
-Dockerfile it is using to build the docker image. While it is tempting to copy
+Dockerfile that is used to build the docker image. While it is tempting to copy
 this as a base for your own Dockerfile, that is not supported & in most cases
 will not work. The `--debug` output is just our intermediate generated
 Dockerfile, and is meant to be built in
