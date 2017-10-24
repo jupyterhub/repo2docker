@@ -10,4 +10,5 @@ Site Contents
 .. toctree::
    :maxdepth: 2
 
+   design
    samples
