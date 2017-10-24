@@ -19,6 +19,7 @@ setup(
     entry_points={
         'console_scripts': [
             'jupyter-repo2docker = repo2docker.__main__:main',
+            'repo2docker = repo2docker.__main__:main',
         ]
     },
 )
