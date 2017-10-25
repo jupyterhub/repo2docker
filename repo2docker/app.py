@@ -30,7 +30,7 @@ from .detectors import (
     BuildPack, PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
 )
-from .utils import execute_cmd
+from .utils import execute_cmd, generate_repo_name
 from . import __version__
 
 
@@ -233,8 +233,8 @@ class Repo2Docker(Application):
             self.output_image_spec = args.image_name
         else:
             # Attempt to set a sane default!
-            # HACK: Provide something more descriptive?
-            self.output_image_spec = 'r2d' + escapism.escape(self.repo, escape_char='-').lower() + str(int(time.time()))
+            repo_name = generate_repo_name(self.repo, self.ref)
+            self.output_image_spec = 'r2d_' + escapism.escape(repo_name, escape_char='-').lower() + str(int(time.time()))
 
         self.push = args.push
         self.run = args.run
