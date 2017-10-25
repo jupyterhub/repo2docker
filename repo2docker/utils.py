@@ -17,7 +17,7 @@ def execute_cmd(cmd, capture=False, **kwargs):
         if ret != 0:
             raise subprocess.CalledProcessError(ret, cmd)
         return
-    
+
     # Capture output for logging.
     # Each line will be yielded as text.
     # This should behave the same as .readline(), but splits on `\r` OR `\n`,
@@ -27,7 +27,7 @@ def execute_cmd(cmd, capture=False, **kwargs):
         line = b''.join(buf).decode('utf8', 'replace')
         buf[:] = []
         return line
-    
+
     c_last = ''
     try:
         for c in iter(partial(proc.stdout.read, 1), b''):
@@ -41,3 +41,21 @@ def execute_cmd(cmd, capture=False, **kwargs):
         ret = proc.wait()
         if ret != 0:
             raise subprocess.CalledProcessError(ret, cmd)
+
+
+def generate_repo_name(repo, ref):
+    """Try to parse the repo string to extract relevant information.
+
+    If we don't know what to do with a repo, just return the string.
+    """
+    if 'github.com' in repo:
+        parts = repo.split('github.com/')[-1].split('/')
+        org = parts[0]
+        repo = parts[1]
+        s = 'org-{org}_repo-{repo}'.format(org=org, repo=repo)
+        if ref is not None:
+            s += '_ref-{ref}'.format(ref=ref)
+    else:
+        s = repo
+    s += '_'  # End with _ so we can separate it from the time
+    return s
