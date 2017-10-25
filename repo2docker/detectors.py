@@ -64,9 +64,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 {% endif -%}
 
-# make JUPYTERHUB_VERSION a build argument
-ARG JUPYTERHUB_VERSION=0.7.2
-
 EXPOSE 8888
 
 {% if env -%}
@@ -139,21 +136,6 @@ class BuildPack(LoggingConfigurable):
     and there are *some* general guarantees of ordering.
 
     """
-
-    jupyterhub_version = Unicode(
-        '0.7.2',
-        config=True,
-        help="""JupyterHub version to install.
-
-        In general, the JupyterHub version in the image
-        and the Hub itself should have the same version number.
-        """
-    )
-    @default('jupyterhub_version')
-    def _jupyterhub_version_default(self):
-        """Allow setting JUPYTERHUB_VERSION via env"""
-        return os.environ.get('JUPYTERHUB_VERSION') or '0.7.2'
-
     packages = Set(
         help="""
         List of packages that are installed in this BuildPack by default.
@@ -416,9 +398,7 @@ class BuildPack(LoggingConfigurable):
                 fileobj=tarf,
                 tag=image_spec,
                 custom_context=True,
-                buildargs={
-                    'JUPYTERHUB_VERSION': self.jupyterhub_version,
-                },
+                buildargs={},
                 decode=True,
                 forcerm=True,
                 rm=True
@@ -513,7 +493,6 @@ class PythonBuildPack(BuildPack):
             r"""
             pip install --no-cache-dir \
                 notebook==5.2.0 \
-                jupyterhub==${JUPYTERHUB_VERSION} \
                 ipywidgets==6.0.0 \
                 jupyterlab==0.28 && \
             jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
@@ -735,9 +714,7 @@ class DockerBuildPack(BuildPack):
                 path=os.getcwd(),
                 dockerfile=self.binder_path(self.dockerfile),
                 tag=image_spec,
-                buildargs={
-                    'JUPYTERHUB_VERSION': self.jupyterhub_version,
-                },
+                buildargs={},
                 decode=True,
         ):
             yield line
