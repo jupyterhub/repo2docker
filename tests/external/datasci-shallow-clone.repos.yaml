@@ -1,0 +1,6 @@
+# Check that we correctly detect that this ref is more than 50 commits ago
+# and trigger a full clone of the repository
+- name: Jake's Data Science Book
+  url: https://github.com/jakevdp/PythonDataScienceHandbook
+  ref: 8761de29a853f0c187286b7c7bc1e4767e7c5574
+  verify: python -c 'import matplotlib'
