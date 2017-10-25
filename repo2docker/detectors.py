@@ -739,6 +739,8 @@ class DockerBuildPack(BuildPack):
                     'JUPYTERHUB_VERSION': self.jupyterhub_version,
                 },
                 decode=True,
+                forcerm=True,
+                rm=True
         ):
             yield line
 
