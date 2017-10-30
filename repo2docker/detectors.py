@@ -716,6 +716,8 @@ class DockerBuildPack(BuildPack):
                 tag=image_spec,
                 buildargs={},
                 decode=True,
+                forcerm=True,
+                rm=True
         ):
             yield line
 
