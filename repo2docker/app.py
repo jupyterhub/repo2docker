@@ -91,22 +91,63 @@ class Repo2Docker(Application):
     )
 
     def fetch(self, url, ref, checkout_path):
-        try:
-            for line in execute_cmd(['git', 'clone', url, checkout_path],
-                                    capture=self.json_logs):
-                self.log.info(line, extra=dict(phase='fetching'))
-        except subprocess.CalledProcessError:
-            self.log.error('Failed to clone repository!', extra=dict(phase='failed'))
-            sys.exit(1)
+        def _clone(depth=None):
+            if depth is not None:
+                command = ['git', 'clone', '--depth', str(depth),
+                           url, checkout_path]
+            else:
+                command = ['git', 'clone', url, checkout_path]
 
-        if ref:
             try:
-                for line in execute_cmd(['git', 'reset', '--hard', ref], cwd=checkout_path,
+                for line in execute_cmd(command, capture=self.json_logs):
+                    self.log.info(line, extra=dict(phase='fetching'))
+            except subprocess.CalledProcessError:
+                self.log.error('Failed to clone repository!',
+                               extra=dict(phase='failed'))
+                raise RuntimeError("Failed to clone %s." % url)
+
+        def _unshallow():
+            try:
+                for line in execute_cmd(['git', 'fetch', '--unshallow'],
+                                        capture=self.json_logs,
+                                        cwd=checkout_path):
+                    self.log.info(line, extra=dict(phase='fetching'))
+            except subprocess.CalledProcessError:
+                self.log.error('Failed to unshallow repository!',
+                               extra=dict(phase='failed'))
+                raise RuntimeError("Failed to create a full clone of"
+                                   " %s." % url)
+
+        def _contains(ref):
+            try:
+                for line in execute_cmd(['git', 'cat-file', '-t', ref],
+                                        capture=self.json_logs,
+                                        cwd=checkout_path):
+                    self.log.debug(line, extra=dict(phase='fetching'))
+            except subprocess.CalledProcessError:
+                return False
+
+            return True
+
+        def _checkout(ref):
+            try:
+                for line in execute_cmd(['git', 'reset', '--hard', ref],
+                                        cwd=checkout_path,
                                         capture=self.json_logs):
                     self.log.info(line, extra=dict(phase='fetching'))
             except subprocess.CalledProcessError:
-                self.log.error('Failed to check out ref %s', ref, extra=dict(phase='failed'))
-                sys.exit(1)
+                self.log.error('Failed to check out ref %s', ref,
+                               extra=dict(phase='failed'))
+                raise RuntimeError("Failed to checkout reference %s for"
+                                   " %s." % (ref, url))
+
+        # create a shallow clone first
+        _clone(depth=50)
+
+        if not _contains(ref):
+            # have to create a full clone
+            _unshallow()
+        _checkout(ref)
 
     def get_argparser(self):
         argparser = argparse.ArgumentParser()
