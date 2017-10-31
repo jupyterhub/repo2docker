@@ -1,0 +1,13 @@
+# Check that we correctly detect that this ref is more than 50 commits ago
+# and trigger a full clone of the repository
+- name: A dummy repo with 100 commits - unshallow to reach ref
+  url: https://github.com/betatim/repo2docker-ci-clone-depth
+  ref: f702ae5c612ca0dcaf77954f9f5dd4ede7cb9b5f
+  verify: python -c "commit = open('COMMIT').read(); assert int(commit) == 1, 'this is not the first commit'"
+
+- name: A dummy repo with 100 commits - shallow clone is enough
+  url: https://github.com/betatim/repo2docker-ci-clone-depth
+  ref: 28674ab4da34585525d9c5451f6d6a872522d017
+  # we checkout the second to last commit, hence the log has 49 entries at a
+  # max clone depth of 50
+  verify: /bin/bash -c '[ $(git log --oneline | wc -l) == "49" ]'

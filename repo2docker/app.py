@@ -104,7 +104,7 @@ class Repo2Docker(Application):
             except subprocess.CalledProcessError:
                 self.log.error('Failed to clone repository!',
                                extra=dict(phase='failed'))
-                sys.exit(1)
+                raise RuntimeError("Failed to clone %s." % url)
 
         def _unshallow():
             try:
@@ -115,7 +115,8 @@ class Repo2Docker(Application):
             except subprocess.CalledProcessError:
                 self.log.error('Failed to unshallow repository!',
                                extra=dict(phase='failed'))
-                sys.exit(1)
+                raise RuntimeError("Failed to create a full clone of"
+                                   " %s." % url)
 
         def _contains(ref):
             try:
@@ -137,15 +138,16 @@ class Repo2Docker(Application):
             except subprocess.CalledProcessError:
                 self.log.error('Failed to check out ref %s', ref,
                                extra=dict(phase='failed'))
-                sys.exit(1)
+                raise RuntimeError("Failed to checkout reference %s for"
+                                   " %s." % (ref, url))
 
         # create a shallow clone first
         _clone(depth=50)
-        if ref:
-            if not _contains(ref):
-                # have to create a full clone
-                _unshallow()
-            _checkout(ref)
+
+        if not _contains(ref):
+            # have to create a full clone
+            _unshallow()
+        _checkout(ref)
 
     def get_argparser(self):
         argparser = argparse.ArgumentParser()
