@@ -8,6 +8,7 @@ return a non-zero exit code for the test to be considered a
 success.
 """
 import pytest
+import os
 import subprocess
 import yaml
 import shlex
@@ -28,6 +29,9 @@ class LocalRepoTest(pytest.Item):
         self.path = path
 
     def runtest(self):
+        readme_path = os.path.join(self.path.dirname, 'README.rst')
+        if not os.path.exists(readme_path):
+            raise Exception("README.rst required for test case in %s" % readme_path)
         subprocess.check_call([
             'jupyter-repo2docker',
             str(self.path.dirname),
