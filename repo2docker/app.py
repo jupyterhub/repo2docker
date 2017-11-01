@@ -144,10 +144,13 @@ class Repo2Docker(Application):
         # create a shallow clone first
         _clone(depth=50)
 
-        if not _contains(ref):
-            # have to create a full clone
-            _unshallow()
-        _checkout(ref)
+        # ref == None means we want to use HEAD so no need to checkout a
+        # specific revision
+        if ref is not None:
+            if not _contains(ref):
+                # have to create a full clone
+                _unshallow()
+            _checkout(ref)
 
     def get_argparser(self):
         argparser = argparse.ArgumentParser()

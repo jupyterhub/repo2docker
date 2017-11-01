@@ -51,9 +51,8 @@ class RemoteRepoTest(pytest.Item):
         self.verify = verify
 
     def runtest(self):
-        subprocess.check_call([
-            'jupyter-repo2docker',
-            '--ref', self.ref,
-            self.url,
-            '--',
-        ] + shlex.split(self.verify))
+        if self.ref is not None:
+            cmd = ['jupyter-repo2docker', '--ref', self.ref, self.url, '--']
+        else:
+            cmd = ['jupyter-repo2docker', self.url, '--']
+        subprocess.check_call(cmd + shlex.split(self.verify))
