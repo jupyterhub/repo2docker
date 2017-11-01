@@ -11,9 +11,3 @@
   # we checkout the second to last commit, hence the log has 49 entries at a
   # max clone depth of 50
   verify: /bin/bash -c '[ $(git log --oneline | wc -l) == "49" ]'
-
-- name: A dummy repo with 100 commits - live at HEAD
-  url: https://github.com/betatim/repo2docker-ci-clone-depth
-  # provide no ref, aka use HEAD, aka the 100th commit
-  ref: NULL
-  verify: python -c "commit = open('COMMIT').read(); assert int(commit) == 100, 'this is not the 100th commit'"
