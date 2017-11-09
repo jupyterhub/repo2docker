@@ -700,7 +700,7 @@ class JuliaBuildPack(BuildPack):
                 eval(:(using $(Symbol(pkg)))) \
                end \
             '
-            """ % { "require" : require }
+            """ % { "require" : self.repo_path(require) }
         )]
 
     def detect(self):
