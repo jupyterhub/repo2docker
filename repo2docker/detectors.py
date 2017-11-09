@@ -314,11 +314,10 @@ class BuildPack(LoggingConfigurable):
 
     def binder_path(self, path):
         """Locate a file"""
-        binder_dir = os.path.join('repository', 'binder')
-        if os.path.exists(binder_dir):
-            return os.path.join(binder_dir, path)
+        if os.path.exists('binder'):
+            return os.path.join('binder', path)
         else:
-            return os.path.join('repository', path)
+            return path
 
     def detect(self):
         return all([p.detect() for p in self.components])
@@ -422,7 +421,7 @@ class BaseImage(BuildPack):
     def setup_assembly(self):
         assemble_scripts = []
         try:
-            with open('apt.txt') as f:
+            with open(self.binder_path('apt.txt')) as f:
                 extra_apt_packages = [l.strip() for l in f]
             # Validate that this is, indeed, just a list of packages
             # We're doing shell injection around here, gotta be careful.
@@ -565,12 +564,13 @@ class CondaBuildPack(BuildPack):
                 r"""
                 conda env update -n root -f "{}" && \
                 conda clean -tipsy
-                """.format(environment_yml)
+                """.format(os.path.join('repository', environment_yml))
             ))
         return assembly_scripts
 
     def detect(self):
-        return os.path.exists(self.binder_path('environment.yml')) and super().detect()
+        return (os.path.exists(self.binder_path('environment.yml')) and
+                super().detect())
 
 
 class Python2BuildPack(BuildPack):
