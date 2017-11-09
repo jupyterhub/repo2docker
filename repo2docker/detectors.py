@@ -92,7 +92,7 @@ COPY {{ src }} {{ dst }}
 # Copy and chown stuff. This doubles the size of the repo, because
 # you can't actually copy as USER, only as root! Thanks, Docker!
 USER root
-COPY src/ ${HOME}
+COPY src/ ${HOME}/repository/
 RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
 
 # Run assemble scripts! These will actually build the specification
@@ -314,10 +314,11 @@ class BuildPack(LoggingConfigurable):
 
     def binder_path(self, path):
         """Locate a file"""
-        if os.path.exists('binder'):
-            return os.path.join('binder', path)
+        binder_dir = os.path.join('repository', 'binder')
+        if os.path.exists(binder_dir):
+            return os.path.join(binder_dir, path)
         else:
-            return path
+            return os.path.join('repository', path)
 
     def detect(self):
         return all([p.detect() for p in self.components])
