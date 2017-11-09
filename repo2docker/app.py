@@ -12,25 +12,25 @@ import json
 import os
 import time
 import logging
-import uuid
-import shutil
 import argparse
+import tempfile
 from pythonjsonlogger import jsonlogger
 import escapism
 
 
-from traitlets.config import Application, LoggingConfigurable
-from traitlets import Type, Bool, Unicode, Dict, List, default, Tuple
+from traitlets.config import Application
+from traitlets import Unicode, List, default, Tuple
 import docker
 from docker.utils import kwargs_from_env
 
 import subprocess
 
 from .detectors import (
-    BuildPack, PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
+    PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
 )
 from .utils import execute_cmd
+from .utils import maybe_cleanup
 from . import __version__
 
 
@@ -54,12 +54,14 @@ class Repo2Docker(Application):
         return logging.INFO
 
     git_workdir = Unicode(
-        "/tmp",
+        None,
         config=True,
+        allow_none=True,
         help="""
-        The directory to use to check out git repositories into.
+        Working directory to check out git repositories to.
 
-        Should be somewhere ephemeral, such as /tmp
+        The default is to use the system's temporary directory. Should be
+        somewhere ephemeral, such as /tmp.
         """
     )
 
@@ -248,7 +250,6 @@ class Repo2Docker(Application):
 
         self.run_cmd = args.cmd
 
-
     def push_image(self):
         client = docker.APIClient(version='auto', **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer info every 1.5s
@@ -316,39 +317,49 @@ class Repo2Docker(Application):
         if self.repo_type == 'local':
             checkout_path = self.repo
         else:
-            checkout_path = os.path.join(self.git_workdir, str(uuid.uuid4()))
-            self.fetch(
-                self.repo,
-                self.ref,
-                checkout_path
-            )
+            if self.git_workdir is None:
+                checkout_path = tempfile.mkdtemp(prefix='repo2docker')
+            else:
+                checkout_path = self.git_workdir
 
-        os.chdir(checkout_path)
-        picked_buildpack = compose(self.default_buildpack, parent=self)
+        # keep as much as possible in the context manager to make sure we
+        # cleanup if things go wrong
+        with maybe_cleanup(checkout_path, self.cleanup_checkout):
+            if self.repo_type == 'remote':
+                self.fetch(
+                    self.repo,
+                    self.ref,
+                    checkout_path
+                )
 
-        for bp_spec in self.buildpacks:
-            bp = compose(bp_spec, parent=self)
-            if bp.detect():
-                picked_buildpack = bp
-                break
+            os.chdir(checkout_path)
+            picked_buildpack = compose(self.default_buildpack, parent=self)
 
-        self.log.debug(picked_buildpack.render(), extra=dict(phase='building'))
+            for bp_spec in self.buildpacks:
+                bp = compose(bp_spec, parent=self)
+                if bp.detect():
+                    picked_buildpack = bp
+                    break
 
-        if self.build:
-            self.log.info('Using %s builder\n', bp.name, extra=dict(phase='building'))
-            for l in picked_buildpack.build(self.output_image_spec):
-                if 'stream' in l:
-                    self.log.info(l['stream'], extra=dict(phase='building'))
-                elif 'error' in l:
-                    self.log.info(l['error'], extra=dict(phase='failure'))
-                    sys.exit(1)
-                elif 'status' in l:
-                        self.log.info('Fetching base image...\r', extra=dict(phase='building'))
-                else:
-                    self.log.info(json.dumps(l), extra=dict(phase='building'))
+            self.log.debug(picked_buildpack.render(),
+                           extra=dict(phase='building'))
 
-        if self.cleanup_checkout:
-            shutil.rmtree(checkout_path, ignore_errors=True)
+            if self.build:
+                self.log.info('Using %s builder\n', bp.name,
+                              extra=dict(phase='building'))
+                for l in picked_buildpack.build(self.output_image_spec):
+                    if 'stream' in l:
+                        self.log.info(l['stream'],
+                                      extra=dict(phase='building'))
+                    elif 'error' in l:
+                        self.log.info(l['error'], extra=dict(phase='failure'))
+                        sys.exit(1)
+                    elif 'status' in l:
+                            self.log.info('Fetching base image...\r',
+                                          extra=dict(phase='building'))
+                    else:
+                        self.log.info(json.dumps(l),
+                                      extra=dict(phase='building'))
 
         if self.push:
             self.push_image()

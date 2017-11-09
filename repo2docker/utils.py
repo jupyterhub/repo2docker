@@ -1,5 +1,8 @@
+from contextlib import contextmanager
 from functools import partial
+import shutil
 import subprocess
+
 
 def execute_cmd(cmd, capture=False, **kwargs):
     """
@@ -17,7 +20,7 @@ def execute_cmd(cmd, capture=False, **kwargs):
         if ret != 0:
             raise subprocess.CalledProcessError(ret, cmd)
         return
-    
+
     # Capture output for logging.
     # Each line will be yielded as text.
     # This should behave the same as .readline(), but splits on `\r` OR `\n`,
@@ -27,7 +30,7 @@ def execute_cmd(cmd, capture=False, **kwargs):
         line = b''.join(buf).decode('utf8', 'replace')
         buf[:] = []
         return line
-    
+
     c_last = ''
     try:
         for c in iter(partial(proc.stdout.read, 1), b''):
@@ -41,3 +44,10 @@ def execute_cmd(cmd, capture=False, **kwargs):
         ret = proc.wait()
         if ret != 0:
             raise subprocess.CalledProcessError(ret, cmd)
+
+
+@contextmanager
+def maybe_cleanup(path, cleanup=False):
+    yield
+    if cleanup:
+        shutil.rmtree(path, ignore_errors=True)
