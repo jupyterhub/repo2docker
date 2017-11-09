@@ -319,6 +319,14 @@ class BuildPack(LoggingConfigurable):
         else:
             return path
 
+    def repo_path(self, path):
+        """Locate file inside repository after copying it to the container"""
+        if path.startswith('binder/'):
+            return os.path.join('repository', path)
+        else:
+            path = self.binder_path(path)
+            return os.path.join('repository', path)
+
     def detect(self):
         return all([p.detect() for p in self.components])
 
@@ -451,7 +459,7 @@ class BaseImage(BuildPack):
             if not stat.S_IXUSR & os.stat(post_build).st_mode:
                 raise ValueError("%s is not executable, see %s for help." % (
                                  post_build, DOC_URL+'#system-post-build-scripts'))
-            return [post_build]
+            return [self.repo_path(post_build)]
         return []
 
 class PythonBuildPack(BuildPack):
@@ -522,7 +530,8 @@ class PythonBuildPack(BuildPack):
         if os.path.exists(requirements_file):
             return [(
                 '${NB_USER}',
-                'pip3 install --no-cache-dir -r "{}"'.format(requirements_file)
+                'pip3 install --no-cache-dir -r "{}"'.format(
+                    self.repo_path(requirements_file))
             )]
         return []
 
@@ -564,7 +573,7 @@ class CondaBuildPack(BuildPack):
                 r"""
                 conda env update -n root -f "{}" && \
                 conda clean -tipsy
-                """.format(os.path.join('repository', environment_yml))
+                """.format(self.repo_path('environment.yml'))
             ))
         return assembly_scripts
 
