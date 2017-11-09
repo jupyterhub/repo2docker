@@ -55,6 +55,7 @@ class Repo2Docker(Application):
     git_workdir = Unicode(
         None,
         config=True,
+        allow_none=True,
         help="""
         Working directory to check out git repositories to.
 
