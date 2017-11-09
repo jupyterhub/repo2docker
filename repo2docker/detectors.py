@@ -629,7 +629,8 @@ class Python2BuildPack(BuildPack):
         return [
             (
                 '${NB_USER}',
-                'pip2 install --no-cache-dir -r requirements.txt'
+                'pip2 install --no-cache-dir -r {}'.format(
+                    self.repo_path('requirements.txt'))
             )
         ]
 
