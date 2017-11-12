@@ -421,7 +421,7 @@ class BaseImage(BuildPack):
     def setup_assembly(self):
         assemble_scripts = []
         try:
-            with open('apt.txt') as f:
+            with open(self.binder_path('apt.txt')) as f:
                 extra_apt_packages = [l.strip() for l in f]
             # Validate that this is, indeed, just a list of packages
             # We're doing shell injection around here, gotta be careful.
