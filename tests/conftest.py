@@ -12,15 +12,18 @@ import subprocess
 import yaml
 import shlex
 
+
 def pytest_collect_file(parent, path):
     if path.basename == 'verify':
         return LocalRepo(path, parent)
     elif path.basename.endswith('.repos.yaml'):
         return RemoteRepoList(path, parent)
 
+
 class LocalRepo(pytest.File):
     def collect(self):
         yield LocalRepoTest(self.fspath.basename, self, self.fspath)
+
 
 class LocalRepoTest(pytest.Item):
     def __init__(self, name, parent, path):
@@ -40,7 +43,8 @@ class RemoteRepoList(pytest.File):
         with self.fspath.open() as f:
             repos = yaml.safe_load(f)
         for repo in repos:
-            yield RemoteRepoTest(repo['name'], self, repo['url'], repo['ref'], repo['verify'])
+            yield RemoteRepoTest(repo['name'], self, repo['url'],
+                                 repo['ref'], repo['verify'])
 
 
 class RemoteRepoTest(pytest.Item):
