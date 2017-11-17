@@ -686,7 +686,7 @@ class JuliaBuildPack(BuildPack):
             julia -e ' \
                Pkg.resolve(); \
                for pkg in keys(Pkg.Reqs.parse("%(require)s")) \
-                eval(:(using $(Symbol(pkg)))) \
+                pkg != "julia" && eval(:(using $(Symbol(pkg)))) \
                end \
             '
             """ % { "require" : require }
