@@ -92,7 +92,7 @@ COPY {{ src }} {{ dst }}
 # Copy and chown stuff. This doubles the size of the repo, because
 # you can't actually copy as USER, only as root! Thanks, Docker!
 USER root
-COPY src/ ${HOME}
+COPY src/ ${HOME}/repository/
 RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
 
 # Run assemble scripts! These will actually build the specification
@@ -319,6 +319,14 @@ class BuildPack(LoggingConfigurable):
         else:
             return path
 
+    def repo_path(self, path):
+        """Locate file inside repository after copying it to the container"""
+        if path.startswith('binder/'):
+            return os.path.join('repository', path)
+        else:
+            path = self.binder_path(path)
+            return os.path.join('repository', path)
+
     def detect(self):
         return all([p.detect() for p in self.components])
 
@@ -451,7 +459,7 @@ class BaseImage(BuildPack):
             if not stat.S_IXUSR & os.stat(post_build).st_mode:
                 raise ValueError("%s is not executable, see %s for help." % (
                                  post_build, DOC_URL+'#system-post-build-scripts'))
-            return [post_build]
+            return [self.repo_path(post_build)]
         return []
 
 class PythonBuildPack(BuildPack):
@@ -522,7 +530,8 @@ class PythonBuildPack(BuildPack):
         if os.path.exists(requirements_file):
             return [(
                 '${NB_USER}',
-                'pip3 install --no-cache-dir -r "{}"'.format(requirements_file)
+                'pip3 install --no-cache-dir -r "{}"'.format(
+                    self.repo_path(requirements_file))
             )]
         return []
 
@@ -564,12 +573,13 @@ class CondaBuildPack(BuildPack):
                 r"""
                 conda env update -n root -f "{}" && \
                 conda clean -tipsy
-                """.format(environment_yml)
+                """.format(self.repo_path('environment.yml'))
             ))
         return assembly_scripts
 
     def detect(self):
-        return os.path.exists(self.binder_path('environment.yml')) and super().detect()
+        return (os.path.exists(self.binder_path('environment.yml')) and
+                super().detect())
 
 
 class Python2BuildPack(BuildPack):
@@ -619,7 +629,8 @@ class Python2BuildPack(BuildPack):
         return [
             (
                 '${NB_USER}',
-                'pip2 install --no-cache-dir -r requirements.txt'
+                'pip2 install --no-cache-dir -r {}'.format(
+                    self.repo_path('requirements.txt'))
             )
         ]
 
@@ -689,7 +700,7 @@ class JuliaBuildPack(BuildPack):
                 pkg != "julia" && eval(:(using $(Symbol(pkg)))) \
                end \
             '
-            """ % { "require" : require }
+            """ % { "require" : self.repo_path(require) }
         )]
 
     def detect(self):

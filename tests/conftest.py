@@ -31,7 +31,7 @@ class LocalRepoTest(pytest.Item):
         subprocess.check_call([
             'jupyter-repo2docker',
             str(self.path.dirname),
-            './verify'
+            './repository/verify'
         ])
 
 
