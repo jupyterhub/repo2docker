@@ -10,7 +10,7 @@ import re
 import docker
 
 TEMPLATE = r"""
-FROM buildpack-deps:zesty
+FROM buildpack-deps:artful
 
 # Set up locales properly
 RUN apt-get update && \
