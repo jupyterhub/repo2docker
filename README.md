@@ -21,12 +21,12 @@ To install from pypi, the python packaging index:
 pip install jupyter-repo2docker
 ```
 
-To install from source:
+To install from source and start contributing:
 
 ```bash
 git clone https://github.com/jupyter/repo2docker.git
 cd repo2docker
-pip install .
+pip install -e .
 ```
 
 ## Usage
