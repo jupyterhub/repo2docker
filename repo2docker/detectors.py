@@ -733,7 +733,7 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     USER main
     WORKDIR /home/main/notebooks
     ENV PATH /home/main/anaconda2/envs/python3/bin:$PATH
-    RUN conda install -yq -n python3 notebook==5.2.0 ipykernel==4.6.0 && \
+    RUN conda install -yq -n python3 notebook==5.0.0 ipykernel==4.6.0 && \
         conda remove -yq -n python3 nb_conda_kernels && \
         conda install -yq -n root ipykernel==4.6.0 && \
         /home/main/anaconda2/envs/python3/bin/ipython kernel install --sys-prefix && \
