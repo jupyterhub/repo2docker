@@ -492,7 +492,7 @@ class PythonBuildPack(BuildPack):
             "${NB_USER}",
             r"""
             pip install --no-cache-dir \
-                notebook==5.2.0 \
+                notebook==5.2.2 \
                 ipywidgets==6.0.0 \
                 jupyterlab==0.28 && \
             jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
