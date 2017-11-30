@@ -28,7 +28,7 @@ class PythonBuildPack(BuildPack):
 
 
     build_script_files = {
-        'python/requirements.txt': '/tmp/requirements.txt',
+        'python/requirements.frozen.txt': '/tmp/requirements.frozen.txt',
     }
 
     build_scripts = [
@@ -48,7 +48,7 @@ class PythonBuildPack(BuildPack):
         (
             "${NB_USER}",
             r"""
-            pip install --no-cache-dir -r /tmp/requirements.txt && \
+            pip install --no-cache-dir -r /tmp/requirements.frozen.txt && \
             jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
             jupyter serverextension enable --py jupyterlab --sys-prefix
             """
@@ -95,7 +95,7 @@ class Python2BuildPack(BuildPack):
     }
 
     build_script_files = {
-        'python/requirements2.txt': '/tmp/requirements2.txt',
+        'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
     }
 
     env = [
@@ -123,7 +123,7 @@ class Python2BuildPack(BuildPack):
         (
             "${NB_USER}",
             r"""
-            pip2 install --no-cache-dir -r /tmp/requirements2.txt && \
+            pip2 install --no-cache-dir -r /tmp/requirements2.frozen.txt && \
             python2 -m ipykernel install --prefix=${NB_PYTHON_PREFIX}
             """
         )
