@@ -562,7 +562,7 @@ class CondaBuildPack(BuildPack):
             assembly_scripts.append((
                 '${NB_USER}',
                 r"""
-                conda env update -n root -f "{}" && \
+                conda env update -v -n root -f "{}" && \
                 conda clean -tipsy
                 """.format(environment_yml)
             ))
