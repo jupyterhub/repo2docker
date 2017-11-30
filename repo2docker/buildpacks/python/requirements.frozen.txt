@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM requirements.txt, DO NOT MANUALLY MODIFY
-# Frozen on Thu Nov 30 08:51:37 UTC 2017
+# Frozen on Thu Nov 30 11:49:16 UTC 2017
 bleach==2.1.1
 decorator==4.1.2
 entrypoints==0.2.3
@@ -13,8 +13,8 @@ Jinja2==2.10
 jsonschema==2.6.0
 jupyter-client==5.1.0
 jupyter-core==4.4.0
-jupyterlab==0.28.0
-jupyterlab-launcher==0.6.0
+jupyterlab==0.29.2
+jupyterlab-launcher==0.5.5
 MarkupSafe==1.0
 mistune==0.8.1
 nbconvert==5.3.1
