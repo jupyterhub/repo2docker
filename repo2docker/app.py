@@ -25,7 +25,7 @@ from docker.utils import kwargs_from_env
 
 import subprocess
 
-from .detectors import (
+from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
 )
