@@ -5,7 +5,14 @@ set -euo pipefail
 # Does the same for requirements2.txt to requirements2.frozen.txt...
 
 # cd to the directory where the freeze script is located
-dirname "$(readlink -f "$0")"
+if [[ ! -z "$(which realpath 2>/dev/null)" ]]; then
+    realpath=realpath
+else
+    realpath="readlink -f"
+fi
+
+cd $(dirname "$($realpath "$0")")
+
 
 function freeze-requirements {
     # Freeze a requirements file $2 into a frozen requirements file $3
