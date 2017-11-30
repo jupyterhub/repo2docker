@@ -1,20 +1,20 @@
 # AUTO GENERATED FROM requirements.txt, DO NOT MANUALLY MODIFY
-# Frozen on Thu Nov 30 11:49:16 UTC 2017
+# Frozen on Thu Nov 30 12:03:22 UTC 2017
 bleach==2.1.1
 decorator==4.1.2
 entrypoints==0.2.3
 html5lib==1.0b10
 ipykernel==4.6.1
-ipython==6.2.1
 ipython-genutils==0.2.0
-ipywidgets==6.0.0
+ipython==6.2.1
+ipywidgets==6.0.1
 jedi==0.11.0
 Jinja2==2.10
 jsonschema==2.6.0
 jupyter-client==5.1.0
 jupyter-core==4.4.0
-jupyterlab==0.29.2
 jupyterlab-launcher==0.5.5
+jupyterlab==0.29.2
 MarkupSafe==1.0
 mistune==0.8.1
 nbconvert==5.3.1
@@ -24,7 +24,6 @@ pandocfilters==1.4.2
 parso==0.1.0
 pexpect==4.3.0
 pickleshare==0.7.4
-pkg-resources==0.0.0
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 Pygments==2.2.0
