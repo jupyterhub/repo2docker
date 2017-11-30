@@ -26,6 +26,11 @@ class PythonBuildPack(BuildPack):
         "${VENV_PATH}/bin"
     ]
 
+
+    build_script_files = {
+        'python/requirements.txt': '/tmp/requirements.txt',
+    }
+
     build_scripts = [
         (
             "root",
@@ -43,10 +48,7 @@ class PythonBuildPack(BuildPack):
         (
             "${NB_USER}",
             r"""
-            pip install --no-cache-dir \
-                notebook==5.2.2 \
-                ipywidgets==6.0.0 \
-                jupyterlab==0.28 && \
+            pip install --no-cache-dir -r /tmp/requirements.txt && \
             jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
             jupyter serverextension enable --py jupyterlab --sys-prefix
             """
@@ -92,6 +94,10 @@ class Python2BuildPack(BuildPack):
         'virtualenv'
     }
 
+    build_script_files = {
+        'python/requirements2.txt': '/tmp/requirements2.txt',
+    }
+
     env = [
         ('VENV2_PATH', '${APP_BASE}/venv2')
     ]
@@ -117,8 +123,7 @@ class Python2BuildPack(BuildPack):
         (
             "${NB_USER}",
             r"""
-            pip2 install --no-cache-dir \
-                 ipykernel==4.6.1 && \
+            pip2 install --no-cache-dir -r /tmp/requirements2.txt && \
             python2 -m ipykernel install --prefix=${NB_PYTHON_PREFIX}
             """
         )
