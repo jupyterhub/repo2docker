@@ -1,4 +1,4 @@
 include *.md
 include LICENSE
 include setup.cfg
-recursive-include repo2docker/files *
+recursive-include repo2docker/buildpacks *

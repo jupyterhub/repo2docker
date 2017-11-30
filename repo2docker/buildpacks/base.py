@@ -381,7 +381,7 @@ class BuildPack(LoggingConfigurable):
 
         for src in sorted(self.build_script_files):
             src_parts = src.split('/')
-            src_path = os.path.join(os.path.dirname(__file__), '..', 'files', *src_parts)
+            src_path = os.path.join(os.path.dirname(__file__), *src_parts)
             tar.add(src_path, src, filter=_filter_tar)
 
         tar.add('.', 'src/', filter=_filter_tar)
