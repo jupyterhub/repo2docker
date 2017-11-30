@@ -1,16 +1,7 @@
 """
 Generates a variety of Dockerfiles based on an input matrix
 """
-import textwrap
-from traitlets.config import LoggingConfigurable
-from traitlets import Unicode, Set, List, Dict, Tuple, default
-from textwrap import dedent
-import jinja2
-import tarfile
-import io
 import os
-import stat
-import re
 import docker
 from .base import BuildPack
 

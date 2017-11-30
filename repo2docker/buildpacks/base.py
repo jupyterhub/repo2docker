@@ -1,7 +1,6 @@
 import textwrap
 from traitlets.config import LoggingConfigurable
 from traitlets import Unicode, Set, List, Dict, Tuple, default
-from textwrap import dedent
 import jinja2
 import tarfile
 import io
