@@ -163,7 +163,7 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
-            '---build-memory-limit',
+            '--build-memory-limit',
             help='Total Memory that can be used by the docker build process'
         )
 
