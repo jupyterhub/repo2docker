@@ -29,8 +29,7 @@ from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
 )
-from .utils import execute_cmd
-from .utils import maybe_cleanup
+from .utils import execute_cmd, ByteSpecification, maybe_cleanup
 from . import __version__
 
 
@@ -92,6 +91,16 @@ class Repo2Docker(Application):
         """
     )
 
+    build_memory_limit = ByteSpecification(
+        0,
+        help="""
+        Total memory that can be used by the docker image building process.
+
+        Set to 0 for no limits.
+        """,
+        config=True
+    )
+
     def fetch(self, url, ref, checkout_path):
         try:
             for line in execute_cmd(['git', 'clone', url, checkout_path],
@@ -151,6 +160,11 @@ class Repo2Docker(Application):
             dest='build',
             action='store_false',
             help="Do not actually build the image. Useful in conjunction with --debug."
+        )
+
+        argparser.add_argument(
+            '--build-memory-limit',
+            help='Total Memory that can be used by the docker build process'
         )
 
         argparser.add_argument(
@@ -250,6 +264,9 @@ class Repo2Docker(Application):
 
         self.run_cmd = args.cmd
 
+        if args.build_memory_limit:
+            self.build_memory_limit = args.build_memory_limit
+
     def push_image(self):
         client = docker.APIClient(version='auto', **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer info every 1.5s
@@ -347,7 +364,7 @@ class Repo2Docker(Application):
             if self.build:
                 self.log.info('Using %s builder\n', bp.name,
                               extra=dict(phase='building'))
-                for l in picked_buildpack.build(self.output_image_spec):
+                for l in picked_buildpack.build(self.output_image_spec, self.build_memory_limit):
                     if 'stream' in l:
                         self.log.info(l['stream'],
                                       extra=dict(phase='building'))

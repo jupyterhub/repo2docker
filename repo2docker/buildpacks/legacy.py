@@ -31,10 +31,10 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
         with open('Dockerfile') as f:
             return f.read() + self.dockerfile_appendix
 
-    def build(self, image_spec):
+    def build(self, image_spec, memory_limit):
         with open(self.dockerfile, 'w') as f:
             f.write(self.render())
-        return super().build(image_spec)
+        return super().build(image_spec, memory_limit)
 
     def detect(self):
         try:
