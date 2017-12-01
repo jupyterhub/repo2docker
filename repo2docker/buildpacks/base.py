@@ -426,13 +426,19 @@ class BaseImage(BuildPack):
         assemble_scripts = []
         try:
             with open(self.binder_path('apt.txt')) as f:
-                extra_apt_packages = [l.strip() for l in f]
-            # Validate that this is, indeed, just a list of packages
-            # We're doing shell injection around here, gotta be careful.
-            # FIXME: Add support for specifying version numbers
-            for p in extra_apt_packages:
-                if not re.match(r"^[a-z0-9.+-]+", p):
-                    raise ValueError("Found invalid package name {} in apt.txt".format(p))
+
+                extra_apt_packages = []
+                for l in f:
+                    package = l.partition('#')[0].strip()
+                    if not package:
+                       continue
+                    # Validate that this is, indeed, just a list of packages
+                    # We're doing shell injection around here, gotta be careful.
+                    # FIXME: Add support for specifying version numbers
+                    if not re.match(r"^[a-z0-9.+-]+", package):
+                       raise ValueError("Found invalid package name {} in apt.txt".format(package))
+                extra_apt_packages.append(package)
+
 
             assemble_scripts.append((
                 'root',
