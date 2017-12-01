@@ -15,7 +15,11 @@ def does_build(builddir, mem_limit, mem_allocate_mb):
     # Cache bust so we actually do a rebuild each time this is run!
     with open(os.path.join(builddir, 'cachebust'), 'w') as cachebust:
         cachebust.write(str(time.time()))
+
     try:
+        # we don't have an easy way to pass env vars or whatever to
+        # postBuild from here, so we write a file into the repo that is
+        # read by the postBuild script!
         with open(mem_allocate_mb_file, 'w') as f:
             f.write(str(mem_allocate_mb))
         try:
