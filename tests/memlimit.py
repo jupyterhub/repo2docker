@@ -79,3 +79,21 @@ def test_memlimit_dockerfile_fail():
         512,
         256
     )
+
+
+def test_memlimit_same_postbuild():
+    """
+    Validate that the postBuild files for dockerfile & nondockerfile are same
+
+    Until https://github.com/jupyter/repo2docker/issues/160 gets fixed.
+    """
+    basedir = os.path.dirname(__file__)
+    filepaths = [
+        os.path.join(basedir, 'memlimit', t, "postBuild")
+        for t in ("dockerfile", "non-dockerfile")
+    ]
+    file_contents = []
+    for fp in filepaths:
+        with open(fp) as f:
+            file_contents.append(f.read())
+    assert all(c == file_contents[0] for c in file_contents)
