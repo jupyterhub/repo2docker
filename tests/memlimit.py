@@ -96,4 +96,5 @@ def test_memlimit_same_postbuild():
     for fp in filepaths:
         with open(fp) as f:
             file_contents.append(f.read())
-    assert all(c == file_contents[0] for c in file_contents)
+    # Make sure they're all the same
+    assert len(set(file_contents)) == 1
