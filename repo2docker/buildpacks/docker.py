@@ -22,7 +22,7 @@ class DockerBuildPack(BuildPack):
         limits = {
             # Always disable memory swap for building, since mostly
             # nothing good can come of that.
-            'memoryswap': -1
+            'memswap': -1
         }
         if memory_limit:
             limits['memory'] = memory_limit
