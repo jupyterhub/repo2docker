@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
+"""
+Simplest program that tries to allocate a large amount of RAM.
 
-array = []
-for i in range(1024 * 1024 * 64):
-    array.append(i)
+malloc lies on Linux by default, so we use memset to force the
+kernel to actually give us real memory.
+"""
+from ctypes import cdll, c_void_p, memset
+import os
+
+libc = cdll.LoadLibrary("libc.so.6")
+libc.malloc.restype = c_void_p
+
+with open('mem_allocate_mb') as f:
+    mem_allocate_mb = int(f.read().strip())
+
+size = 1024 * 1024 * mem_allocate_mb
+print("trying to allocate {}MB".format(mem_allocate_mb))
+
+ret = libc.malloc(size)
+
+memset(ret, 0, size)

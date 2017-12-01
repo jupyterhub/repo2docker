@@ -1,5 +1,1 @@
-#!/usr/bin/env python3
-
-array = []
-for i in range(1024 * 1024 * 64):
-    array.append(i)
+../dockerfile/postBuild

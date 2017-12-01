@@ -1,4 +1,6 @@
-FROM python:3.6
+FROM ubuntu:zesty
 
-COPY postBuild /usr/local/bin/postBuild
+RUN apt-get update && apt-get install --yes python3
+
+COPY . .
 RUN ./postBuild
