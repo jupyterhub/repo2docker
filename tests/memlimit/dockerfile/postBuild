@@ -4,6 +4,11 @@ Simplest program that tries to allocate a large amount of RAM.
 
 malloc lies on Linux by default, so we use memset to force the
 kernel to actually give us real memory.
+
+NOTE: This file has to be duplicated & present in all the following locations:
+ - tests/memlimit/dockerfile/postBuild
+ - tests/memlimit/dockerfile/postBuild
+See https://github.com/jupyter/repo2docker/issues/160 for reason
 """
 from ctypes import cdll, c_void_p, memset
 import os
