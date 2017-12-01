@@ -356,7 +356,7 @@ class BuildPack(LoggingConfigurable):
             post_build_scripts=self.post_build_scripts,
         )
 
-    def build(self, image_spec):
+    def build(self, image_spec, memory_limit):
         tarf = io.BytesIO()
         tar = tarfile.open(fileobj=tarf, mode='w')
         dockerfile_tarinfo = tarfile.TarInfo("Dockerfile")
@@ -389,6 +389,13 @@ class BuildPack(LoggingConfigurable):
         tar.close()
         tarf.seek(0)
 
+        limits = {
+            # Always disable memory swap for building, since mostly
+            # nothing good can come of that.
+            'memoryswap': -1
+        }
+        if memory_limit:
+            limits['memory'] = memory_limit
         client = docker.APIClient(version='auto', **docker.utils.kwargs_from_env())
         for line in client.build(
                 fileobj=tarf,
@@ -397,7 +404,8 @@ class BuildPack(LoggingConfigurable):
                 buildargs={},
                 decode=True,
                 forcerm=True,
-                rm=True
+                rm=True,
+                container_limits=limits
         ):
             yield line
 
