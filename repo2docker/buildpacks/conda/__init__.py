@@ -18,7 +18,7 @@ class CondaBuildPack(BuildPack):
 
     build_script_files = {
         'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
-        'conda/environment.yml': '/tmp/environment.yml'
+        'conda/environment.frozen.yml': '/tmp/environment.yml'
     }
 
     build_scripts = [
