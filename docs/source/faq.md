@@ -4,6 +4,11 @@ A collection of frequently asked questions with answers!
 
 If you have a question & have found an answer, send a PR to add it here!
 
+## How should I specify another version of Python 3?
+
+Currently the best way to do this is by using an ``environment.yaml``
+file and setting the language to whichever version of Python you like.
+
 ## Can I use repo2docker to bootstrap my own Dockerfile?
 
 No, you can't.

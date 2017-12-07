@@ -1,5 +1,7 @@
-Sample build files
-==================
+.. _samples:
+
+Sample build repositories
+=========================
 
 There are many options for specifying your environment with ``repo2docker``.
 The following sections describe a few samples to get you started.
