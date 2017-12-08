@@ -4,7 +4,8 @@
 [![Build Status](https://travis-ci.org/jupyter/repo2docker.svg?branch=master)](https://travis-ci.org/jupyter/repo2docker)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
 
-**jupyter-repo2docker** is a tool to build, run and push Docker images from source code repositories.
+**jupyter-repo2docker** takes as input a repository source, such as a GitHub repo. It then builds, runs, and/or pushes Docker images built from
+that source.
 
 See the [repo2docker documentation](http://repo2docker.readthedocs.io)
 for more information.
@@ -62,7 +63,8 @@ For more information on how to use ``repo2docker``, see the
 
 ## Repository specifications
 
-Repo2Docker looks for configuration files in the repository being built to figure out how to build it.
+Repo2Docker looks for configuration files in the source repository to
+determine how the Docker image should be built.
 It is philosophically similar to [Heroku Build Packs](https://devcenter.heroku.com/articles/buildpacks).
 
 For a list of the configuration files that ``repo2docker`` can use,

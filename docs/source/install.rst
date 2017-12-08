@@ -3,16 +3,19 @@
 Installing ``repo2docker``
 ==========================
 
-Installing ``repo2docker`` is easiest using the python
-packaging index. In addition, you need to install
-`Docker <https://www.docker.com/>`_ as it is required in
-order to build images.
+1. Install `Docker <https://www.docker.com>`_ as it is required to build Docker images.
 
-To install ``repo2docker`` from pypi, the python packaging index::
+2. We recommend installing ``repo2docker`` with the ``pip`` tool::
 
-  pip install jupyter-repo2docker
+    python3 -m pip install jupyter-repo2docker
 
-To install from source and start contributing::
+For infomation on using ``repo2docker``, see :ref:`usage`.
+
+Installing repo2docker from source code
+---------------------------------------
+
+Alternatively, you can install repo2docker from source,
+i.e. if you are contributing back to this project::
 
   git clone https://github.com/jupyter/repo2docker.git
   cd repo2docker

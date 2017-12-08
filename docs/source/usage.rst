@@ -3,16 +3,20 @@
 Using ``repo2docker``
 =====================
 
-The core feature of repo2docker is to fetch a repo (from github or locally),
-build a container image based on the specifications found in the
-repo & optionally launch a local Jupyter Notebook you can use to explore it.
+The core functionality of repo2docker is to fetch a repo (e.g., from GitHub or
+other locations) and build a container image based on the specifications found in the
+repo. Optionally, it can launch a local Jupyter Notebook which you can use to explore it.
 
 This section describes the general ways in which you can use
-``repo2docker``. It covers basics in how to prepare your
-repository for building, as well as how to use ``repo2docker``
-to build repositories on your own.
+``repo2docker``, including:
 
-See the `Frequently Asked Questions <faq.html>`_ for more info.
+.. contents::
+   :depth: 1
+   :local:
+
+.. note::
+
+   See the `Frequently Asked Questions <faq.html>`_ for more info.
 
 Preparing your repository
 -------------------------
@@ -22,9 +26,9 @@ to determine how to build it. It is philosophically similar to
 `Heroku Build Packs <https://devcenter.heroku.com/articles/buildpacks>`_.
 ``repo2docker`` will look for files in two places:
 
-* The root of the repository.
-* A folder called ``binder`` in the root of the repository (if this folder
-  exists, configuration files in the root of the repository will be ignored).
+* A folder called ``binder`` in the root of the repository.
+* The root of the repository. (if a folder called ``binder`` exists in the root
+  of the repository, configuration files outside of that folder will be ignored)
 
 .. note::
 
@@ -33,19 +37,20 @@ to determine how to build it. It is philosophically similar to
    creating new custom configuration files.
 
 ``repodocker`` configuration files are all composable - you can use any number
-of them in the same repository, with a few notable exceptions:
+of them in the same repository. There are a few notable rules:
 
 * ``Dockerfile``: if a Dockerfile is present in a repository, it will take precedence
   over all other configuration files (which will be ignored).
-* ``environment.yaml`` with ``requirements.txt``: If both of these files are
-  present, then ``environment.yaml`` will be used to build the image, **not**
+* ``environment.yml`` with ``requirements.txt``: If both of these files are
+  present, then ``environment.yml`` will be used to build the image, **not**
   ``requirements.txt``. If you wish to ``pip install`` packages using an
-  ``environment.yaml`` file, `you should do so with the
+  ``environment.yml`` file, `you should do so with the
   *pip:* key <https://conda.io/docs/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually>`_.
 
   .. note::
 
-     For a list of sample repositories, see :ref:`samples`.
+     For a list of repositories demonstrating various configurations,
+     see :ref:`samples`.
 
 Supported configuration files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -62,9 +67,10 @@ This specifies a list of python packages that would be installed in a virtualenv
 
 This is a conda environment specification, that lets you install packages with conda.
 
-.. note::
+.. important::
 
-   You must leave the name of the environment empty for this to work out of the box.
+   You must leave the ``environment.yml``'s name field empty for this
+   to work out of the box.
 
 ``apt.txt``
 ^^^^^^^^^^^
@@ -88,13 +94,12 @@ want this to be a shell script, make sure the first line is `#!/bin/bash`.
 ``REQUIRE``
 ^^^^^^^^^^^
 
-This specifies a list of Julia packages! Currently only version 0.6 of Julia is supported, but more will
-be as they are released.
+This specifies a list of Julia packages!
 
 .. note::
 
    Using a ``REQUIRE`` file also requires that the repository contain an
-   ``environment.yaml`` file.
+   ``environment.yml`` file.
 
 ``Dockerfile``
 ^^^^^^^^^^^^^^
@@ -109,7 +114,7 @@ It is possible to use ``repo2docker`` in order to build JupyterHub-ready
 Docker images. In order for this to work properly, **the version of the ``jupyterhub``
 package in your git repository must match the version in your JupyterHub
 deployment**. For example, if your JupyterHub deployment runs ``jupyterhub==0.8``,
-you should put the following in ``requirements.txt`` or ``environment.yaml``::
+you should put the following in ``requirements.txt`` or ``environment.yml``::
 
   jupyterhub==0.8.*
 
@@ -133,14 +138,13 @@ You can do this with the following command::
 
   jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook
 
-After building (it might take a while!), it should output in your terminal
-something like::
+After building (it might take a while!), it should output a message in your terminal::
 
   Copy/paste this URL into your browser when you connect for the first time,
   to login with a token:
       http://0.0.0.0:36511/?token=f94f8fabb92e22f5bfab116c382b4707fc2cade56ad1ace0
 
-If you copy paste that URL into your browser you will see a Jupyter Notebook with the
+If you copy/paste that URL into your browser you will see a Jupyter Notebook with the
 contents of the repository you have just built!
 
 Displaying the image Dockerfile
@@ -155,8 +159,8 @@ the ``--debug`` and ``--no-build`` flags like so::
 This will output the contents of the Dockerfile in your console. Note that it
 will **not** build the image.
 
-Other build configurations
---------------------------
+Accessing help from the command line
+------------------------------------
 
 For a list of all the build configurations at your disposal, see the
 CLI help::
