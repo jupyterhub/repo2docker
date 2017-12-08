@@ -3,7 +3,7 @@
 set -ex
 
 cd $(dirname $0)
-CONDA_VERSION=4.3.14
+CONDA_VERSION=4.3.30
 URL="https://repo.continuum.io/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
 
@@ -12,7 +12,7 @@ chmod +x ${INSTALLER_PATH}
 
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
-MD5SUM="fc6fc37479e3e3fcf3f9ba52cae98991"
+MD5SUM="0b80a152332a4ce5250f3c09589c7a81"
 
 if ! echo "${MD5SUM}  ${INSTALLER_PATH}" | md5sum  --quiet -c -; then
     echo "md5sum mismatch for ${INSTALLER_PATH}, exiting!"
@@ -26,7 +26,8 @@ ${CONDA_DIR}/bin/conda config --system --add channels conda-forge
 
 # Do not attempt to auto update conda or dependencies
 ${CONDA_DIR}/bin/conda config --system --set auto_update_conda false
-${CONDA_DIR}/bin/conda config --system --set update_dependencies false
+# bug in conda 4.3.>15 prevents --set update_dependencies
+echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 ${CONDA_DIR}/bin/conda config --system --set show_channel_urls true
 
 ${CONDA_DIR}/bin/conda env update -n root -f /tmp/environment.yml
