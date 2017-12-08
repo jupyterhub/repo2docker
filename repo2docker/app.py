@@ -126,6 +126,12 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
+            '--mount',
+            default='/',
+            help='Mount local repository into container instead of copying it'
+        )
+
+        argparser.add_argument(
             'repo',
             help='Path to repository that should be built. Could be local path or a git URL.'
         )
