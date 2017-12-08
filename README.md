@@ -3,9 +3,12 @@
 
 [![Build Status](https://travis-ci.org/jupyter/repo2docker.svg?branch=master)](https://travis-ci.org/jupyter/repo2docker)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
- 
-**jupyter-repo2docker** is a tool to build, run and push docker images from source code repositories.
 
+**jupyter-repo2docker** takes as input a repository source, such as a GitHub repo. It then builds, runs, and/or pushes Docker images built from
+that source.
+
+See the [repo2docker documentation](http://repo2docker.readthedocs.io)
+for more information.
 
 ## Pre-requisites
 
@@ -55,49 +58,14 @@ After building (it might take a while!), it should output in your terminal somet
 If you copy paste that URL into your browser you will see a Jupyter Notebook with the
 contents of the repository you had just built!
 
-### Displaying the image Dockerfile
-Repo2Docker will generate a Dockerfile that composes the created Docker image.
-To see the contents of this Dockerfile without building the image use `--debug` and `--no-build`
-flags like so:
-
-```bash
-jupyter-repo2docker --debug --no-build https://github.com/jakevdp/PythonDataScienceHandbook
-```
+For more information on how to use ``repo2docker``, see the
+[usage guide](http://repo2docker.readthedocs.io/en/latest/usage.html).
 
 ## Repository specifications
 
-Repo2Docker looks for various files in the repository being built to figure out how to build it.
+Repo2Docker looks for configuration files in the source repository to
+determine how the Docker image should be built.
 It is philosophically similar to [Heroku Build Packs](https://devcenter.heroku.com/articles/buildpacks).
 
-It currently looks for the following files. They are all composable - you can use any number of them
-in the same repository (except for Dockerfiles, which take precedence over everything else).
-
-### `requirements.txt`
-
-This specifies a list of python packages that would be installed in a virtualenv (or conda environment).
-
-### `environment.yml`
-
-This is a conda environment specification, that lets you install packages with conda. Note that you must
-leave the name of the environment empty for this to work out of the box.
-
-### `apt.txt`
-
-A list of debian packages that should be installed. The base image used is usually the latest released
-version of Ubuntu (currently Zesty.)
-
-### `postBuild`
-
-A script that can contain arbitrary commands to be run after the whole repository has been built. If you
-want this to be a shell script, make sure the first line is `#!/bin/bash`. This file must have the
-executable bit set (`chmod +x postBuild`) to be considered.
-
-### `REQUIRE`
-
-This specifies a list of Julia packages! Currently only version 0.6 of Julia is supported, but more will
-be as they are released.
-
-### `Dockerfile`
-
-This will be treated as a regular Dockerfile and a regular Docker build will be performed. The presence
-of a Dockerfile will cause all other building behavior to not be triggered.
+For a list of the configuration files that ``repo2docker`` can use,
+see the [usage guide](http://repo2docker.readthedocs.io/en/latest/usage.html).

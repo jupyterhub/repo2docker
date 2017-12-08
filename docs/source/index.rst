@@ -10,6 +10,8 @@ Site Contents
 .. toctree::
    :maxdepth: 2
 
+   install
+   usage
    design
    faq
    samples
