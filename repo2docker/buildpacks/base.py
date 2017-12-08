@@ -116,6 +116,7 @@ RUN ./{{ s }}
 
 DOC_URL = "http://repo2docker.readthedocs.io/en/latest/samples.html"
 
+
 class BuildPack(LoggingConfigurable):
     """
     A composable BuildPack.
@@ -155,8 +156,8 @@ class BuildPack(LoggingConfigurable):
         Base set of apt packages that are installed for all images.
 
         These contain useful images that are commonly used by a lot of images,
-        where it would be useful to share a base docker image layer that contains
-        them.
+        where it would be useful to share a base docker image layer that
+        contains them.
 
         These would be installed with a --no-install-recommends option.
         """
@@ -257,10 +258,10 @@ class BuildPack(LoggingConfigurable):
     post_build_scripts = List(
         [],
         help="""
-        An ordered list of executable scripts that should be executed after build.
+        An ordered list of executable scripts to execute after build.
 
-        Is run as a non-root user, and must be executable. Used for doing things
-        that are currently not supported by other means!
+        Is run as a non-root user, and must be executable. Used for doing
+        things that are currently not supported by other means!
 
         The scripts should be as deterministic as possible - running it twice
         should not produce different results!
@@ -295,8 +296,10 @@ class BuildPack(LoggingConfigurable):
         # FIXME: Deduplicate Env
         result.env = self.env + other.env
         result.build_scripts = self.build_scripts + other.build_scripts
-        result.assemble_scripts = self.assemble_scripts + other.assemble_scripts
-        result.post_build_scripts = self.post_build_scripts + other.post_build_scripts
+        result.assemble_scripts = (self.assemble_scripts +
+                                   other.assemble_scripts)
+        result.post_build_scripts = (self.post_build_scripts +
+                                     other.post_build_scripts)
 
         build_script_files = {}
         build_script_files.update(self.build_script_files)
@@ -305,7 +308,8 @@ class BuildPack(LoggingConfigurable):
 
         result.name = "{}-{}".format(self.name, other.name)
 
-        result.components = (self, ) + self.components + (other, ) + other.components
+        result.components = ((self, ) + self.components +
+                             (other, ) + other.components)
         return result
 
     def binder_path(self, path):
@@ -396,7 +400,8 @@ class BuildPack(LoggingConfigurable):
         }
         if memory_limit:
             limits['memory'] = memory_limit
-        client = docker.APIClient(version='auto', **docker.utils.kwargs_from_env())
+        client = docker.APIClient(version='auto',
+                                  **docker.utils.kwargs_from_env())
         for line in client.build(
                 fileobj=tarf,
                 tag=image_spec,
@@ -426,19 +431,18 @@ class BaseImage(BuildPack):
         assemble_scripts = []
         try:
             with open(self.binder_path('apt.txt')) as f:
-
                 extra_apt_packages = []
                 for l in f:
                     package = l.partition('#')[0].strip()
                     if not package:
-                       continue
+                        continue
                     # Validate that this is, indeed, just a list of packages
                     # We're doing shell injection around here, gotta be careful.
                     # FIXME: Add support for specifying version numbers
                     if not re.match(r"^[a-z0-9.+-]+", package):
-                       raise ValueError("Found invalid package name {} in apt.txt".format(package))
+                        raise ValueError("Found invalid package name {} in "
+                                         "apt.txt".format(package))
                 extra_apt_packages.append(package)
-
 
             assemble_scripts.append((
                 'root',
@@ -460,6 +464,7 @@ class BaseImage(BuildPack):
         if os.path.exists(post_build):
             if not stat.S_IXUSR & os.stat(post_build).st_mode:
                 raise ValueError("%s is not executable, see %s for help." % (
-                                 post_build, DOC_URL+'#system-post-build-scripts'))
+                                 post_build,
+                                 DOC_URL+'#system-post-build-scripts'))
             return [post_build]
         return []
