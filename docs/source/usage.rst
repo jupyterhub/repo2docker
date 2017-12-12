@@ -57,6 +57,9 @@ Supported configuration files
 
 Below is a list of supported configuration files.
 
+.. contents::
+   :local:
+
 ``requirements.txt``
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -100,6 +103,13 @@ This specifies a list of Julia packages!
 
    Using a ``REQUIRE`` file also requires that the repository contain an
    ``environment.yml`` file.
+
+``runtime.txt``
+^^^^^^^^^^^^^^^
+
+This allows you to control the runtime of Python. To use Python 2,
+put the line ``python-2.7`` in the file. A Python 2 kernel will be installed
+alongside Python 3.
 
 ``Dockerfile``
 ^^^^^^^^^^^^^^
