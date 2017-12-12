@@ -52,7 +52,19 @@ of them in the same repository. There are a few notable rules:
      For a list of repositories demonstrating various configurations,
      see :ref:`samples`.
 
+.. *** List of all configuratoin files ***
 .. include:: config_files.txt
+
+Using ``repo2docker`` with a JupyterHub
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to use ``repo2docker`` in order to build JupyterHub-ready
+Docker images. In order for this to work properly, **the version of the ``jupyterhub``
+package in your git repository must match the version in your JupyterHub
+deployment**. For example, if your JupyterHub deployment runs ``jupyterhub==0.8``,
+you should put the following in ``requirements.txt`` or ``environment.yml``::
+
+  jupyterhub==0.8.*
 
 Running ``repo2docker`` locally
 -------------------------------
