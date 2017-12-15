@@ -1,0 +1,115 @@
+.. _config-files:
+
+Supported configuration files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Below is a list of supported configuration files.
+
+.. contents::
+   :local:
+   :depth: 1
+
+``requirements.txt``
+^^^^^^^^^^^^^^^^^^^^
+
+This specifies a list of python packages that would be installed in a virtualenv (or conda environment).
+
+Example Contents
+````````````````
+::
+
+   numpy==1.7
+   matplotlib==2.1
+
+``environment.yml``
+^^^^^^^^^^^^^^^^^^^
+
+This is a conda environment specification, that lets you install packages with conda.
+
+Example Contents
+````````````````
+::
+
+  channels:
+    - conda-forge
+    - defaults
+  dependencies:
+    - matplotlib
+    - pip:
+      - sphinx-gallery
+
+.. important::
+
+   You must leave the ``environment.yml``'s name field empty for this
+   to work out of the box.
+
+``apt.txt``
+^^^^^^^^^^^
+
+A list of debian packages that should be installed. The base image used is usually the latest released
+version of Ubuntu (currently Zesty.)
+
+Example Contents
+````````````````
+::
+
+   cowsay
+   fortune
+
+``postBuild``
+^^^^^^^^^^^^^
+
+A script that can contain arbitrary commands to be run after the whole repository has been built. If you
+want this to be a shell script, make sure the first line is `#!/bin/bash`.
+
+Example Contents
+````````````````
+::
+
+   wget <url-to-dataset>
+   python myfile.py
+
+.. note::
+
+   This file must be executable to be used with ``repo2docker``. To do this,
+   run the following::
+
+     chmod +x postBuild
+
+``REQUIRE``
+^^^^^^^^^^^
+
+This specifies a list of Julia packages!
+
+.. note::
+
+   Using a ``REQUIRE`` file also requires that the repository contain an
+   ``environment.yml`` file.
+
+Example Contents
+````````````````
+::
+
+  PyPlot
+  Stats
+
+``runtime.txt``
+^^^^^^^^^^^^^^^
+
+This allows you to control the runtime of Python. To use Python 2,
+put the line ``python-2.7`` in the file. A Python 2 kernel will be installed
+alongside Python 3.
+
+Example Contents
+````````````````
+::
+
+   python-2.7
+
+``Dockerfile``
+^^^^^^^^^^^^^^
+
+This will be treated as a regular Dockerfile and a regular Docker build will be performed.
+The presence of a Dockerfile prevents all other build behavior.
+See the `Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
+best-practices with Dockerfiles.

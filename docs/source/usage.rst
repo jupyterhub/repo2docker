@@ -52,60 +52,8 @@ of them in the same repository. There are a few notable rules:
      For a list of repositories demonstrating various configurations,
      see :ref:`samples`.
 
-Supported configuration files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Below is a list of supported configuration files.
-
-``requirements.txt``
-^^^^^^^^^^^^^^^^^^^^
-
-This specifies a list of python packages that would be installed in a virtualenv (or conda environment).
-
-``environment.yml``
-^^^^^^^^^^^^^^^^^^^
-
-This is a conda environment specification, that lets you install packages with conda.
-
-.. important::
-
-   You must leave the ``environment.yml``'s name field empty for this
-   to work out of the box.
-
-``apt.txt``
-^^^^^^^^^^^
-
-A list of debian packages that should be installed. The base image used is usually the latest released
-version of Ubuntu (currently Zesty.)
-
-``postBuild``
-^^^^^^^^^^^^^
-
-A script that can contain arbitrary commands to be run after the whole repository has been built. If you
-want this to be a shell script, make sure the first line is `#!/bin/bash`.
-
-.. note::
-
-   This file must be executable to be used with ``repo2docker``. To do this,
-   run the following::
-
-     chmod +x postBuild
-
-``REQUIRE``
-^^^^^^^^^^^
-
-This specifies a list of Julia packages!
-
-.. note::
-
-   Using a ``REQUIRE`` file also requires that the repository contain an
-   ``environment.yml`` file.
-
-``Dockerfile``
-^^^^^^^^^^^^^^
-
-This will be treated as a regular Dockerfile and a regular Docker build will be performed. The presence
-of a Dockerfile will cause all other building behavior to not be triggered.
+.. *** List of all configuratoin files ***
+.. include:: config_files.txt
 
 Using ``repo2docker`` with a JupyterHub
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
