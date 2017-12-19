@@ -19,7 +19,7 @@ import escapism
 
 
 from traitlets.config import Application
-from traitlets import Unicode, List, default, Tuple, Dict
+from traitlets import Unicode, List, default, Tuple, Dict, Int
 import docker
 from docker.utils import kwargs_from_env
 
@@ -113,6 +113,29 @@ class Repo2Docker(Application):
         resolved relative to the current working directory on the host,
         destination is resolved relative to the working directory of the image -
         ($HOME by default)
+        """,
+        config=True
+    )
+
+    user_id = Int(
+        1000,
+        help="""
+        UID of the user to create inside the built image.
+
+        Should be a uid that is not currently used by anything in the image.
+
+        Might not affect Dockerfile builds.
+        """,
+        config=True
+    )
+
+    user_name = Unicode(
+        'jovyan',
+        help="""
+        Username of the user to create inside the built image.
+
+        Should be a uid that is not currently used by anything in the image,
+        and should conform to the restrictions on user names for Linux.
         """,
         config=True
     )
@@ -224,6 +247,19 @@ class Repo2Docker(Application):
             default=[]
         )
 
+        argparser.add_argument(
+            '--user-id',
+            help='User id the primary user in the image',
+            default=1000,
+            type=int
+        )
+
+        argparser.add_argument(
+            '--user-name',
+            help='User name of primary user in the image',
+            default='jovyan'
+        )
+
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -306,6 +342,9 @@ class Repo2Docker(Application):
             self.volumes[src] = dest
 
         self.run_cmd = args.cmd
+
+        self.user_id = int(args.user_id)
+        self.user_name = args.user_name
 
         if args.build_memory_limit:
             self.build_memory_limit = args.build_memory_limit
@@ -424,9 +463,13 @@ class Repo2Docker(Application):
                            extra=dict(phase='building'))
 
             if self.build:
+                build_args = {
+                    'NB_USER': self.user_name,
+                    'NB_UID': str(self.user_id)
+                }
                 self.log.info('Using %s builder\n', bp.name,
                               extra=dict(phase='building'))
-                for l in picked_buildpack.build(self.output_image_spec, self.build_memory_limit):
+                for l in picked_buildpack.build(self.output_image_spec, self.build_memory_limit, build_args):
                     if 'stream' in l:
                         self.log.info(l['stream'],
                                       extra=dict(phase='building'))

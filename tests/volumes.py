@@ -12,9 +12,12 @@ def test_volume_abspath():
     """
     ts = str(time.time())
     with tempfile.TemporaryDirectory() as tmpdir:
+        username = os.getlogin()
         subprocess.check_call([
             'repo2docker',
-            '-v', '{}:/home/jovyan'.format(tmpdir),
+            '-v', '{}:/home/{}'.format(tmpdir, username),
+            '--user-id', str(os.geteuid()),
+            '--user-name', username,
             tmpdir,
             '--',
             '/bin/bash',
@@ -37,6 +40,8 @@ def test_volume_relpath():
             subprocess.check_call([
                 'repo2docker',
                 '-v', '.:.',
+                '--user-id', str(os.geteuid()),
+                '--user-name', os.getlogin(),
                 tmpdir,
                 '--',
                 '/bin/bash',

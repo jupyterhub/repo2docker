@@ -30,8 +30,8 @@ ENV LANGUAGE en_US.UTF-8
 ENV SHELL /bin/bash
 
 # Set up user
-ENV NB_USER jovyan
-ENV NB_UID 1000
+ARG NB_USER
+ARG NB_UID
 ENV HOME /home/${NB_USER}
 
 RUN adduser --disabled-password \
@@ -360,7 +360,7 @@ class BuildPack(LoggingConfigurable):
             post_build_scripts=self.post_build_scripts,
         )
 
-    def build(self, image_spec, memory_limit):
+    def build(self, image_spec, memory_limit, build_args):
         tarf = io.BytesIO()
         tar = tarfile.open(fileobj=tarf, mode='w')
         dockerfile_tarinfo = tarfile.TarInfo("Dockerfile")
@@ -406,7 +406,7 @@ class BuildPack(LoggingConfigurable):
                 fileobj=tarf,
                 tag=image_spec,
                 custom_context=True,
-                buildargs={},
+                buildargs=build_args,
                 decode=True,
                 forcerm=True,
                 rm=True,
