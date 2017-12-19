@@ -19,7 +19,7 @@ import escapism
 
 
 from traitlets.config import Application
-from traitlets import Unicode, List, default, Tuple
+from traitlets import Unicode, List, default, Tuple, Dict
 import docker
 from docker.utils import kwargs_from_env
 
@@ -97,6 +97,19 @@ class Repo2Docker(Application):
         Total memory that can be used by the docker image building process.
 
         Set to 0 for no limits.
+        """,
+        config=True
+    )
+
+    volumes = Dict(
+        {},
+        help="""
+        Volumes to mount when running the container.
+
+        Only used when running, not during build!
+
+        Should be a key value pair, with the key being the volume source &
+        value being the destination.
         """,
         config=True
     )
@@ -200,6 +213,13 @@ class Repo2Docker(Application):
             help='Push docker image to repository'
         )
 
+        argparser.add_argument(
+            '--volume', '-v',
+            dest='volumes',
+            action='append',
+            help='Volumes to mount inside the container, in form src:dest'
+        )
+
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -272,6 +292,15 @@ class Repo2Docker(Application):
             self.run = False
             self.push = False
 
+        if args.volumes and not args.run:
+            # Can't mount if we aren't running
+            print("Can not mount volumes when not running container")
+            sys.exit(1)
+
+        for v in args.volumes:
+            src, dest = v.split(':')
+            self.volumes[src] = dest
+
         self.run_cmd = args.cmd
 
         if args.build_memory_limit:
@@ -310,11 +339,16 @@ class Repo2Docker(Application):
         else:
             run_cmd = self.run_cmd
             ports = {}
+        volumes = {
+            os.path.abspath(k): { 'bind': v, 'mode': 'rw'}
+            for k, v in self.volumes.items()
+        }
         container = client.containers.run(
             self.output_image_spec,
             ports=ports,
             detach=True,
-            command=run_cmd
+            command=run_cmd,
+            volumes=volumes
         )
         while container.status == 'created':
             time.sleep(0.5)
