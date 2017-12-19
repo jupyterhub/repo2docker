@@ -217,7 +217,8 @@ class Repo2Docker(Application):
             '--volume', '-v',
             dest='volumes',
             action='append',
-            help='Volumes to mount inside the container, in form src:dest'
+            help='Volumes to mount inside the container, in form src:dest',
+            default=[]
         )
 
         return argparser
