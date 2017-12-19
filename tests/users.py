@@ -21,7 +21,7 @@ def test_user():
             tmpdir,
             '--',
             '/bin/bash',
-            '-c', 'id -u > id && pwd > pwd && whoami > name'.format(ts)
+            '-c', 'id -u > id && pwd > pwd && whoami > name && echo -n $USER > env_user'.format(ts)
         ])
 
         with open(os.path.join(tmpdir, 'id')) as f:
@@ -29,4 +29,6 @@ def test_user():
         with open(os.path.join(tmpdir, 'pwd')) as f:
             assert f.read().strip() == '/home/yuvipanda'
         with open(os.path.join(tmpdir, 'name')) as f:
+            assert f.read().strip() == 'yuvipanda'
+        with open(os.path.join(tmpdir, 'env_user')) as f:
             assert f.read().strip() == 'yuvipanda'
