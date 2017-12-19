@@ -109,7 +109,10 @@ class Repo2Docker(Application):
         Only used when running, not during build!
 
         Should be a key value pair, with the key being the volume source &
-        value being the destination.
+        value being the destination. Both can be relative - sources are
+        resolved relative to the current working directory on the host,
+        destination is resolved relative to the working directory of the image -
+        ($HOME by default)
         """,
         config=True
     )
@@ -331,6 +334,8 @@ class Repo2Docker(Application):
 
     def run_image(self):
         client = docker.from_env(version='auto')
+        api_client = docker.APIClient(version='auto',
+                                  **docker.utils.kwargs_from_env())
         port = self._get_free_port()
         if not self.run_cmd:
             port = str(self._get_free_port())
@@ -340,16 +345,23 @@ class Repo2Docker(Application):
         else:
             run_cmd = self.run_cmd
             ports = {}
-        volumes = {
-            os.path.abspath(k): { 'bind': v, 'mode': 'rw'}
-            for k, v in self.volumes.items()
-        }
+        container_volumes = {}
+        if self.volumes:
+            image = api_client.inspect_image(self.output_image_spec)
+            image_workdir = image['ContainerConfig']['WorkingDir']
+
+            for k, v in self.volumes.items():
+                container_volumes[os.path.abspath(k)] = {
+                    'bind': v if v.startswith('/') else os.path.join(image_workdir, v),
+                    'mode': 'rw'
+                }
+
         container = client.containers.run(
             self.output_image_spec,
             ports=ports,
             detach=True,
             command=run_cmd,
-            volumes=volumes
+            volumes=container_volumes
         )
         while container.status == 'created':
             time.sleep(0.5)
