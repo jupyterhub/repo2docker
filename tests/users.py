@@ -11,12 +11,14 @@ def test_user():
     Validate user id and name setting
     """
     ts = str(time.time())
-    username = 'yuvipanda'
+    # FIXME: Use arbitrary login here, We need it now since we wanna put things to volume.
+    username = os.getlogin()
+    userid = str(os.geteuid())
     with tempfile.TemporaryDirectory() as tmpdir:
         subprocess.check_call([
             'repo2docker',
             '-v', '{}:/home/{}'.format(tmpdir, username),
-            '--user-id', '1000',
+            '--user-id', userid,
             '--user-name', username,
             tmpdir,
             '--',
@@ -25,7 +27,7 @@ def test_user():
         ])
 
         with open(os.path.join(tmpdir, 'id')) as f:
-            assert f.read().strip() == '1000'
+            assert f.read().strip() == userid
         with open(os.path.join(tmpdir, 'pwd')) as f:
             assert f.read().strip() == '/home/{}'.format(username)
         with open(os.path.join(tmpdir, 'name')) as f:
