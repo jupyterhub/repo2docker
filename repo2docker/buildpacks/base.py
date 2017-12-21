@@ -112,6 +112,10 @@ USER ${NB_USER}
 RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
+
+# Specify the default command to run
+CMD jupyter notebook --ip 0.0.0.0
+
 """
 
 DOC_URL = "http://repo2docker.readthedocs.io/en/latest/samples.html"
