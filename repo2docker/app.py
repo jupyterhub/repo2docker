@@ -118,27 +118,45 @@ class Repo2Docker(Application):
     )
 
     user_id = Int(
-        1000,
         help="""
         UID of the user to create inside the built image.
 
         Should be a uid that is not currently used by anything in the image.
+        Defaults to uid of currently running user, since that is the most
+        common case when running r2d manually.
 
         Might not affect Dockerfile builds.
         """,
         config=True
     )
 
+    @default('user_id')
+    def _user_id_default(self):
+        """
+        Default user_id to current running user.
+        """
+        return os.geteuid()
+
     user_name = Unicode(
         'jovyan',
         help="""
         Username of the user to create inside the built image.
 
-        Should be a uid that is not currently used by anything in the image,
+        Should be a username that is not currently used by anything in the image,
         and should conform to the restrictions on user names for Linux.
+
+        Defaults to username of currently running user, since that is the most
+        common case when running r2d manually.
         """,
         config=True
     )
+
+    @default('user_name')
+    def _user_name_default(self):
+        """
+        Default user_name to current running user.
+        """
+        return pwd.getpwuid(os.getuid()).pw_name
 
     def fetch(self, url, ref, checkout_path):
         try:
@@ -249,15 +267,13 @@ class Repo2Docker(Application):
 
         argparser.add_argument(
             '--user-id',
-            help='User id the primary user in the image',
-            default=1000,
+            help='User ID of the primary user in the image',
             type=int
         )
 
         argparser.add_argument(
             '--user-name',
-            help='User name of primary user in the image',
-            default='jovyan'
+            help='Username of the primary user in the image',
         )
 
         return argparser
@@ -343,8 +359,10 @@ class Repo2Docker(Application):
 
         self.run_cmd = args.cmd
 
-        self.user_id = int(args.user_id)
-        self.user_name = args.user_name
+        if args.user_id:
+            self.user_id = args.user_id
+        if args.user_name:
+            self.user_name = args.user_name
 
         if args.build_memory_limit:
             self.build_memory_limit = args.build_memory_limit
