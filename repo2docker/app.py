@@ -16,6 +16,7 @@ import argparse
 import tempfile
 from pythonjsonlogger import jsonlogger
 import escapism
+import pwd
 
 
 from traitlets.config import Application
