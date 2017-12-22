@@ -18,7 +18,7 @@ class DockerBuildPack(BuildPack):
         with open(Dockerfile) as f:
             return f.read()
 
-    def build(self, image_spec, memory_limit):
+    def build(self, image_spec, memory_limit, build_args):
         limits = {
             # Always disable memory swap for building, since mostly
             # nothing good can come of that.
@@ -31,7 +31,7 @@ class DockerBuildPack(BuildPack):
                 path=os.getcwd(),
                 dockerfile=self.binder_path(self.dockerfile),
                 tag=image_spec,
-                buildargs={},
+                buildargs=build_args,
                 decode=True,
                 forcerm=True,
                 rm=True,

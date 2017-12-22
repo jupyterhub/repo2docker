@@ -16,10 +16,11 @@ import argparse
 import tempfile
 from pythonjsonlogger import jsonlogger
 import escapism
+import pwd
 
 
 from traitlets.config import Application
-from traitlets import Unicode, List, default, Tuple
+from traitlets import Unicode, List, default, Tuple, Dict, Int
 import docker
 from docker.utils import kwargs_from_env
 
@@ -100,6 +101,63 @@ class Repo2Docker(Application):
         """,
         config=True
     )
+
+    volumes = Dict(
+        {},
+        help="""
+        Volumes to mount when running the container.
+
+        Only used when running, not during build!
+
+        Should be a key value pair, with the key being the volume source &
+        value being the destination. Both can be relative - sources are
+        resolved relative to the current working directory on the host,
+        destination is resolved relative to the working directory of the image -
+        ($HOME by default)
+        """,
+        config=True
+    )
+
+    user_id = Int(
+        help="""
+        UID of the user to create inside the built image.
+
+        Should be a uid that is not currently used by anything in the image.
+        Defaults to uid of currently running user, since that is the most
+        common case when running r2d manually.
+
+        Might not affect Dockerfile builds.
+        """,
+        config=True
+    )
+
+    @default('user_id')
+    def _user_id_default(self):
+        """
+        Default user_id to current running user.
+        """
+        return os.geteuid()
+
+    user_name = Unicode(
+        'jovyan',
+        help="""
+        Username of the user to create inside the built image.
+
+        Should be a username that is not currently used by anything in the image,
+        and should conform to the restrictions on user names for Linux.
+
+        Defaults to username of currently running user, since that is the most
+        common case when running r2d manually.
+        """,
+        config=True
+    )
+
+    @default('user_name')
+    def _user_name_default(self):
+        """
+        Default user_name to current running user.
+        """
+        return pwd.getpwuid(os.getuid()).pw_name
 
     def fetch(self, url, ref, checkout_path):
         try:
@@ -200,6 +258,25 @@ class Repo2Docker(Application):
             help='Push docker image to repository'
         )
 
+        argparser.add_argument(
+            '--volume', '-v',
+            dest='volumes',
+            action='append',
+            help='Volumes to mount inside the container, in form src:dest',
+            default=[]
+        )
+
+        argparser.add_argument(
+            '--user-id',
+            help='User ID of the primary user in the image',
+            type=int
+        )
+
+        argparser.add_argument(
+            '--user-name',
+            help='Username of the primary user in the image',
+        )
+
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -272,7 +349,21 @@ class Repo2Docker(Application):
             self.run = False
             self.push = False
 
+        if args.volumes and not args.run:
+            # Can't mount if we aren't running
+            print("To Mount volumes with -v, you also need to run the container")
+            sys.exit(1)
+
+        for v in args.volumes:
+            src, dest = v.split(':')
+            self.volumes[src] = dest
+
         self.run_cmd = args.cmd
+
+        if args.user_id:
+            self.user_id = args.user_id
+        if args.user_name:
+            self.user_name = args.user_name
 
         if args.build_memory_limit:
             self.build_memory_limit = args.build_memory_limit
@@ -310,11 +401,27 @@ class Repo2Docker(Application):
         else:
             run_cmd = self.run_cmd
             ports = {}
+        container_volumes = {}
+        if self.volumes:
+            api_client = docker.APIClient(
+                version='auto',
+                **docker.utils.kwargs_from_env()
+            )
+            image = api_client.inspect_image(self.output_image_spec)
+            image_workdir = image['ContainerConfig']['WorkingDir']
+
+            for k, v in self.volumes.items():
+                container_volumes[os.path.abspath(k)] = {
+                    'bind': v if v.startswith('/') else os.path.join(image_workdir, v),
+                    'mode': 'rw'
+                }
+
         container = client.containers.run(
             self.output_image_spec,
             ports=ports,
             detach=True,
-            command=run_cmd
+            command=run_cmd,
+            volumes=container_volumes
         )
         while container.status == 'created':
             time.sleep(0.5)
@@ -377,9 +484,13 @@ class Repo2Docker(Application):
                            extra=dict(phase='building'))
 
             if self.build:
+                build_args = {
+                    'NB_USER': self.user_name,
+                    'NB_UID': str(self.user_id)
+                }
                 self.log.info('Using %s builder\n', bp.name,
                               extra=dict(phase='building'))
-                for l in picked_buildpack.build(self.output_image_spec, self.build_memory_limit):
+                for l in picked_buildpack.build(self.output_image_spec, self.build_memory_limit, build_args):
                     if 'stream' in l:
                         self.log.info(l['stream'],
                                       extra=dict(phase='building'))
