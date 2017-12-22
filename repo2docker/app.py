@@ -124,10 +124,18 @@ class Repo2Docker(Application):
 
     def validate_image_name(self, image_name):
         """
-        Validate that the image_name read by argparse contains only lowercase characters
-        :param image_name: string argument read by argparse
-        :return: test and return image_name if it only contains lowercase characters else raise error
+        Validate image_name read by argparse contains only lowercase characters
+
+        Args:
+            image_name: string argument read by the argument parser
+
+        Returns:
+            unmodified image_name
+
+        Raises:
+            ArgumentTypeError: if image_name contains characters that are not lowercase
         """
+
         if not image_name.islower():
             msg = "%r is not a valid docker image name. Image name can contain only lowercase characters." % image_name
             raise argparse.ArgumentTypeError(msg)
