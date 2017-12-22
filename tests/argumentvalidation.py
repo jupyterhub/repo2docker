@@ -17,11 +17,9 @@ def does_validate_image_name(builddir, image_name):
             ],
             stderr=subprocess.STDOUT,
         ).decode()
-        print(output)
         return True
     except subprocess.CalledProcessError as e:
         output = e.output.decode()
-        print(output)
         if "error: argument --image-name: %r is not a valid docker image name. " \
            "Image name can contain only lowercase characters." % image_name in output:
             return False
@@ -29,6 +27,10 @@ def does_validate_image_name(builddir, image_name):
             raise
 
 def test_image_name_fail():
+    """
+    Test to check if repo2docker throws image_name validation error on --image-name argument containing uppercase characters.
+    """
+
     builddir = os.path.dirname(__file__)
 
     assert not does_validate_image_name(builddir, 'Test/Invalid_name:1.0.0')
