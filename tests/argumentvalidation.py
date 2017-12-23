@@ -11,6 +11,7 @@ def does_validate_image_name(builddir, image_name):
             [
                 'repo2docker',
                 '--no-run',
+                '--no-build',
                 '--image-name',
                 str(image_name),
                 builddir
@@ -26,12 +27,64 @@ def does_validate_image_name(builddir, image_name):
         else:
             raise
 
+
 def test_image_name_fail():
     """
-    Test to check if repo2docker throws image_name validation error on --image-name argument containing uppercase characters.
+    Test to check if repo2docker throws image_name validation error on --image-name argument containing
+    uppercase characters and _ characters in incorrect positions.
     """
 
     builddir = os.path.dirname(__file__)
 
     assert not does_validate_image_name(builddir, 'Test/Invalid_name:1.0.0')
 
+
+def test_image_name_underscore_fail():
+    """
+    Test to check if repo2docker throws image_name validation error on --image-name argument starts with _.
+    """
+
+    builddir = os.path.dirname(__file__)
+
+    assert not does_validate_image_name(builddir, '_test/invalid_name:1.0.0')
+
+
+def test_image_name_double_dot_fail():
+    """
+    Test to check if repo2docker throws image_name validation error on --image-name argument contains consecutive dots.
+    """
+
+    builddir = os.path.dirname(__file__)
+
+    assert not does_validate_image_name(builddir, 'test..com/invalid_name:1.0.0')
+
+
+def test_image_name_valid_restircted_registry_domain_name_fail():
+    """
+    Test to check if repo2docker throws image_name validation error on -image-name argument being invalid. Based on the
+    regex definitions first part of registry domain cannot contain uppercase characters
+    """
+
+    builddir = os.path.dirname(__file__)
+
+    assert not does_validate_image_name(builddir, 'Test.com/valid_name:1.0.0')
+
+
+def test_image_name_valid_registry_domain_name_success():
+    """
+    Test to check if repo2docker runs with a valid --image-name argument.
+    """
+
+    builddir = os.path.dirname(__file__) + '/dockerfile/simple/'
+
+    assert does_validate_image_name(builddir, 'test.COM/valid_name:1.0.0')
+
+
+def test_image_name_valid_name_success():
+    """
+    Test to check if repo2docker runs with a valid --image-name argument.
+    """
+
+    builddir = os.path.dirname(__file__) + '/dockerfile/simple/'
+
+    assert does_validate_image_name(builddir, 'test.com/valid_name:1.0.0')
