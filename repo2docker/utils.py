@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from functools import partial
 import shutil
 import subprocess
+import re
 
 from traitlets import Integer
 
@@ -54,6 +55,81 @@ def maybe_cleanup(path, cleanup=False):
     yield
     if cleanup:
         shutil.rmtree(path, ignore_errors=True)
+
+
+def is_valid_docker_image_name(image_name):
+    """
+    Function that constructs a regex representing the docker image name and tests it against the given image_name
+    Reference Regex definition in https://github.com/docker/distribution/blob/master/reference/regexp.go
+
+    Args:
+        image_name: string representing a docker image name
+
+    Returns:
+        True if image_name is valid else False
+
+    Example:
+
+        'test.Com/name:latest' is a valid tag
+
+        'Test/name:latest' is not a valid tag
+
+        Note:
+
+        This function has a stricter pattern than https://github.com/docker/distribution/blob/master/reference/regexp.go
+
+        This pattern will not allow cases like
+        'TEST.com/name:latest' though docker considers it a valid tag
+    """
+    reference_regex = re.compile(r"""^ # Anchored at start and end of string
+
+                        ( # Start capturing name
+
+                        (?: # start grouping the optional registry domain name part
+
+                        (?:[a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9]) # lowercase only '<domain-name-component>'
+
+                        (?: # start optional group
+
+                        (?:\.(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]))+ # multiple repetitions of pattern '.<domain-name-component>'
+
+                        )? # end optional grouping part of the '.' separated domain name
+
+                        (?::[0-9]+)?/ # '<domain-name>' followed by an optional '<port>' component followed by '/' literal
+
+                        )? # end grouping the optional registry domain part
+
+                        # start <name-pattern>
+                        [a-z0-9]+   # must have a <name-component>
+                        (?:
+                        (?:(?:[\._]|__|[-]*)[a-z0-9]+)+ # repeat the pattern '<separator><name-component>'
+                        )? # optionally have multiple repetitions of the above line
+                        # end <name-pattern>
+
+                        (?: # start optional name components
+
+                        (?: # start multiple repetitions
+
+                        /   # separate multiple name components by /
+                        # start <name-pattern>
+                        [a-z0-9]+ # must have a <name-component>
+                        (?:
+                        (?:(?:[\._]|__|[-]*)[a-z0-9]+)+ # repeat the pattern '<separator><name-component>'
+                        )? # optionally have multiple repetitions of the above line
+                        # end <name-pattern>
+
+                        )+ # multiple repetitions of the pattern '/<name-component><separator><name-component>'
+
+                        )? # optionally have  the above group
+
+                        ) # end capturing name
+
+                        (?::([\w][\w.-]{0,127}))? # optional capture <tag-pattern>=':<tag>'
+                        (?:@[A-Za-z][A-Za-z0-9]*(?:[-_+.][A-Za-z][A-Za-z0-9]*)*[:][[:xdigit:]]{32,})? # optionally capture <digest-pattern>='@<digest>'
+                        $""",
+                                 re.VERBOSE)
+
+    return reference_regex.match(image_name) is not None
 
 
 class ByteSpecification(Integer):
