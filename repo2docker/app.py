@@ -29,7 +29,7 @@ from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
 )
-from .utils import execute_cmd, ByteSpecification, maybe_cleanup, ImageNameValidator
+from .utils import execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name
 from . import __version__
 
 
@@ -127,7 +127,7 @@ class Repo2Docker(Application):
         Validate image_name read by argparse contains only lowercase characters
 
         Args:
-            image_name: string argument read by the argument parser
+            image_name (string): argument read by the argument parser
 
         Returns:
             unmodified image_name
@@ -136,7 +136,7 @@ class Repo2Docker(Application):
             ArgumentTypeError: if image_name contains characters that are not lowercase
         """
 
-        if not ImageNameValidator.is_valid_image_name(image_name):
+        if not is_valid_docker_image_name(image_name):
             msg = "%r is not a valid docker image name. Image name can contain only lowercase characters." % image_name
             raise argparse.ArgumentTypeError(msg)
         return image_name
