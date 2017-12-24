@@ -5,24 +5,17 @@ Tests that runs validity checks on arguments passed in from shell
 import os
 import subprocess
 
-def does_validate_image_name(builddir, image_name):
+def validate_arguments(builddir, args_list, expected):
     try:
-        output = subprocess.check_output(
-            [
-                'repo2docker',
-                '--no-run',
-                '--no-build',
-                '--image-name',
-                str(image_name),
-                builddir
-            ],
-            stderr=subprocess.STDOUT,
-        ).decode()
+        cmd = ['repo2docker']
+        for k in args_list:
+            cmd.append(k)
+        cmd.append(builddir)
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         return True
     except subprocess.CalledProcessError as e:
         output = e.output.decode()
-        if "error: argument --image-name: %r is not a valid docker image name. " \
-           "Image name can contain only lowercase characters." % image_name in output:
+        if expected in output:
             return False
         else:
             raise
@@ -35,8 +28,11 @@ def test_image_name_fail():
     """
 
     builddir = os.path.dirname(__file__)
-
-    assert not does_validate_image_name(builddir, 'Test/Invalid_name:1.0.0')
+    image_name = 'Test/Invalid_name:1.0.0'
+    args_list = ['--no-run', '--no-build', '--image-name', image_name]
+    expected = "error: argument --image-name: %r is not a valid docker image name. " \
+               "Image name can contain only lowercase characters." % image_name
+    assert not validate_arguments(builddir, args_list, expected)
 
 
 def test_image_name_underscore_fail():
@@ -45,8 +41,12 @@ def test_image_name_underscore_fail():
     """
 
     builddir = os.path.dirname(__file__)
+    image_name = '_test/invalid_name:1.0.0'
+    args_list = ['--no-run', '--no-build', '--image-name', image_name]
+    expected = "error: argument --image-name: %r is not a valid docker image name. " \
+               "Image name can contain only lowercase characters." % image_name
 
-    assert not does_validate_image_name(builddir, '_test/invalid_name:1.0.0')
+    assert not validate_arguments(builddir, args_list, expected)
 
 
 def test_image_name_double_dot_fail():
@@ -55,8 +55,12 @@ def test_image_name_double_dot_fail():
     """
 
     builddir = os.path.dirname(__file__)
+    image_name = 'test..com/invalid_name:1.0.0'
+    args_list = ['--no-run', '--no-build', '--image-name', image_name]
+    expected = "error: argument --image-name: %r is not a valid docker image name. " \
+               "Image name can contain only lowercase characters." % image_name
 
-    assert not does_validate_image_name(builddir, 'test..com/invalid_name:1.0.0')
+    assert not validate_arguments(builddir, args_list, expected)
 
 
 def test_image_name_valid_restircted_registry_domain_name_fail():
@@ -66,8 +70,12 @@ def test_image_name_valid_restircted_registry_domain_name_fail():
     """
 
     builddir = os.path.dirname(__file__)
+    image_name = 'Test.com/valid_name:1.0.0'
+    args_list = ['--no-run', '--no-build', '--image-name', image_name]
+    expected = "error: argument --image-name: %r is not a valid docker image name. " \
+               "Image name can contain only lowercase characters." % image_name
 
-    assert not does_validate_image_name(builddir, 'Test.com/valid_name:1.0.0')
+    assert not validate_arguments(builddir, args_list, expected)
 
 
 def test_image_name_valid_registry_domain_name_success():
@@ -76,8 +84,10 @@ def test_image_name_valid_registry_domain_name_success():
     """
 
     builddir = os.path.dirname(__file__) + '/dockerfile/simple/'
+    image_name = 'test.COM/valid_name:1.0.0'
+    args_list = ['--no-run', '--no-build', '--image-name', image_name]
 
-    assert does_validate_image_name(builddir, 'test.COM/valid_name:1.0.0')
+    assert validate_arguments(builddir, args_list, None)
 
 
 def test_image_name_valid_name_success():
@@ -86,5 +96,26 @@ def test_image_name_valid_name_success():
     """
 
     builddir = os.path.dirname(__file__) + '/dockerfile/simple/'
+    image_name = 'test.com/valid_name:1.0.0'
+    args_list = ['--no-run', '--no-build', '--image-name', image_name]
 
-    assert does_validate_image_name(builddir, 'test.com/valid_name:1.0.0')
+    assert validate_arguments(builddir, args_list, None)
+
+def test_volume_no_build_fail():
+    """
+    Test to check if repo2docker fails when both --no-build and -v arguments are given
+    """
+    builddir = os.path.dirname(__file__)
+    args_list = ['--no-build', '-v', '/data:/data']
+
+    assert not validate_arguments(builddir, args_list, 'To Mount volumes with -v, you also need to run the container')
+
+
+def test_volume_no_run_fail():
+    """
+    Test to check if repo2docker fails when both --no-run and -v arguments are given
+    """
+    builddir = os.path.dirname(__file__)
+    args_list = ['--no-run', '-v', '/data:/data']
+
+    assert not validate_arguments(builddir, args_list, 'To Mount volumes with -v, you also need to run the container')
