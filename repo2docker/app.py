@@ -30,7 +30,7 @@ from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
 )
-from .utils import execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name
+from .utils import execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name, validate_and_generate_port_mapping
 from . import __version__
 
 
@@ -265,6 +265,20 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
+            '--publish', '-p',
+            dest='ports',
+            action='append',
+            help='Specify port mappings for the image. Needs a command to run in the container.'
+        )
+
+        argparser.add_argument(
+            '--publish-all', '-P',
+            dest='all_ports',
+            action='store_true',
+            help='Publish all exposed ports to random host ports.'
+        )
+
+        argparser.add_argument(
             '--no-clean',
             dest='clean',
             action='store_false',
@@ -389,6 +403,21 @@ class Repo2Docker(Application):
 
         self.run_cmd = args.cmd
 
+        if args.all_ports and not self.run:
+            print('To publish user defined port mappings, the container must also be run')
+            sys.exit(1)
+
+        if args.ports and not self.run:
+            print('To publish user defined port mappings, the container must also be run')
+            sys.exit(1)
+
+        if args.ports and not self.run_cmd:
+            print('To publish user defined port mapping, user must specify the command to run in the container')
+            sys.exit(1)
+
+        self.ports = validate_and_generate_port_mapping(args.ports)
+        self.all_ports = args.all_ports
+
         if args.user_id:
             self.user_id = args.user_id
         if args.user_name:
@@ -427,15 +456,19 @@ class Repo2Docker(Application):
 
     def run_image(self):
         client = docker.from_env(version='auto')
-        port = self._get_free_port()
         if not self.run_cmd:
             port = str(self._get_free_port())
+
             run_cmd = ['jupyter', 'notebook', '--ip', '0.0.0.0',
                        '--port', port]
             ports = {'%s/tcp' % port: port}
         else:
+            # run_cmd given by user, if port is also given then pass it on
             run_cmd = self.run_cmd
-            ports = {}
+            if self.ports:
+                ports = self.ports
+            else:
+                ports = {}
         container_volumes = {}
         if self.volumes:
             api_client = docker.APIClient(
@@ -453,6 +486,7 @@ class Repo2Docker(Application):
 
         container = client.containers.run(
             self.output_image_spec,
+            publish_all_ports=self.all_ports,
             ports=ports,
             detach=True,
             command=run_cmd,
@@ -487,6 +521,7 @@ class Repo2Docker(Application):
         port = s.getsockname()[1]
         s.close()
         return port
+
 
     def start(self):
         if self.repo_type == 'local':

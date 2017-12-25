@@ -3,6 +3,7 @@ from functools import partial
 import shutil
 import subprocess
 import re
+import sys
 
 from traitlets import Integer
 
@@ -56,6 +57,75 @@ def maybe_cleanup(path, cleanup=False):
     if cleanup:
         shutil.rmtree(path, ignore_errors=True)
 
+
+def validate_and_generate_port_mapping(port_mapping):
+    """
+    Validate the port mapping list provided as argument and split into as dictionary of key being continer port and the
+    values being None, or 'host_port' or ['interface_ip','host_port']
+
+
+    Args:
+        port_mapping (list): List of strings of format 'host_port:container_port'
+                             with optional tcp udp values and host network interface
+
+    Returns:
+        List of validated tuples of form ('host_port:container_port') with optional tcp udp values and host network interface
+
+    Raises:
+        Exception on invalid port mapping
+
+    Note:
+        One limitation cannot bind single container_port to multiple host_ports (docker-py supports this but repo2docker
+        does not)
+
+    Examples:
+        Valid port mappings are
+        127.0.0.1:90:900
+        :999 - To match to any host port
+        999:999/tcp - bind 999 host port to 999 tcp container port
+
+        Invalid port mapping
+        127.0.0.1::999 --- even though docker accepts it
+        other invalid ip address combinations
+    """
+    reg_regex = re.compile('''^(
+                                    ( # or capturing group
+                                    (?: # start capturing ip address of network interface
+                                    (?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3} # first three parts
+                                       (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?) # last part of the ip address
+                                    :(?:6553[0-5]|655[0-2][0-9]|65[0-4](\d){2}|6[0-4](\d){3}|[1-5](\d){4}|(\d){1,4})
+                                    )?
+                                    |   # host ip with port or only port
+                                    (?:6553[0-5]|655[0-2][0-9]|65[0-4](\d){2}|6[0-4](\d){3}|[1-5](\d){4}|(\d){0,4})
+                                    )
+                                    :
+                                    (?:6553[0-5]|655[0-2][0-9]|65[0-4](\d){2}|6[0-4](\d){3}|[1-5](\d){4}|(\d){0,4})
+                                    (?:/udp|/tcp)?
+                               )$''', re.VERBOSE)
+    ports = {}
+    if not port_mapping:
+        return None
+    for p in port_mapping:
+        if reg_regex.match(p) is None:
+            raise Exception('Invalid port mapping ' + str(p))
+        # Do a reverse split twice on the separator :
+        port_host = str(p).rsplit(':', 2)
+        host = None
+        if len(port_host) == 3:
+            # host, optional host_port and container port information given
+            host = port_host[0]
+            host_port = port_host[1]
+            container_port = port_host[2]
+        else:
+            host_port = port_host[0] if len(port_host[0]) > 0 else None
+            container_port = port_host[1]
+
+
+        if host is None:
+            ports[str(container_port)] = host_port
+        else:
+            ports[str(container_port)] = (host, host_port)
+    return ports
 
 def is_valid_docker_image_name(image_name):
     """

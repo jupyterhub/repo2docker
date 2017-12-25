@@ -5,6 +5,7 @@ Tests that runs validity checks on arguments passed in from shell
 import os
 import subprocess
 
+
 def validate_arguments(builddir, args_list, expected):
     try:
         cmd = ['repo2docker']
@@ -101,6 +102,7 @@ def test_image_name_valid_name_success():
 
     assert validate_arguments(builddir, args_list, None)
 
+
 def test_volume_no_build_fail():
     """
     Test to check if repo2docker fails when both --no-build and -v arguments are given
@@ -120,6 +122,7 @@ def test_volume_no_run_fail():
 
     assert not validate_arguments(builddir, args_list, 'To Mount volumes with -v, you also need to run the container')
 
+
 def test_env_no_run_fail():
     """
     Test to check if repo2docker fails when both --no-run and -e arguments are given 
@@ -129,3 +132,58 @@ def test_env_no_run_fail():
 
     assert not validate_arguments(builddir, args_list, 'To specify environment variables, you also need to run the container')
 
+
+def test_port_mapping_no_run_fail():
+    """
+    Test to check if repo2docker fails when both --no-run and --publish arguments are specified.
+    """
+    builddir = os.path.dirname(__file__)
+    args_list = ['--no-run', '--publish', '8000:8000']
+
+    assert not validate_arguments(builddir, args_list, 'To publish user defined port mappings, the container must also be run')
+
+
+def test_all_ports_mapping_no_run_fail():
+    """
+    Test to check if repo2docker fails when both --no-run and -P arguments are specified.
+    """
+    builddir = os.path.dirname(__file__)
+    args_list = ['--no-run', '-P']
+
+    assert not validate_arguments(builddir, args_list, 'To publish user defined port mappings, the container must also be run')
+
+
+def test_invalid_port_mapping_fail():
+    """
+    Test to check if r2d fails when an invalid port is specified in the port mapping
+    """
+    builddir = os.path.dirname(__file__)
+    # Specifying builddir here itself to simulate passing in a run command
+    # builddir passed in the function will be an argument for the run command
+    args_list = ['-p', '75000:80', builddir, 'ls']
+
+    assert not validate_arguments(builddir, args_list, 'Invalid port mapping')
+
+
+def test_invalid_protocol_port_mapping_fail():
+    """
+    Test to check if r2d fails when an invalid protocol is specified in the port mapping
+    """
+    builddir = os.path.dirname(__file__)
+    # Specifying builddir here itself to simulate passing in a run command
+    # builddir passed in the function will be an argument for the run command
+    args_list = ['-p', '80/tpc:8000', builddir, 'ls']
+
+    assert not validate_arguments(builddir, args_list, 'Invalid port mapping')
+
+
+def test_invalid_container_port_protocol_mapping_fail():
+    """
+    Test to check if r2d fails when an invalid protocol is specified in the container port in port mapping
+    """
+    builddir = os.path.dirname(__file__)
+    # Specifying builddir here itself to simulate passing in a run command
+    # builddir passed in the function will be an argument for the run command
+    args_list = ['-p', '80:8000/upd', builddir, 'ls']
+
+    assert not validate_arguments(builddir, args_list, 'Invalid port mapping')
