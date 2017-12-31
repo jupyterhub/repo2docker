@@ -443,7 +443,7 @@ class BaseImage(BuildPack):
                     if not re.match(r"^[a-z0-9.+-]+", package):
                         raise ValueError("Found invalid package name {} in "
                                          "apt.txt".format(package))
-                extra_apt_packages.append(package)
+                    extra_apt_packages.append(package)
 
             assemble_scripts.append((
                 'root',
