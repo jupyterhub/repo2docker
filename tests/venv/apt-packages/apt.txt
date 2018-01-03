@@ -4,5 +4,5 @@ gfortran
 
 # testing to see if all packages get installed
 rolldice
-moo
+sl
 
