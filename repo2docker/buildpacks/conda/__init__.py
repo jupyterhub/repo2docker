@@ -6,7 +6,7 @@ import os
 import re
 
 from ruamel.yaml import YAML
-from traitlets import default
+from traitlets import default, Unicode
 
 from ..base import BuildPack
 
@@ -46,7 +46,7 @@ class CondaBuildPack(BuildPack):
         files = {
             'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
         }
-        py_version = self.detect_python_version()
+        py_version = self.python_version
         self.log.info("Building conda environment for python=%s" % py_version)
         # Select the frozen base environment based on Python version.
         # avoids expensive and possibly conflicting upgrades when changing
@@ -55,36 +55,30 @@ class CondaBuildPack(BuildPack):
         # the default base environment is used.
         frozen_name = 'environment.frozen.yml'
         if py_version:
-            py_frozen_name = \
-                'environment.py-{py}.frozen.yml'.format(py=py_version)
-            if os.path.exists(os.path.join(HERE, py_frozen_name)):
-                frozen_name = py_frozen_name
+            if self.py2:
+                # python 2 goes in a different env
+                files['conda/environment.py-2.7.frozen.yml'] = '/tmp/kernel-environment.yml'
             else:
-                self.log.warning("No frozen env: %s", py_frozen_name)
+                py_frozen_name = \
+                    'environment.py-{py}.frozen.yml'.format(py=py_version)
+                if os.path.exists(os.path.join(HERE, py_frozen_name)):
+                    frozen_name = py_frozen_name
+                else:
+                    self.log.warning("No frozen env: %s", py_frozen_name)
         files['conda/' + frozen_name] = '/tmp/environment.yml'
         return files
 
-    @default('assemble_scripts')
-    def setup_assembly(self):
-        assembly_scripts = []
-        environment_yml = self.binder_path('environment.yml')
-        if os.path.exists(environment_yml):
-            assembly_scripts.append((
-                '${NB_USER}',
-                r"""
-                conda env update -v -n root -f "{}" && \
-                conda clean -tipsy
-                """.format(environment_yml)
-            ))
-        return assembly_scripts
-
+    python_version = Unicode()
+    @default('python_version')
     def detect_python_version(self):
         """Detect the Python version for a given environment.yml
 
-        Will return 'x.y' if found, or None.
+        Will return 'x.y' if found, or Falsy '' if not.
         """
         py_version = None
         environment_yml = self.binder_path('environment.yml')
+        if not os.path.exists(environment_yml):
+            return ''
         with open(environment_yml) as f:
             env = YAML().load(f)
             for dep in env.get('dependencies', []):
@@ -103,6 +97,29 @@ class CondaBuildPack(BuildPack):
             else:
                 # return major.minor
                 return '.'.join(py_version[:2])
+
+        return ''
+
+    @property
+    def py2(self):
+        """Am I building a Python 2 kernel environment?"""
+        return self.python_version and self.python_version.split('.')[0] == '2'
+
+    @default('assemble_scripts')
+    def setup_assembly(self):
+        assembly_scripts = []
+        environment_yml = self.binder_path('environment.yml')
+        env_name = 'kernel' if self.py2 else 'root'
+        if os.path.exists(environment_yml):
+            assembly_scripts.append((
+                '${NB_USER}',
+                r"""
+                conda env update -v -n {} -f "{}" && \
+                conda clean -tipsy
+                """.format(env_name, environment_yml)
+            ))
+        return assembly_scripts
+
 
     def detect(self):
         return os.path.exists(self.binder_path('environment.yml')) and super().detect()
