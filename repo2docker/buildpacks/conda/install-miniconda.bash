@@ -32,6 +32,12 @@ ${CONDA_DIR}/bin/conda config --system --set show_channel_urls true
 
 ${CONDA_DIR}/bin/conda env update -n root -f /tmp/environment.yml
 
+if [[ -f /tmp/kernel-environment.yml ]]; then
+    # install kernel env and register kernelspec
+    ${CONDA_DIR}/bin/conda env create -n kernel -f /tmp/kernel-environment.yml
+    ${CONDA_DIR}/envs/kernel/bin/ipython kernel install --prefix "${CONDA_DIR}"
+fi
+
 # Clean things out!
 ${CONDA_DIR}/bin/conda clean -tipsy
 

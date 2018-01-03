@@ -8,7 +8,8 @@ setup(
         'traitlets',
         'python-json-logger',
         'escapism',
-        'jinja2'
+        'jinja2',
+        'ruamel.yaml>=0.15',
     ],
     python_requires='>=3.4',
     author='Yuvi Panda',
