@@ -1,3 +1,5 @@
 #!/bin/bash
 set -euo pipefail
 which gfortran
+which unp
+which byacc

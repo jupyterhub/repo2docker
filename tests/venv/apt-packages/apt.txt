@@ -1,3 +1,8 @@
 # testing to skip comments in this file
 
 gfortran
+
+# testing to see if all packages get installed
+unp
+byacc
+
