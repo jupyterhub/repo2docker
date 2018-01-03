@@ -1,9 +1,19 @@
 """
-Generates a variety of Dockerfiles based on an input matrix
+Buildpack for conda environments
 """
-from traitlets import default
+import glob
 import os
+import re
+
+from ruamel.yaml import YAML
+from traitlets import default
+
 from ..base import BuildPack
+
+# pattern for parsing conda dependency line
+PYTHON_REGEX = re.compile(r'python\s*=+\s*([\d\.]*)')
+# current directory
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 class CondaBuildPack(BuildPack):
@@ -11,15 +21,10 @@ class CondaBuildPack(BuildPack):
     version = "0.1"
     env = [
         ('CONDA_DIR', '${APP_BASE}/conda'),
-        ('NB_PYTHON_PREFIX', '${CONDA_DIR}')
+        ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
     ]
 
     path = ['${CONDA_DIR}/bin']
-
-    build_script_files = {
-        'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
-        'conda/environment.frozen.yml': '/tmp/environment.yml'
-    }
 
     build_scripts = [
         (
@@ -30,6 +35,34 @@ class CondaBuildPack(BuildPack):
             """
         )
     ]
+
+    major_pythons = {
+        '2': '2.7',
+        '3': '3.6',
+    }
+
+    @default('build_script_files')
+    def setup_build_script_files(self):
+        files = {
+            'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
+        }
+        py_version = self.detect_python_version()
+        self.log.info("Building conda environment for python=%s" % py_version)
+        # Select the frozen base environment based on Python version.
+        # avoids expensive and possibly conflicting upgrades when changing
+        # major Python versions during upgrade.
+        # If no version is specified or no matching X.Y version is found,
+        # the default base environment is used.
+        frozen_name = 'environment.frozen.yml'
+        if py_version:
+            py_frozen_name = \
+                'environment.py-{py}.frozen.yml'.format(py=py_version)
+            if os.path.exists(os.path.join(HERE, py_frozen_name)):
+                frozen_name = py_frozen_name
+            else:
+                self.log.warning("No frozen env: %s", py_frozen_name)
+        files['conda/' + frozen_name] = '/tmp/environment.yml'
+        return files
 
     @default('assemble_scripts')
     def setup_assembly(self):
@@ -44,6 +77,32 @@ class CondaBuildPack(BuildPack):
                 """.format(environment_yml)
             ))
         return assembly_scripts
+
+    def detect_python_version(self):
+        """Detect the Python version for a given environment.yml
+
+        Will return 'x.y' if found, or None.
+        """
+        py_version = None
+        environment_yml = self.binder_path('environment.yml')
+        with open(environment_yml) as f:
+            env = YAML().load(f)
+            for dep in env.get('dependencies', []):
+                if not isinstance(dep, str):
+                    continue
+                match = PYTHON_REGEX.match(dep)
+                if not match:
+                    continue
+                py_version = match.group(1)
+                break
+
+        # extract major.minor
+        if py_version:
+            if len(py_version) == 1:
+                return self.major_pythons.get(py_version[0])
+            else:
+                # return major.minor
+                return '.'.join(py_version[:2])
 
     def detect(self):
         return os.path.exists(self.binder_path('environment.yml')) and super().detect()
