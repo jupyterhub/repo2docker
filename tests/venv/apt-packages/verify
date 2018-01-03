@@ -1,5 +1,5 @@
 #!/bin/bash
 set -euo pipefail
 which gfortran
-which rolldice
-which sl
+which unp
+which byacc
