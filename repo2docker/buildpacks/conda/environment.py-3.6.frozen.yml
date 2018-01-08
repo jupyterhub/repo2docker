@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-01-03 15:33:55 UTC
+# Frozen on 2018-01-08 13:27:23 UTC
 name: r2d
 channels:
 - conda-forge
@@ -19,7 +19,7 @@ dependencies:
 - jedi=0.10.2=py36_0
 - jinja2=2.10=py36_0
 - jsonschema=2.6.0=py36_0
-- jupyter_client=5.2.0=py36_0
+- jupyter_client=5.2.1=py36_0
 - jupyter_core=4.4.0=py_0
 - jupyterlab=0.30.6=py36_0
 - jupyterlab_launcher=0.6.0=py36_0
@@ -43,7 +43,7 @@ dependencies:
 - python-dateutil=2.6.1=py36_0
 - pyzmq=16.0.2=py36_2
 - readline=7.0=0
-- setuptools=38.2.4=py36_0
+- setuptools=38.4.0=py36_0
 - simplegeneric=0.8.1=py36_0
 - six=1.11.0=py36_1
 - sqlite=3.20.1=2
@@ -54,7 +54,7 @@ dependencies:
 - traitlets=4.3.2=py36_0
 - wcwidth=0.1.7=py36_0
 - webencodings=0.5=py36_0
-- wheel=0.30.0=py_1
+- wheel=0.30.0=py36_2
 - widgetsnbextension=2.0.1=py36_0
 - xz=5.2.3=0
 - zeromq=4.2.1=1
