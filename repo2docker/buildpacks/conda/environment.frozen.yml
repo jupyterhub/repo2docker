@@ -4,6 +4,7 @@ name: r2d
 channels:
 - conda-forge
 - defaults
+- conda-forge/label/broken
 dependencies:
 - bleach=2.0.0=py36_0
 - ca-certificates=2017.11.5=0
