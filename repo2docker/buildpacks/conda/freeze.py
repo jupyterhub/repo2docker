@@ -82,6 +82,9 @@ def freeze(env_file, frozen_file):
             'conda config --add channels conda-forge',
             'conda config --system --set auto_update_conda false',
             f"conda env create -v -f /r2d/{env_file} -n r2d",
+            # add conda-forge broken channel as lowest priority in case
+            # any of our frozen packages are marked as broken after freezing
+            'conda config --append channels conda-forge/label/broken',
             f"conda env export -n r2d >> /r2d/{frozen_file}",
         ])
     ])
@@ -117,5 +120,6 @@ if __name__ == '__main__':
         set_python(env_file, py)
         frozen_file = os.path.splitext(env_file)[0] + '.frozen.yml'
         freeze(env_file, frozen_file)
+
     # use last version as default
     shutil.copy(frozen_file, FROZEN_FILE)
