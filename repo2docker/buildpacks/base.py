@@ -1,6 +1,7 @@
 import textwrap
 from traitlets.config import LoggingConfigurable
 from traitlets import Unicode, Set, List, Dict, Tuple, default
+from ruamel.yaml import YAML
 import jinja2
 import tarfile
 import io
@@ -144,7 +145,7 @@ class BuildPack(LoggingConfigurable):
     )
 
     base_image = Unicode(
-        "buildpack-deps:artful",
+        "buildpack-deps:zesty",
         help="""
         Base image to use.
 
@@ -434,8 +435,35 @@ class BaseImage(BuildPack):
         ("APP_BASE", "/srv")
     ]
 
+    base_image_map = {
+        'zesty': 'buildpack-deps:zesty',
+        'artful': 'buildpack-deps:artful'
+    }
+
     def detect(self):
         return True
+
+    @default('base_image')
+    def setup_base_image(self):
+        """
+        Support setting base_image from apt.yaml
+        """
+        try:
+            with open(self.binder_path('apt.yaml')) as f:
+                apt = YAML().load(f)
+                if 'base' in apt:
+                    base = apt['base']
+                    if base in self.base_image_map:
+                        return self.base_image_map[base]
+                    else:
+                        raise ValueError(
+                            "Unknown base {} found in apt.yaml, available bases are {}".format(
+                                base, ', '.join(self.base_image_map.keys())
+                            )
+                        )
+        except FileNotFoundError:
+            pass
+        return 'buildpack-deps:zesty'
 
     @default('assemble_scripts')
     def setup_assembly(self):

@@ -1,0 +1,3 @@
+#!/bin/bash
+set -euo pipefail
+grep -q 'Ubuntu 17.10' /etc/issue
