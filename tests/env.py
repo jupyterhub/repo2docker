@@ -16,7 +16,8 @@ def test_env():
         subprocess.check_call([
             'repo2docker',
             '-v', '{}:/home/{}'.format(tmpdir, username),
-            '-e', 'FOO={}'.format(ts), 'BAR=baz',
+            '-e', 'FOO={}'.format(ts), 
+            '--env', 'BAR=baz',
             '--',
             tmpdir,
             '/bin/bash',

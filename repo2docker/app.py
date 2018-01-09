@@ -300,7 +300,7 @@ class Repo2Docker(Application):
         argparser.add_argument(
             '--env', '-e',
             dest='environment',
-            nargs='+',
+            action='append',
             help='Environment variables to define at container run time',
             default=[]
         )
