@@ -1,5 +1,5 @@
 """
-Test that volume mounts work when running
+Test that environment variables may be defined
 """
 import os
 import subprocess
