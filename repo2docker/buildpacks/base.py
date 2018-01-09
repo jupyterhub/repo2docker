@@ -10,7 +10,7 @@ import re
 import docker
 
 TEMPLATE = r"""
-FROM buildpack-deps:artful
+FROM {{ base_image }}
 
 # Set up locales properly
 RUN apt-get update && \
@@ -140,6 +140,15 @@ class BuildPack(LoggingConfigurable):
 
         Versions are not specified, and ordering is not guaranteed. These
         are usually installed as apt packages.
+        """
+    )
+
+    base_image = Unicode(
+        "buildpack-deps:artful",
+        help="""
+        Base image to use.
+
+        Should be debian or ubuntu based image.
         """
     )
 
@@ -357,6 +366,7 @@ class BuildPack(LoggingConfigurable):
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.build_script_files,
+            base_image=self.base_image,
             base_packages=sorted(self.base_packages),
             post_build_scripts=self.post_build_scripts,
         )
