@@ -297,6 +297,14 @@ class Repo2Docker(Application):
             help='Username of the primary user in the image',
         )
 
+        argparser.add_argument(
+            '--env', '-e',
+            dest='environment',
+            action='append',
+            help='Environment variables to define at container run time',
+            default=[]
+        )
+
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -389,6 +397,12 @@ class Repo2Docker(Application):
         if args.build_memory_limit:
             self.build_memory_limit = args.build_memory_limit
 
+        if args.environment and not self.run:
+            print("To specify environment variables, you also need to run the container")
+            sys.exit(1)
+
+        self.environment = args.environment
+
     def push_image(self):
         client = docker.APIClient(version='auto', **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer
@@ -442,7 +456,8 @@ class Repo2Docker(Application):
             ports=ports,
             detach=True,
             command=run_cmd,
-            volumes=container_volumes
+            volumes=container_volumes,
+            environment=self.environment
         )
         while container.status == 'created':
             time.sleep(0.5)

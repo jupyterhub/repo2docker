@@ -119,3 +119,13 @@ def test_volume_no_run_fail():
     args_list = ['--no-run', '-v', '/data:/data']
 
     assert not validate_arguments(builddir, args_list, 'To Mount volumes with -v, you also need to run the container')
+
+def test_env_no_run_fail():
+    """
+    Test to check if repo2docker fails when both --no-run and -e arguments are given 
+    """
+    builddir = os.path.dirname(__file__)
+    args_list = ['--no-run', '-e', 'FOO=bar', '--']
+
+    assert not validate_arguments(builddir, args_list, 'To specify environment variables, you also need to run the container')
+
