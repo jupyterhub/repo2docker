@@ -64,7 +64,6 @@ class PythonBuildPack(BuildPack):
     def setup_env(self):
         return [
             ("PYENV_ROOT", "${APP_BASE}/pyenv"),
-            ("VENV_PATH", "${APP_BASE}/venv"),
             ("BASE_PYENV", self.default_version),
             # Prefix to use for installing kernels and finding jupyter binary
             ("NB_PYTHON_PREFIX", "${PYENV_ROOT}/versions/${BASE_PYENV}"),

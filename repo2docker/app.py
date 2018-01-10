@@ -83,7 +83,7 @@ class Repo2Docker(Application):
     )
 
     default_buildpack = Tuple(
-        (BaseImage, PythonBuildPack),
+        (BaseImage, PythonPipBuildPack),
         config=True,
         help="""
         The build pack to use when no buildpacks are found
