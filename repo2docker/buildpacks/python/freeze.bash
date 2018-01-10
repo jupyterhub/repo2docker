@@ -32,7 +32,7 @@ function freeze-requirements {
         sh -c "
             python -m $VENV /venv
             /venv/bin/pip install -r /python/${REQUIREMENTS_FILE} &&
-            /venv/bin/pip freeze | sort --ignore-case >> /python/${FROZEN_FILE}"
+            /venv/bin/pip freeze --all | sort --ignore-case >> /python/${FROZEN_FILE}"
 }
 
 freeze-requirements 3.5 requirements.txt requirements.frozen.txt
