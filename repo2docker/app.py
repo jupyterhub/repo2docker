@@ -23,6 +23,7 @@ from traitlets.config import Application
 from traitlets import Unicode, List, default, Tuple, Dict, Int
 import docker
 from docker.utils import kwargs_from_env
+from docker.errors import DockerException
 
 import subprocess
 
@@ -524,6 +525,19 @@ class Repo2Docker(Application):
 
 
     def start(self):
+        # Check if r2d can connect to docker daemon
+        if self.build:
+            try:
+                client = docker.APIClient(version='auto',
+                                          **kwargs_from_env())
+                del client
+            except DockerException as e:
+                print("Docker client initialization error. Check if docker is running on the host.")
+                print(e)
+                if self.log_level == logging.DEBUG:
+                    raise e
+                sys.exit(1)
+
         if self.repo_type == 'local':
             checkout_path = self.repo
         else:

@@ -6,13 +6,16 @@ import os
 import subprocess
 
 
-def validate_arguments(builddir, args_list, expected):
+def validate_arguments(builddir, args_list, expected, disable_dockerd=False):
     try:
         cmd = ['repo2docker']
         for k in args_list:
             cmd.append(k)
         cmd.append(builddir)
-        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        env = os.environ.copy()
+        if disable_dockerd:
+            env['DOCKER_HOST'] = "INCORRECT"
+        subprocess.check_output(cmd, env=env, stderr=subprocess.STDOUT)
         return True
     except subprocess.CalledProcessError as e:
         output = e.output.decode()
@@ -187,3 +190,34 @@ def test_invalid_container_port_protocol_mapping_fail():
     args_list = ['-p', '80:8000/upd', builddir, 'ls']
 
     assert not validate_arguments(builddir, args_list, 'Invalid port mapping')
+
+
+def test_docker_handle_fail():
+    """
+    Test to check if r2d fails with minimal error message on not being able to connect to docker daemon
+    """
+    args_list = []
+    builddir = os.path.dirname(__file__) + '/../'
+
+    assert not validate_arguments(builddir, args_list, "Docker client initialization error. Check if docker is running on the host.", True)
+
+
+def test_docker_handle_debug_fail():
+    """
+    Test to check if r2d fails with stack trace on not being able to connect to docker daemon and debug enabled
+    """
+    args_list = ['--debug']
+    builddir = os.path.dirname(__file__) + '/../'
+
+    assert not validate_arguments(builddir, args_list, "docker.errors.DockerException", True)
+
+
+def test_docker_no_build_success():
+    """
+    Test to check if r2d succeeds with --no-build argument with not being able to connect to docker daemon
+    """
+    args_list = ['--no-build', '--no-run']
+    builddir = os.path.dirname(__file__) + '/../'
+
+    assert validate_arguments(builddir, args_list, "", True)
+
