@@ -28,7 +28,7 @@ import subprocess
 
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
+    CondaBuildPack, JuliaBuildPack, BaseImage
 )
 from .utils import execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name, validate_and_generate_port_mapping
 from . import __version__
@@ -73,9 +73,7 @@ class Repo2Docker(Application):
             (BaseImage, CondaBuildPack, JuliaBuildPack),
             (BaseImage, CondaBuildPack),
 
-            (BaseImage, PythonBuildPack, Python2BuildPack, JuliaBuildPack),
             (BaseImage, PythonBuildPack, JuliaBuildPack),
-            (BaseImage, PythonBuildPack, Python2BuildPack),
             (BaseImage, PythonBuildPack),
         ],
         config=True,

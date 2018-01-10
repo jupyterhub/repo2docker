@@ -7,143 +7,117 @@ from ..base import BuildPack
 
 
 class PythonBuildPack(BuildPack):
-    name = "python3.5"
+    """
+    """
+    name = "python"
     version = "0.1"
 
-    packages = {
-        'python3',
-        'python3-venv',
-        'python3-dev',
-    }
-
-    env = [
-        ("VENV_PATH", "${APP_BASE}/venv"),
-        # Prefix to use for installing kernels and finding jupyter binary
-        ("NB_PYTHON_PREFIX", "${VENV_PATH}"),
-    ]
-
-    path = [
-        "${VENV_PATH}/bin"
-    ]
+    packages = {}
 
 
     build_script_files = {
         'python/requirements.frozen.txt': '/tmp/requirements.frozen.txt',
-    }
-
-    build_scripts = [
-        (
-            "root",
-            r"""
-            mkdir -p ${VENV_PATH} && \
-            chown -R ${NB_USER}:${NB_USER} ${VENV_PATH}
-            """
-        ),
-        (
-            "${NB_USER}",
-            r"""
-            python3 -m venv ${VENV_PATH}
-            """
-        ),
-        (
-            "${NB_USER}",
-            r"""
-            pip install --no-cache-dir -r /tmp/requirements.frozen.txt && \
-            jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-            jupyter serverextension enable --py jupyterlab --sys-prefix
-            """
-        )
-    ]
-
-    @default('assemble_scripts')
-    def setup_assembly(self):
-        # If we have a runtime.txt & that's set to python-2.7,
-        # we will *not* install requirements.txt but will find &
-        # install a requirements3.txt file if it exists.
-        # This way, when using python2 venv, requirements.txt will
-        # be installed in the python2 venv, and requirements3.txt
-        # will be installed in python3 venv. This is less of a
-        # surprise than requiring python2 to be requirements2.txt tho.
-        try:
-            with open(self.binder_path('runtime.txt')) as f:
-                runtime = f.read().strip()
-        except FileNotFoundError:
-            runtime = 'python-3.5'
-        if runtime == 'python-2.7':
-            requirements_file = self.binder_path('requirements3.txt')
-        else:
-            requirements_file = self.binder_path('requirements.txt')
-        if os.path.exists(requirements_file):
-            return [(
-                '${NB_USER}',
-                'pip3 install --no-cache-dir -r "{}"'.format(requirements_file)
-            )]
-        return []
-
-    def detect(self):
-        return os.path.exists('requirements.txt') and super().detect()
-
-
-class Python2BuildPack(BuildPack):
-    name = "python2.7"
-    version = "0.1"
-
-    packages = {
-        'python',
-        'python-dev',
-        'virtualenv'
-    }
-
-    build_script_files = {
         'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
     }
 
-    env = [
-        ('VENV2_PATH', '${APP_BASE}/venv2')
-    ]
-
     path = [
-        "${VENV2_PATH}/bin"
+        "${PYENV_ROOT}/shims",
+        "${PYENV_ROOT}/bin",
+        "${PYENV_ROOT}/versions/${DEFAULT_PYENV}/bin"
     ]
 
-    build_scripts = [
-        (
-            "root",
-            r"""
-            mkdir -p ${VENV2_PATH} && \
-            chown -R ${NB_USER}:${NB_USER} ${VENV2_PATH}
-            """
-        ),
-        (
-            "${NB_USER}",
-            r"""
-            virtualenv -p python2 ${VENV2_PATH}
-            """
-        ),
-        (
-            "${NB_USER}",
-            r"""
-            pip2 install --no-cache-dir -r /tmp/requirements2.frozen.txt && \
-            python2 -m ipykernel install --prefix=${NB_PYTHON_PREFIX}
-            """
-        )
-    ]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    @default('assemble_scripts')
-    def setup_assembly(self):
+        self.default_version = '3.6.4'
+
+        try:
+            with open(self.binder_path('runtime.txt')) as f:
+                runtime = f.read().strip()
+                self.version = runtime.replace('python-', '')
+        except FileNotFoundError:
+            self.version = self.default_version
+
+        # If 2.7 is specified, use 2.7.14, which is latest as of now.
+        # This gets some crucial HTTPS fixes.
+        if self.version == '2.7':
+            self.version = '2.7.14'
+
+
+    @default('env')
+    def setup_env(self):
         return [
-            (
-                '${NB_USER}',
-                'pip2 install --no-cache-dir -r requirements.txt'
-            )
+            ("PYENV_ROOT", "${APP_BASE}/pyenv"),
+            ("VENV_PATH", "${APP_BASE}/venv"),
+            ("DEFAULT_PYENV", self.default_version),
+            # Prefix to use for installing kernels and finding jupyter binary
+            ("NB_PYTHON_PREFIX", "${PYENV_ROOT}/versions/${DEFAULT_PYENV}"),
+            ("PYENV_VERSION", self.version)
         ]
 
+
+
+
+    @default('build_scripts')
+    def setup_build_script(self):
+        build_scripts = [
+                (
+                    "root",
+                    r"""
+                    mkdir -p ${PYENV_ROOT} && \
+                    chown -R ${NB_USER}:${NB_USER} ${PYENV_ROOT}
+                    """
+                ),
+                (
+                    "${NB_USER}",
+                    r"""
+                    git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT && \
+                    pyenv install ${DEFAULT_PYENV}
+                    """
+                ),
+                (
+                    "${NB_USER}",
+                    r"""
+                    PYENV_VERSION=${DEFAULT_PYENV} \
+                    python -m pip install --no-cache-dir -r /tmp/requirements.frozen.txt && \
+                    PYENV_VERSION=${DEFAULT_PYENV} \
+                    jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+                    PYENV_VERSION=${DEFAULT_PYENV} \
+                    jupyter serverextension enable --py jupyterlab --sys-prefix
+                    """
+                )
+            ]
+
+        if self.version != self.default_version:
+            base_requirements = '/tmp/requirements{}.frozen.txt'.format(
+                '2' if self.version.startswith('2') else ''
+            )
+
+            build_scripts += [
+                (
+                    '${NB_USER}',
+                    'pyenv install {}'.format(self.version)
+                ),
+            ]
+        return build_scripts
+
+    @default('assemble_scripts')
+    def setup_assemble_scripts(self):
+        assemble_scripts = []
+        if os.path.exists(self.binder_path('requirements.txt')):
+            assemble_scripts += [(
+                '${NB_USER}',
+                'python -m pip install --no-cache-dir -r "{}"'.format(self.binder_path('requirements.txt'))
+            )]
+
+        if (os.path.exists(self.binder_path('requirements3.txt')) and
+            self.version.startswith('2')):
+            assemble_scripts += [(
+                '${NB_USER}',
+                'PYENV_VERSION=${DEFAULT_PYENV} python -m pip install --no-cache-dir "{}"'.format(self.binder_path('requirements3.txt'))
+            )]
+        return assemble_scripts
+
+
     def detect(self):
-        requirements_txt = self.binder_path('requirements.txt')
-        runtime_txt = self.binder_path('runtime.txt')
-        if os.path.exists(requirements_txt) and os.path.exists(runtime_txt):
-            with open(runtime_txt) as f:
-                runtime = f.read().strip()
-            if runtime == 'python-2.7':
-                return True
-        return False
+        return os.path.exists('requirements.txt') and super().detect()
