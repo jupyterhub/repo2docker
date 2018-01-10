@@ -35,5 +35,6 @@ function freeze-requirements {
             /venv/bin/pip freeze --all | sort --ignore-case >> /python/${FROZEN_FILE}"
 }
 
-freeze-requirements 3.5 requirements.txt requirements.frozen.txt
-freeze-requirements 2.7 requirements2.txt requirements2.frozen.txt
+freeze-requirements 3.6 base.requirements.txt base.requirements.frozen.txt
+freeze-requirements 3.6 kernel.requirements.txt kernel.requirements.frozen.txt
+freeze-requirements 2.7 kernel.requirements.txt kernel.requirements2.frozen.txt

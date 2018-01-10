@@ -1,0 +1,2 @@
+# Pinned requirements for secondary pyenv environments
+ipykernel==4.6.1

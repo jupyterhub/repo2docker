@@ -17,7 +17,7 @@ class PythonBuildPack(BuildPack):
     path = [
         "${PYENV_ROOT}/shims",
         "${PYENV_ROOT}/bin",
-        "${PYENV_ROOT}/versions/${DEFAULT_PYENV}/bin"
+        "${PYENV_ROOT}/versions/${BASE_PYENV}/bin"
     ]
 
     default_version = Unicode(
@@ -65,9 +65,9 @@ class PythonBuildPack(BuildPack):
         return [
             ("PYENV_ROOT", "${APP_BASE}/pyenv"),
             ("VENV_PATH", "${APP_BASE}/venv"),
-            ("DEFAULT_PYENV", self.default_version),
+            ("BASE_PYENV", self.default_version),
             # Prefix to use for installing kernels and finding jupyter binary
-            ("NB_PYTHON_PREFIX", "${PYENV_ROOT}/versions/${DEFAULT_PYENV}"),
+            ("NB_PYTHON_PREFIX", "${PYENV_ROOT}/versions/${BASE_PYENV}"),
             ("PYENV_VERSION", self.version)
         ]
 
@@ -85,7 +85,7 @@ class PythonBuildPack(BuildPack):
                     "${NB_USER}",
                     r"""
                     git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT && \
-                    pyenv install ${DEFAULT_PYENV}
+                    pyenv install ${BASE_PYENV}
                     """
                 ),
             ] + self.base_install_scripts
@@ -113,12 +113,19 @@ class PythonPipBuildPack(PythonBuildPack):
             '3.6.4',
             'pypy3.5-5.9.0',
             'pypy3.5-5.8.0'
-        ]
+        ],
+        help="""
+        List of python versions that can be used for base environment.
+
+        These must be able to support all the packages in requirements.frozen.txt.
+        List is a whitelist from output of `pyenv install --list`.
+        """
     )
 
     build_script_files = {
-        'python/requirements.frozen.txt': '/tmp/requirements.frozen.txt',
-        'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
+        'python/base.requirements.frozen.txt': '/tmp/base.requirements.frozen.txt',
+        'python/kernel.requirements.frozen.txt': '/tmp/kernel.requirements.frozen.txt',
+        'python/kernel.requirements2.frozen.txt': '/tmp/kernel.requirements2.frozen.txt',
     }
 
     def __init__(self, *args, **kwargs):
@@ -139,7 +146,7 @@ class PythonPipBuildPack(PythonBuildPack):
             self.version.startswith('2')):
             assemble_scripts += [(
                 '${NB_USER}',
-                'PYENV_VERSION=${DEFAULT_PYENV} python -m pip install --no-cache-dir "{}"'.format(self.binder_path('requirements3.txt'))
+                'PYENV_VERSION=${BASE_PYENV} python -m pip install --no-cache-dir "{}"'.format(self.binder_path('requirements3.txt'))
             )]
         return assemble_scripts
 
@@ -149,11 +156,11 @@ class PythonPipBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                PYENV_VERSION=${DEFAULT_PYENV} \
-                python -m pip install --no-cache-dir -r /tmp/requirements.frozen.txt && \
-                PYENV_VERSION=${DEFAULT_PYENV} \
+                PYENV_VERSION=${BASE_PYENV} \
+                python -m pip install --no-cache-dir -r /tmp/base.requirements.frozen.txt && \
+                PYENV_VERSION=${BASE_PYENV} \
                 jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-                PYENV_VERSION=${DEFAULT_PYENV} \
+                PYENV_VERSION=${BASE_PYENV} \
                 jupyter serverextension enable --py jupyterlab --sys-prefix
                 """
             )
@@ -161,7 +168,7 @@ class PythonPipBuildPack(PythonBuildPack):
 
         if self.version != self.default_version:
             # If we need to create an additional environment...
-            base_requirements = '/tmp/requirements{}.frozen.txt'.format(
+            base_requirements = '/tmp/kernel.requirements{}.frozen.txt'.format(
                 '2' if self.version.startswith('2') else ''
             )
 
@@ -169,6 +176,12 @@ class PythonPipBuildPack(PythonBuildPack):
                 (
                     '${NB_USER}',
                     'pyenv install {}'.format(self.version)
+                ),
+                (
+                    '${NB_USER}',
+                    # Explicitly install a pinned version of pip,
+                    # since lots of versions have an old version of pip.
+                    'python -m pip install pip==9.0.1',
                 ),
                 (
                     '${NB_USER}',

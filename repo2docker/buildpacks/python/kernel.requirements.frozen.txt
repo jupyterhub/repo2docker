@@ -1,16 +1,13 @@
-# AUTO GENERATED FROM requirements2.txt, DO NOT MANUALLY MODIFY
-# Frozen on Wed Jan 10 07:33:17 UTC 2018
-backports-abc==0.5
-backports.shutil-get-terminal-size==1.0.0
-certifi==2017.11.5
+# AUTO GENERATED FROM kernel.requirements.txt, DO NOT MANUALLY MODIFY
+# Frozen on Wed Jan 10 08:19:37 UTC 2018
 decorator==4.1.2
-enum34==1.1.6
 ipykernel==4.6.1
 ipython-genutils==0.2.0
-ipython==5.5.0
+ipython==6.2.1
+jedi==0.11.1
 jupyter-client==5.2.1
 jupyter-core==4.4.0
-pathlib2==2.3.0
+parso==0.1.1
 pexpect==4.3.1
 pickleshare==0.7.4
 pip==9.0.1
@@ -19,12 +16,9 @@ ptyprocess==0.5.2
 Pygments==2.2.0
 python-dateutil==2.6.1
 pyzmq==16.0.3
-scandir==1.6
-setuptools==38.4.0
+setuptools==28.8.0
 simplegeneric==0.8.1
-singledispatch==3.4.0.3
 six==1.11.0
 tornado==4.5.3
 traitlets==4.3.2
 wcwidth==0.1.7
-wheel==0.30.0
