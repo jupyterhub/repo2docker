@@ -98,6 +98,14 @@ class PythonBuildPack(BuildPack):
 class PythonPipBuildPack(PythonBuildPack):
     whitelisted_base_versions = List(
         [
+            '3.4.0',
+            '3.4.1',
+            '3.4.2',
+            '3.4.3',
+            '3.4.4',
+            '3.4.5',
+            '3.4.6',
+            '3.4.7',
             '3.5.0',
             '3.5.1',
             '3.5.2',
@@ -154,6 +162,8 @@ class PythonPipBuildPack(PythonBuildPack):
                 "${NB_USER}",
                 r"""
                 PYENV_VERSION=${BASE_PYENV} \
+                python -m pip install pip==9.0.1 && \
+                PYENV_VERSION=${BASE_PYENV} \
                 python -m pip install --no-cache-dir -r /tmp/base.requirements.frozen.txt && \
                 PYENV_VERSION=${BASE_PYENV} \
                 jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
@@ -185,6 +195,10 @@ class PythonPipBuildPack(PythonBuildPack):
                     'python -m pip install --no-cache-dir -r {}'.format(
                         base_requirements
                     )
+                ),
+                (
+                    '${NB_USER}',
+                    'python -m ipykernel install --prefix=${NB_PYTHON_PREFIX}'
                 )
             ]
 

@@ -6,9 +6,5 @@ assert sys.version_info[:2] == (3, 4)
 
 import numpy
 
-# Validate we are *not* in the primary environment
-try:
-    import notebook
-    assert False
-except ImportError:
-    pass
+# Validate we are in the primary environment
+import notebook
