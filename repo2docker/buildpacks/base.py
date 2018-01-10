@@ -144,12 +144,21 @@ class BuildPack(LoggingConfigurable):
         """
     )
 
-    base_image = Unicode(
-        "buildpack-deps:zesty",
+    base_distro = Unicode(
         help="""
-        Base image to use.
+        Base distro to use.
 
-        Should be debian or ubuntu based image.
+        Should be debian or ubuntu based distro.
+        """
+    )
+
+    distro_image_map = Dict(
+        {
+            'zesty': 'buildpack-deps:zesty',
+            'artful': 'buildpack-deps:artful'
+        },
+        help="""
+        Dictionary of base_distros to docker images to use as base.
         """
     )
 
@@ -317,6 +326,8 @@ class BuildPack(LoggingConfigurable):
         build_script_files.update(other.build_script_files)
         result.build_script_files = build_script_files
 
+        # FIXME: Validate that they all have same base image!
+        result.base_distro = self.base_distro
         result.name = "{}-{}".format(self.name, other.name)
 
         result.components = ((self, ) + self.components +
@@ -359,6 +370,8 @@ class BuildPack(LoggingConfigurable):
                 textwrap.dedent(script.strip('\n'))
             ))
 
+        base_image = self.distro_image_map[self.base_distro]
+
         return t.render(
             packages=sorted(self.packages),
             path=self.path,
@@ -367,7 +380,7 @@ class BuildPack(LoggingConfigurable):
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.build_script_files,
-            base_image=self.base_image,
+            base_image=base_image,
             base_packages=sorted(self.base_packages),
             post_build_scripts=self.post_build_scripts,
         )
@@ -435,16 +448,11 @@ class BaseImage(BuildPack):
         ("APP_BASE", "/srv")
     ]
 
-    base_image_map = {
-        'zesty': 'buildpack-deps:zesty',
-        'artful': 'buildpack-deps:artful'
-    }
-
     def detect(self):
         return True
 
-    @default('base_image')
-    def setup_base_image(self):
+    @default('base_distro')
+    def setup_base_distro(self):
         """
         Support setting base_image from apt.yaml
         """
@@ -453,17 +461,17 @@ class BaseImage(BuildPack):
                 apt = YAML().load(f)
                 if 'base' in apt:
                     base = apt['base']
-                    if base in self.base_image_map:
-                        return self.base_image_map[base]
+                    if base in self.distro_image_map:
+                        return base
                     else:
                         raise ValueError(
                             "Unknown base {} found in apt.yaml, available bases are {}".format(
-                                base, ', '.join(self.base_image_map.keys())
+                                base, ', '.join(self.distro_image_map.keys())
                             )
                         )
         except FileNotFoundError:
             pass
-        return 'buildpack-deps:zesty'
+        return 'zesty'
 
     @default('assemble_scripts')
     def setup_assembly(self):
