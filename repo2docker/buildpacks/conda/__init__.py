@@ -8,7 +8,7 @@ import re
 from ruamel.yaml import YAML
 from traitlets import default, Unicode
 
-from ..python import PythonBuildPack
+from ..base import BuildPack
 
 # pattern for parsing conda dependency line
 PYTHON_REGEX = re.compile(r'python\s*=+\s*([\d\.]*)')
@@ -16,11 +16,25 @@ PYTHON_REGEX = re.compile(r'python\s*=+\s*([\d\.]*)')
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
-class CondaBuildPack(PythonBuildPack):
+class CondaBuildPack(BuildPack):
     name = "conda"
     version = "0.1"
+    env = [
+        ('CONDA_DIR', '${APP_BASE}/conda'),
+        ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
+    ]
 
-    default_version = 'miniconda3-4.3.30'
+    path = ['${CONDA_DIR}/bin']
+
+    build_scripts = [
+        (
+            "root",
+            r"""
+            bash /tmp/install-miniconda.bash && \
+            rm /tmp/install-miniconda.bash /tmp/environment.yml
+            """
+        )
+    ]
 
     major_pythons = {
         '2': '2.7',
@@ -29,7 +43,9 @@ class CondaBuildPack(PythonBuildPack):
 
     @default('build_script_files')
     def setup_build_script_files(self):
-        files = {}
+        files = {
+            'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
+        }
         py_version = self.python_version
         self.log.info("Building conda environment for python=%s" % py_version)
         # Select the frozen base environment based on Python version.
