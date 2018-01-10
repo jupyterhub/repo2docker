@@ -53,8 +53,8 @@ def test_memlimit_nondockerfile_fail():
     basedir = os.path.dirname(__file__)
     assert not does_build(
         os.path.join(basedir, 'memlimit/non-dockerfile'),
-        128,
-        256
+        256,
+        512
     )
     assert does_build(
         os.path.join(basedir, 'memlimit/non-dockerfile'),
