@@ -20,6 +20,16 @@ class PythonBuildPack(BuildPack):
         "${PYENV_ROOT}/versions/${BASE_PYENV}/bin"
     ]
 
+    @default('entrypoint')
+    def setup_entrypoint(self):
+        # We can't interpolate environment variables here, so have
+        # to construct full path from scratch
+        return [
+            os.path.join('/srv/pyenv/versions/', self.default_version, 'bin/jupyter')
+        ]
+
+    command = ['notebook', '--ip', '0.0.0.0']
+
     default_version = Unicode(
         '3.5.4',
         help="""

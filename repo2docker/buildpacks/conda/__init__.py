@@ -26,6 +26,9 @@ class CondaBuildPack(BuildPack):
 
     path = ['${CONDA_DIR}/bin']
 
+    entrypoint = ['/srv/conda/bin/jupyter']
+    command = ['notebook', '--ip', '0.0.0.0']
+
     build_scripts = [
         (
             "root",

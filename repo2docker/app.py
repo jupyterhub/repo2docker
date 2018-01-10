@@ -456,9 +456,7 @@ class Repo2Docker(Application):
         client = docker.from_env(version='auto')
         if not self.run_cmd:
             port = str(self._get_free_port())
-
-            run_cmd = ['jupyter', 'notebook', '--ip', '0.0.0.0',
-                       '--port', port]
+            run_cmd = ['notebook', '--ip', '0.0.0.0', '--port', port]
             ports = {'%s/tcp' % port: port}
         else:
             # run_cmd given by user, if port is also given then pass it on

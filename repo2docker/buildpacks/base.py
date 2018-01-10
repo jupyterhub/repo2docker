@@ -6,6 +6,7 @@ import tarfile
 import io
 import os
 import stat
+import json
 import re
 import docker
 
@@ -113,6 +114,10 @@ USER ${NB_USER}
 RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
+
+{% if entrypoint_json -%}
+ENTRYPOINT {{ entrypoint_json }}
+{% endif -%}
 """
 
 DOC_URL = "http://repo2docker.readthedocs.io/en/latest/samples.html"
@@ -175,6 +180,26 @@ class BuildPack(LoggingConfigurable):
         name and the second item being the value.
         """
     )
+
+    entrypoint = List(
+        [],
+        help="""
+        ENTRYPOINT for the Docker image that is generated.
+
+        Note that no environment variable extrapolation happens here.
+        """
+    )
+
+    command = List(
+        [],
+        help="""
+        CMD for the Docker image that is generated.
+
+        This might or might now get environment variable interpolation,
+        depending on the value of entrypoint.
+        """
+    )
+
 
     path = List(
         [],
@@ -307,6 +332,9 @@ class BuildPack(LoggingConfigurable):
         build_script_files.update(other.build_script_files)
         result.build_script_files = build_script_files
 
+        result.entrypoint = self.entrypoint if self.entrypoint else other.entrypoint
+        result.command = self.command if self.command else other.command
+
         result.name = "{}-{}".format(self.name, other.name)
 
         result.components = ((self, ) + self.components +
@@ -359,6 +387,8 @@ class BuildPack(LoggingConfigurable):
             build_script_files=self.build_script_files,
             base_packages=sorted(self.base_packages),
             post_build_scripts=self.post_build_scripts,
+            entrypoint_json=json.dumps(self.entrypoint),
+            command_json=json.dumps(self.command)
         )
 
     def build(self, image_spec, memory_limit, build_args):
