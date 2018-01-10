@@ -2,7 +2,7 @@
 import sys
 
 print(sys.version_info)
-assert sys.version_info[:2] == (3, 5)
+assert sys.version_info[:2] == (3, 6)
 
 import numpy
 

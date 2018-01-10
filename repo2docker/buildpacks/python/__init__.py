@@ -21,7 +21,7 @@ class PythonBuildPack(BuildPack):
     ]
 
     default_version = Unicode(
-        '3.6.4',
+        '3.5.4',
         help="""
         The default python version to install with pyvenv.
 
