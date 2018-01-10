@@ -301,6 +301,7 @@ class BuildPack(LoggingConfigurable):
         result.post_build_scripts = (self.post_build_scripts +
                                      other.post_build_scripts)
 
+
         build_script_files = {}
         build_script_files.update(self.build_script_files)
         build_script_files.update(other.build_script_files)

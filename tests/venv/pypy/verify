@@ -8,3 +8,6 @@ import platform
 assert platform.python_implementation() == 'PyPy'
 
 import tornado
+
+# Verify we are primary version!
+import jupyter

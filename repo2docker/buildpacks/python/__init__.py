@@ -1,7 +1,7 @@
 """
 Generates a variety of Dockerfiles based on an input matrix
 """
-from traitlets import default
+from traitlets import default, Unicode, List
 import os
 from ..base import BuildPack
 
@@ -14,23 +14,34 @@ class PythonBuildPack(BuildPack):
 
     packages = {}
 
-
-    build_script_files = {
-        'python/requirements.frozen.txt': '/tmp/requirements.frozen.txt',
-        'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
-    }
-
     path = [
         "${PYENV_ROOT}/shims",
         "${PYENV_ROOT}/bin",
         "${PYENV_ROOT}/versions/${DEFAULT_PYENV}/bin"
     ]
 
+    default_version = Unicode(
+        '3.6.4',
+        help="""
+        The default python version to install with pyvenv.
+
+        This *must* be a version that can install a new enough version of
+        the notebook package.
+        """
+    )
+
+    base_install_scripts = List(
+        [],
+        help="""
+        Ordered list of shell script snippets to install base notebook.
+
+        This should install the base python environment and appropriate
+        required notebook packages.
+        """
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.default_version = '3.6.4'
-
         try:
             with open(self.binder_path('runtime.txt')) as f:
                 runtime = f.read().strip()
@@ -44,6 +55,11 @@ class PythonBuildPack(BuildPack):
             self.version = '2.7.14'
 
 
+    def compose_with(self, other):
+        result = super().compose_with(other)
+        result.default_version = self.default_version
+        result.base_install_scripts = self.base_install_scripts
+
     @default('env')
     def setup_env(self):
         return [
@@ -54,9 +70,6 @@ class PythonBuildPack(BuildPack):
             ("NB_PYTHON_PREFIX", "${PYENV_ROOT}/versions/${DEFAULT_PYENV}"),
             ("PYENV_VERSION", self.version)
         ]
-
-
-
 
     @default('build_scripts')
     def setup_build_script(self):
@@ -75,31 +88,43 @@ class PythonBuildPack(BuildPack):
                     pyenv install ${DEFAULT_PYENV}
                     """
                 ),
-                (
-                    "${NB_USER}",
-                    r"""
-                    PYENV_VERSION=${DEFAULT_PYENV} \
-                    python -m pip install --no-cache-dir -r /tmp/requirements.frozen.txt && \
-                    PYENV_VERSION=${DEFAULT_PYENV} \
-                    jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-                    PYENV_VERSION=${DEFAULT_PYENV} \
-                    jupyter serverextension enable --py jupyterlab --sys-prefix
-                    """
-                )
-            ]
+            ] + self.base_install_scripts
 
-        if self.version != self.default_version:
-            base_requirements = '/tmp/requirements{}.frozen.txt'.format(
-                '2' if self.version.startswith('2') else ''
-            )
-
-            build_scripts += [
-                (
-                    '${NB_USER}',
-                    'pyenv install {}'.format(self.version)
-                ),
-            ]
         return build_scripts
+
+
+
+    def detect(self):
+        return os.path.exists('requirements.txt') and super().detect()
+
+
+class PythonPipBuildPack(PythonBuildPack):
+    whitelisted_base_versions = List(
+        [
+            '3.5.0',
+            '3.5.1',
+            '3.5.2',
+            '3.5.3',
+            '3.5.4',
+            '3.6.0',
+            '3.6.1',
+            '3.6.2',
+            '3.6.3',
+            '3.6.4',
+            'pypy3.5-5.9.0',
+            'pypy3.5-5.8.0'
+        ]
+    )
+
+    build_script_files = {
+        'python/requirements.frozen.txt': '/tmp/requirements.frozen.txt',
+        'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.version in self.whitelisted_base_versions:
+            self.default_version = self.version
 
     @default('assemble_scripts')
     def setup_assemble_scripts(self):
@@ -118,6 +143,39 @@ class PythonBuildPack(BuildPack):
             )]
         return assemble_scripts
 
+    @default('base_install_scripts')
+    def setup_base_install_scripts(self):
+        base_install_scripts = [
+            (
+                "${NB_USER}",
+                r"""
+                PYENV_VERSION=${DEFAULT_PYENV} \
+                python -m pip install --no-cache-dir -r /tmp/requirements.frozen.txt && \
+                PYENV_VERSION=${DEFAULT_PYENV} \
+                jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+                PYENV_VERSION=${DEFAULT_PYENV} \
+                jupyter serverextension enable --py jupyterlab --sys-prefix
+                """
+            )
+        ]
 
-    def detect(self):
-        return os.path.exists('requirements.txt') and super().detect()
+        if self.version != self.default_version:
+            # If we need to create an additional environment...
+            base_requirements = '/tmp/requirements{}.frozen.txt'.format(
+                '2' if self.version.startswith('2') else ''
+            )
+
+            base_install_scripts += [
+                (
+                    '${NB_USER}',
+                    'pyenv install {}'.format(self.version)
+                ),
+                (
+                    '${NB_USER}',
+                    'python -m pip install --no-cache-dir -r {}'.format(
+                        base_requirements
+                    )
+                )
+            ]
+
+        return base_install_scripts
