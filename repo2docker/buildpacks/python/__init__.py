@@ -93,8 +93,6 @@ class PythonBuildPack(BuildPack):
 
 
 
-    def detect(self):
-        return os.path.exists('requirements.txt') and super().detect()
 
 
 class PythonPipBuildPack(PythonBuildPack):
@@ -191,3 +189,6 @@ class PythonPipBuildPack(PythonBuildPack):
             ]
 
         return base_install_scripts
+
+    def detect(self):
+        return os.path.exists('requirements.txt') and super().detect()
