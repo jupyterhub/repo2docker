@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.5.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-01-08 13:25:03 UTC
+# Frozen on 2018-01-11 02:57:06 UTC
 name: r2d
 channels:
 - conda-forge
@@ -32,7 +32,7 @@ dependencies:
 - ncurses=5.9=10
 - notebook=5.2.2=py35_1
 - openssl=1.0.2n=0
-- pandoc=2.0.5=0
+- pandoc=2.1=0
 - pandocfilters=1.4.1=py35_0
 - pexpect=4.3.1=py35_0
 - pickleshare=0.7.4=py35_0
@@ -42,7 +42,7 @@ dependencies:
 - pygments=2.2.0=py35_0
 - python=3.5.4=3
 - python-dateutil=2.6.1=py35_0
-- pyzmq=16.0.2=py35_2
+- pyzmq=16.0.2=py35_3
 - readline=7.0=0
 - setuptools=38.4.0=py35_0
 - simplegeneric=0.8.1=py35_0
@@ -51,7 +51,7 @@ dependencies:
 - terminado=0.8.1=py35_0
 - testpath=0.3.1=py35_0
 - tk=8.6.7=0
-- tornado=4.5.2=py35_0
+- tornado=4.5.3=py35_0
 - traitlets=4.3.2=py35_0
 - wcwidth=0.1.7=py35_0
 - webencodings=0.5=py35_0
