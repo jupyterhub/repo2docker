@@ -1,5 +1,0 @@
-# A bunch of external datascience related repos we care about!
-- name: Jake's Data Science Book
-  url: https://github.com/jakevdp/PythonDataScienceHandbook
-  ref: de0cc6bd31
-  verify: python -c 'import matplotlib'
