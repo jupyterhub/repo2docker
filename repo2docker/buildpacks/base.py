@@ -10,7 +10,7 @@ import re
 import docker
 
 TEMPLATE = r"""
-FROM buildpack-deps:zesty
+FROM buildpack-deps:artful
 
 # Set up locales properly
 RUN apt-get update && \
@@ -151,7 +151,6 @@ class BuildPack(LoggingConfigurable):
             # FIXME: Use npm from nodesource!
             # Everything seems to depend on npm these days, unfortunately.
             "npm",
-            "nodejs-legacy"
         },
         help="""
         Base set of apt packages that are installed for all images.
