@@ -2,5 +2,5 @@
 # Verify that the default just provides a py3 environment with jupyter
 import sys
 
-assert sys.version_info[:2] == (3, 6)
+assert sys.version_info[:2] == (3, 5)
 import jupyter

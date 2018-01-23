@@ -28,7 +28,7 @@ import subprocess
 
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage
+    CondaBuildPack, JuliaBuildPack, BaseImage, PythonPipBuildPack
 )
 from .utils import execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name, validate_and_generate_port_mapping
 from . import __version__
@@ -73,10 +73,8 @@ class Repo2Docker(Application):
             (BaseImage, CondaBuildPack, JuliaBuildPack),
             (BaseImage, CondaBuildPack),
 
-            (BaseImage, PythonBuildPack, Python2BuildPack, JuliaBuildPack),
-            (BaseImage, PythonBuildPack, JuliaBuildPack),
-            (BaseImage, PythonBuildPack, Python2BuildPack),
-            (BaseImage, PythonBuildPack),
+            (BaseImage, PythonPipBuildPack, JuliaBuildPack),
+            (BaseImage, PythonPipBuildPack),
         ],
         config=True,
         help="""
@@ -85,7 +83,7 @@ class Repo2Docker(Application):
     )
 
     default_buildpack = Tuple(
-        (BaseImage, PythonBuildPack),
+        (BaseImage, PythonPipBuildPack),
         config=True,
         help="""
         The build pack to use when no buildpacks are found
@@ -458,9 +456,7 @@ class Repo2Docker(Application):
         client = docker.from_env(version='auto')
         if not self.run_cmd:
             port = str(self._get_free_port())
-
-            run_cmd = ['jupyter', 'notebook', '--ip', '0.0.0.0',
-                       '--port', port]
+            run_cmd = ['notebook', '--ip', '0.0.0.0', '--port', port]
             ports = {'%s/tcp' % port: port}
         else:
             # run_cmd given by user, if port is also given then pass it on
