@@ -55,7 +55,8 @@ class PythonBuildPack(BuildPack):
                 r"""
                 pip install --no-cache-dir -r /tmp/requirements.frozen.txt && \
                 jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-                jupyter serverextension enable --py jupyterlab --sys-prefix
+                jupyter serverextension enable --py jupyterlab --sys-prefix && \
+                jupyter serverextension enable nteract_on_jupyter --sys-prefix
                 """
             )
         ]
