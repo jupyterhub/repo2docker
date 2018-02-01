@@ -31,6 +31,8 @@ echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 ${CONDA_DIR}/bin/conda config --system --set show_channel_urls true
 
 ${CONDA_DIR}/bin/conda env update -n root -f /tmp/environment.yml
+# enable nteract-on-jupyter, which was installed with pip
+jupyter serverextension enable nteract_on_jupyter --sys-prefix
 
 if [[ -f /tmp/kernel-environment.yml ]]; then
     # install kernel env and register kernelspec
