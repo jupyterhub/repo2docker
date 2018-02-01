@@ -3,6 +3,10 @@
 Freeze the conda environment.yml
 
 Run in a continuumio/miniconda3 image to ensure portability
+
+Usage:
+
+python freeze.py [3.5]
 """
 
 from datetime import datetime
@@ -10,6 +14,7 @@ import os
 import pathlib
 import shutil
 from subprocess import check_call
+import sys
 
 from ruamel.yaml import YAML
 
@@ -39,6 +44,7 @@ def freeze(env_file, frozen_file):
 
     Result will be stored in frozen_file
     """
+    print(f"Freezing {env_file} -> {frozen_file}")
 
     with open(HERE / frozen_file, 'w') as f:
         f.write(f"# AUTO GENERATED FROM {env_file}, DO NOT MANUALLY MODIFY\n")
@@ -73,6 +79,8 @@ def set_python(py_env_file, py):
             text = f.read()
             if text and 'GENERATED' not in text:
                 return
+
+    print(f"Regenerating {py_env_file} from {ENV_FILE}")
     with open(ENV_FILE) as f:
         env = yaml.load(f)
     for idx, dep in enumerate(env['dependencies']):
@@ -89,7 +97,9 @@ def set_python(py_env_file, py):
 
 
 if __name__ == '__main__':
-    for py in ('2.7', '3.5', '3.6'):
+    # allow specifying which Pythons to update on argv
+    pys = sys.argv[1:] or ('2.7', '3.5', '3.6')
+    for py in pys:
         env_file = ENV_FILE_T.format(py=py)
         set_python(env_file, py)
         frozen_file = os.path.splitext(env_file)[0] + '.frozen.yml'
