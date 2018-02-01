@@ -260,49 +260,6 @@ class BuildPack(LoggingConfigurable):
         """
         return []
 
-    name = Unicode(
-        help="""
-        Name of the BuildPack!
-        """
-    )
-
-    components = Tuple(())
-
-    def compose_with(self, other):
-        """
-        Compose this BuildPack with another, returning a new one
-
-        Ordering does matter - the properties of the current BuildPack take
-        precedence (wherever that matters) over the properties of other
-        BuildPack. If there are any conflicts, this method is responsible
-        for resolving them.
-        """
-        result = BuildPack(parent=self)
-        # FIXME: Temporary hack so we can refactor this piece by piece instead of all at once!
-
-        def _merge_dicts(d1, d2):
-            md = {}
-            md.update(d1)
-            md.update(d2)
-            return md
-
-        result.get_packages = lambda: self.get_packages().union(other.get_packages())
-        result.get_base_packages = lambda: self.get_base_packages().union(other.get_base_packages())
-        result.get_path = lambda: self.get_path() + other.get_path()
-        result.get_env = lambda: self.get_env() + other.get_env()
-        result.get_labels = lambda: _merge_dicts(self.get_labels(), other.get_labels())
-        result.get_build_script_files = lambda: _merge_dicts(self.get_build_script_files(), other.get_build_script_files())
-        result.get_build_scripts = lambda: self.get_build_scripts() + other.get_build_scripts()
-        result.get_assemble_scripts = lambda: self.get_assemble_scripts() + other.get_assemble_scripts()
-        result.get_post_build_scripts = lambda: self.get_post_build_scripts() + other.get_post_build_scripts()
-
-
-        result.name = "{}-{}".format(self.name, other.name)
-
-        result.components = ((self, ) + self.components +
-                             (other, ) + other.components)
-        return result
-
     def binder_path(self, path):
         """Locate a file"""
         if os.path.exists('binder'):
@@ -311,7 +268,7 @@ class BuildPack(LoggingConfigurable):
             return path
 
     def detect(self):
-        return all([p.detect() for p in self.components])
+        return True
 
     def render(self):
         """
@@ -407,9 +364,6 @@ class BuildPack(LoggingConfigurable):
 
 
 class BaseImage(BuildPack):
-    name = "repo2docker"
-    version = "0.1"
-
     def get_env(self):
         return [
             ("APP_BASE", "/srv")

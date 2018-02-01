@@ -7,7 +7,6 @@ from .docker import DockerBuildPack
 
 class LegacyBinderDockerBuildPack(DockerBuildPack):
 
-    name = 'Legacy Binder Dockerfile'
     dockerfile = '._binder.Dockerfile'
 
     dockerfile_appendix = Unicode(dedent(r"""
