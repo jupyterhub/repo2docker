@@ -30,6 +30,9 @@ ${CONDA_DIR}/bin/conda config --system --set auto_update_conda false
 echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 ${CONDA_DIR}/bin/conda config --system --set show_channel_urls true
 
+# disable pip cache for conda-triggered pip installs
+export PIP_CACHE_DIR=0
+
 ${CONDA_DIR}/bin/conda env update -n root -f /tmp/environment.yml
 # enable nteract-on-jupyter, which was installed with pip
 jupyter serverextension enable nteract_on_jupyter --sys-prefix
