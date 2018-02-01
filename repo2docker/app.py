@@ -344,6 +344,7 @@ class Repo2Docker(Application):
             logHandler = logging.StreamHandler()
             formatter = jsonlogger.JsonFormatter()
             logHandler.setFormatter(formatter)
+            self.log = logging.getLogger("repo2docker")
             self.log.handlers = []
             self.log.addHandler(logHandler)
             self.log.setLevel(logging.INFO)

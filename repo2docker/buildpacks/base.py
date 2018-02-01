@@ -1,11 +1,11 @@
 import textwrap
-from traitlets.config import LoggingConfigurable
 import jinja2
 import tarfile
 import io
 import os
 import stat
 import re
+import logging
 import docker
 
 TEMPLATE = r"""
@@ -117,7 +117,7 @@ RUN ./{{ s }}
 DOC_URL = "http://repo2docker.readthedocs.io/en/latest/samples.html"
 
 
-class BuildPack(LoggingConfigurable):
+class BuildPack:
     """
     A composable BuildPack.
 
@@ -133,6 +133,10 @@ class BuildPack(LoggingConfigurable):
     and there are *some* general guarantees of ordering.
 
     """
+
+    def __init__(self):
+        self.log = logging.getLogger('repo2docker')
+
     def get_packages(self):
         """
         List of packages that are installed in this BuildPack.
