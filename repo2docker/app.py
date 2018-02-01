@@ -61,6 +61,7 @@ class Repo2Docker(Application):
         [
             LegacyBinderDockerBuildPack(),
             DockerBuildPack(),
+            JuliaBuildPack(),
             CondaBuildPack(),
             Python2BuildPack(),
             PythonBuildPack()
