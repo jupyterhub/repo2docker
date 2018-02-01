@@ -19,12 +19,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 class CondaBuildPack(BuildPack):
     name = "conda"
     version = "0.1"
-    env = [
-        ('CONDA_DIR', '${APP_BASE}/conda'),
-        ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
-    ]
+    def get_env(self):
+        return [
+            ('CONDA_DIR', '${APP_BASE}/conda'),
+            ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
+        ]
 
-    path = ['${CONDA_DIR}/bin']
+    def get_path(self):
+        return ['${CONDA_DIR}/bin']
 
     build_scripts = [
         (

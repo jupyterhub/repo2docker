@@ -9,17 +9,18 @@ from .base import BuildPack
 class JuliaBuildPack(BuildPack):
     name = "julia"
     version = "0.1"
-    env = [
-        ('JULIA_PATH', '${APP_BASE}/julia'),
-        ('JULIA_HOME', '${JULIA_PATH}/bin'),
-        ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),
-        ('JULIA_VERSION', '0.6.0'),
-        ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
-    ]
 
-    path = [
-        '${JULIA_PATH}/bin'
-    ]
+    def get_env(self):
+        return [
+            ('JULIA_PATH', '${APP_BASE}/julia'),
+            ('JULIA_HOME', '${JULIA_PATH}/bin'),
+            ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),
+            ('JULIA_VERSION', '0.6.0'),
+            ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
+        ]
+
+    def get_path(self):
+        return ['${JULIA_PATH}/bin']
 
     build_scripts = [
         (

@@ -162,9 +162,8 @@ class BuildPack(LoggingConfigurable):
             "npm",
         }
 
-    env = List(
-        [],
-        help="""
+    def get_env(self):
+        """
         Ordered list of environment variables to be set for this image.
 
         Ordered so that environment variables can use other environment
@@ -173,17 +172,16 @@ class BuildPack(LoggingConfigurable):
         Expects tuples, with the first item being the environment variable
         name and the second item being the value.
         """
-    )
+        return []
 
-    path = List(
-        [],
-        help="""
+    def get_path(self):
+        """
         Ordered list of file system paths to look for executables in.
 
         Just sets the PATH environment variable. Separated out since
         it is very commonly set by various buildpacks.
         """
-    )
+        return []
 
     labels = Dict(
         {},
@@ -292,10 +290,9 @@ class BuildPack(LoggingConfigurable):
         # FIXME: Temporary hack so we can refactor this piece by piece instead of all at once!
         result.get_packages = lambda: self.get_packages().union(other.get_packages())
         result.get_base_packages = lambda: self.get_base_packages().union(other.get_base_packages())
+        result.get_path = lambda: self.get_path() + other.get_path()
+        result.get_env = lambda: self.get_env() + other.get_env()
 
-        result.path = self.path + other.path
-        # FIXME: Deduplicate Env
-        result.env = self.env + other.env
         result.build_scripts = self.build_scripts + other.build_scripts
         result.assemble_scripts = (self.assemble_scripts +
                                    other.assemble_scripts)
@@ -351,8 +348,8 @@ class BuildPack(LoggingConfigurable):
 
         return t.render(
             packages=sorted(self.get_packages()),
-            path=self.path,
-            env=self.env,
+            path=self.get_path(),
+            env=self.get_env(),
             labels=self.labels,
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,

@@ -17,15 +17,17 @@ class PythonBuildPack(BuildPack):
             'python3-dev',
         }
 
-    env = [
-        ("VENV_PATH", "${APP_BASE}/venv"),
-        # Prefix to use for installing kernels and finding jupyter binary
-        ("NB_PYTHON_PREFIX", "${VENV_PATH}"),
-    ]
+    def get_env(self):
+        return [
+            ("VENV_PATH", "${APP_BASE}/venv"),
+            # Prefix to use for installing kernels and finding jupyter binary
+            ("NB_PYTHON_PREFIX", "${VENV_PATH}"),
+        ]
 
-    path = [
-        "${VENV_PATH}/bin"
-    ]
+    def get_path(self):
+        return [
+            "${VENV_PATH}/bin"
+        ]
 
 
     build_script_files = {
@@ -100,13 +102,15 @@ class Python2BuildPack(BuildPack):
         'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
     }
 
-    env = [
-        ('VENV2_PATH', '${APP_BASE}/venv2')
-    ]
+    def get_env(self):
+        return [
+            ('VENV2_PATH', '${APP_BASE}/venv2')
+        ]
 
-    path = [
-        "${VENV2_PATH}/bin"
-    ]
+    def get_path(self):
+        return [
+            "${VENV2_PATH}/bin"
+        ]
 
     build_scripts = [
         (
