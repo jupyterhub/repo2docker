@@ -410,9 +410,10 @@ class BaseImage(BuildPack):
     name = "repo2docker"
     version = "0.1"
 
-    env = [
-        ("APP_BASE", "/srv")
-    ]
+    def get_env(self):
+        return [
+            ("APP_BASE", "/srv")
+        ]
 
     def detect(self):
         return True
