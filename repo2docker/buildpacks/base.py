@@ -248,9 +248,8 @@ class BuildPack(LoggingConfigurable):
         """
         return []
 
-    post_build_scripts = List(
-        [],
-        help="""
+    def get_post_build_scripts(self):
+        """
         An ordered list of executable scripts to execute after build.
 
         Is run as a non-root user, and must be executable. Used for doing
@@ -259,7 +258,7 @@ class BuildPack(LoggingConfigurable):
         The scripts should be as deterministic as possible - running it twice
         should not produce different results!
         """
-    )
+        return []
 
     name = Unicode(
         help="""
@@ -295,9 +294,8 @@ class BuildPack(LoggingConfigurable):
         result.get_build_script_files = lambda: _merge_dicts(self.get_build_script_files(), other.get_build_script_files())
         result.get_build_scripts = lambda: self.get_build_scripts() + other.get_build_scripts()
         result.get_assemble_scripts = lambda: self.get_assemble_scripts() + other.get_assemble_scripts()
+        result.get_post_build_scripts = lambda: self.get_post_build_scripts() + other.get_post_build_scripts()
 
-        result.post_build_scripts = (self.post_build_scripts +
-                                     other.post_build_scripts)
 
         result.name = "{}-{}".format(self.name, other.name)
 
@@ -350,7 +348,7 @@ class BuildPack(LoggingConfigurable):
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.get_build_script_files(),
             base_packages=sorted(self.get_base_packages()),
-            post_build_scripts=self.post_build_scripts,
+            post_build_scripts=self.get_post_build_scripts(),
         )
 
     def build(self, image_spec, memory_limit, build_args):
@@ -451,8 +449,7 @@ class BaseImage(BuildPack):
             pass
         return assemble_scripts
 
-    @default('post_build_scripts')
-    def setup_post_build_scripts(self):
+    def get_post_build_scripts(self):
         post_build = self.binder_path('postBuild')
         if os.path.exists(post_build):
             if not stat.S_IXUSR & os.stat(post_build).st_mode:
