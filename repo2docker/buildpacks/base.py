@@ -183,12 +183,11 @@ class BuildPack(LoggingConfigurable):
         """
         return []
 
-    labels = Dict(
-        {},
-        help="""
+    def get_labels(self):
+        """
         Docker labels to set on the built image.
         """
-    )
+        return {}
 
     build_script_files = Dict(
         {},
@@ -283,15 +282,12 @@ class BuildPack(LoggingConfigurable):
         for resolving them.
         """
         result = BuildPack(parent=self)
-        labels = {}
-        labels.update(self.labels)
-        labels.update(other.labels)
-        result.labels = labels
         # FIXME: Temporary hack so we can refactor this piece by piece instead of all at once!
         result.get_packages = lambda: self.get_packages().union(other.get_packages())
         result.get_base_packages = lambda: self.get_base_packages().union(other.get_base_packages())
         result.get_path = lambda: self.get_path() + other.get_path()
         result.get_env = lambda: self.get_env() + other.get_env()
+        result.get_labels = lambda: self.get_labels() + other.get_labels()
 
         result.build_scripts = self.build_scripts + other.build_scripts
         result.assemble_scripts = (self.assemble_scripts +
@@ -350,7 +346,7 @@ class BuildPack(LoggingConfigurable):
             packages=sorted(self.get_packages()),
             path=self.get_path(),
             env=self.get_env(),
-            labels=self.labels,
+            labels=self.get_labels(),
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.build_script_files,
