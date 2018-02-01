@@ -152,5 +152,5 @@ class Python2BuildPack(PythonBuildPack):
             with open(runtime_txt) as f:
                 runtime = f.read().strip()
             if runtime == 'python-2.7':
-                return True and super().detect()
+                return True
         return False
