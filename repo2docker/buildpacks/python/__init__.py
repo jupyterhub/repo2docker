@@ -10,11 +10,12 @@ class PythonBuildPack(BuildPack):
     name = "python3.5"
     version = "0.1"
 
-    packages = {
-        'python3',
-        'python3-venv',
-        'python3-dev',
-    }
+    def get_packages(self):
+        return {
+            'python3',
+            'python3-venv',
+            'python3-dev',
+        }
 
     env = [
         ("VENV_PATH", "${APP_BASE}/venv"),
@@ -88,7 +89,8 @@ class Python2BuildPack(BuildPack):
     name = "python2.7"
     version = "0.1"
 
-    packages = {
+    def get_packages(self):
+        return {
         'python',
         'python-dev',
         'virtualenv'

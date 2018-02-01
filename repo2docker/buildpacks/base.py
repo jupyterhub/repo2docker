@@ -134,25 +134,17 @@ class BuildPack(LoggingConfigurable):
     and there are *some* general guarantees of ordering.
 
     """
-    packages = Set(
-        help="""
-        List of packages that are installed in this BuildPack by default.
+    def get_packages(self):
+        """
+        List of packages that are installed in this BuildPack.
 
         Versions are not specified, and ordering is not guaranteed. These
         are usually installed as apt packages.
         """
-    )
+        return set()
 
-    base_packages = Set(
-        {
-            # Utils!
-            "less",
-
-            # FIXME: Use npm from nodesource!
-            # Everything seems to depend on npm these days, unfortunately.
-            "npm",
-        },
-        help="""
+    def get_base_packages(self):
+        """
         Base set of apt packages that are installed for all images.
 
         These contain useful images that are commonly used by a lot of images,
@@ -161,7 +153,14 @@ class BuildPack(LoggingConfigurable):
 
         These would be installed with a --no-install-recommends option.
         """
-    )
+        return {
+            # Utils!
+            "less",
+
+            # FIXME: Use npm from nodesource!
+            # Everything seems to depend on npm these days, unfortunately.
+            "npm",
+        }
 
     env = List(
         [],
@@ -290,8 +289,10 @@ class BuildPack(LoggingConfigurable):
         labels.update(self.labels)
         labels.update(other.labels)
         result.labels = labels
-        result.packages = self.packages.union(other.packages)
-        result.base_packages = self.base_packages.union(other.base_packages)
+        # FIXME: Temporary hack so we can refactor this piece by piece instead of all at once!
+        result.get_packages = lambda: self.get_packages().union(other.get_packages())
+        result.get_base_packages = lambda: self.get_base_packages().union(other.get_base_packages())
+
         result.path = self.path + other.path
         # FIXME: Deduplicate Env
         result.env = self.env + other.env
@@ -349,14 +350,14 @@ class BuildPack(LoggingConfigurable):
             ))
 
         return t.render(
-            packages=sorted(self.packages),
+            packages=sorted(self.get_packages()),
             path=self.path,
             env=self.env,
             labels=self.labels,
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.build_script_files,
-            base_packages=sorted(self.base_packages),
+            base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.post_build_scripts,
         )
 
