@@ -22,31 +22,32 @@ class JuliaBuildPack(BuildPack):
     def get_path(self):
         return ['${JULIA_PATH}/bin']
 
-    build_scripts = [
-        (
-            "root",
-            r"""
-            mkdir -p ${JULIA_PATH} && \
-            curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
-            """
-        ),
-        (
-            "root",
-            r"""
-            mkdir -p ${JULIA_PKGDIR} && \
-            chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
-            """
-        ),
-        (
-            "${NB_USER}",
-            # HACK: Can't seem to tell IJulia to install in sys-prefix
-            # FIXME: Find way to get it to install under /srv and not $HOME?
-            r"""
-            julia -e 'Pkg.init(); Pkg.add("IJulia"); using IJulia;' && \
-            mv ${HOME}/.local/share/jupyter/kernels/julia-0.6  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-0.6
-            """
-        )
-    ]
+    def get_build_scripts(self):
+        return [
+            (
+                "root",
+                r"""
+                mkdir -p ${JULIA_PATH} && \
+                curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
+                """
+            ),
+            (
+                "root",
+                r"""
+                mkdir -p ${JULIA_PKGDIR} && \
+                chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
+                """
+            ),
+            (
+                "${NB_USER}",
+                # HACK: Can't seem to tell IJulia to install in sys-prefix
+                # FIXME: Find way to get it to install under /srv and not $HOME?
+                r"""
+                julia -e 'Pkg.init(); Pkg.add("IJulia"); using IJulia;' && \
+                mv ${HOME}/.local/share/jupyter/kernels/julia-0.6  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-0.6
+                """
+            )
+        ]
 
     @default('assemble_scripts')
     def setup_assembly(self):

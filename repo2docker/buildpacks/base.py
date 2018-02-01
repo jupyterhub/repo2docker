@@ -189,10 +189,9 @@ class BuildPack(LoggingConfigurable):
         """
         return {}
 
-    build_script_files = Dict(
-        {},
-        help="""
-        List of files to be copied to the container image for use in building.
+    def get_build_script_files(self):
+        """
+        Dict of files to be copied to the container image for use in building.
 
         This is copied before the `build_scripts` & `assemble_scripts` are
         run, so can be executed from either of them.
@@ -201,11 +200,10 @@ class BuildPack(LoggingConfigurable):
         system, and the value is the destination file path inside the
         container image.
         """
-    )
+        return {}
 
-    build_scripts = List(
-        [],
-        help="""
+    def get_build_scripts(self):
+        """
         Ordered list of shell script snippets to build the base image.
 
         A list of tuples, where the first item is a username & the
@@ -222,7 +220,7 @@ class BuildPack(LoggingConfigurable):
         You can use environment variable substitutions in both the
         username and the execution script.
         """
-    )
+        return []
 
     assemble_scripts = List(
         [],
@@ -283,22 +281,25 @@ class BuildPack(LoggingConfigurable):
         """
         result = BuildPack(parent=self)
         # FIXME: Temporary hack so we can refactor this piece by piece instead of all at once!
+
+        def _merge_dicts(d1, d2):
+            md = {}
+            md.update(d1)
+            md.update(d2)
+            return md
+
         result.get_packages = lambda: self.get_packages().union(other.get_packages())
         result.get_base_packages = lambda: self.get_base_packages().union(other.get_base_packages())
         result.get_path = lambda: self.get_path() + other.get_path()
         result.get_env = lambda: self.get_env() + other.get_env()
-        result.get_labels = lambda: self.get_labels() + other.get_labels()
+        result.get_labels = lambda: _merge_dicts(self.get_labels(), other.get_labels())
+        result.get_build_script_files = lambda: _merge_dicts(self.get_build_script_files(), other.get_build_script_files())
+        result.get_build_scripts = lambda: self.get_build_scripts() + other.get_build_scripts()
 
-        result.build_scripts = self.build_scripts + other.build_scripts
         result.assemble_scripts = (self.assemble_scripts +
                                    other.assemble_scripts)
         result.post_build_scripts = (self.post_build_scripts +
                                      other.post_build_scripts)
-
-        build_script_files = {}
-        build_script_files.update(self.build_script_files)
-        build_script_files.update(other.build_script_files)
-        result.build_script_files = build_script_files
 
         result.name = "{}-{}".format(self.name, other.name)
 
@@ -324,7 +325,7 @@ class BuildPack(LoggingConfigurable):
 
         build_script_directives = []
         last_user = 'root'
-        for user, script in self.build_scripts:
+        for user, script in self.get_build_scripts():
             if last_user != user:
                 build_script_directives.append("USER {}".format(user))
                 last_user = user
@@ -349,7 +350,7 @@ class BuildPack(LoggingConfigurable):
             labels=self.get_labels(),
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
-            build_script_files=self.build_script_files,
+            build_script_files=self.get_build_script_files(),
             base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.post_build_scripts,
         )
@@ -377,7 +378,7 @@ class BuildPack(LoggingConfigurable):
             tar.gid = 1000
             return tar
 
-        for src in sorted(self.build_script_files):
+        for src in sorted(self.get_build_script_files()):
             src_parts = src.split('/')
             src_path = os.path.join(os.path.dirname(__file__), *src_parts)
             tar.add(src_path, src, filter=_filter_tar)
