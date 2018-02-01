@@ -417,8 +417,7 @@ class BaseImage(BuildPack):
     def detect(self):
         return True
 
-    @default('assemble_scripts')
-    def setup_assembly(self):
+    def get_assemble_scripts(self):
         assemble_scripts = []
         try:
             with open(self.binder_path('apt.txt')) as f:
