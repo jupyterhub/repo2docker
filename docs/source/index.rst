@@ -13,6 +13,5 @@ Site Contents
    install
    usage
    design
-   builder
    faq
    samples
