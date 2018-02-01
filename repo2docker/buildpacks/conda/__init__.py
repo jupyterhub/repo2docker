@@ -78,9 +78,11 @@ class CondaBuildPack(BuildPack):
         Will return 'x.y' if found, or Falsy '' if not.
         """
         if not hasattr(self, '_python_version'):
+            py_version = None
             environment_yml = self.binder_path('environment.yml')
             if not os.path.exists(environment_yml):
                 self._python_version = ''
+                return self._python_version
             with open(environment_yml) as f:
                 env = YAML().load(f)
                 for dep in env.get('dependencies', []):
