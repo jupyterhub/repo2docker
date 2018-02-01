@@ -100,7 +100,7 @@ class CondaBuildPack(BuildPack):
                     self._python_version = self.major_pythons.get(py_version[0])
                 else:
                     # return major.minor
-                    self._python_version = '.'.join(py_version[:2])
+                    self._python_version = '.'.join(py_version.split('.')[:2])
             else:
                 self._python_version = ''
 
