@@ -95,17 +95,26 @@ After building (it might take a while!), it should output a message in your term
 If you copy/paste that URL into your browser you will see a Jupyter Notebook with the
 contents of the repository you have just built!
 
-Displaying the image Dockerfile
--------------------------------
+Debugging the build process
+---------------------------
 
-``repo2docker`` will generate a Dockerfile that composes the created Docker image.
-To see the contents of this Dockerfile without building the image use
-the ``--debug`` and ``--no-build`` flags like so::
+If you want to debug and understand the details of the docker image being built,
+you can pass the ``debug`` parameter to the commandline. This will print the
+generated ``Dockerfile`` before building and running it.
 
-  jupyter-repo2docker --debug --no-build https://github.com/jakevdp/PythonDataScienceHandbook
+  .. code-block:: bash
 
-This will output the contents of the Dockerfile in your console. Note that it
-will **not** build the image.
+  jupyter-repo2docker --debug https://github.com/jakevdp/PythonDataScienceHandbook
+
+
+If you only want to see the ``Dockerfile`` output but not actually build it,
+you can also pass ``--no-build`` to the commandline. This ``Dockerfile`` output
+is for **debugging purposes** only - it can not be used by docker directly.
+
+  .. code-block:: bash
+
+  jupyter-repo2docker --no-build --debug https://github.com/jakevdp/PythonDataScienceHandbook
+
 
 Accessing help from the command line
 ------------------------------------
