@@ -1,7 +1,6 @@
 """
 Generates a variety of Dockerfiles based on an input matrix
 """
-from traitlets import default
 import os
 from ..base import BaseImage
 
