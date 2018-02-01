@@ -222,9 +222,8 @@ class BuildPack(LoggingConfigurable):
         """
         return []
 
-    assemble_scripts = List(
-        [],
-        help="""
+    def get_assemble_scripts(self):
+        """
         Ordered list of shell script snippets to build the repo into the image.
 
         A list of tuples, where the first item is a username & the
@@ -247,7 +246,7 @@ class BuildPack(LoggingConfigurable):
         You can use environment variable substitutions in both the
         username and the execution script.
         """
-    )
+        return []
 
     post_build_scripts = List(
         [],
@@ -295,9 +294,8 @@ class BuildPack(LoggingConfigurable):
         result.get_labels = lambda: _merge_dicts(self.get_labels(), other.get_labels())
         result.get_build_script_files = lambda: _merge_dicts(self.get_build_script_files(), other.get_build_script_files())
         result.get_build_scripts = lambda: self.get_build_scripts() + other.get_build_scripts()
+        result.get_assemble_scripts = lambda: self.get_assemble_scripts() + other.get_assemble_scripts()
 
-        result.assemble_scripts = (self.assemble_scripts +
-                                   other.assemble_scripts)
         result.post_build_scripts = (self.post_build_scripts +
                                      other.post_build_scripts)
 
@@ -335,7 +333,7 @@ class BuildPack(LoggingConfigurable):
 
         assemble_script_directives = []
         last_user = 'root'
-        for user, script in self.assemble_scripts:
+        for user, script in self.get_assemble_scripts():
             if last_user != user:
                 assemble_script_directives.append("USER {}".format(user))
                 last_user = user

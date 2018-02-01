@@ -60,8 +60,7 @@ class PythonBuildPack(BuildPack):
             )
         ]
 
-    @default('assemble_scripts')
-    def setup_assembly(self):
+    def get_assemble_scripts(self):
         # If we have a runtime.txt & that's set to python-2.7,
         # we will *not* install requirements.txt but will find &
         # install a requirements3.txt file if it exists.
@@ -140,8 +139,7 @@ class Python2BuildPack(BuildPack):
             )
         ]
 
-    @default('assemble_scripts')
-    def setup_assembly(self):
+    def get_assemble_scripts(self):
         return [
             (
                 '${NB_USER}',

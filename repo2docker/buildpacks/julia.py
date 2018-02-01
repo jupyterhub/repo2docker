@@ -49,8 +49,7 @@ class JuliaBuildPack(BuildPack):
             )
         ]
 
-    @default('assemble_scripts')
-    def setup_assembly(self):
+    def get_assemble_scripts(self):
         require = self.binder_path('REQUIRE')
         return [(
             "${NB_USER}",

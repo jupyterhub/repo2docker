@@ -108,8 +108,7 @@ class CondaBuildPack(BuildPack):
         """Am I building a Python 2 kernel environment?"""
         return self.python_version and self.python_version.split('.')[0] == '2'
 
-    #@default('assemble_scripts')
-    def setup_assembly(self):
+    def get_assemble_scripts(self):
         assembly_scripts = []
         environment_yml = self.binder_path('environment.yml')
         env_name = 'kernel' if self.py2 else 'root'
