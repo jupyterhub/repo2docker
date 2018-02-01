@@ -48,7 +48,7 @@ class CondaBuildPack(BuildPack):
         files = {
             'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
         }
-        py_version = self.get_python_version()
+        py_version = self.python_version
         self.log.info("Building conda environment for python=%s" % py_version)
         # Select the frozen base environment based on Python version.
         # avoids expensive and possibly conflicting upgrades when changing
@@ -70,42 +70,46 @@ class CondaBuildPack(BuildPack):
         files['conda/' + frozen_name] = '/tmp/environment.yml'
         return files
 
-    def get_python_version(self):
+    @property
+    def python_version(self):
         """
         Detect the Python version for a given environment.yml
 
         Will return 'x.y' if found, or Falsy '' if not.
         """
-        py_version = None
         environment_yml = self.binder_path('environment.yml')
         if not os.path.exists(environment_yml):
             return ''
-        with open(environment_yml) as f:
-            env = YAML().load(f)
-            for dep in env.get('dependencies', []):
-                if not isinstance(dep, str):
-                    continue
-                match = PYTHON_REGEX.match(dep)
-                if not match:
-                    continue
-                py_version = match.group(1)
-                break
 
-        # extract major.minor
-        if py_version:
-            if len(py_version) == 1:
-                return self.major_pythons.get(py_version[0])
+        if not hasattr(self, '_python_version'):
+            py_version = None
+            with open(environment_yml) as f:
+                env = YAML().load(f)
+                for dep in env.get('dependencies', []):
+                    if not isinstance(dep, str):
+                        continue
+                    match = PYTHON_REGEX.match(dep)
+                    if not match:
+                        continue
+                    py_version = match.group(1)
+                    break
+
+            # extract major.minor
+            if py_version:
+                if len(py_version) == 1:
+                    self._python_version = self.major_pythons.get(py_version[0])
+                else:
+                    # return major.minor
+                    self._python_version = '.'.join(py_version[:2])
             else:
-                # return major.minor
-                return '.'.join(py_version[:2])
+                self._python_version = ''
 
-        return ''
+        return self._python_version
 
     @property
     def py2(self):
         """Am I building a Python 2 kernel environment?"""
-        python_version = self.get_python_version()
-        return python_version and python_version.split('.')[0] == '2'
+        return self.python_version and self.python_version.split('.')[0] == '2'
 
     def get_assemble_scripts(self):
         assembly_scripts = []
