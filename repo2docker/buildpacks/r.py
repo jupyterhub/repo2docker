@@ -50,10 +50,8 @@ class RBuildPack(PythonBuildPack):
             match = re.match(r'r-(\d\d\d\d)-(\d\d)-(\d\d)', self.runtime)
             if not match:
                 self._checkpoint_date = False
-
-            year, month, day = [int(s) for s in match.groups()]
-
-            self._checkpoint_date = datetime.date(year, month, day)
+            else:
+                self._checkpoint_date = datetime.date(*[int(s) for s in match.groups()])
 
         return self._checkpoint_date
 
