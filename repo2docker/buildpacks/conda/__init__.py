@@ -6,9 +6,8 @@ import os
 import re
 
 from ruamel.yaml import YAML
-from traitlets import default, Unicode
 
-from ..base import BuildPack
+from ..base import BaseImage
 
 # pattern for parsing conda dependency line
 PYTHON_REGEX = re.compile(r'python\s*=+\s*([\d\.]*)')
@@ -16,20 +15,18 @@ PYTHON_REGEX = re.compile(r'python\s*=+\s*([\d\.]*)')
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
-class CondaBuildPack(BuildPack):
-    name = "conda"
-    version = "0.1"
+class CondaBuildPack(BaseImage):
     def get_env(self):
-        return [
+        return super().get_env() + [
             ('CONDA_DIR', '${APP_BASE}/conda'),
             ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
         ]
 
     def get_path(self):
-        return ['${CONDA_DIR}/bin']
+        return super().get_path() + ['${CONDA_DIR}/bin']
 
     def get_build_scripts(self):
-        return [
+        return super().get_build_scripts() + [
             (
                 "root",
                 r"""
@@ -68,6 +65,7 @@ class CondaBuildPack(BuildPack):
                 else:
                     self.log.warning("No frozen env: %s", py_frozen_name)
         files['conda/' + frozen_name] = '/tmp/environment.yml'
+        files.update(super().get_build_script_files())
         return files
 
     @property
@@ -123,7 +121,7 @@ class CondaBuildPack(BuildPack):
                 conda clean -tipsy
                 """.format(env_name, environment_yml)
             ))
-        return assembly_scripts
+        return super().get_assemble_scripts() + assembly_scripts
 
 
     def detect(self):

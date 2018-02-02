@@ -1,42 +1,40 @@
 """
 Generates a variety of Dockerfiles based on an input matrix
 """
-from traitlets import default
 import os
-from ..base import BuildPack
+from ..base import BaseImage
 
 
-class PythonBuildPack(BuildPack):
-    name = "python3.5"
-    version = "0.1"
-
+class PythonBuildPack(BaseImage):
     def get_packages(self):
-        return {
+        return super().get_packages().union({
             'python3',
             'python3-venv',
             'python3-dev',
-        }
+        })
 
     def get_env(self):
-        return [
+        return super().get_env() + [
             ("VENV_PATH", "${APP_BASE}/venv"),
             # Prefix to use for installing kernels and finding jupyter binary
             ("NB_PYTHON_PREFIX", "${VENV_PATH}"),
         ]
 
     def get_path(self):
-        return [
+        return super().get_path() + [
             "${VENV_PATH}/bin"
         ]
 
 
     def get_build_script_files(self):
-        return {
+        files = {
             'python/requirements.frozen.txt': '/tmp/requirements.frozen.txt',
         }
+        files.update(super().get_build_script_files())
+        return files
 
     def get_build_scripts(self):
-        return [
+        return super().get_build_scripts() + [
             (
                 "root",
                 r"""
@@ -69,6 +67,7 @@ class PythonBuildPack(BuildPack):
         # be installed in the python2 venv, and requirements3.txt
         # will be installed in python3 venv. This is less of a
         # surprise than requiring python2 to be requirements2.txt tho.
+        assemble_scripts = super().get_assemble_scripts()
         try:
             with open(self.binder_path('runtime.txt')) as f:
                 runtime = f.read().strip()
@@ -79,45 +78,44 @@ class PythonBuildPack(BuildPack):
         else:
             requirements_file = self.binder_path('requirements.txt')
         if os.path.exists(requirements_file):
-            return [(
+            assemble_scripts.append((
                 '${NB_USER}',
                 'pip3 install --no-cache-dir -r "{}"'.format(requirements_file)
-            )]
-        return []
+            ))
+        return assemble_scripts
 
     def detect(self):
         return os.path.exists('requirements.txt') and super().detect()
 
 
-class Python2BuildPack(BuildPack):
-    name = "python2.7"
-    version = "0.1"
-
+class Python2BuildPack(PythonBuildPack):
     def get_packages(self):
-        return {
-        'python',
-        'python-dev',
-        'virtualenv'
-    }
+        return super().get_packages().union({
+            'python',
+            'python-dev',
+            'virtualenv'
+        })
 
 
     def get_env(self):
-        return [
+        return super().get_env() + [
             ('VENV2_PATH', '${APP_BASE}/venv2')
         ]
 
     def get_path(self):
-        return [
+        return super().get_path() + [
             "${VENV2_PATH}/bin"
         ]
 
     def get_build_script_files(self):
-        return {
+        files = {
             'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
         }
+        files.update(super().get_build_script_files())
+        return files
 
     def get_build_scripts(self):
-        return [
+        return super().get_build_scripts() + [
             (
                 "root",
                 r"""
@@ -141,7 +139,7 @@ class Python2BuildPack(BuildPack):
         ]
 
     def get_assemble_scripts(self):
-        return [
+        return super().get_assemble_scripts() + [
             (
                 '${NB_USER}',
                 'pip2 install --no-cache-dir -r requirements.txt'

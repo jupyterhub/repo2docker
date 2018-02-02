@@ -20,7 +20,7 @@ import pwd
 
 
 from traitlets.config import Application
-from traitlets import Unicode, List, default, Tuple, Dict, Int
+from traitlets import Unicode, List, default, Any, Dict, Int
 import docker
 from docker.utils import kwargs_from_env
 from docker.errors import DockerException
@@ -34,15 +34,6 @@ from .buildpacks import (
 from .utils import execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name, validate_and_generate_port_mapping
 from . import __version__
 
-
-def compose(buildpacks, parent=None):
-    """
-    Shortcut to compose many buildpacks together
-    """
-    image = buildpacks[0](parent=parent)
-    for buildpack in buildpacks[1:]:
-        image = image.compose_with(buildpack(parent=parent))
-    return image
 
 
 class Repo2Docker(Application):
@@ -68,16 +59,12 @@ class Repo2Docker(Application):
 
     buildpacks = List(
         [
-            (LegacyBinderDockerBuildPack, ),
-            (DockerBuildPack, ),
-
-            (BaseImage, CondaBuildPack, JuliaBuildPack),
-            (BaseImage, CondaBuildPack),
-
-            (BaseImage, PythonBuildPack, Python2BuildPack, JuliaBuildPack),
-            (BaseImage, PythonBuildPack, JuliaBuildPack),
-            (BaseImage, PythonBuildPack, Python2BuildPack),
-            (BaseImage, PythonBuildPack),
+            LegacyBinderDockerBuildPack(),
+            DockerBuildPack(),
+            JuliaBuildPack(),
+            CondaBuildPack(),
+            Python2BuildPack(),
+            PythonBuildPack()
         ],
         config=True,
         help="""
@@ -85,8 +72,8 @@ class Repo2Docker(Application):
         """
     )
 
-    default_buildpack = Tuple(
-        (BaseImage, PythonBuildPack),
+    default_buildpack = Any(
+        PythonBuildPack(),
         config=True,
         help="""
         The build pack to use when no buildpacks are found
@@ -358,6 +345,7 @@ class Repo2Docker(Application):
             logHandler = logging.StreamHandler()
             formatter = jsonlogger.JsonFormatter()
             logHandler.setFormatter(formatter)
+            self.log = logging.getLogger("repo2docker")
             self.log.handlers = []
             self.log.addHandler(logHandler)
             self.log.setLevel(logging.INFO)
@@ -557,10 +545,9 @@ class Repo2Docker(Application):
                 )
 
             os.chdir(checkout_path)
-            picked_buildpack = compose(self.default_buildpack, parent=self)
+            picked_buildpack = self.default_buildpack
 
-            for bp_spec in self.buildpacks:
-                bp = compose(bp_spec, parent=self)
+            for bp in self.buildpacks:
                 if bp.detect():
                     picked_buildpack = bp
                     break
@@ -573,7 +560,7 @@ class Repo2Docker(Application):
                     'NB_USER': self.user_name,
                     'NB_UID': str(self.user_id)
                 }
-                self.log.info('Using %s builder\n', bp.name,
+                self.log.info('Using %s builder\n', bp.__class__.__name__,
                               extra=dict(phase='building'))
                 for l in picked_buildpack.build(self.output_image_spec, self.build_memory_limit, build_args):
                     if 'stream' in l:

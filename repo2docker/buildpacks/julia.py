@@ -1,17 +1,19 @@
 """
 Generates a variety of Dockerfiles based on an input matrix
 """
-from traitlets import default
 import os
-from .base import BuildPack
+from .conda import CondaBuildPack
 
 
-class JuliaBuildPack(BuildPack):
-    name = "julia"
-    version = "0.1"
+class JuliaBuildPack(CondaBuildPack):
+    """
+    Julia + Conda build pack
 
+    Julia does not work with Virtual Envs,
+    see https://github.com/JuliaPy/PyCall.jl/issues/410
+    """
     def get_env(self):
-        return [
+        return super().get_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
             ('JULIA_HOME', '${JULIA_PATH}/bin'),
             ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),
@@ -20,10 +22,10 @@ class JuliaBuildPack(BuildPack):
         ]
 
     def get_path(self):
-        return ['${JULIA_PATH}/bin']
+        return super().get_path() + ['${JULIA_PATH}/bin']
 
     def get_build_scripts(self):
-        return [
+        return super().get_build_scripts() + [
             (
                 "root",
                 r"""
@@ -51,7 +53,7 @@ class JuliaBuildPack(BuildPack):
 
     def get_assemble_scripts(self):
         require = self.binder_path('REQUIRE')
-        return [(
+        return super().get_assemble_scripts() + [(
             "${NB_USER}",
             # Pre-compile all libraries if they've opted into it. `using {libraryname}` does the
             # right thing
@@ -67,4 +69,4 @@ class JuliaBuildPack(BuildPack):
         )]
 
     def detect(self):
-        return os.path.exists(self.binder_path('REQUIRE')) and super()
+        return os.path.exists(self.binder_path('REQUIRE')) and super().detect()

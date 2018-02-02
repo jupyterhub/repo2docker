@@ -7,7 +7,6 @@ from .base import BuildPack
 
 
 class DockerBuildPack(BuildPack):
-    name = "Dockerfile"
     dockerfile = "Dockerfile"
 
     def detect(self):
