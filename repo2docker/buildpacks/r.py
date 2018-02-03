@@ -146,7 +146,7 @@ class RBuildPack(PythonBuildPack):
                 "root",
                 # Install RStudio!
                 r"""
-                curl --quiet -L --fail {rstudio_url} > /tmp/rstudio.deb && \
+                curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
                 echo '{rstudio_checksum} /tmp/rstudio.deb' | md5sum -c - && \
                 dpkg -i /tmp/rstudio.deb && \
                 rm /tmp/rstudio.deb
