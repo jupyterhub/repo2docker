@@ -7,34 +7,35 @@ Usage:
 
     python -m repo2docker https://github.com/you/your-repo
 """
-import sys
-import json
-import os
-import time
-import logging
 import argparse
-import tempfile
-from pythonjsonlogger import jsonlogger
-import escapism
+import json
+import sys
+import logging
+import os
 import pwd
+import subprocess
+import tempfile
+import time
 
-
-from traitlets.config import Application
-from traitlets import Unicode, List, default, Any, Dict, Int
 import docker
 from docker.utils import kwargs_from_env
 from docker.errors import DockerException
+import escapism
+from pythonjsonlogger import jsonlogger
 
-import subprocess
+from traitlets import Unicode, List, default, Any, Dict, Int
+from traitlets.config import Application
 
+from . import __version__
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage,
     RBuildPack
 )
-from .utils import execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name, validate_and_generate_port_mapping
-from . import __version__
-
+from .utils import (
+    execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
+    validate_and_generate_port_mapping
+)
 
 
 class Repo2Docker(Application):
