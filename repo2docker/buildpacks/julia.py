@@ -41,6 +41,20 @@ class JuliaBuildPack(CondaBuildPack):
         return super().get_path() + ['${JULIA_PATH}/bin']
 
     def get_build_scripts(self):
+        """
+        Return series of build-steps common to "ALL" Julia repositories
+
+        All scripts found here should be independent of contents of a
+        particular repository.
+
+        This sets up:
+
+        - a directory for the specified Julia version and path
+        - a directory for Julia packages with ownership granted to the
+          notebook user
+        - add IJulia to the directory for Julia packages
+
+        """
         return super().get_build_scripts() + [
             (
                 "root",
@@ -68,11 +82,19 @@ class JuliaBuildPack(CondaBuildPack):
         ]
 
     def get_assemble_scripts(self):
+        """
+        Return series of build-steps specific to "this" Julia repository
+
+        Precompile all Julia libraries found in the repository's REQUIRE
+        file. The parent, CondaBuildPack, will add the build steps for
+        any needed Python packages found in environment.yml.
+
+        """
         require = self.binder_path('REQUIRE')
         return super().get_assemble_scripts() + [(
             "${NB_USER}",
-            # Pre-compile all libraries if they've opted into it. `using {libraryname}` does the
-            # right thing
+            # Pre-compile all libraries if they've opted into it.
+            # `using {libraryname}` does the right thing
             r"""
             cat "%(require)s" >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
             julia -e ' \
@@ -85,4 +107,10 @@ class JuliaBuildPack(CondaBuildPack):
         )]
 
     def detect(self):
+        """
+        Check if current repo should be built with the Julia Build pack
+
+        super().detect() is called if Julia Build pack should be used.
+
+        """
         return os.path.exists(self.binder_path('REQUIRE')) and super().detect()
