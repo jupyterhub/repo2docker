@@ -1,18 +1,27 @@
-"""
-Generates a variety of Dockerfiles based on an input matrix
-"""
+"""Generates a Dockerfile based on an input matrix for Julia"""
 import os
 from .conda import CondaBuildPack
 
 
 class JuliaBuildPack(CondaBuildPack):
     """
-    Julia + Conda build pack
+    Julia build pack which uses conda.
 
-    Julia does not work with Virtual Envs,
-    see https://github.com/JuliaPy/PyCall.jl/issues/410
+    The Julia build pack always uses the parent, `CondaBuildPack`,
+    since Julia does not work with Python virtual environments.
+    See https://github.com/JuliaPy/PyCall.jl/issues/410
+
     """
     def get_env(self):
+        """Get additional environment settings for Julia and Jupyter
+
+        Returns:
+            an ordered list of environment setting tuples.
+            The tuple contains a string of the environment variable name and
+            a string of the environment setting. For example,
+            `('JULIA_VERSION', '0.6.0')`
+
+        """
         return super().get_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
             ('JULIA_HOME', '${JULIA_PATH}/bin'),
@@ -22,6 +31,13 @@ class JuliaBuildPack(CondaBuildPack):
         ]
 
     def get_path(self):
+        """Get path for Julia executables
+
+         Returns:
+             an ordered list of path strings. The path to the Julia
+             executable is added to the list.
+
+        """
         return super().get_path() + ['${JULIA_PATH}/bin']
 
     def get_build_scripts(self):
