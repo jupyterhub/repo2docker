@@ -29,6 +29,7 @@ env:
   - REPO_TYPE=conda
   - REPO_TYPE=venv
   - REPO_TYPE=julia
+  - REPO_TYPE=r
   - REPO_TYPE=dockerfile
   - REPO_TYPE=external/*
   - REPO_TYPE=*.py
