@@ -117,7 +117,11 @@ class JuliaBuildPack(CondaBuildPack):
         """
         Check if current repo should be built with the Julia Build pack
 
-        super().detect() is called if Julia Build pack should be used.
+        super().detect() is not called in this function - it would return
+        false unless an `environment.yml` is present and we do not want to
+        require the presence of a `environment.yml` to use Julia.
+
+        Instead we just check if the path to `REQUIRE` exists
 
         """
-        return os.path.exists(self.binder_path('REQUIRE')) and super().detect()
+        return os.path.exists(self.binder_path('REQUIRE'))
