@@ -5,8 +5,9 @@ services:
 python:
 - 3.4
 install:
-- pip install -e .
-- pip install pyyaml
+- pip install --no-cache-dir pyyaml pytest wheel
+- python setup.py bdist_wheel
+- pip install dist/*.whl
 
 script:
   - pytest -s -v tests/${REPO_TYPE}
