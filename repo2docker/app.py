@@ -46,7 +46,7 @@ class Repo2Docker(Application):
 
     @default('log_level')
     def _default_log_level(self):
-        """The system's default log level"""
+        """The application's default log level"""
         return logging.INFO
 
     git_workdir = Unicode(
@@ -484,7 +484,7 @@ class Repo2Docker(Application):
                 last_emit_time = time.time()
 
     def run_image(self):
-        """Run docker image"""
+        """Run docker container from built image"""
         client = docker.from_env(version='auto')
         if not self.run_cmd:
             port = str(self._get_free_port())
