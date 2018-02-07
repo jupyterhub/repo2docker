@@ -54,7 +54,7 @@ def execute_cmd(cmd, capture=False, **kwargs):
 
 @contextmanager
 def maybe_cleanup(path, cleanup=False):
-    """Execute cleanup of the passed path when cleanup flag is True."""
+    """Delete the directory at passed path if cleanup flag is True."""
     yield
     if cleanup:
         shutil.rmtree(path, ignore_errors=True)
