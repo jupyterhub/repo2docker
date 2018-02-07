@@ -21,6 +21,14 @@ class JuliaBuildPack(CondaBuildPack):
             a string of the environment setting. For example,
             `('JULIA_VERSION', '0.6.0')`
 
+           - `JULIA_PATH`: base path where all Julia Binaries and libraries
+              will be installed
+           -` JULIA_HOME`: path where all Julia Binaries will be installed
+           - `JULIA_PKGDIR`: path where all Julia libraries will be installed
+           - `JULIA_VERSION`: default version of julia to be installed
+           - `JUPYTER`: environment variable required by IJulia to point to
+             the `jupyter` executable
+
         """
         return super().get_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
@@ -31,14 +39,14 @@ class JuliaBuildPack(CondaBuildPack):
         ]
 
     def get_path(self):
-        """Get path for Julia executables
+        """Adds path to Julia binaries to user's PATH.
 
          Returns:
              an ordered list of path strings. The path to the Julia
              executable is added to the list.
 
         """
-        return super().get_path() + ['${JULIA_PATH}/bin']
+        return super().get_path() + ['${JULIA_HOME}']
 
     def get_build_scripts(self):
         """
@@ -47,12 +55,11 @@ class JuliaBuildPack(CondaBuildPack):
         All scripts found here should be independent of contents of a
         particular repository.
 
-        This sets up:
+        This installs:
 
-        - a directory for the specified Julia version and path
-        - a directory for Julia packages with ownership granted to the
-          notebook user
-        - add IJulia to the directory for Julia packages
+        - the specified Julia version and path
+        - Julia packages with ownership granted to the notebook user
+        - IJulia
 
         """
         return super().get_build_scripts() + [
