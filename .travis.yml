@@ -5,12 +5,16 @@ services:
 python:
 - 3.4
 install:
+# Make a wheel and install it to test to catch possible
+# issues with MANIFEST.in
 - pip install --no-cache-dir pyyaml pytest wheel
 - python setup.py bdist_wheel
 - pip install dist/*.whl
 
 script:
-  - pytest -s -v tests/${REPO_TYPE}
+  # cd into tests so CWD being repo2docker does not hide
+  # possible issues with MANIFEST.in
+  - cd tests && pytest -s -v ${REPO_TYPE}
 
 jobs:
   include:
