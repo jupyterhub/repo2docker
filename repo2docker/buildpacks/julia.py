@@ -16,14 +16,14 @@ class JuliaBuildPack(CondaBuildPack):
         """Get additional environment settings for Julia and Jupyter
 
         Returns:
-            an ordered list of environment setting tuples.
+            An ordered list of environment setting tuples.
             The tuple contains a string of the environment variable name and
             a string of the environment setting. For example,
             `('JULIA_VERSION', '0.6.0')`
 
            - `JULIA_PATH`: base path where all Julia Binaries and libraries
               will be installed
-           -` JULIA_HOME`: path where all Julia Binaries will be installed
+           - `JULIA_HOME`: path where all Julia Binaries will be installed
            - `JULIA_PKGDIR`: path where all Julia libraries will be installed
            - `JULIA_VERSION`: default version of julia to be installed
            - `JUPYTER`: environment variable required by IJulia to point to
