@@ -2,7 +2,7 @@
 """
 Freeze the conda environment.yml
 
-Run in a continuumio/miniconda3 image to ensure portability
+It runs the freeze in a continuumio/miniconda3 image to ensure portability
 
 Usage:
 
