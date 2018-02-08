@@ -7,12 +7,12 @@ python:
 install:
 # Make a wheel and install it to test to catch possible
 # issues with MANIFEST.in
-- pip install --no-cache-dir pyyaml pytest wheel
+- pip install --no-cache-dir -r dev-requirements.txt
 - python setup.py bdist_wheel
 - pip install dist/*.whl
 
 script:
-  # cd into tests so CWD being repo2docker does not hide
+  # cd into tests so CWD being repo2docker does not hide 
   # possible issues with MANIFEST.in
   - cd tests && pytest -s -v ${REPO_TYPE}
 
