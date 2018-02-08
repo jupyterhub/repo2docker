@@ -12,7 +12,7 @@ install:
 - pip install dist/*.whl
 
 script:
-  # cd into tests so CWD being repo2docker does not hide 
+  # cd into tests so CWD being repo2docker does not hide
   # possible issues with MANIFEST.in
   - cd tests && pytest -s -v ${REPO_TYPE}
 
