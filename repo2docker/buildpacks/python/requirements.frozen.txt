@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM requirements.txt, DO NOT MANUALLY MODIFY
-# Frozen on Wed Feb  7 00:37:05 UTC 2018
+# Frozen on Thu  8 Feb 2018 09:22:43 UTC
 bleach==2.1.2
 decorator==4.2.1
 entrypoints==0.2.3
@@ -13,13 +13,13 @@ Jinja2==2.10
 jsonschema==2.6.0
 jupyter-client==5.2.2
 jupyter-core==4.4.0
-jupyterlab-launcher==0.6.0
-jupyterlab==0.30.6
+jupyterlab-launcher==0.10.3
+jupyterlab==0.31.5
 MarkupSafe==1.0
 mistune==0.8.3
 nbconvert==5.3.1
 nbformat==4.4.0
-notebook==5.2.2
+notebook==5.4.0
 nteract-on-jupyter==1.4.0
 pandocfilters==1.4.2
 parso==0.1.1
@@ -30,6 +30,7 @@ ptyprocess==0.5.2
 Pygments==2.2.0
 python-dateutil==2.6.1
 pyzmq==16.0.4
+Send2Trash==1.4.2
 simplegeneric==0.8.1
 six==1.11.0
 terminado==0.8.1
