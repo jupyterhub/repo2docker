@@ -9,6 +9,7 @@ success.
 """
 
 import os
+import pipes
 import shlex
 
 import pytest
@@ -36,12 +37,21 @@ def make_test_func(args):
 class Repo2DockerTest(pytest.Function):
     """A pytest.Item for running repo2docker"""
     def __init__(self, name, parent, args):
+        self.args = args
+        self.save_cwd = os.getcwd()
         f = parent.obj = make_test_func(args)
         super().__init__(name, parent, callobj=f)
-        self.save_cwd = os.getcwd()
 
     def reportinfo(self):
         return self.parent.fspath, None, ""
+
+    def repr_failure(self, excinfo):
+        err = excinfo.value
+        if isinstance(err, SystemExit):
+            cmd = "jupyter-repo2docker %s" % ' '.join(map(pipes.quote, self.args))
+            return "%s | exited with status=%s" % (cmd, err.code)
+        else:
+            return super().repr_failure(excinfo)
 
     def teardown(self):
         super().teardown()
