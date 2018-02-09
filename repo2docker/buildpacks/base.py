@@ -93,10 +93,15 @@ COPY {{ src }} {{ dst }}
 {{sd}}
 {% endfor %}
 
-# Copy and chown stuff. This doubles the size of the repo, because
-# you can't actually copy as USER, only as root! Thanks, Docker!
+# FIXME: use COPY --chown with docker 17.09 to avoid copy+chown in two steps
+{% if assemble_from_subset -%}
+{% for f in assemble_files %}
+COPY src/{{ f }} ${HOME}/{{ f }}
+{% endfor %}
+{% else -%}
 USER root
 COPY src/ ${HOME}
+{% endif -%}
 RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
 
 {% if env -%}
@@ -112,6 +117,13 @@ ENV {{item[0]}} {{item[1]}}
 {% for sd in assemble_script_directives -%}
 {{ sd }}
 {% endfor %}
+
+{% if assemble_from_subset -%}
+# Load the rest of the repo after assembling the environment
+USER root
+COPY src/ ${HOME}
+RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
+{% endif -%}
 
 # Container image Labels!
 # Put these at the end, since we don't want to rebuild everything
@@ -301,6 +313,27 @@ class BuildPack:
         """
         return []
 
+    def get_assemble_files(self):
+        """
+        Ordered list of files required to run assemble scripts
+
+        This should be the subset of files in the repository
+        that are needed to run the assembly scripts.
+
+        If the scripts can be run with a subset of files,
+        then only these files will be present when the scripts run
+        and the rest of the repository will be loaded after
+        running the scripts (for better caching).
+        Otherwise, the entire repository will be present.
+
+        Only used if assemble_from_subset=True,
+        which is not the default.
+        """
+
+    # whether I can be assembled with a subset of files
+    # change in subclasses that are sure that they can do this
+    assemble_from_subset = False
+
     def get_assemble_scripts(self):
         """
         Ordered list of shell script snippets to build the repo into the image.
@@ -313,14 +346,6 @@ class BuildPack:
         the container image (into the current directory). These should be
         the scripts that actually build the repository into the container
         image.
-
-        If this needs to be dynamically determined (based on the presence
-        or absence of certain files, for example), you can create any
-        method and decorate it with `traitlets.default('assemble_scripts)`
-        and the return value of this method is used as the value of
-        assemble_scripts. You can expect that the script is running in
-        the current directory of the repository being built when doing
-        dynamic detection.
 
         You can use environment variable substitutions in both the
         username and the execution script.
@@ -396,8 +421,10 @@ class BuildPack:
             build_env=self.get_build_env(),
             env=self.get_env(),
             labels=self.get_labels(),
-            build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
+            assemble_files=self.get_assemble_files(),
+            assemble_from_subset=self.assemble_from_subset,
+            build_script_directives=build_script_directives,
             build_script_files=self.get_build_script_files(),
             base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.get_post_build_scripts(),
@@ -488,6 +515,13 @@ class BaseImage(BuildPack):
 
     def detect(self):
         return True
+
+    def get_assemble_files(self):
+        apt_txt = self.binder_path('apt.txt')
+        files = []
+        if os.path.exists(apt_txt):
+            files.append(apt_txt)
+        return files
 
     def get_assemble_scripts(self):
         assemble_scripts = []
