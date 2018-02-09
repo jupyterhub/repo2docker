@@ -9,6 +9,8 @@ MANIFEST
 
 .DS_Store
 .cache
+.coverage
+htmlcov
 
 repo2docker/s2i
 
