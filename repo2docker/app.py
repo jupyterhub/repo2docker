@@ -60,13 +60,13 @@ class Repo2Docker(Application):
 
     buildpacks = List(
         [
-            LegacyBinderDockerBuildPack(),
-            DockerBuildPack(),
-            JuliaBuildPack(),
-            CondaBuildPack(),
-            Python2BuildPack(),
-            RBuildPack(),
-            PythonBuildPack()
+            LegacyBinderDockerBuildPack,
+            DockerBuildPack,
+            JuliaBuildPack,
+            CondaBuildPack,
+            Python2BuildPack,
+            RBuildPack,
+            PythonBuildPack,
         ],
         config=True,
         help="""
@@ -75,7 +75,7 @@ class Repo2Docker(Application):
     )
 
     default_buildpack = Any(
-        PythonBuildPack(),
+        PythonBuildPack,
         config=True,
         help="""
         The build pack to use when no buildpacks are found
@@ -547,12 +547,14 @@ class Repo2Docker(Application):
                 )
 
             os.chdir(checkout_path)
-            picked_buildpack = self.default_buildpack
 
-            for bp in self.buildpacks:
+            for BP in self.buildpacks:
+                bp = BP()
                 if bp.detect():
                     picked_buildpack = bp
                     break
+            else:
+                picked_buildpack = self.default_buildpack()
 
             self.log.debug(picked_buildpack.render(),
                            extra=dict(phase='building'))
