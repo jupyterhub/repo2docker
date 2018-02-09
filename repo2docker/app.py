@@ -502,7 +502,8 @@ class Repo2Docker(Application):
                 container.kill()
             exit_code = container.attrs['State']['ExitCode']
             container.remove()
-            sys.exit(exit_code)
+            if exit_code:
+                sys.exit(exit_code)
 
     def _get_free_port(self):
         """
