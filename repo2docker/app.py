@@ -149,6 +149,16 @@ class Repo2Docker(Application):
         """
         return pwd.getpwuid(os.getuid()).pw_name
 
+    appendix = Unicode(
+        config=True,
+        help="""
+        Appendix of Dockerfile commands to run at the end of the build.
+
+        Can be used to customize the resulting image after all
+        standard build steps finish.
+        """
+    )
+
     def fetch(self, url, ref, checkout_path):
         try:
             for line in execute_cmd(['git', 'clone', '--recursive', url, checkout_path],
@@ -309,6 +319,11 @@ class Repo2Docker(Application):
             default=[]
         )
 
+        argparser.add_argument(
+            '--appendix',
+            type=str,
+            help=self.traits()['appendix'].help,
+        )
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -329,6 +344,8 @@ class Repo2Docker(Application):
             self.log_level = logging.DEBUG
 
         self.load_config_file(args.config)
+        if args.appendix:
+            self.appendix = args.appendix
 
         if os.path.exists(args.repo):
             # Let's treat this as a local directory we are building
@@ -558,6 +575,8 @@ class Repo2Docker(Application):
                     break
             else:
                 picked_buildpack = self.default_buildpack()
+
+            picked_buildpack.appendix = self.appendix
 
             self.log.debug(picked_buildpack.render(),
                            extra=dict(phase='building'))
