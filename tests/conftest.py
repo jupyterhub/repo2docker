@@ -7,10 +7,15 @@ and then ./verify is run inside the built container. It should
 return a non-zero exit code for the test to be considered a
 success.
 """
-import pytest
-import subprocess
-import yaml
+
+import os
+import pipes
 import shlex
+
+import pytest
+import yaml
+
+from repo2docker.app import Repo2Docker
 
 
 def pytest_collect_file(parent, path):
@@ -20,22 +25,45 @@ def pytest_collect_file(parent, path):
         return RemoteRepoList(path, parent)
 
 
+def make_test_func(args):
+    """Generate a test function that runs repo2docker"""
+    def test():
+        app = Repo2Docker()
+        app.initialize(args)
+        app.start()
+    return test
+
+
+class Repo2DockerTest(pytest.Function):
+    """A pytest.Item for running repo2docker"""
+    def __init__(self, name, parent, args):
+        self.args = args
+        self.save_cwd = os.getcwd()
+        f = parent.obj = make_test_func(args)
+        super().__init__(name, parent, callobj=f)
+
+    def reportinfo(self):
+        return self.parent.fspath, None, ""
+
+    def repr_failure(self, excinfo):
+        err = excinfo.value
+        if isinstance(err, SystemExit):
+            cmd = "jupyter-repo2docker %s" % ' '.join(map(pipes.quote, self.args))
+            return "%s | exited with status=%s" % (cmd, err.code)
+        else:
+            return super().repr_failure(excinfo)
+
+    def teardown(self):
+        super().teardown()
+        os.chdir(self.save_cwd)
+
+
 class LocalRepo(pytest.File):
     def collect(self):
-        yield LocalRepoTest(self.fspath.basename, self, self.fspath)
-
-
-class LocalRepoTest(pytest.Item):
-    def __init__(self, name, parent, path):
-        super().__init__(name, parent)
-        self.path = path
-
-    def runtest(self):
-        subprocess.check_call([
-            'jupyter-repo2docker',
-            str(self.path.dirname),
-            './verify'
-        ])
+        yield Repo2DockerTest(
+            self.fspath.basename, self,
+            args=[self.fspath.dirname, './verify'],
+        )
 
 
 class RemoteRepoList(pytest.File):
@@ -43,21 +71,11 @@ class RemoteRepoList(pytest.File):
         with self.fspath.open() as f:
             repos = yaml.safe_load(f)
         for repo in repos:
-            yield RemoteRepoTest(repo['name'], self, repo['url'],
-                                 repo['ref'], repo['verify'])
-
-
-class RemoteRepoTest(pytest.Item):
-    def __init__(self, name, parent, url, ref, verify):
-        super().__init__(name, parent)
-        self.url = url
-        self.ref = ref
-        self.verify = verify
-
-    def runtest(self):
-        subprocess.check_call([
-            'jupyter-repo2docker',
-            '--ref', self.ref,
-            self.url,
-            '--',
-        ] + shlex.split(self.verify))
+            yield Repo2DockerTest(
+                repo['name'], self,
+                args=[
+                    '--ref', repo['ref'],
+                    repo['url'],
+                    '--',
+                ] + shlex.split(repo['verify']),
+            )

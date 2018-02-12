@@ -320,8 +320,10 @@ class Repo2Docker(Application):
                        exc_info=(etype, evalue, traceback),
                        extra=dict(phase='failed'))
 
-    def initialize(self):
-        args = self.get_argparser().parse_args()
+    def initialize(self, argv=None):
+        if argv is None:
+            argv = sys.argv[1:]
+        args = self.get_argparser().parse_args(argv)
 
         if args.debug:
             self.log_level = logging.DEBUG
@@ -500,7 +502,8 @@ class Repo2Docker(Application):
                 container.kill()
             exit_code = container.attrs['State']['ExitCode']
             container.remove()
-            sys.exit(exit_code)
+            if exit_code:
+                sys.exit(exit_code)
 
     def _get_free_port(self):
         """
