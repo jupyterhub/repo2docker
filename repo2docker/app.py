@@ -151,7 +151,7 @@ class Repo2Docker(Application):
 
     def fetch(self, url, ref, checkout_path):
         try:
-            for line in execute_cmd(['git', 'clone', url, checkout_path],
+            for line in execute_cmd(['git', 'clone', '--recursive', url, checkout_path],
                                     capture=self.json_logs):
                 self.log.info(line, extra=dict(phase='fetching'))
         except subprocess.CalledProcessError:
