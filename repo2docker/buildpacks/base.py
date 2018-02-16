@@ -3,7 +3,6 @@ import jinja2
 import tarfile
 import io
 import os
-import stat
 import re
 import logging
 import docker
@@ -107,14 +106,13 @@ LABEL {{k}}={{v}}
 # We always want containers to run as non-root
 USER ${NB_USER}
 
+# Make sure that postBuild scripts are marked executable before executing them
 {% if post_build_scripts -%}
 {% for s in post_build_scripts -%}
-RUN ./{{ s }}
+RUN chmod +x {{ s }} && ./{{ s }}
 {% endfor %}
 {% endif -%}
 """
-
-DOC_URL = "http://repo2docker.readthedocs.io/en/latest/samples.html"
 
 
 class BuildPack:
@@ -409,9 +407,5 @@ class BaseImage(BuildPack):
     def get_post_build_scripts(self):
         post_build = self.binder_path('postBuild')
         if os.path.exists(post_build):
-            if not stat.S_IXUSR & os.stat(post_build).st_mode:
-                raise ValueError("%s is not executable, see %s for help." % (
-                                 post_build,
-                                 DOC_URL+'#system-post-build-scripts'))
             return [post_build]
         return []
