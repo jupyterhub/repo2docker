@@ -112,6 +112,11 @@ USER ${NB_USER}
 RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
+
+{% if appendix -%}
+# Appendix:
+{{ appendix }}
+{% endif %}
 """
 
 DOC_URL = "http://repo2docker.readthedocs.io/en/latest/samples.html"
@@ -136,6 +141,7 @@ class BuildPack:
 
     def __init__(self):
         self.log = logging.getLogger('repo2docker')
+        self.appendix = ''
 
     def get_packages(self):
         """
@@ -309,6 +315,7 @@ class BuildPack:
             build_script_files=self.get_build_script_files(),
             base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.get_post_build_scripts(),
+            appendix=self.appendix,
         )
 
     def build(self, image_spec, memory_limit, build_args):
