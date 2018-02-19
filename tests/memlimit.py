@@ -37,7 +37,7 @@ def does_build(builddir, mem_limit, mem_allocate_mb):
         except subprocess.CalledProcessError as e:
             output = e.output.decode()
             print(output)
-            if "The command '/bin/sh -c ./postBuild' returned a non-zero code: 137" in output:
+            if "/postBuild' returned a non-zero code: 137" in output:
                 return False
             else:
                 raise
