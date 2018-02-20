@@ -1,27 +1,27 @@
 # AUTO GENERATED FROM requirements2.txt, DO NOT MANUALLY MODIFY
-# Frozen on Sat Dec 16 22:13:15 UTC 2017
+# Frozen on Wed Feb 14 16:41:08 UTC 2018
 backports-abc==0.5
 backports.shutil-get-terminal-size==1.0.0
-certifi==2017.11.5
-decorator==4.1.2
+certifi==2018.1.18
+decorator==4.2.1
 enum34==1.1.6
 ipykernel==4.6.1
 ipython-genutils==0.2.0
 ipython==5.5.0
-jupyter-client==5.1.0
+jupyter-client==5.2.2
 jupyter-core==4.4.0
 pathlib2==2.3.0
-pexpect==4.3.1
+pexpect==4.4.0
 pickleshare==0.7.4
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 Pygments==2.2.0
 python-dateutil==2.6.1
-pyzmq==16.0.3
-scandir==1.6
+pyzmq==17.0.0
+scandir==1.7
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
 six==1.11.0
-tornado==4.5.2
+tornado==4.5.3
 traitlets==4.3.2
 wcwidth==0.1.7

@@ -1,16 +1,14 @@
 import textwrap
-from traitlets.config import LoggingConfigurable
-from traitlets import Unicode, Set, List, Dict, Tuple, default
 import jinja2
 import tarfile
 import io
 import os
-import stat
 import re
+import logging
 import docker
 
 TEMPLATE = r"""
-FROM buildpack-deps:zesty
+FROM buildpack-deps:artful
 
 # Set up locales properly
 RUN apt-get update && \
@@ -30,8 +28,9 @@ ENV LANGUAGE en_US.UTF-8
 ENV SHELL /bin/bash
 
 # Set up user
-ENV NB_USER jovyan
-ENV NB_UID 1000
+ARG NB_USER
+ARG NB_UID
+ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
 RUN adduser --disabled-password \
@@ -107,21 +106,24 @@ LABEL {{k}}={{v}}
 # We always want containers to run as non-root
 USER ${NB_USER}
 
+# Make sure that postBuild scripts are marked executable before executing them
 {% if post_build_scripts -%}
 {% for s in post_build_scripts -%}
-RUN ./{{ s }}
+RUN chmod +x {{ s }} && ./{{ s }}
 {% endfor %}
 {% endif -%}
 
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
 
+{% if appendix -%}
+# Appendix:
+{{ appendix }}
+{% endif %}
 """
 
-DOC_URL = "http://repo2docker.readthedocs.io/en/latest/samples.html"
 
-
-class BuildPack(LoggingConfigurable):
+class BuildPack:
     """
     A composable BuildPack.
 
@@ -137,26 +139,22 @@ class BuildPack(LoggingConfigurable):
     and there are *some* general guarantees of ordering.
 
     """
-    packages = Set(
-        help="""
-        List of packages that are installed in this BuildPack by default.
+
+    def __init__(self):
+        self.log = logging.getLogger('repo2docker')
+        self.appendix = ''
+
+    def get_packages(self):
+        """
+        List of packages that are installed in this BuildPack.
 
         Versions are not specified, and ordering is not guaranteed. These
         are usually installed as apt packages.
         """
-    )
+        return set()
 
-    base_packages = Set(
-        {
-            # Utils!
-            "less",
-
-            # FIXME: Use npm from nodesource!
-            # Everything seems to depend on npm these days, unfortunately.
-            "npm",
-            "nodejs-legacy"
-        },
-        help="""
+    def get_base_packages(self):
+        """
         Base set of apt packages that are installed for all images.
 
         These contain useful images that are commonly used by a lot of images,
@@ -165,11 +163,17 @@ class BuildPack(LoggingConfigurable):
 
         These would be installed with a --no-install-recommends option.
         """
-    )
+        return {
+            # Utils!
+            "less",
 
-    env = List(
-        [],
-        help="""
+            # FIXME: Use npm from nodesource!
+            # Everything seems to depend on npm these days, unfortunately.
+            "npm",
+        }
+
+    def get_env(self):
+        """
         Ordered list of environment variables to be set for this image.
 
         Ordered so that environment variables can use other environment
@@ -178,29 +182,26 @@ class BuildPack(LoggingConfigurable):
         Expects tuples, with the first item being the environment variable
         name and the second item being the value.
         """
-    )
+        return []
 
-    path = List(
-        [],
-        help="""
+    def get_path(self):
+        """
         Ordered list of file system paths to look for executables in.
 
         Just sets the PATH environment variable. Separated out since
         it is very commonly set by various buildpacks.
         """
-    )
+        return []
 
-    labels = Dict(
-        {},
-        help="""
+    def get_labels(self):
+        """
         Docker labels to set on the built image.
         """
-    )
+        return {}
 
-    build_script_files = Dict(
-        {},
-        help="""
-        List of files to be copied to the container image for use in building.
+    def get_build_script_files(self):
+        """
+        Dict of files to be copied to the container image for use in building.
 
         This is copied before the `build_scripts` & `assemble_scripts` are
         run, so can be executed from either of them.
@@ -209,11 +210,10 @@ class BuildPack(LoggingConfigurable):
         system, and the value is the destination file path inside the
         container image.
         """
-    )
+        return {}
 
-    build_scripts = List(
-        [],
-        help="""
+    def get_build_scripts(self):
+        """
         Ordered list of shell script snippets to build the base image.
 
         A list of tuples, where the first item is a username & the
@@ -230,11 +230,10 @@ class BuildPack(LoggingConfigurable):
         You can use environment variable substitutions in both the
         username and the execution script.
         """
-    )
+        return []
 
-    assemble_scripts = List(
-        [],
-        help="""
+    def get_assemble_scripts(self):
+        """
         Ordered list of shell script snippets to build the repo into the image.
 
         A list of tuples, where the first item is a username & the
@@ -257,11 +256,10 @@ class BuildPack(LoggingConfigurable):
         You can use environment variable substitutions in both the
         username and the execution script.
         """
-    )
+        return []
 
-    post_build_scripts = List(
-        [],
-        help="""
+    def get_post_build_scripts(self):
+        """
         An ordered list of executable scripts to execute after build.
 
         Is run as a non-root user, and must be executable. Used for doing
@@ -270,51 +268,7 @@ class BuildPack(LoggingConfigurable):
         The scripts should be as deterministic as possible - running it twice
         should not produce different results!
         """
-    )
-
-    name = Unicode(
-        help="""
-        Name of the BuildPack!
-        """
-    )
-
-    components = Tuple(())
-
-    def compose_with(self, other):
-        """
-        Compose this BuildPack with another, returning a new one
-
-        Ordering does matter - the properties of the current BuildPack take
-        precedence (wherever that matters) over the properties of other
-        BuildPack. If there are any conflicts, this method is responsible
-        for resolving them.
-        """
-        result = BuildPack(parent=self)
-        labels = {}
-        labels.update(self.labels)
-        labels.update(other.labels)
-        result.labels = labels
-        result.packages = self.packages.union(other.packages)
-        result.base_packages = self.base_packages.union(other.base_packages)
-        result.path = self.path + other.path
-        # FIXME: Deduplicate Env
-        result.env = self.env + other.env
-        result.build_scripts = self.build_scripts + other.build_scripts
-        result.assemble_scripts = (self.assemble_scripts +
-                                   other.assemble_scripts)
-        result.post_build_scripts = (self.post_build_scripts +
-                                     other.post_build_scripts)
-
-        build_script_files = {}
-        build_script_files.update(self.build_script_files)
-        build_script_files.update(other.build_script_files)
-        result.build_script_files = build_script_files
-
-        result.name = "{}-{}".format(self.name, other.name)
-
-        result.components = ((self, ) + self.components +
-                             (other, ) + other.components)
-        return result
+        return []
 
     def binder_path(self, path):
         """Locate a file"""
@@ -324,7 +278,7 @@ class BuildPack(LoggingConfigurable):
             return path
 
     def detect(self):
-        return all([p.detect() for p in self.components])
+        return True
 
     def render(self):
         """
@@ -334,7 +288,7 @@ class BuildPack(LoggingConfigurable):
 
         build_script_directives = []
         last_user = 'root'
-        for user, script in self.build_scripts:
+        for user, script in self.get_build_scripts():
             if last_user != user:
                 build_script_directives.append("USER {}".format(user))
                 last_user = user
@@ -344,7 +298,7 @@ class BuildPack(LoggingConfigurable):
 
         assemble_script_directives = []
         last_user = 'root'
-        for user, script in self.assemble_scripts:
+        for user, script in self.get_assemble_scripts():
             if last_user != user:
                 assemble_script_directives.append("USER {}".format(user))
                 last_user = user
@@ -353,18 +307,19 @@ class BuildPack(LoggingConfigurable):
             ))
 
         return t.render(
-            packages=sorted(self.packages),
-            path=self.path,
-            env=self.env,
-            labels=self.labels,
+            packages=sorted(self.get_packages()),
+            path=self.get_path(),
+            env=self.get_env(),
+            labels=self.get_labels(),
             build_script_directives=build_script_directives,
             assemble_script_directives=assemble_script_directives,
-            build_script_files=self.build_script_files,
-            base_packages=sorted(self.base_packages),
-            post_build_scripts=self.post_build_scripts,
+            build_script_files=self.get_build_script_files(),
+            base_packages=sorted(self.get_base_packages()),
+            post_build_scripts=self.get_post_build_scripts(),
+            appendix=self.appendix,
         )
 
-    def build(self, image_spec, memory_limit):
+    def build(self, image_spec, memory_limit, build_args):
         tarf = io.BytesIO()
         tar = tarfile.open(fileobj=tarf, mode='w')
         dockerfile_tarinfo = tarfile.TarInfo("Dockerfile")
@@ -387,7 +342,7 @@ class BuildPack(LoggingConfigurable):
             tar.gid = 1000
             return tar
 
-        for src in sorted(self.build_script_files):
+        for src in sorted(self.get_build_script_files()):
             src_parts = src.split('/')
             src_path = os.path.join(os.path.dirname(__file__), *src_parts)
             tar.add(src_path, src, filter=_filter_tar)
@@ -410,7 +365,7 @@ class BuildPack(LoggingConfigurable):
                 fileobj=tarf,
                 tag=image_spec,
                 custom_context=True,
-                buildargs={},
+                buildargs=build_args,
                 decode=True,
                 forcerm=True,
                 rm=True,
@@ -420,18 +375,15 @@ class BuildPack(LoggingConfigurable):
 
 
 class BaseImage(BuildPack):
-    name = "repo2docker"
-    version = "0.1"
-
-    env = [
-        ("APP_BASE", "/srv")
-    ]
+    def get_env(self):
+        return [
+            ("APP_BASE", "/srv")
+        ]
 
     def detect(self):
         return True
 
-    @default('assemble_scripts')
-    def setup_assembly(self):
+    def get_assemble_scripts(self):
         assemble_scripts = []
         try:
             with open(self.binder_path('apt.txt')) as f:
@@ -446,7 +398,7 @@ class BaseImage(BuildPack):
                     if not re.match(r"^[a-z0-9.+-]+", package):
                         raise ValueError("Found invalid package name {} in "
                                          "apt.txt".format(package))
-                extra_apt_packages.append(package)
+                    extra_apt_packages.append(package)
 
             assemble_scripts.append((
                 'root',
@@ -462,13 +414,8 @@ class BaseImage(BuildPack):
             pass
         return assemble_scripts
 
-    @default('post_build_scripts')
-    def setup_post_build_scripts(self):
+    def get_post_build_scripts(self):
         post_build = self.binder_path('postBuild')
         if os.path.exists(post_build):
-            if not stat.S_IXUSR & os.stat(post_build).st_mode:
-                raise ValueError("%s is not executable, see %s for help." % (
-                                 post_build,
-                                 DOC_URL+'#system-post-build-scripts'))
             return [post_build]
         return []

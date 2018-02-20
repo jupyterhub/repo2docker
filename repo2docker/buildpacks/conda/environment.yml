@@ -1,5 +1,7 @@
 dependencies:
-  - python==3.6.1
-  - ipywidgets==6.0.1
-  - jupyterlab==0.30.6
-  - notebook==5.2.2
+  - python=3.6.*
+  - ipywidgets==7.1.1
+  - jupyterlab==0.31.5
+  - notebook==5.4.0
+  - pip:
+    - nteract_on_jupyter==1.4.0

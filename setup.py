@@ -2,13 +2,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='jupyter-repo2docker',
-    version='0.4.1',
+    version='0.5.0',
     install_requires=[
         'docker',
         'traitlets',
         'python-json-logger',
         'escapism',
-        'jinja2'
+        'jinja2',
+        'ruamel.yaml>=0.15',
     ],
     python_requires='>=3.4',
     author='Yuvi Panda',

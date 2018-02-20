@@ -1,16 +1,14 @@
 """
 Generates a variety of Dockerfiles based on an input matrix
 """
-from traitlets import Unicode
 from textwrap import dedent
 from .docker import DockerBuildPack
 
 class LegacyBinderDockerBuildPack(DockerBuildPack):
 
-    name = 'Legacy Binder Dockerfile'
     dockerfile = '._binder.Dockerfile'
 
-    dockerfile_appendix = Unicode(dedent(r"""
+    legacy_appendix = dedent(r"""
     USER root
     COPY . /home/main/notebooks
     RUN chown -R main:main /home/main/notebooks
@@ -25,16 +23,16 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
         /home/main/anaconda2/bin/ipython kernel install --sys-prefix
     ENV JUPYTER_PATH /home/main/anaconda2/share/jupyter:$JUPYTER_PATH
     CMD jupyter notebook --ip 0.0.0.0
-    """), config=True)
+    """)
 
     def render(self):
         with open('Dockerfile') as f:
-            return f.read() + self.dockerfile_appendix
+            return '\n'.join([f.read(), self.legacy_appendix, self.appendix, ''])
 
-    def build(self, image_spec, memory_limit):
+    def build(self, image_spec, memory_limit, build_args):
         with open(self.dockerfile, 'w') as f:
             f.write(self.render())
-        return super().build(image_spec, memory_limit)
+        return super().build(image_spec, memory_limit, build_args)
 
     def detect(self):
         try:
