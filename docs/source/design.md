@@ -22,11 +22,11 @@ exact same Dockerfile output.
 This provides a few advantages:
 
 1. Reuse of cached built artifacts based on a repository's identity increases
-   efficiency and reliability. For example, if we had already run `reop2docker`
+   efficiency and reliability. For example, if we had already run `repo2docker`
    on a git repository at a particular commit hash, we know we can just re-use
    the old output, since we know it is going to be the same. This provides
    massive performance & architectural advantages when building additional
-   tools (like BinderHub) on top of `reop2docker`.
+   tools (like BinderHub) on top of `repo2docker`.
 2. We produce Dockerfiles that have as much in common as possible across
    multiple repositories, enabling better use of the Docker build cache. This
    also provides massive performance advantages.
@@ -67,5 +67,5 @@ well.
 
 An easy process for getting support for more languages here is to demonstrate
 their value with Dockerfiles that other people can use, and then show that this
-pattern is popular enough to be included inside `reop2docker`. Remember that 'yes'
+pattern is popular enough to be included inside `repo2docker`. Remember that 'yes'
 is forever (very hard to remove features!), but 'no' is only temporary!
