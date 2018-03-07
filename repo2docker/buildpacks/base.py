@@ -113,6 +113,9 @@ RUN chmod +x {{ s }} && ./{{ s }}
 {% endfor %}
 {% endif -%}
 
+# Specify the default command to run
+CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
+
 {% if appendix -%}
 # Appendix:
 {{ appendix }}
