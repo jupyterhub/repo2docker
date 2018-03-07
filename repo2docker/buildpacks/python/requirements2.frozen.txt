@@ -1,10 +1,10 @@
 # AUTO GENERATED FROM requirements2.txt, DO NOT MANUALLY MODIFY
-# Frozen on Wed Feb 14 16:41:08 UTC 2018
+# Frozen on Wed Mar  7 21:54:06 UTC 2018
 backports-abc==0.5
 backports.shutil-get-terminal-size==1.0.0
-certifi==2018.1.18
 decorator==4.2.1
 enum34==1.1.6
+futures==3.2.0
 ipykernel==4.6.1
 ipython-genutils==0.2.0
 ipython==5.5.0
@@ -22,6 +22,6 @@ scandir==1.7
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
 six==1.11.0
-tornado==4.5.3
+tornado==5.0
 traitlets==4.3.2
 wcwidth==0.1.7

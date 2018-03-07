@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-02-14 16:42:29 UTC
+# Frozen on 2018-03-07 21:54:33 UTC
 name: r2d
 channels:
   - conda-forge
@@ -11,7 +11,7 @@ dependencies:
   - backports_abc=0.5=py27_0
   - ca-certificates=2018.1.18=0
   - certifi=2018.1.18=py27_0
-  - decorator=4.1.2=py27_0
+  - decorator=4.2.1=py27_0
   - enum34=1.1.6=py27_1
   - ipykernel=4.7.0=py27_0
   - ipython=5.5.0=py27_0
@@ -33,7 +33,7 @@ dependencies:
   - pyzmq=17.0.0=py27_3
   - readline=7.0=0
   - scandir=1.7=py27_0
-  - setuptools=38.5.1=py27_0
+  - setuptools=38.5.2=py27_0
   - simplegeneric=0.8.1=py27_0
   - singledispatch=3.4.0.3=py27_0
   - six=1.11.0=py27_1
