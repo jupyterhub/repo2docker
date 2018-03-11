@@ -202,7 +202,7 @@ for root, _, files in os.walk(os.path.join('..', '..', 'tests')):
         continue
     header = files.pop(files.index('README.rst'))
     with open(os.path.join(root, header), 'r') as ff:
-        this_s = ff.read() + '\n'
+        this_s = ff.read() + '\n\n'
         title = this_s.split('\n')[0]
     for ifile in files:
         filename = os.path.basename(ifile)
