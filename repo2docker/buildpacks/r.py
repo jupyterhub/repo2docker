@@ -156,6 +156,16 @@ class RBuildPack(PythonBuildPack):
                 )
             ),
             (
+                "root",
+                # Set paths so that RStudio shares libraries with base R
+                # install. This first comments out any R_LIBS_USER that
+                # might be set in /etc/R/Renviron and then sets it.
+                r"""
+                sed -i -e '/^R_LIBS_USER=/s/^/#/' /etc/R/Renviron && \
+                echo "R_LIBS_USER=${R_LIBS_USER}" >> /etc/R/Renviron
+                """
+            ),
+            (
                 "${NB_USER}",
                 # Install nbrsessionproxy
                 r"""
