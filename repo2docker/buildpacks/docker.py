@@ -15,7 +15,7 @@ class DockerBuildPack(BuildPack):
     def render(self):
         Dockerfile = self.binder_path('Dockerfile')
         with open(Dockerfile) as f:
-            return '\n'.join([f.read(), self.appendix, ''])
+            return f.read()
 
     def build(self, image_spec, memory_limit, build_args):
         limits = {
