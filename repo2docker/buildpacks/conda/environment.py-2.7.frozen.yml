@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-02-08 08:02:45 UTC
+# Frozen on 2018-03-07 21:54:33 UTC
 name: r2d
 channels:
   - conda-forge
@@ -9,9 +9,9 @@ dependencies:
   - backports=1.0=py27_1
   - backports.shutil_get_terminal_size=1.0.0=py_3
   - backports_abc=0.5=py27_0
-  - ca-certificates=2017.11.5=0
-  - certifi=2017.11.5=py27_0
-  - decorator=4.1.2=py27_0
+  - ca-certificates=2018.1.18=0
+  - certifi=2018.1.18=py27_0
+  - decorator=4.2.1=py27_0
   - enum34=1.1.6=py27_1
   - ipykernel=4.7.0=py27_0
   - ipython=5.5.0=py27_0
@@ -22,7 +22,7 @@ dependencies:
   - ncurses=5.9=10
   - openssl=1.0.2n=0
   - pathlib2=2.3.0=py27_0
-  - pexpect=4.3.1=py27_0
+  - pexpect=4.4.0=py27_0
   - pickleshare=0.7.4=py27_0
   - pip=9.0.1=py27_1
   - prompt_toolkit=1.0.15=py27_0
@@ -30,10 +30,10 @@ dependencies:
   - pygments=2.2.0=py27_0
   - python=2.7.14=4
   - python-dateutil=2.6.1=py27_0
-  - pyzmq=16.0.2=py27_3
+  - pyzmq=17.0.0=py27_3
   - readline=7.0=0
-  - scandir=1.6=py27_0
-  - setuptools=38.4.0=py27_0
+  - scandir=1.7=py27_0
+  - setuptools=38.5.2=py27_0
   - simplegeneric=0.8.1=py27_0
   - singledispatch=3.4.0.3=py27_0
   - six=1.11.0=py27_1
@@ -44,7 +44,7 @@ dependencies:
   - traitlets=4.3.2=py27_0
   - wcwidth=0.1.7=py27_0
   - wheel=0.30.0=py27_2
-  - zeromq=4.2.1=1
+  - zeromq=4.2.3=2
   - zlib=1.2.11=0
   - pip:
     - backports.ssl-match-hostname==3.5.0.1

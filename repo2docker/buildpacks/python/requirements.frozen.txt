@@ -1,36 +1,36 @@
 # AUTO GENERATED FROM requirements.txt, DO NOT MANUALLY MODIFY
-# Frozen on Thu  8 Feb 2018 09:22:43 UTC
-bleach==2.1.2
+# Frozen on Wed Mar  7 21:53:43 UTC 2018
+bleach==2.1.3
 decorator==4.2.1
 entrypoints==0.2.3
 html5lib==1.0.1
-ipykernel==4.8.0
+ipykernel==4.8.2
 ipython-genutils==0.2.0
 ipython==6.2.1
-ipywidgets==6.0.1
+ipywidgets==7.1.1
 jedi==0.11.1
 Jinja2==2.10
 jsonschema==2.6.0
 jupyter-client==5.2.2
 jupyter-core==4.4.0
-jupyterlab-launcher==0.10.3
+jupyterlab-launcher==0.10.5
 jupyterlab==0.31.5
 MarkupSafe==1.0
 mistune==0.8.3
 nbconvert==5.3.1
 nbformat==4.4.0
 notebook==5.4.0
-nteract-on-jupyter==1.4.0
+nteract-on-jupyter==1.5.0
 pandocfilters==1.4.2
 parso==0.1.1
-pexpect==4.3.1
+pexpect==4.4.0
 pickleshare==0.7.4
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 Pygments==2.2.0
 python-dateutil==2.6.1
-pyzmq==16.0.4
-Send2Trash==1.4.2
+pyzmq==17.0.0
+Send2Trash==1.5.0
 simplegeneric==0.8.1
 six==1.11.0
 terminado==0.8.1
@@ -39,4 +39,4 @@ tornado==4.5.3
 traitlets==4.3.2
 wcwidth==0.1.7
 webencodings==0.5.1
-widgetsnbextension==2.0.1
+widgetsnbextension==3.1.4

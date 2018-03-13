@@ -117,8 +117,9 @@ class CondaBuildPack(BaseImage):
             assembly_scripts.append((
                 '${NB_USER}',
                 r"""
-                conda env update -v -n {} -f "{}" && \
-                conda clean -tipsy
+                conda env update -n {0} -f "{1}" && \
+                conda clean -tipsy && \
+                conda list -n {0}
                 """.format(env_name, environment_yml)
             ))
         return super().get_assemble_scripts() + assembly_scripts

@@ -62,7 +62,11 @@ class LocalRepo(pytest.File):
     def collect(self):
         yield Repo2DockerTest(
             self.fspath.basename, self,
-            args=[self.fspath.dirname, './verify'],
+            args=[
+                '--appendix', 'RUN echo "appendix" > /tmp/appendix',
+                self.fspath.dirname,
+                './verify',
+            ],
         )
 
 

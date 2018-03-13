@@ -14,7 +14,7 @@ list :)
 
 The core of `repo2docker` can be considered a
 [deterministic algorithm](https://en.wikipedia.org/wiki/Deterministic_algorithm).
-When given an input directory which has a particular repository checked out, it 
+When given an input directory which has a particular repository checked out, it
 deterministically produces a Dockerfile based on the contents of the directory.
 So if we run `repo2docker` on the same directory multiple times, we get the
 exact same Dockerfile output.
@@ -22,14 +22,35 @@ exact same Dockerfile output.
 This provides a few advantages:
 
 1. Reuse of cached built artifacts based on a repository's identity increases
-   efficiency and reliability. For example, if we had already run `reop2docker`
+   efficiency and reliability. For example, if we had already run `repo2docker`
    on a git repository at a particular commit hash, we know we can just re-use
    the old output, since we know it is going to be the same. This provides
    massive performance & architectural advantages when building additional
-   tools (like BinderHub) on top of `reop2docker`.
+   tools (like BinderHub) on top of `repo2docker`.
 2. We produce Dockerfiles that have as much in common as possible across
    multiple repositories, enabling better use of the Docker build cache. This
    also provides massive performance advantages.
+
+## Reproducibility and version stability
+
+Many ingredients go into making an image from a repository:
+
+1. version of the base docker image
+1. version of `repo2docker` itself
+1. versions of the libraries installed by the repository
+
+`repo2docker` controls the first two, the user controls the third one. The current
+policy for the version of the base image is that we will keep pace with Ubuntu
+releases until we reach the next release with Long Term Support (LTS). We
+currently use Artful Aardvark (17.10) and the next LTS version will be
+Bionic Beaver (18.04).
+
+The version of `repo2docker` used to build an image can influence which packages
+are installed by default and which features are supported during the build
+process. We will periodically update those packages to keep step with releases
+of jupyter notebook, jupyterlab, etc. For packages that are installed by
+default but where you want to control the version we recommend you specify them
+explicitly in your dependencies.
 
 ## Unix principles "do one thing well"
 
@@ -67,5 +88,5 @@ well.
 
 An easy process for getting support for more languages here is to demonstrate
 their value with Dockerfiles that other people can use, and then show that this
-pattern is popular enough to be included inside `reop2docker`. Remember that 'yes'
+pattern is popular enough to be included inside `repo2docker`. Remember that 'yes'
 is forever (very hard to remove features!), but 'no' is only temporary!

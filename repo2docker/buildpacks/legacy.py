@@ -8,7 +8,7 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
 
     dockerfile = '._binder.Dockerfile'
 
-    dockerfile_appendix = dedent(r"""
+    legacy_appendix = dedent(r"""
     USER root
     COPY . /home/main/notebooks
     RUN chown -R main:main /home/main/notebooks
@@ -27,7 +27,7 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
 
     def render(self):
         with open('Dockerfile') as f:
-            return f.read() + self.dockerfile_appendix
+            return '\n'.join([f.read(), self.legacy_appendix, self.appendix, ''])
 
     def build(self, image_spec, memory_limit, build_args):
         with open(self.dockerfile, 'w') as f:

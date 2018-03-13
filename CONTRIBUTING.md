@@ -24,7 +24,7 @@ make that your current directory with `cd repo2docker`.
 ## Set up local virtual environment
 
 After cloning the repository (or your fork of the repo), you should set up an
-isolated environment to install libraries required for running / developing 
+isolated environment to install libraries required for running / developing
 repo2docker. There are many ways to do this, and a `virtual environment` is
 one of them.
 
@@ -90,14 +90,21 @@ py.test -s tests/<path-to-test>
 
 # Updating libraries installed for all repos
 
-For both the conda and virtualenv base environments, we install specific
+For both the `conda` and `virtualenv` (`pip`) base environments, we install specific
 pinned versions of all dependencies. We explicitly list the dependencies
 we want, then *freeze* them at commit time to explicitly list all the
 transitive dependencies at current versions. This way, we know that
 all dependencies will have the exact same version installed at all times.
 
-If you update a library in the base environment, you need to update it
-for both the virtualenv and conda environments before submitting a PR.
+To update one of the dependencies shared across all `repo2docker` builds, you
+must follow these steps (with more detailed information in the sections below):
+
+* Make sure you have [Docker](https://www.docker.com/) running on your computer
+* Bump the version number in `virtualenv` ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#virtualenv-dependencies))
+* Bump the version number in the `conda` environment ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#conda-dependencies))
+* Make a pull request with your changes ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#make-a-pull-request))
+
+See the subsections below for more detailed instructions.
 
 ## Virtualenv dependencies
 
@@ -106,22 +113,23 @@ There are two files related to virtualenv dependencies:
 1. `repo2docker/buildpacks/python/requirements.txt`
 
    Contains list of packages to install in Python3 virtualenvs,
-   which are the default. This should be where all Notebook versions &
-   notebook extensions (such as JupyterLab / nteract) go.
+   which are the default. **This where all Notebook versions &
+   notebook extensions (such as JupyterLab / nteract) go**.
 
 2. `repo2docker/buildpacks/python/requirements2.txt`
 
    Contains list of packages to install in Python2 virtualenvs, which
-   can be specifically requested by users. This only needs `IPyKernel`
-   and kernel related libraries - Notebook / Notebook Extension need
+   can be specifically requested by users. **This only needs `IPyKernel`
+   and kernel related libraries** - Notebook / Notebook Extension need
    not be installed here.
 
-Once you edit either of these files to add a new package / bump version on
-an existing package, you should then run `./repo2docker/buildpacks/python/freeze.bash`.
+After you edit either of these files to add a new package / bump version on
+an existing package, run `./repo2docker/buildpacks/python/freeze.bash`.
+
 This script will resolve dependencies and write them to the respective `.frozen.txt`
 files. You will need Python3 and Python2 with virtualenv to run the script.
 
-All the .txt files in `repo2docker/buildpacks/python/` should be comitted to git.
+All the `.txt` files in `repo2docker/buildpacks/python/` should be committed to git.
 
 ## Conda dependencies
 
@@ -130,14 +138,14 @@ There are two files related to conda dependencies:
 1. `repo2docker/buildpacks/conda/environment.yml`
 
    Contains list of packages to install in Python3 conda environments,
-   which are the default. This should be where all Notebook versions &
-   notebook extensions (such as JupyterLab / nteract) go.
+   which are the default. **This is where all Notebook versions &
+   notebook extensions (such as JupyterLab / nteract) go**.
 
 2. `repo2docker/buildpacks/conda/environment.py-2.7.yml`
 
    Contains list of packages to install in Python2 conda environments, which
-   can be specifically requested by users. This only needs `IPyKernel`
-   and kernel related libraries - Notebook / Notebook Extension need
+   can be specifically requested by users. **This only needs `IPyKernel`
+   and kernel related libraries** - Notebook / Notebook Extension need
    not be installed here.
 
 Once you edit either of these files to add a new package / bump version on
@@ -145,14 +153,18 @@ an existing package, you should then run `./repo2docker/buildpacks/conda/freeze.
 This script will resolve dependencies and write them to the respective `.frozen.yml`
 files. You will need `docker` installed to run this script.
 
-The following files should be comitted to git:
+After the freeze script finishes, a number of files will have been created.
+Commit the following subset of files to git:
 
-- repo2docker/buildpacks/conda/environment.frozen.yml
-- repo2docker/buildpacks/conda/environment.py-2.7.yml
-- repo2docker/buildpacks/conda/environment.py-3.6.frozen.yml
-- repo2docker/buildpacks/conda/environment.py-2.7.frozen.yml
-- repo2docker/buildpacks/conda/environment.py-3.5.frozen.yml
-- repo2docker/buildpacks/conda/environment.yml
+```
+repo2docker/buildpacks/conda/environment.yml
+repo2docker/buildpacks/conda/environment.frozen.yml
+repo2docker/buildpacks/conda/environment.py-2.7.yml
+repo2docker/buildpacks/conda/environment.py-2.7.frozen.yml
+repo2docker/buildpacks/conda/environment.py-3.5.frozen.yml
+repo2docker/buildpacks/conda/environment.py-3.6.frozen.yml
+```
+
 
 ## Make a Pull Request
 
@@ -191,13 +203,13 @@ If you do not have access to any of these, please contact a current maintainer o
    rm -f dist/*
    python setup.py sdist bdist_wheel
    ```
-4. Once tests pass, time to upload! 
+4. Once tests pass, time to upload!
    ```bash
    twine upload dist/*
    ```
-   
+
    This might ask for your PyPI username and password.
-   
+
 5. Make a git tag and push it to GitHub:
    ```bash
    git tag -a v<version>
