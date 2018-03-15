@@ -12,6 +12,9 @@ Site Contents
 
    install
    usage
-   design
    faq
    samples
+   design
+   architecture
+   dev_newbuildpack
+
