@@ -1,1 +1,2 @@
-ipykernel==4.6.1
+ipykernel==4.8.2
+tornado==4.5.3
