@@ -86,14 +86,14 @@ The simplest invocation of ``repo2docker`` performs two steps:
 1. builds a Docker image from a git repo
 2. runs a Jupyter server within the image
 
-This two step process enable you to build an image and run it so you can
+This two step process enables you to build an image and run it so you can
 explore the repository's contents.
 
 The **command** used is::
 
-  juptyer-repo2docker <URL to repo>
+  juptyer-repo2docker <URL-or-path to repo>
 
-where ``<URL to repo>`` provides a URL to the source repository.
+where ``<URL-or-path to repo>`` provides a URL or path to the source repository.
 
 For example, use the following to build an image and launch a Jupyter Notebook
 server::
@@ -124,7 +124,7 @@ This will print the generated ``Dockerfile``, build it, and run it.
 
 To see the generated ``Dockerfile`` without actually building it,
 pass ``--no-build`` to the commandline. This ``Dockerfile`` output
-is for **debugging purposes** for ``repo2docker`` only - it can not
+is for **debugging purposes** of ``repo2docker`` only - it can not
 be used by docker directly.
 
   .. code-block:: bash

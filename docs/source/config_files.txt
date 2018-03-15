@@ -38,7 +38,7 @@ Example Contents
 ``requirements.txt``
 ^^^^^^^^^^^^^^^^^^^^
 
-This specifies a list of Python packages that would be installed in a virtualenv (or conda environment).
+This specifies a list of Python packages that should be installed in a virtualenv (or conda environment).
 
 Example Contents
 ````````````````
