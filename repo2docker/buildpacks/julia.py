@@ -16,18 +16,19 @@ class JuliaBuildPack(CondaBuildPack):
         """Get additional environment settings for Julia and Jupyter
 
         Returns:
-            An ordered list of environment setting tuples.
-            The tuple contains a string of the environment variable name and
-            a string of the environment setting. For example,
-            `('JULIA_VERSION', '0.6.0')`
+            an ordered list of environment setting tuples
 
-           - `JULIA_PATH`: base path where all Julia Binaries and libraries
-              will be installed
-           - `JULIA_HOME`: path where all Julia Binaries will be installed
-           - `JULIA_PKGDIR`: path where all Julia libraries will be installed
-           - `JULIA_VERSION`: default version of julia to be installed
-           - `JUPYTER`: environment variable required by IJulia to point to
-             the `jupyter` executable
+            The tuples contain a string of the environment variable name and
+            a string of the environment setting:
+            - `JULIA_PATH`: base path where all Julia Binaries and libraries
+                will be installed
+            - `JULIA_HOME`: path where all Julia Binaries will be installed
+            - `JULIA_PKGDIR`: path where all Julia libraries will be installed
+            - `JULIA_VERSION`: default version of julia to be installed
+            - `JUPYTER`: environment variable required by IJulia to point to
+                the `jupyter` executable
+
+            For example, a tuple may be `('JULIA_VERSION', '0.6.0')`.
 
         """
         return super().get_env() + [
@@ -55,11 +56,8 @@ class JuliaBuildPack(CondaBuildPack):
         All scripts found here should be independent of contents of a
         particular repository.
 
-        This installs:
-
-        - the specified Julia version and path
-        - Julia packages with ownership granted to the notebook user
-        - IJulia
+        This creates a directory with permissions for installing julia packages
+        (from get_assemble_scripts).
 
         """
         return super().get_build_scripts() + [
