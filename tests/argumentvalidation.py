@@ -34,8 +34,11 @@ def test_image_name_fail():
     builddir = os.path.dirname(__file__)
     image_name = 'Test/Invalid_name:1.0.0'
     args_list = ['--no-run', '--no-build', '--image-name', image_name]
-    expected = "error: argument --image-name: %r is not a valid docker image name. " \
-               "Image name can contain only lowercase characters." % image_name
+    expected = (
+        "%r is not a valid docker image name. Image name"
+        "must start with an alphanumeric character and"
+        "can then use _ . or - in addition to alphanumeric." % image_name
+    )
     assert not validate_arguments(builddir, args_list, expected)
 
 
@@ -47,9 +50,11 @@ def test_image_name_underscore_fail():
     builddir = os.path.dirname(__file__)
     image_name = '_test/invalid_name:1.0.0'
     args_list = ['--no-run', '--no-build', '--image-name', image_name]
-    expected = "error: argument --image-name: %r is not a valid docker image name. " \
-               "Image name can contain only lowercase characters." % image_name
-
+    expected = (
+        "%r is not a valid docker image name. Image name"
+        "must start with an alphanumeric character and"
+        "can then use _ . or - in addition to alphanumeric." % image_name
+    )
     assert not validate_arguments(builddir, args_list, expected)
 
 
@@ -61,9 +66,11 @@ def test_image_name_double_dot_fail():
     builddir = os.path.dirname(__file__)
     image_name = 'test..com/invalid_name:1.0.0'
     args_list = ['--no-run', '--no-build', '--image-name', image_name]
-    expected = "error: argument --image-name: %r is not a valid docker image name. " \
-               "Image name can contain only lowercase characters." % image_name
-
+    expected = (
+        "%r is not a valid docker image name. Image name"
+        "must start with an alphanumeric character and"
+        "can then use _ . or - in addition to alphanumeric." % image_name
+    )
     assert not validate_arguments(builddir, args_list, expected)
 
 
@@ -76,8 +83,11 @@ def test_image_name_valid_restircted_registry_domain_name_fail():
     builddir = os.path.dirname(__file__)
     image_name = 'Test.com/valid_name:1.0.0'
     args_list = ['--no-run', '--no-build', '--image-name', image_name]
-    expected = "error: argument --image-name: %r is not a valid docker image name. " \
-               "Image name can contain only lowercase characters." % image_name
+    expected = (
+        "%r is not a valid docker image name. Image name"
+        "must start with an alphanumeric character and"
+        "can then use _ . or - in addition to alphanumeric." % image_name
+    )
 
     assert not validate_arguments(builddir, args_list, expected)
 
