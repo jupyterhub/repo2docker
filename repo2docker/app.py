@@ -190,7 +190,9 @@ class Repo2Docker(Application):
         """
         Validate image_name read by argparse
 
-        Note: image_name contains only lowercase characters
+        Note: Container names must start with an alphanumeric character and
+        can then use _ . or - in addition to alphanumeric.
+        [a-zA-Z0-9][a-zA-Z0-9_.-]+
 
         Args:
             image_name (string): argument read by the argument parser
@@ -199,12 +201,16 @@ class Repo2Docker(Application):
             unmodified image_name
 
         Raises:
-            ArgumentTypeError: if image_name contains characters that are not
-                               lowercase
+            ArgumentTypeError: if image_name contains characters that do not
+                               meet the logic that container names must start
+                               with an alphanumeric character and can then 
+                               use _ . or - in addition to alphanumeric.
+                               [a-zA-Z0-9][a-zA-Z0-9_.-]+
         """
         if not is_valid_docker_image_name(image_name):
-            msg = ("%r is not a valid docker image name. Image name can "
-                   "contain only lowercase characters." % image_name)
+            msg = ("%r is not a valid docker image name. Image name"
+                   "must start with an alphanumeric character and"
+                   "can then use _ . or - in addition to alphanumeric." % image_name)
             raise argparse.ArgumentTypeError(msg)
         return image_name
 
