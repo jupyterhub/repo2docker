@@ -14,9 +14,8 @@ This section describes the general ways in which you can use
    :depth: 1
    :local:
 
-.. note::
 
-   See the `Frequently Asked Questions <faq.html>`_ for more info.
+See the `Frequently Asked Questions <faq.html>`_ for additional information.
 
 Preparing your repository
 -------------------------
@@ -59,13 +58,13 @@ of them in the same repository. There are a few notable rules for precedence:
 .. *** List of all configuration files ***
 .. include:: config_files.txt
 
-Preparing a repo and ``repo2docker`` to build JupyterHub-ready images
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Preparing a repo to build JupyterHub-ready images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to use ``repo2docker`` to build JupyterHub-ready
-Docker images. For this to work properly, **the version of the ``jupyterhub``
+Docker images. For this to work properly, the version of the ``jupyterhub``
 package in your git repository must match the version in your JupyterHub
-deployment**. For example, if your JupyterHub deployment runs ``jupyterhub==0.8``,
+deployment. For example, if your JupyterHub deployment runs ``jupyterhub==0.8``,
 you should put the following in ``requirements.txt`` or ``environment.yml``::
 
   jupyterhub==0.8.*
@@ -88,11 +87,11 @@ The simplest invocation of ``repo2docker`` performs two steps:
 This two step process enable you to build an image and run it so you can
 explore the repository's contents.
 
-The **command** used is:
+The **command** used is::
 
   juptyer-repo2docker <URL to repo>
 
-where <URL to repo> provides a URL to the source repository.
+where ``<URL to repo>`` provides a URL to the source repository.
 
 For example, use the following to build an image and launch a Jupyter Notebook
 server::
