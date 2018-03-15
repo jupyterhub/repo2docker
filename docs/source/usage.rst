@@ -24,11 +24,15 @@ Preparing your repository
 ``repo2docker`` looks for configuration files in the repository being built
 to determine how to build it. It is philosophically similar to
 `Heroku Build Packs <https://devcenter.heroku.com/articles/buildpacks>`_.
-``repo2docker`` will look for files in two places:
+
+Locating and composing configuration files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``repo2docker`` will look for configuration files **located** in two places:
 
 * A folder called ``binder`` in the root of the repository.
-* The root of the repository. (if a folder called ``binder`` exists in the root
-  of the repository, configuration files outside of that folder will be ignored)
+* The root of the repository. (If a folder called ``binder`` exists in the root
+  of the repository, configuration files outside of that folder will be ignored.)
 
 .. note::
 
@@ -36,10 +40,10 @@ to determine how to build it. It is philosophically similar to
    various data science workflows (e.g., ``requirements.txt``), rather than
    creating new custom configuration files.
 
-``repodocker`` configuration files are all composable - you can use any number
-of them in the same repository. There are a few notable rules:
+``repodocker`` configuration files are all **composable** - you can use any number
+of them in the same repository. There are a few notable rules for precedence:
 
-* ``Dockerfile``: if a Dockerfile is present in a repository, it will take precedence
+* ``Dockerfile``: If a Dockerfile is present in a repository, it will take precedence
   over all other configuration files (which will be ignored).
 * ``environment.yml`` with ``requirements.txt``: If both of these files are
   present, then ``environment.yml`` will be used to build the image, **not**
@@ -52,14 +56,14 @@ of them in the same repository. There are a few notable rules:
      For a list of repositories demonstrating various configurations,
      see :ref:`samples`.
 
-.. *** List of all configuratoin files ***
+.. *** List of all configuration files ***
 .. include:: config_files.txt
 
-Using ``repo2docker`` with a JupyterHub
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Preparing a repo and ``repo2docker`` to build JupyterHub-ready images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to use ``repo2docker`` in order to build JupyterHub-ready
-Docker images. In order for this to work properly, **the version of the ``jupyterhub``
+It is possible to use ``repo2docker`` to build JupyterHub-ready
+Docker images. For this to work properly, **the version of the ``jupyterhub``
 package in your git repository must match the version in your JupyterHub
 deployment**. For example, if your JupyterHub deployment runs ``jupyterhub==0.8``,
 you should put the following in ``requirements.txt`` or ``environment.yml``::
@@ -76,40 +80,51 @@ For information on installing ``repo2docker``, see :ref:`install`.
    Docker must be running on your machine in order to build images
    with ``repo2docker``.
 
-Building an image
-~~~~~~~~~~~~~~~~~
+The simplest invocation of ``repo2docker`` performs two steps:
 
-The simplest invocation of ``repo2docker`` builds a Docker image
-from a git repo, then runs a Jupyter server within the image
-so you can explore the repository's contents.
-You can do this with the following command::
+1. builds a Docker image from a git repo
+2. runs a Jupyter server within the image
+
+This two step process enable you to build an image and run it so you can
+explore the repository's contents.
+
+The **command** used is:
+
+  juptyer-repo2docker <URL to repo>
+
+where <URL to repo> provides a URL to the source repository.
+
+For example, use the following to build an image and launch a Jupyter Notebook
+server::
 
   jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook
 
-After building (it might take a while!), it should output a message in your terminal::
+When the example completes building (which may take a few minutes), a message will
+be output to your terminal::
 
   Copy/paste this URL into your browser when you connect for the first time,
   to login with a token:
       http://0.0.0.0:36511/?token=f94f8fabb92e22f5bfab116c382b4707fc2cade56ad1ace0
 
 If you copy/paste that URL into your browser you will see a Jupyter Notebook with the
-contents of the repository you have just built!
+contents of the source repository which you have just built.
 
-Debugging the build process
----------------------------
+Using the ``--debug`` and ``--no-build`` parameters
+---------------------------------------------------
 
 If you want to debug and understand the details of the docker image being built,
-you can pass the ``debug`` parameter to the commandline. This will print the
-generated ``Dockerfile`` before building and running it.
+you can pass the ``debug`` parameter to the commandline:
 
   .. code-block:: bash
 
   jupyter-repo2docker --debug https://github.com/jakevdp/PythonDataScienceHandbook
 
+This will print the generated ``Dockerfile``, build it, and run it.
 
-If you only want to see the ``Dockerfile`` output but not actually build it,
-you can also pass ``--no-build`` to the commandline. This ``Dockerfile`` output
-is for **debugging purposes** only - it can not be used by docker directly.
+To see the generated ``Dockerfile`` without actually building it,
+pass ``--no-build`` to the commandline. This ``Dockerfile`` output
+is for **debugging purposes** for ``repo2docker`` only - it can not
+be used by docker directly.
 
   .. code-block:: bash
 
