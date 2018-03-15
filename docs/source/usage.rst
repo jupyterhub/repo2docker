@@ -40,15 +40,17 @@ Locating and composing configuration files
    creating new custom configuration files.
 
 ``repodocker`` configuration files are all **composable** - you can use any number
-of them in the same repository. There are a few notable rules for precedence:
+of them in the same repository. 
+
+There are a few notable rules for composition precedence and build priority:
 
 * ``Dockerfile``: If a Dockerfile is present in a repository, it will take precedence
   over all other configuration files (which will be ignored).
 * ``environment.yml`` with ``requirements.txt``: If both of these files are
   present, then ``environment.yml`` will be used to build the image, **not**
   ``requirements.txt``. If you wish to ``pip install`` packages using an
-  ``environment.yml`` file, `you should do so with the
-  *pip:* key <https://conda.io/docs/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually>`_.
+  ``environment.yml`` file, you should do so with the
+  ``pip:`` key as described in the `conda documentation`_.
 
   .. note::
 
@@ -116,7 +118,7 @@ you can pass the ``debug`` parameter to the commandline:
 
   .. code-block:: bash
 
-  jupyter-repo2docker --debug https://github.com/jakevdp/PythonDataScienceHandbook
+     jupyter-repo2docker --debug https://github.com/jakevdp/PythonDataScienceHandbook
 
 This will print the generated ``Dockerfile``, build it, and run it.
 
@@ -127,7 +129,7 @@ be used by docker directly.
 
   .. code-block:: bash
 
-  jupyter-repo2docker --no-build --debug https://github.com/jakevdp/PythonDataScienceHandbook
+     jupyter-repo2docker --no-build --debug https://github.com/jakevdp/PythonDataScienceHandbook
 
 
 Accessing help from the command line
@@ -137,3 +139,5 @@ For a list of all the build configurations at your disposal, see the
 CLI help::
 
   jupyter-repo2docker -h
+
+.. _conda documentation: https://conda.io/docs/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually
