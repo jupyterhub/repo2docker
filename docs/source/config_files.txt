@@ -3,7 +3,7 @@
 Supported configuration files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Below is a list of supported configuration files.
+Below is a list of supported configuration files (roughly in the order of build priority).
 
 .. contents::
    :local:
@@ -34,11 +34,6 @@ Example Contents
     - matplotlib
     - pip:
       - sphinx-gallery
-
-.. important::
-
-   You must leave the ``environment.yml``'s name field empty for this
-   to work out of the box.
 
 ``requirements.txt``
 ^^^^^^^^^^^^^^^^^^^^
