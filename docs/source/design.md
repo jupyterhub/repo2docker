@@ -1,6 +1,8 @@
 # Design
 
-Two primary use cases for `repo2docker` drive most design decisions:
+When designing `repo2docker` and adding to it in the future, the
+developers are influenced by two primary use cases.
+The use cases for `repo2docker` which drive most design decisions are:
 
 1. Automated image building used by projects like
    [BinderHub](http://github.com/jupyterhub/binderhub)
