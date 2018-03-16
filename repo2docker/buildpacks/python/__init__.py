@@ -7,7 +7,13 @@ from ..base import BaseImage
 class PythonBuildPack(BaseImage):
     """Setup Python 3 for use with a repository."""
     def get_packages(self):
-        """Return list of Python3 packages to be installed."""
+        """Return a list of the Python 3 core language packages to be installed
+           via apt-get for this BuildPack.
+
+           Note: The packages specified here are for the core Python3 language.
+           Third party libraries are specified in other configuration files.
+           
+        """
         return super().get_packages().union({
             'python3',
             'python3-venv',
@@ -137,7 +143,13 @@ class PythonBuildPack(BaseImage):
 class Python2BuildPack(PythonBuildPack):
     """Setup Python 2 for use with a repository."""
     def get_packages(self):
-        """Return list of Python 2 packages to be installed."""
+        """Return a list of the Python 2 core language packages to be installed
+           via apt-get for this BuildPack.
+
+           Note: The packages specified here are for the core Python2 language.
+           Third party libraries are specified in other configuration files.
+           
+        """
         return super().get_packages().union({
             'python',
             'python-dev',
