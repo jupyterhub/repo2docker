@@ -3,23 +3,25 @@
 Supported configuration files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Below is a list of supported configuration files.
+Below is a list of supported configuration files (roughly in the order of build priority).
 
 .. contents::
    :local:
    :depth: 1
 
-``requirements.txt``
-^^^^^^^^^^^^^^^^^^^^
+``Dockerfile``
+^^^^^^^^^^^^^^
 
-This specifies a list of python packages that would be installed in a virtualenv (or conda environment).
+This will be treated as a regular Dockerfile and a regular Docker build will be performed.
+The presence of a Dockerfile takes priority over and ignores all other build behavior
+specified in other configuration files.
 
-Example Contents
-````````````````
-::
+In the majority of cases, providing your own Dockerfile is not necessary as the base
+images provide core functionality, compact image sizes, and efficient builds. We recommend
+trying the other configuration files before deciding to use your own Dockerfile.
 
-   numpy==1.7
-   matplotlib==2.1
+See the `Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
+best-practices with Dockerfiles.
 
 ``environment.yml``
 ^^^^^^^^^^^^^^^^^^^
@@ -38,16 +40,40 @@ Example Contents
     - pip:
       - sphinx-gallery
 
-.. important::
+``requirements.txt``
+^^^^^^^^^^^^^^^^^^^^
 
-   You must leave the ``environment.yml``'s name field empty for this
-   to work out of the box.
+This specifies a list of Python packages that should be installed in a virtualenv (or conda environment).
+
+Example Contents
+````````````````
+::
+
+   numpy==1.7
+   matplotlib==2.1
+
+``REQUIRE``
+^^^^^^^^^^^
+
+This specifies a list of Julia packages.
+
+.. note::
+
+   Using a ``REQUIRE`` file also requires that the repository contain an
+   ``environment.yml`` file.
+
+Example Contents
+````````````````
+::
+
+  PyPlot
+  Stats
 
 ``apt.txt``
 ^^^^^^^^^^^
 
-A list of debian packages that should be installed. The base image used is usually the latest released
-version of Ubuntu (currently Zesty.)
+A list of Debian packages that should be installed. The base image used is usually the latest released
+version of Ubuntu.
 
 Example Contents
 ````````````````
@@ -76,23 +102,6 @@ Example Contents
 
      chmod +x postBuild
 
-``REQUIRE``
-^^^^^^^^^^^
-
-This specifies a list of Julia packages!
-
-.. note::
-
-   Using a ``REQUIRE`` file also requires that the repository contain an
-   ``environment.yml`` file.
-
-Example Contents
-````````````````
-::
-
-  PyPlot
-  Stats
-
 ``runtime.txt``
 ^^^^^^^^^^^^^^^
 
@@ -105,11 +114,3 @@ Example Contents
 ::
 
    python-2.7
-
-``Dockerfile``
-^^^^^^^^^^^^^^
-
-This will be treated as a regular Dockerfile and a regular Docker build will be performed.
-The presence of a Dockerfile prevents all other build behavior.
-See the `Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
-best-practices with Dockerfiles.
