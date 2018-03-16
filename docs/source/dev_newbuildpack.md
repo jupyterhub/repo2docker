@@ -1,9 +1,8 @@
 # Adding a new buildpack to repo2docker
 
 A new buildpack is needed when a new language or a new package manager should be
-supported. Buildpacks need to work together. For example, when adding support for
-a new language, like nodejs, the new nodejs buildpack should be able to co-exist
-with Python / R / etc support.
+supported. Existing buildpacks are a good model for how new buildpacks
+should be structured.
 
 ## Criteria to balance and consider
 
