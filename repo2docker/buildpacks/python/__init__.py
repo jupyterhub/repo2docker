@@ -85,7 +85,8 @@ class PythonBuildPack(BaseImage):
         return assemble_scripts
 
     def detect(self):
-        return os.path.exists('requirements.txt') and super().detect()
+        return (os.path.exists(self.binder_path('requirements.txt')) and
+                super().detect())
 
 
 class Python2BuildPack(PythonBuildPack):
@@ -95,7 +96,6 @@ class Python2BuildPack(PythonBuildPack):
             'python-dev',
             'virtualenv'
         })
-
 
     def get_env(self):
         return super().get_env() + [

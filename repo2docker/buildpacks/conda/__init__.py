@@ -1,7 +1,6 @@
 """
 Buildpack for conda environments
 """
-import glob
 import os
 import re
 
@@ -123,7 +122,6 @@ class CondaBuildPack(BaseImage):
                 """.format(env_name, environment_yml)
             ))
         return super().get_assemble_scripts() + assembly_scripts
-
 
     def detect(self):
         return os.path.exists(self.binder_path('environment.yml')) and super().detect()

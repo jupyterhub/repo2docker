@@ -210,11 +210,12 @@ class RBuildPack(PythonBuildPack):
             ),
         ]
 
-        if os.path.exists('install.R'):
+        installR_path = self.binder_path('install.R')
+        if os.path.exists(installR_path):
             assemble_scripts += [
                 (
                     "${NB_USER}",
-                    "Rscript install.R"
+                    "Rscript %s" % installR_path
                 )
             ]
 
