@@ -4,6 +4,7 @@ import tarfile
 import io
 import os
 import re
+import pathspec
 import logging
 import docker
 
@@ -349,7 +350,21 @@ class BuildPack:
             src_path = os.path.join(os.path.dirname(__file__), *src_parts)
             tar.add(src_path, src, filter=_filter_tar)
 
-        tar.add('.', 'src/', filter=_filter_tar)
+        _exclude_tar = None
+        if os.path.exists(".gitignore"):
+            gitignore_fh = open(".gitignore")
+            ignorespec = pathspec.PathSpec.from_lines('gitignore', gitignore_fh)
+
+            def _exclude_tar(filepath):
+                # Conditionally exclude files based on the pathspecs mentioned
+                # in the `.gitignore` file.
+                # Note that, the behaviour of this function is not **exactly**
+                # same to the way `git` excludes files based on `.gitignore`.
+                #
+                # https://github.com/cpburnz/python-path-specification/issues/19
+                return ignorespec.match_file(filepath)
+
+        tar.add('.', 'src/', exclude=_exclude_tar, filter=_filter_tar)
 
         tar.close()
         tarf.seek(0)

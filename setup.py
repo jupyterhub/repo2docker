@@ -10,6 +10,7 @@ setup(
         'escapism',
         'jinja2',
         'ruamel.yaml>=0.15',
+        'pathspec>=0.5.5',
     ],
     python_requires='>=3.4',
     author='Yuvi Panda',
