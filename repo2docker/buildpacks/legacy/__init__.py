@@ -1,5 +1,10 @@
-"""
-Generates a variety of Dockerfiles based on an input matrix
+"""Generates Dockerfiles from the legacy Binder Dockerfiles
+based on `andrewosh/binder-base`.
+
+The Dockerfile is amended to add the contents of the repository
+to the image and install a supported version of the notebook
+and IPython kernel.
+
 """
 import os
 import shutil
@@ -7,7 +12,7 @@ from textwrap import dedent
 from ..docker import DockerBuildPack
 
 class LegacyBinderDockerBuildPack(DockerBuildPack):
-
+    """Legacy build pack for compatibility to first version of Binder."""
     dockerfile = '._binder.Dockerfile'
 
     legacy_prependix = dedent(r"""
@@ -39,6 +44,11 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     """)
 
     def render(self):
+        """Render buildpack into a Dockerfile.
+
+        Render appendix (post-build commands) at the end of the Dockerfile.
+
+        """
         segments = [
             'FROM andrewosh/binder-base@sha256:eabde24f4c55174832ed8795faa40cea62fc9e2a4a9f1ee1444f8a2e4f9710ee',
             self.legacy_prependix,
@@ -52,12 +62,27 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
         return '\n'.join(segments)
 
     def get_build_script_files(self):
-       return {
+        """
+        Dict of files to be copied to the container image for use in building.
+
+        This is copied before the `build_scripts` & `assemble_scripts` are
+        run, so can be executed from either of them.
+
+        It's a dictionary where the key is the source file path in the host
+        system, and the value is the destination file path inside the
+        container image.
+
+        This currently adds a frozen set of Python requirements to the dict
+        of files.
+         
+        """
+        return {
             'legacy/root.frozen.yml': '/tmp/root.frozen.yml',
             'legacy/python3.frozen.yml': '/tmp/python3.frozen.yml',
         }
             
     def build(self, image_spec, memory_limit, build_args):
+        """Build a legacy Docker image."""
         with open(self.dockerfile, 'w') as f:
             f.write(self.render())
         for env in ('root', 'python3'):
@@ -70,6 +95,8 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
         return super().build(image_spec, memory_limit, build_args)
 
     def detect(self):
+        """Check if current repo should be built with the Legacy BuildPack.
+        """
         try:
             with open('Dockerfile', 'r') as f:
                 for line in f:
