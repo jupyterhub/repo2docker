@@ -7,43 +7,46 @@ Usage:
 
     python -m repo2docker https://github.com/you/your-repo
 """
-import sys
-import json
-import os
-import time
-import logging
 import argparse
-import tempfile
-from pythonjsonlogger import jsonlogger
-import escapism
+import json
+import sys
+import logging
+import os
 import pwd
+import subprocess
+import tempfile
+import time
 
-
-from traitlets.config import Application
-from traitlets import Unicode, List, default, Any, Dict, Int
 import docker
 from docker.utils import kwargs_from_env
 from docker.errors import DockerException
+import escapism
+from pythonjsonlogger import jsonlogger
 
-import subprocess
+from traitlets import Any, Dict, Int,  List, Unicode, default
+from traitlets.config import Application
 
+from . import __version__
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage,
     RBuildPack
 )
-from .utils import execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name, validate_and_generate_port_mapping
-from . import __version__
-
+from .utils import (
+    execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
+    validate_and_generate_port_mapping
+)
 
 
 class Repo2Docker(Application):
+    """An application for converting git repositories to docker images"""
     name = 'jupyter-repo2docker'
     version = __version__
     description = __doc__
 
     @default('log_level')
     def _default_log_level(self):
+        """The application's default log level"""
         return logging.INFO
 
     git_workdir = Unicode(
@@ -51,7 +54,7 @@ class Repo2Docker(Application):
         config=True,
         allow_none=True,
         help="""
-        Working directory to check out git repositories to.
+        Working directory to use for check out of git repositories.
 
         The default is to use the system's temporary directory. Should be
         somewhere ephemeral, such as /tmp.
@@ -70,7 +73,7 @@ class Repo2Docker(Application):
         ],
         config=True,
         help="""
-        Ordered list of BuildPacks to try to use to build a git repository.
+        Ordered list of BuildPacks to try when building a git repository.
         """
     )
 
@@ -78,7 +81,7 @@ class Repo2Docker(Application):
         PythonBuildPack,
         config=True,
         help="""
-        The build pack to use when no buildpacks are found
+        The default build pack to use when no other buildpacks are found.
         """
     )
 
@@ -97,13 +100,15 @@ class Repo2Docker(Application):
         help="""
         Volumes to mount when running the container.
 
-        Only used when running, not during build!
+        Only used when running, not during build process!
 
-        Should be a key value pair, with the key being the volume source &
-        value being the destination. Both can be relative - sources are
-        resolved relative to the current working directory on the host,
-        destination is resolved relative to the working directory of the image -
-        ($HOME by default)
+        Use a key-value pair, with the key being the volume source &
+        value being the destination volume.
+        
+        Both source and destination can be relative. Source is resolved 
+        relative to the current working directory on the host, and
+        destination is resolved relative to the working directory of the 
+        image - ($HOME by default)
         """,
         config=True
     )
@@ -133,11 +138,11 @@ class Repo2Docker(Application):
         help="""
         Username of the user to create inside the built image.
 
-        Should be a username that is not currently used by anything in the image,
-        and should conform to the restrictions on user names for Linux.
+        Should be a username that is not currently used by anything in the
+        image, and should conform to the restrictions on user names for Linux.
 
         Defaults to username of currently running user, since that is the most
-        common case when running r2d manually.
+        common case when running repo2docker manually.
         """,
         config=True
     )
@@ -160,6 +165,7 @@ class Repo2Docker(Application):
     )
 
     def fetch(self, url, ref, checkout_path):
+        """Check out a repo using url and ref to the checkout_path location"""
         try:
             for line in execute_cmd(['git', 'clone', '--recursive', url, checkout_path],
                                     capture=self.json_logs):
@@ -182,7 +188,11 @@ class Repo2Docker(Application):
 
     def validate_image_name(self, image_name):
         """
-        Validate image_name read by argparse contains only lowercase characters
+        Validate image_name read by argparse
+
+        Note: Container names must start with an alphanumeric character and
+        can then use _ . or - in addition to alphanumeric.
+        [a-zA-Z0-9][a-zA-Z0-9_.-]+
 
         Args:
             image_name (string): argument read by the argument parser
@@ -191,15 +201,21 @@ class Repo2Docker(Application):
             unmodified image_name
 
         Raises:
-            ArgumentTypeError: if image_name contains characters that are not lowercase
+            ArgumentTypeError: if image_name contains characters that do not
+                               meet the logic that container names must start
+                               with an alphanumeric character and can then 
+                               use _ . or - in addition to alphanumeric.
+                               [a-zA-Z0-9][a-zA-Z0-9_.-]+
         """
-
         if not is_valid_docker_image_name(image_name):
-            msg = "%r is not a valid docker image name. Image name can contain only lowercase characters." % image_name
+            msg = ("%r is not a valid docker image name. Image name"
+                   "must start with an alphanumeric character and"
+                   "can then use _ . or - in addition to alphanumeric." % image_name)
             raise argparse.ArgumentTypeError(msg)
         return image_name
 
     def get_argparser(self):
+        """Get arguments that may be used by repo2docker"""
         argparser = argparse.ArgumentParser()
         argparser.add_argument(
             '--config',
@@ -268,7 +284,8 @@ class Repo2Docker(Application):
             '--publish', '-p',
             dest='ports',
             action='append',
-            help='Specify port mappings for the image. Needs a command to run in the container.'
+            help=('Specify port mappings for the image. Needs a command to '
+                  'run in the container.')
         )
 
         argparser.add_argument(
@@ -336,6 +353,7 @@ class Repo2Docker(Application):
                        extra=dict(phase='failed'))
 
     def initialize(self, argv=None):
+        """Init repo2docker configuration before start"""
         if argv is None:
             argv = sys.argv[1:]
         args = self.get_argparser().parse_args(argv)
@@ -401,10 +419,12 @@ class Repo2Docker(Application):
             self.run = False
             self.push = False
 
-        # check against self.run and not args.run as self.run is false on --no-build
+        # check against self.run and not args.run as self.run is false on
+        # --no-build
         if args.volumes and not self.run:
             # Can't mount if we aren't running
-            print("To Mount volumes with -v, you also need to run the container")
+            print('To Mount volumes with -v, you also need to run the '
+                  'container')
             sys.exit(1)
 
         for v in args.volumes:
@@ -414,15 +434,18 @@ class Repo2Docker(Application):
         self.run_cmd = args.cmd
 
         if args.all_ports and not self.run:
-            print('To publish user defined port mappings, the container must also be run')
+            print('To publish user defined port mappings, the container must '
+                  'also be run')
             sys.exit(1)
 
         if args.ports and not self.run:
-            print('To publish user defined port mappings, the container must also be run')
+            print('To publish user defined port mappings, the container must '
+                  'also be run')
             sys.exit(1)
 
         if args.ports and not self.run_cmd:
-            print('To publish user defined port mapping, user must specify the command to run in the container')
+            print('To publish user defined port mapping, user must specify '
+                  'the command to run in the container')
             sys.exit(1)
 
         self.ports = validate_and_generate_port_mapping(args.ports)
@@ -437,12 +460,14 @@ class Repo2Docker(Application):
             self.build_memory_limit = args.build_memory_limit
 
         if args.environment and not self.run:
-            print("To specify environment variables, you also need to run the container")
+            print('To specify environment variables, you also need to run '
+                  'the container')
             sys.exit(1)
 
         self.environment = args.environment
 
     def push_image(self):
+        """Push docker image to registry"""
         client = docker.APIClient(version='auto', **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
@@ -465,6 +490,7 @@ class Repo2Docker(Application):
                 last_emit_time = time.time()
 
     def run_image(self):
+        """Run docker container from built image"""
         client = docker.from_env(version='auto')
         if not self.run_cmd:
             port = str(self._get_free_port())
@@ -533,8 +559,8 @@ class Repo2Docker(Application):
         s.close()
         return port
 
-
     def start(self):
+        """Start execution of repo2docker"""
         # Check if r2d can connect to docker daemon
         if self.build:
             try:
@@ -542,7 +568,8 @@ class Repo2Docker(Application):
                                           **kwargs_from_env())
                 del client
             except DockerException as e:
-                print("Docker client initialization error. Check if docker is running on the host.")
+                print("Docker client initialization error. Check if docker is"
+                      " running on the host.")
                 print(e)
                 if self.log_level == logging.DEBUG:
                     raise e
@@ -560,11 +587,7 @@ class Repo2Docker(Application):
         # cleanup if things go wrong
         with maybe_cleanup(checkout_path, self.cleanup_checkout):
             if self.repo_type == 'remote':
-                self.fetch(
-                    self.repo,
-                    self.ref,
-                    checkout_path
-                )
+                self.fetch(self.repo, self.ref, checkout_path)
 
             os.chdir(checkout_path)
 
@@ -588,7 +611,9 @@ class Repo2Docker(Application):
                 }
                 self.log.info('Using %s builder\n', bp.__class__.__name__,
                               extra=dict(phase='building'))
-                for l in picked_buildpack.build(self.output_image_spec, self.build_memory_limit, build_args):
+
+                for l in picked_buildpack.build(self.output_image_spec,
+                    self.build_memory_limit, build_args):
                     if 'stream' in l:
                         self.log.info(l['stream'],
                                       extra=dict(phase='building'))
