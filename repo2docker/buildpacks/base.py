@@ -352,17 +352,18 @@ class BuildPack:
 
         _exclude_tar = None
         if os.path.exists(".gitignore"):
-            gitignore_fh = open(".gitignore")
-            ignorespec = pathspec.PathSpec.from_lines('gitignore', gitignore_fh)
-
-            def _exclude_tar(filepath):
-                # Conditionally exclude files based on the pathspecs mentioned
-                # in the `.gitignore` file.
-                # Note that, the behaviour of this function is not **exactly**
-                # same to the way `git` excludes files based on `.gitignore`.
-                #
-                # https://github.com/cpburnz/python-path-specification/issues/19
-                return ignorespec.match_file(filepath)
+            with open(".gitignore") as gitignore_fh:
+                ignorespec = pathspec.PathSpec.from_lines('gitignore',
+                                                          gitignore_fh)
+                def _exclude_tar(filepath):
+                    # Conditionally exclude files based on the pathspecs
+                    # mentioned in the `.gitignore` file.
+                    # Note that, the behaviour of this function is
+                    # not **exactly** same as the way `git` excludes files
+                    # based on `.gitignore`.
+                    #
+                    # https://github.com/cpburnz/python-path-specification/issues/19
+                    return ignorespec.match_file(filepath)
 
         tar.add('.', 'src/', exclude=_exclude_tar, filter=_filter_tar)
 
