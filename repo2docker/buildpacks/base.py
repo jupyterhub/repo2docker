@@ -171,7 +171,7 @@ class BuildPack:
             # FIXME: Use npm from nodesource!
             # Everything seems to depend on npm these days, unfortunately.
             "npm",
-            
+
             "unzip",
         }
 
@@ -363,6 +363,7 @@ class BuildPack:
                     # based on `.gitignore`.
                     #
                     # https://github.com/cpburnz/python-path-specification/issues/19
+                    filepath = os.path.relpath(filepath, "./")
                     return ignorespec.match_file(filepath)
 
         tar.add('.', 'src/', exclude=_exclude_tar, filter=_filter_tar)
