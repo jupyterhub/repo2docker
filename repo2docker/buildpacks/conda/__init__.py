@@ -1,6 +1,4 @@
-"""
-Buildpack for conda environments
-"""
+"""BuildPack for conda environments"""
 import os
 import re
 
@@ -15,16 +13,48 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 class CondaBuildPack(BaseImage):
+    """A conda BuildPack.
+
+    Uses miniconda since it is more lightweight than Anaconda.
+
+    """
     def get_env(self):
+        """Return environment variables to be set.
+
+        We set `CONDA_DIR` to the conda install directory and
+        the `NB_PYTHON_PREFIX` to the location of the jupyter binary.
+
+        """
         return super().get_env() + [
             ('CONDA_DIR', '${APP_BASE}/conda'),
             ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
         ]
 
     def get_path(self):
+        """Return paths (including conda environment path) to be added to
+        the PATH environment variable.
+
+        """
         return super().get_path() + ['${CONDA_DIR}/bin']
 
     def get_build_scripts(self):
+        """
+        Return series of build-steps common to all Python 3 repositories.
+
+        All scripts here should be independent of contents of the repository.
+
+        This sets up through `install-miniconda.bash` (found in this directory):
+
+        - a directory for the conda environment and its ownership by the
+          notebook user
+        - a Python 3 interpreter for the conda environment
+        - a Python 3 jupyter kernel
+        - a frozen base set of requirements, including:
+            - support for Jupyter widgets
+            - support for JupyterLab
+            - support for nteract
+
+        """
         return super().get_build_scripts() + [
             (
                 "root",
@@ -41,6 +71,20 @@ class CondaBuildPack(BaseImage):
     }
 
     def get_build_script_files(self):
+        """
+        Dict of files to be copied to the container image for use in building.
+
+        This is copied before the `build_scripts` & `assemble_scripts` are
+        run, so can be executed from either of them.
+
+        It's a dictionary where the key is the source file path in the host
+        system, and the value is the destination file path inside the
+        container image.
+
+        This currently adds a frozen set of Python requirements to the dict
+        of files.
+
+        """
         files = {
             'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
         }
@@ -69,10 +113,11 @@ class CondaBuildPack(BaseImage):
 
     @property
     def python_version(self):
-        """
-        Detect the Python version for a given environment.yml
+        """Detect the Python version for a given `environment.yml`
 
-        Will return 'x.y' if found, or Falsy '' if not.
+        Will return 'x.y' if version is found (e.g '3.6'),
+        or a Falsy empty string '' if not found.
+
         """
         environment_yml = self.binder_path('environment.yml')
         if not os.path.exists(environment_yml):
@@ -109,6 +154,8 @@ class CondaBuildPack(BaseImage):
         return self.python_version and self.python_version.split('.')[0] == '2'
 
     def get_assemble_scripts(self):
+        """Return series of build-steps specific to this source repository.
+        """
         assembly_scripts = []
         environment_yml = self.binder_path('environment.yml')
         env_name = 'kernel' if self.py2 else 'root'
@@ -124,4 +171,6 @@ class CondaBuildPack(BaseImage):
         return super().get_assemble_scripts() + assembly_scripts
 
     def detect(self):
+        """Check if current repo should be built with the Conda BuildPack.
+        """
         return os.path.exists(self.binder_path('environment.yml')) and super().detect()
