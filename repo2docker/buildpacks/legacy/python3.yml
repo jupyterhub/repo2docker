@@ -1,0 +1,4 @@
+dependencies:
+  - notebook==5.4.1
+  - ipykernel==4.8.2
+  - tornado<5

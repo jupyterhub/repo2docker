@@ -1,0 +1,3 @@
+dependencies:
+  - ipykernel==4.8.2
+  - tornado<5
