@@ -1,5 +1,4 @@
-"""
-Generates a variety of Dockerfiles based on an input matrix
+"""Generates a variety of Dockerfiles based on an input matrix
 """
 import os
 import docker
@@ -7,17 +6,21 @@ from .base import BuildPack
 
 
 class DockerBuildPack(BuildPack):
+    """Docker BuildPack"""
     dockerfile = "Dockerfile"
 
     def detect(self):
+        """Check if current repo should be built with the Docker BuildPack"""
         return os.path.exists(self.binder_path('Dockerfile'))
 
     def render(self):
+        """Render the Dockerfile using by reading it from the source repo"""
         Dockerfile = self.binder_path('Dockerfile')
         with open(Dockerfile) as f:
             return f.read()
 
     def build(self, image_spec, memory_limit, build_args):
+        """Build a Docker image based on the Dockerfile in the source repo."""
         limits = {
             # Always disable memory swap for building, since mostly
             # nothing good can come of that.
