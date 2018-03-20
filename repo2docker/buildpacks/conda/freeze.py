@@ -21,7 +21,7 @@ from ruamel.yaml import YAML
 
 MINICONDA_VERSION = '4.3.27'
 # need conda ≥ 4.4 to avoid bug adding spurious pip dependencies
-CONDA_VERSION = '4.4.8'
+CONDA_VERSION = '4.4.11'
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
