@@ -10,31 +10,46 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
 
     dockerfile = '._binder.Dockerfile'
 
-    legacy_appendix = dedent(r"""
-    USER root
-    COPY . /home/main/notebooks
-    RUN chown -R main:main /home/main/notebooks
-    USER main
-    WORKDIR /home/main/notebooks
+    legacy_prependix = dedent(r"""
+    COPY python3.frozen.yml /tmp/python3.frozen.yml
+    COPY root.frozen.yml /tmp/root.frozen.yml
     # update conda in two steps because the base image
     # has very old conda that can't upgrade past 4.3
     RUN conda install -yq conda>=4.3 && \
         conda install -yq conda==4.4.11 && \
-        conda env update -n python3 -f python3.frozen.yml && \
+        conda env update -n python3 -f /tmp/python3.frozen.yml && \
         conda remove -yq -n python3 nb_conda_kernels && \
-        conda env update -n root -f root.frozen.yml && \
+        conda env update -n root -f /tmp/root.frozen.yml && \
         /home/main/anaconda2/envs/python3/bin/ipython kernel install --sys-prefix && \
         /home/main/anaconda2/bin/ipython kernel install --prefix=/home/main/anaconda2/envs/python3 && \
         /home/main/anaconda2/bin/ipython kernel install --sys-prefix
-    RUN rm python3.frozen.yml root.frozen.yml
+    """)
+
+    legacy_appendix = dedent(r"""
+    USER root
+    COPY . /home/main/notebooks
+    RUN chown -R main:main /home/main/notebooks && \
+        rm /home/main/notebooks/root.frozen.yml && \
+        rm /home/main/notebooks/python3.frozen.yml
+    USER main
+    WORKDIR /home/main/notebooks
     ENV PATH /home/main/anaconda2/envs/python3/bin:$PATH
     ENV JUPYTER_PATH /home/main/anaconda2/share/jupyter:$JUPYTER_PATH
     CMD jupyter notebook --ip 0.0.0.0
     """)
 
     def render(self):
+        segments = [
+            'FROM andrewosh/binder-base@sha256:eabde24f4c55174832ed8795faa40cea62fc9e2a4a9f1ee1444f8a2e4f9710ee',
+            self.legacy_prependix,
+        ]
         with open('Dockerfile') as f:
-            return '\n'.join([f.read(), self.legacy_appendix, self.appendix, ''])
+            for line in f:
+                if line.strip().startswith('FROM'):
+                    break
+            segments.append(f.read())
+        segments.append(self.legacy_appendix)
+        return '\n'.join(segments)
 
     def get_build_script_files(self):
        return {
