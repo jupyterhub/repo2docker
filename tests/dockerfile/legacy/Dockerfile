@@ -10,6 +10,5 @@ USER main
 
 # Install Julia kernel
 RUN julia -e 'Pkg.add("IJulia")'
-RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
 
 ADD verify verify
