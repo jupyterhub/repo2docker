@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Freeze the conda environment.yml
+Freeze the conda environment.yml for legacy dockerfiles.
 
-It runs the freeze in a continuumio/miniconda3 image to ensure portability
+It runs the freeze in the andrewosh/binder-base image used for legacy dockerfiles.
 
 Usage:
 
@@ -58,7 +58,7 @@ def freeze(env_name, env_file, frozen_file):
 
 
 if __name__ == '__main__':
-    # allow specifying which Pythons to update on argv
+    # allow specifying which env(s) to update on argv
     env_names = sys.argv[1:] or ('root', 'python3')
     for env_name in env_names:
         env_file = env_name + ".yml"
