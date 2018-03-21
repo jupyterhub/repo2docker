@@ -9,17 +9,15 @@ install:
   # Make a wheel and install it to test to catch possible
   # issues with releases
   - pip install --upgrade setuptools pip
+  - pip install -e .
   - pip install -r dev-requirements.txt
-  - python setup.py bdist_wheel
-  - pip install dist/*.whl
+  #- python setup.py bdist_wheel
+  #- pip install dist/*.whl
 
 script:
   # cd into tests so CWD being repo2docker does not hide
   # possible issues with MANIFEST.in
-  - cd tests && pytest --cov repo2docker -v ${REPO_TYPE}
-after_success:
-  - pip install codecov
-  - codecov
+  - cd tests && pytest repo2docker -v ${REPO_TYPE}
 
 jobs:
   include:
@@ -36,12 +34,12 @@ jobs:
 
 env:
   matrix:
-  - REPO_TYPE=conda
-  - REPO_TYPE=venv
-  - REPO_TYPE=julia
+  #- REPO_TYPE=conda
+  #- REPO_TYPE=venv
+  #- REPO_TYPE=julia
   - REPO_TYPE=r
-  - REPO_TYPE=dockerfile
-  - REPO_TYPE=external/*
+  #- REPO_TYPE=dockerfile
+  #- REPO_TYPE=external/*
   - REPO_TYPE=*.py
   global:
   - secure: gX7IOkbjlvcDwIH24sOLhutINx6TZRwujEusMWh1dqgYG2D69qQai/mTrRXO9PGRrsvQwIBk4RcILKAiZnk5O2Z1hLoIHk/oU2mNUmE44dDm4Xf/VTTdeYhjeOTR9B+KJ9NVwPxuSEDSND3lD7yFfvCqNXykipEhBtTliLupjWVxxXnaz0aZTYHUPJwanxdUc06AphSPwZjtm1m3qMUU8v7UdTGGAdW3NlgkKw0Xx2x5W31fW676vskC/GNQAbcRociYipuhSFWV4lu+6d8XF2xVO97xtzf54tBQzt6RgVfAKtiqkEIYSzJQBBpkQ6SM6yg+fQoQpOo8jPU9ZBjvaoopUG9vn8HRS/OtQrDcG3kEFnFAnaes8Iqtidp1deTn27LIlfCTl7kTFOp8yaaNlIMHJTJKTEMRhfdDlBYx7qiH8e9d/z37lupzY2loLHeNHdMRS1uYsfacZsmrnu9vAdpQmP1LuHivBPZEvgerinADaJiekelWOIEn956pDrno/YgnzP0i9LEBYnbbunqT8oEzLintNt5CXGdhkiG60j38McKCIn4sD6jbMMwgsqVFdClCBersyorKhOs7P8at5vX4xf8fMiKPC8LZPzYVIQYzCjmwSOFQ+Rzmz5gSj+DRTANKfHpzZCKZEF6amBYMGE1O5osF8m6M10vtW9ToK+s=
