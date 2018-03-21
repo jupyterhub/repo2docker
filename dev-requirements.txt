@@ -1,4 +1,5 @@
-pyyaml
 pytest
-wheel
 pytest-cov
+pyyaml
+wheel
+
