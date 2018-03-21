@@ -46,7 +46,9 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     def render(self):
         """Render buildpack into a Dockerfile.
 
-        Render appendix (post-build commands) at the end of the Dockerfile.
+        Render legacy image source (andrewosh/binder-base at a specific commit)
+        and then prependix. Render appendix (post-build commands) at the end of
+        the Dockerfile.
 
         """
         segments = [
