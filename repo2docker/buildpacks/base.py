@@ -170,7 +170,7 @@ class BuildPack:
             # FIXME: Use npm from nodesource!
             # Everything seems to depend on npm these days, unfortunately.
             "npm",
-            
+
             "unzip",
         }
 

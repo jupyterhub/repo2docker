@@ -12,7 +12,7 @@ class PythonBuildPack(BaseImage):
 
            Note: The packages specified here are for the core Python3 language.
            Third party libraries are specified in other configuration files.
-           
+
         """
         return super().get_packages().union({
             'python3',
@@ -37,7 +37,7 @@ class PythonBuildPack(BaseImage):
     def get_path(self):
         """Return paths (including virtual environment path) to be added to
         the PATH environment variable.
-        
+
         """
         return super().get_path() + [
             "${VENV_PATH}/bin"
@@ -148,7 +148,7 @@ class Python2BuildPack(PythonBuildPack):
 
            Note: The packages specified here are for the core Python2 language.
            Third party libraries are specified in other configuration files.
-           
+
         """
         return super().get_packages().union({
             'python',
@@ -162,7 +162,7 @@ class Python2BuildPack(PythonBuildPack):
 
         We set `VENV_PATH` to the virtual environment location containing
         Python 2.
-        
+
         """
         return super().get_env() + [
             ('VENV2_PATH', '${APP_BASE}/venv2')
@@ -171,7 +171,7 @@ class Python2BuildPack(PythonBuildPack):
     def get_path(self):
         """Return paths (including virtual environment path) to be added to
         the PATH environment variable.
-        
+
         """
         return super().get_path() + [
             "${VENV2_PATH}/bin"
@@ -190,7 +190,7 @@ class Python2BuildPack(PythonBuildPack):
 
         This currently adds a frozen set of Python 2 requirements to the dict
         of files.
-        
+
         """
         files = {
             'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
@@ -238,10 +238,11 @@ class Python2BuildPack(PythonBuildPack):
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository.
         """
+        requirements_file = self.binder_path('requirements.txt')
         return super().get_assemble_scripts() + [
             (
                 '${NB_USER}',
-                'pip2 install --no-cache-dir -r requirements.txt'
+                'pip2 install --no-cache-dir -r "{}"'.format(requirements_file)
             )
         ]
 
