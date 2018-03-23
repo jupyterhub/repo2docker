@@ -83,7 +83,9 @@ Then you are good to go!
 ## Running tests
 
 We have a lot of tests for various cases supported by repo2docker in the `tests/`
-subdirectory. These use [py.test](https://docs.pytest.org/). 
+subdirectory. If you fix a bug or add new functionality consider adding a new
+test to prevent the bug from coming back. These use
+[py.test](https://docs.pytest.org/).
 
 You can run all the tests with:
 
@@ -136,17 +138,17 @@ See the subsections below for more detailed instructions.
 
 2. After you edit either of these files to add a new package / bump version on
    an existing package, run:
-   
+
    ```bash
    ./repo2docker/buildpacks/python/freeze.bash
    ```
 
    This script will resolve dependencies and write them to the respective `.frozen.txt`
-   files. 
-   
+   files.
+
    Note: If you do not have Python3 and Python2 with virtualenv, the script
    will create and build Docker containers to process the frozen files.
-   
+
 3. All the `.txt` files in `repo2docker/buildpacks/python/` should be committed to git.
 
 4. Make a pull request.
@@ -174,7 +176,7 @@ See the subsections below for more detailed instructions.
    ```bash
    python ./repo2docker/buildpacks/conda/freeze.py
    ```
- 
+
    This script will resolve dependencies and write them to the respective `.frozen.yml`
    files. You will need `docker` installed to run this script.
 
@@ -196,7 +198,8 @@ See the subsections below for more detailed instructions.
 
 Once you've made the commit, please make a Pull Request to the `jupyter/repo2docker`
 repository, with a description of what versions were bumped / what new packages were
-added and why.
+added and why. If you fix a bug or add new functionality consider adding a new
+test to prevent the bug from coming back/the feature breaking in the future.
 
 ## Creating a Release
 
