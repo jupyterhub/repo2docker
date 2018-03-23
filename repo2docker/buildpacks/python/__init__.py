@@ -136,8 +136,17 @@ class PythonBuildPack(BaseImage):
     def detect(self):
         """Check if current repo should be built with the Python 3 Build pack.
         """
-        return (os.path.exists(self.binder_path('requirements.txt')) and
-                super().detect())
+        requirements_txt = self.binder_path('requirements.txt')
+        runtime_txt = self.binder_path('runtime.txt')
+
+        if os.path.exists(runtime_txt):
+            with open(runtime_txt) as f:
+                runtime = f.read().strip()
+            if runtime.startswith("python"):
+                return True
+            else:
+                return False
+        return os.path.exists(requirements_txt)
 
 
 class Python2BuildPack(PythonBuildPack):
@@ -190,7 +199,7 @@ class Python2BuildPack(PythonBuildPack):
 
         This currently adds a frozen set of Python 2 requirements to the dict
         of files.
-        
+
         """
         files = {
             'python/requirements2.frozen.txt': '/tmp/requirements2.frozen.txt',
@@ -238,19 +247,21 @@ class Python2BuildPack(PythonBuildPack):
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository.
         """
-        return super().get_assemble_scripts() + [
-            (
+        requirements_txt = self.binder_path('requirements.txt')
+        assemble_scripts = super().get_assemble_scripts()
+        if os.path.exists(requirements_txt):
+            assemble_scripts.append((
                 '${NB_USER}',
-                'pip2 install --no-cache-dir -r requirements.txt'
-            )
-        ]
+                'pip3 install --no-cache-dir -r "{}"'.format(requirements_txt)
+            ))
+        return assemble_scripts
 
     def detect(self):
         """Check if current repo should be built with the Python 2 Build pack.
         """
-        requirements_txt = self.binder_path('requirements.txt')
         runtime_txt = self.binder_path('runtime.txt')
-        if os.path.exists(requirements_txt) and os.path.exists(runtime_txt):
+
+        if os.path.exists(runtime_txt):
             with open(runtime_txt) as f:
                 runtime = f.read().strip()
             if runtime == 'python-2.7':
