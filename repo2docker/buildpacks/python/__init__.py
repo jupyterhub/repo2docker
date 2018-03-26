@@ -12,7 +12,7 @@ class PythonBuildPack(BaseImage):
 
            Note: The packages specified here are for the core Python3 language.
            Third party libraries are specified in other configuration files.
-           
+
         """
         return super().get_packages().union({
             'python3',
@@ -37,7 +37,7 @@ class PythonBuildPack(BaseImage):
     def get_path(self):
         """Return paths (including virtual environment path) to be added to
         the PATH environment variable.
-        
+
         """
         return super().get_path() + [
             "${VENV_PATH}/bin"
@@ -142,7 +142,7 @@ class PythonBuildPack(BaseImage):
         if os.path.exists(runtime_txt):
             with open(runtime_txt) as f:
                 runtime = f.read().strip()
-            if runtime.startswith("python"):
+            if runtime.startswith("python-3"):
                 return True
             else:
                 return False
@@ -157,7 +157,7 @@ class Python2BuildPack(PythonBuildPack):
 
            Note: The packages specified here are for the core Python2 language.
            Third party libraries are specified in other configuration files.
-           
+
         """
         return super().get_packages().union({
             'python',
@@ -171,7 +171,7 @@ class Python2BuildPack(PythonBuildPack):
 
         We set `VENV_PATH` to the virtual environment location containing
         Python 2.
-        
+
         """
         return super().get_env() + [
             ('VENV2_PATH', '${APP_BASE}/venv2')
@@ -180,7 +180,7 @@ class Python2BuildPack(PythonBuildPack):
     def get_path(self):
         """Return paths (including virtual environment path) to be added to
         the PATH environment variable.
-        
+
         """
         return super().get_path() + [
             "${VENV2_PATH}/bin"
@@ -252,7 +252,7 @@ class Python2BuildPack(PythonBuildPack):
         if os.path.exists(requirements_txt):
             assemble_scripts.append((
                 '${NB_USER}',
-                'pip3 install --no-cache-dir -r "{}"'.format(requirements_txt)
+                'pip2 install --no-cache-dir -r "{}"'.format(requirements_txt)
             ))
         return assemble_scripts
 
