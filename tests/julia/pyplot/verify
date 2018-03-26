@@ -2,18 +2,30 @@
 using PyPlot
 
 # Make sure we are re-using the same conda python
-if PyCall.libpython != "/srv/conda/lib/libpython3.6m"
-    println("Not re-using conda python! Using " * PyCall.libpython * " instead")
-    exit(1)
-end
+# if PyCall.libpython != "/srv/conda/lib/libpython3.6m"
+#    println("Not re-using conda python! Using " * PyCall.libpython * " instead")
+#    exit(1)
+# end
 
 # We try to plot something, and see if the file saved exists
-x = linspace(0,2*pi,1000); y = sin(3*x + 4*cos(2*x))
-plot(x, y, color="red", linewidth=2.0, linestyle="--")
-savefig("graph.png")
-if isfile("graph.png")
+# x = linspace(0,2*pi,1000); y = sin(3*x + 4*cos(2*x))
+#plot(x, y, color="red", linewidth=2.0, linestyle="--")
+#savefig("graph.png")
+#if isfile("graph.png")
     exit(0)
-else
-    exit(1)
+#else
+#    exit(1)
+#end
+
+# simple test
+
+# function to calculate the volume of a sphere
+function sphere_vol(r)
+    # julia allows Unicode names (in UTF-8 encoding)
+    # so either "pi" or the symbol π can be used
+    return 4/3*pi*r^3
 end
 
+vol = sphere_vol(3)
+# @printf allows number formatting but does not automatically append the \n to statements, see below
+@printf "volume = %0.3f\n" vol
