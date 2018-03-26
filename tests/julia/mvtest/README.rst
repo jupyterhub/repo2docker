@@ -3,6 +3,8 @@ Julia - REQUIRE
 
 The simplest way to specify dependencies in Julia, a REQUIRE file simply
 lists the names of packages. Each one will be installed but not pre-compiled.
-In this case, we install an empty environment.yml but a REQUIRE file with one
-dependency.
+In this case, we install:
+
+- No environment.yml
+- REQUIRE file with one dependency
 
