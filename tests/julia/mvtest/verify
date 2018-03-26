@@ -1,0 +1,6 @@
+#!/usr/bin/env julia
+using DataFrames
+
+test_df = DataFrame(A = 1:4, B = ["M", "F", "F", "M"])
+
+describe(test_df)
