@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
 
-# simple test
+# simple test of mathematical calculations
 
 # function to calculate the volume of a sphere
 function sphere_vol(r)

@@ -3,5 +3,6 @@ Julia - REQUIRE
 
 The simplest way to specify dependencies in Julia, a REQUIRE file simply
 lists the names of packages. Each one will be installed but not pre-compiled.
-In this case, we also specify python dependencies with an ``environment.yml``
-file.
+In this case, we install an empty environment.yml but a REQUIRE file with one
+dependency.
+
