@@ -10,8 +10,9 @@ install:
   # issues with releases
   - pip install --upgrade setuptools pip
   - pip install -r dev-requirements.txt
-  - python setup.py bdist_wheel
-  - pip install dist/*.whl
+  - pip install -e .
+ # - python setup.py bdist_wheel
+ # - pip install dist/*.whl
 
 script:
   # cd into tests so CWD being repo2docker does not hide
