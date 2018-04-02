@@ -16,7 +16,7 @@ install:
 script:
   # cd into tests so CWD being repo2docker does not hide
   # possible issues with MANIFEST.in
-  - cd tests && pytest --cov repo2docker -v ${REPO_TYPE}
+  - cd tests && travis_retry pytest --cov repo2docker -v ${REPO_TYPE}
 after_success:
   - pip install codecov
   - codecov
