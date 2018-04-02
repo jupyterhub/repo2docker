@@ -5,6 +5,7 @@ This document covers:
 - Setting up for Local Development
 - Running Tests
 - Updating and Freezing BuildPack Dependencies
+- Merging a Pull Request
 - Creating a Release
 
 ## Setting up for Local Development
@@ -200,6 +201,23 @@ Once you've made the commit, please make a Pull Request to the `jupyter/repo2doc
 repository, with a description of what versions were bumped / what new packages were
 added and why. If you fix a bug or add new functionality consider adding a new
 test to prevent the bug from coming back/the feature breaking in the future.
+
+
+## Merging a Pull Request
+
+There are not a lot of rules around merging a Pull Request (PR), we rely on
+individuals to be responsible and tread softly when doing so. Below a few
+standard procedures that have proven useful over time that we do follow:
+
+* do not merge your own PR
+* wait for travis to complete
+* check if test coverage has gone up or down, consider discussing additional
+  tests to keep coverage at the same level or even increase it
+* do use merge commits instead of merge-by-squashing/-rebasing. This makes it
+  easier to find all changes since the last deployment `git log --merges --pretty=format:"%h %<(10,trunc)%an %<(15)%ar %s" <deployed-revision>..`
+* [when you merge do deploy to mybinder.org](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
+
+
 
 ## Creating a Release
 
