@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-03-20 00:47:27 UTC
+# Frozen on 2018-04-02 07:27:43 UTC
 name: r2d
 channels:
   - conda-forge
@@ -24,7 +24,7 @@ dependencies:
   - jupyter_core=4.4.0=py_0
   - jupyterlab=0.31.5=py36_1
   - jupyterlab_launcher=0.10.5=py36_0
-  - libsodium=1.0.15=1
+  - libsodium=1.0.16=0
   - markupsafe=1.0=py36_0
   - mistune=0.8.3=py_0
   - nbconvert=5.3.1=py_1
@@ -37,13 +37,13 @@ dependencies:
   - parso=0.1.1=py_0
   - pexpect=4.4.0=py36_0
   - pickleshare=0.7.4=py36_0
-  - pip=9.0.2=py36_0
+  - pip=9.0.3=py36_0
   - prompt_toolkit=1.0.15=py36_0
   - ptyprocess=0.5.2=py36_0
   - pygments=2.2.0=py36_0
-  - python=3.6.4=0
-  - python-dateutil=2.7.0=py_0
-  - pyzmq=17.0.0=py36_3
+  - python=3.6.5=0
+  - python-dateutil=2.7.2=py_0
+  - pyzmq=17.0.0=py36_4
   - readline=7.0=0
   - send2trash=1.5.0=py_0
   - setuptools=39.0.1=py36_0
@@ -58,11 +58,11 @@ dependencies:
   - wcwidth=0.1.7=py36_0
   - webencodings=0.5=py36_0
   - wheel=0.30.0=py36_2
-  - widgetsnbextension=3.1.4=py36_0
+  - widgetsnbextension=3.2.0=py36_0
   - xz=5.2.3=0
-  - zeromq=4.2.3=2
+  - zeromq=4.2.5=1
   - zlib=1.2.11=0
   - pip:
-    - nteract-on-jupyter==1.5.0
+    - nteract-on-jupyter==1.6.0
 prefix: /opt/conda/envs/r2d
 

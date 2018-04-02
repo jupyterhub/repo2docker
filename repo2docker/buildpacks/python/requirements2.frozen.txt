@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM requirements2.txt, DO NOT MANUALLY MODIFY
-# Frozen on Tue Mar 20 00:20:49 UTC 2018
+# Frozen on Mon Apr  2 07:19:00 UTC 2018
 backports-abc==0.5
 backports.shutil-get-terminal-size==1.0.0
 certifi==2018.1.18
@@ -16,7 +16,7 @@ pickleshare==0.7.4
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 Pygments==2.2.0
-python-dateutil==2.7.0
+python-dateutil==2.7.2
 pyzmq==17.0.0
 scandir==1.7
 simplegeneric==0.8.1

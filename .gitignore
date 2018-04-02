@@ -23,3 +23,7 @@ include/
 # Docs
 generated/
 test_file_text.txt
+
+# Untracked artifacts from the conda script
+repo2docker/buildpacks/conda/environment.py-3.5.yml
+repo2docker/buildpacks/conda/environment.py-3.6.yml

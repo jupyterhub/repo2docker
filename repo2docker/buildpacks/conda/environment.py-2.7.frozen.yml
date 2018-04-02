@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-03-20 00:42:45 UTC
+# Frozen on 2018-04-02 07:21:15 UTC
 name: r2d
 channels:
   - conda-forge
@@ -18,19 +18,19 @@ dependencies:
   - ipython_genutils=0.2.0=py27_0
   - jupyter_client=5.2.3=py27_0
   - jupyter_core=4.4.0=py_0
-  - libsodium=1.0.15=1
+  - libsodium=1.0.16=0
   - ncurses=5.9=10
   - openssl=1.0.2n=0
   - pathlib2=2.3.0=py27_0
   - pexpect=4.4.0=py27_0
   - pickleshare=0.7.4=py27_0
-  - pip=9.0.2=py27_0
+  - pip=9.0.3=py27_0
   - prompt_toolkit=1.0.15=py27_0
   - ptyprocess=0.5.2=py27_0
   - pygments=2.2.0=py27_0
-  - python=2.7.14=4
-  - python-dateutil=2.7.0=py_0
-  - pyzmq=17.0.0=py27_3
+  - python=2.7.14=5
+  - python-dateutil=2.7.2=py_0
+  - pyzmq=17.0.0=py27_4
   - readline=7.0=0
   - scandir=1.7=py27_0
   - setuptools=39.0.1=py27_0
@@ -44,7 +44,7 @@ dependencies:
   - traitlets=4.3.2=py27_0
   - wcwidth=0.1.7=py27_0
   - wheel=0.30.0=py27_2
-  - zeromq=4.2.3=2
+  - zeromq=4.2.5=1
   - zlib=1.2.11=0
   - pip:
     - backports.ssl-match-hostname==3.5.0.1
