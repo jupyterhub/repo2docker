@@ -117,7 +117,7 @@ class PythonBuildPack(BaseImage):
         # will be installed in python3 venv. This is less of a
         # surprise than requiring python2 to be requirements2.txt tho.
         assemble_scripts = super().get_assemble_scripts()
-        setup_py = self.binder_path('setup.py')
+        setup_py = 'setup.py'
         try:
             with open(self.binder_path('runtime.txt')) as f:
                 runtime = f.read().strip()
@@ -134,10 +134,10 @@ class PythonBuildPack(BaseImage):
                 '${NB_USER}',
                 'pip3 install --no-cache-dir -r "{}"'.format(requirements_file)
             ))
-        if os.path.exists(setup_py):
+        if not os.path.exists('binder') and os.path.exists(setup_py):
             assemble_scripts.append((
                 '${NB_USER}',
-                '{} install . "{}"'.format(pip, setup_py)
+                '{} install --no-cache-dir .'.format(pip)
             ))
         return assemble_scripts
 
