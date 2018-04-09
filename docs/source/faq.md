@@ -24,3 +24,9 @@ or similar traditional docker command.
 
 Check out the [binder-examples](http://github.com/binder-examples/) github
 organization for example Dockerfiles you can copy & modify for your own use!
+
+## How do I set environment variables?
+
+Use the `-e` or `--env` flag for each variable that you want to define.
+
+For example `jupyter-repo2docker -e VAR1=val1 -e VAR2=val2 ...` 
