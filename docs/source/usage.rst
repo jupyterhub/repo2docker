@@ -131,6 +131,14 @@ be used by docker directly.
 
      jupyter-repo2docker --no-build --debug https://github.com/jakevdp/PythonDataScienceHandbook
 
+Setting environment variables
+-----------------------------
+
+If you want to define environment variables, you can pass the ``--env`` or ``-e`` parameter to the commandline:
+
+  .. code-block:: bash
+
+     jupyter-repo2docker -e VAR1=val1 -e VAR2=val2 ...
 
 Accessing help from the command line
 ------------------------------------
