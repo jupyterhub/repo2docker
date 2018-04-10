@@ -25,17 +25,24 @@ class CondaBuildPack(BaseImage):
         the `NB_PYTHON_PREFIX` to the location of the jupyter binary.
 
         """
-        return super().get_env() + [
+        env = super().get_env() + [
             ('CONDA_DIR', '${APP_BASE}/conda'),
             ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
         ]
+        if self.py2:
+            env.append(('KERNEL_PYTHON_PREFIX', '${CONDA_DIR}/envs/kernel'))
+        return env
 
     def get_path(self):
         """Return paths (including conda environment path) to be added to
         the PATH environment variable.
 
         """
-        return super().get_path() + ['${CONDA_DIR}/bin']
+        path = super().get_path()
+        if self.py2:
+            path.append('${KERNEL_PYTHON_PREFIX}/bin')
+        path.append('${CONDA_DIR}/bin')
+        return path
 
     def get_build_scripts(self):
         """
