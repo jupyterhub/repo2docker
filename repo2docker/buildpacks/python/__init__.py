@@ -266,4 +266,10 @@ class Python2BuildPack(PythonBuildPack):
                 runtime = f.read().strip()
             if runtime == 'python-2.7':
                 return True
+            elif runtime.startswith('python-2'):
+                raise ValueError(
+                    "Only python-2.7 or python-3.x is supported in "
+                    "runtime.txt, not '{}'".format(runtime_txt))
+            else:
+                return False
         return False
