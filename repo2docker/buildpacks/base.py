@@ -109,7 +109,8 @@ USER ${NB_USER}
 # Make sure that postBuild scripts are marked executable before executing them
 {% if post_build_scripts -%}
 {% for s in post_build_scripts -%}
-RUN chmod +x {{ s }} && ./{{ s }}
+RUN chmod +x {{ s }}
+RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
 
