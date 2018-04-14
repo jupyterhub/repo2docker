@@ -117,19 +117,27 @@ class PythonBuildPack(BaseImage):
         # will be installed in python3 venv. This is less of a
         # surprise than requiring python2 to be requirements2.txt tho.
         assemble_scripts = super().get_assemble_scripts()
+        setup_py = 'setup.py'
         try:
             with open(self.binder_path('runtime.txt')) as f:
                 runtime = f.read().strip()
         except FileNotFoundError:
             runtime = 'python-3.5'
         if runtime == 'python-2.7':
+            pip = "pip2"
             requirements_file = self.binder_path('requirements3.txt')
         else:
+            pip = "pip3"
             requirements_file = self.binder_path('requirements.txt')
         if os.path.exists(requirements_file):
             assemble_scripts.append((
                 '${NB_USER}',
                 'pip3 install --no-cache-dir -r "{}"'.format(requirements_file)
+            ))
+        if not os.path.exists('binder') and os.path.exists(setup_py):
+            assemble_scripts.append((
+                '${NB_USER}',
+                '{} install --no-cache-dir .'.format(pip)
             ))
         return assemble_scripts
 
@@ -138,6 +146,7 @@ class PythonBuildPack(BaseImage):
         """
         requirements_txt = self.binder_path('requirements.txt')
         runtime_txt = self.binder_path('runtime.txt')
+        setup_py = 'setup.py'
 
         if os.path.exists(runtime_txt):
             with open(runtime_txt) as f:
@@ -146,6 +155,8 @@ class PythonBuildPack(BaseImage):
                 return True
             else:
                 return False
+        if not os.path.exists('binder') and os.path.exists(setup_py):
+            return True
         return os.path.exists(requirements_txt)
 
 
@@ -250,7 +261,7 @@ class Python2BuildPack(PythonBuildPack):
         requirements_txt = self.binder_path('requirements.txt')
         assemble_scripts = super().get_assemble_scripts()
         if os.path.exists(requirements_txt):
-            assemble_scripts.append((
+            assemble_scripts.insert(0, (
                 '${NB_USER}',
                 'pip2 install --no-cache-dir -r "{}"'.format(requirements_txt)
             ))
