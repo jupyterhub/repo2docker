@@ -31,18 +31,15 @@ class PythonBuildPack(CondaBuildPack):
         """Return series of build-steps specific to this repository.
         """
         # If we have a runtime.txt & that's set to python-2.7,
-        # we will *not* install requirements.txt but will find &
-        # install a requirements3.txt file if it exists.
-        # This way, when using python2 env, requirements.txt will
-        # be installed in the python2 env, and requirements3.txt
-        # will be installed in python3 env. This is less of a
-        # surprise than requiring python2 to be requirements2.txt tho.
+        # requirements.txt will be installed in the *kernel* env
+        # and requirements3.txt (if it exists)
+        # will be installed in the python 3 notebook server env.
         assemble_scripts = super().get_assemble_scripts()
         setup_py = 'setup.py'
         pip = 'pip'
         if self.py2:
             # using python 2 kernel,
-            # requirements3.txt allows installation in the notebook env
+            # requirements3.txt allows installation in the notebook server env
             nb_requirements_file = self.binder_path('requirements3.txt')
             if os.path.exists(nb_requirements_file):
                 assemble_scripts.append((
