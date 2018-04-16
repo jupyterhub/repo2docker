@@ -69,7 +69,7 @@ class PythonBuildPack(CondaBuildPack):
         return assemble_scripts
 
     def detect(self):
-        """Check if current repo should be built with the Python 3 Build pack.
+        """Check if current repo should be built with the Python buildpack.
         """
         requirements_txt = self.binder_path('requirements.txt')
         runtime_txt = self.binder_path('runtime.txt')
