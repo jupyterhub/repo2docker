@@ -42,8 +42,8 @@ class CondaBuildPack(BaseImage):
         """
         path = super().get_path()
         if self.py2:
-            path.append('${KERNEL_PYTHON_PREFIX}/bin')
-        path.append('${CONDA_DIR}/bin')
+            path.insert(0, '${KERNEL_PYTHON_PREFIX}/bin')
+        path.insert(0, '${CONDA_DIR}/bin')
         return path
 
     def get_build_scripts(self):
