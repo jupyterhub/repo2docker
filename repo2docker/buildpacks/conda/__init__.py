@@ -31,6 +31,8 @@ class CondaBuildPack(BaseImage):
         ]
         if self.py2:
             env.append(('KERNEL_PYTHON_PREFIX', '${CONDA_DIR}/envs/kernel'))
+        else:
+            env.append(('KERNEL_PYTHON_PREFIX', '${NB_PYTHON_PREFIX}'))
         return env
 
     def get_path(self):
