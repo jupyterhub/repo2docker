@@ -36,7 +36,9 @@ class PythonBuildPack(CondaBuildPack):
         # will be installed in the python 3 notebook server env.
         assemble_scripts = super().get_assemble_scripts()
         setup_py = 'setup.py'
-        pip = 'pip'
+        # KERNEL_PYTHON_PREFIX is the env with the kernel,
+        # whether it's distinct from the notebook or the same.
+        pip = '${KERNEL_PYTHON_PREFIX}/bin/pip'
         if self.py2:
             # using python 2 kernel,
             # requirements3.txt allows installation in the notebook server env
@@ -44,10 +46,8 @@ class PythonBuildPack(CondaBuildPack):
             if os.path.exists(nb_requirements_file):
                 assemble_scripts.append((
                     '${NB_USER}',
-                    'pip install --no-cache-dir -r "{}"'.format(nb_requirements_file)
+                    '${NB_PYTHON_PREFIX}/bin/pip install --no-cache-dir -r "{}"'.format(nb_requirements_file)
                 ))
-            # subsequent `pip` calls should run in the kernel env
-            pip = '${KERNEL_PYTHON_PREFIX}/bin/pip'
 
         # install requirements.txt in the kernel env
         requirements_file = self.binder_path('requirements.txt')
