@@ -39,7 +39,7 @@ Locating and composing configuration files
    various data science workflows (e.g., ``requirements.txt``), rather than
    creating new custom configuration files.
 
-``repodocker`` configuration files are all **composable** - you can use any number
+``repo2docker`` configuration files are all **composable** - you can use any number
 of them in the same repository. 
 
 There are a few notable rules for composition precedence and build priority:
@@ -91,7 +91,7 @@ explore the repository's contents.
 
 The **command** used is::
 
-  juptyer-repo2docker <URL-or-path to repo>
+  jupyter-repo2docker <URL-or-path to repo>
 
 where ``<URL-or-path to repo>`` provides a URL or path to the source repository.
 
