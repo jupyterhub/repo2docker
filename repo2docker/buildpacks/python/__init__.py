@@ -16,7 +16,14 @@ class PythonBuildPack(CondaBuildPack):
             with open(self.binder_path('runtime.txt')) as f:
                 runtime = f.read().strip()
         except FileNotFoundError:
-            runtime = 'python-' + self.major_pythons['3']
+            runtime = ''
+
+        if not runtime.startswith('python-'):
+            # not a Python runtime (e.g. R, which subclasses this)
+            # use the default Python
+            self._python_version = self.major_pythons['3']
+            return self._python_version
+
         py_version_info = runtime.split('-', 1)[1].split('.')
         py_version = ''
         if len(py_version_info) == 1:
