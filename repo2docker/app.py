@@ -104,10 +104,10 @@ class Repo2Docker(Application):
 
         Use a key-value pair, with the key being the volume source &
         value being the destination volume.
-        
-        Both source and destination can be relative. Source is resolved 
+
+        Both source and destination can be relative. Source is resolved
         relative to the current working directory on the host, and
-        destination is resolved relative to the working directory of the 
+        destination is resolved relative to the working directory of the
         image - ($HOME by default)
         """,
         config=True
@@ -176,6 +176,8 @@ class Repo2Docker(Application):
             sys.exit(1)
 
         if ref:
+            if len(ref.split('/')) != 2:
+                raise ValueError('--ref must be of the form remote/ref')
             try:
                 for line in execute_cmd(['git', 'reset', '--hard', ref],
                                         cwd=checkout_path,
@@ -203,7 +205,7 @@ class Repo2Docker(Application):
         Raises:
             ArgumentTypeError: if image_name contains characters that do not
                                meet the logic that container names must start
-                               with an alphanumeric character and can then 
+                               with an alphanumeric character and can then
                                use _ . or - in addition to alphanumeric.
                                [a-zA-Z0-9][a-zA-Z0-9_.-]+
         """
@@ -245,7 +247,8 @@ class Repo2Docker(Application):
 
         argparser.add_argument(
             '--ref',
-            help='If building a git url, which ref to check out'
+            help=('If building a git url, which ref to check out. Must be of'
+                  'the form `remote/ref`. E.g., `origin/master`.')
         )
 
         argparser.add_argument(
