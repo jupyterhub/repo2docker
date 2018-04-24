@@ -138,7 +138,7 @@ def test_volume_no_run_fail():
 
 def test_env_no_run_fail():
     """
-    Test to check if repo2docker fails when both --no-run and -e arguments are given 
+    Test to check if repo2docker fails when both --no-run and -e arguments are given
     """
     builddir = os.path.dirname(__file__)
     args_list = ['--no-run', '-e', 'FOO=bar', '--']
@@ -231,3 +231,12 @@ def test_docker_no_build_success():
 
     assert validate_arguments(builddir, args_list, "", True)
 
+
+def test_ref_has_correct_form():
+    """
+    Test to check if --ref is given with the form `remote/reference`
+    """
+    builddir = os.path.dirname(__file__)
+    args_list = ['--no-run', '--no-build', '--ref', 'myreference']
+
+    assert not validate_arguments(builddir, args_list, 'Expected --ref to be of the form remote/reference, but got myreference')

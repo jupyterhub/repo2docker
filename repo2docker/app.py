@@ -177,7 +177,8 @@ class Repo2Docker(Application):
 
         if ref:
             if len(ref.split('/')) != 2:
-                raise ValueError('--ref must be of the form remote/ref')
+                raise ValueError('Expected --ref to be of the form '
+                                 'remote/reference, but got %s' % ref)
             try:
                 for line in execute_cmd(['git', 'reset', '--hard', ref],
                                         cwd=checkout_path,
@@ -247,8 +248,8 @@ class Repo2Docker(Application):
 
         argparser.add_argument(
             '--ref',
-            help=('If building a git url, which ref to check out. Must be of'
-                  'the form `remote/ref`. E.g., `origin/master`.')
+            help=('If building a git url, which reference to check out. Must '
+                  'be of the form `remote/reference`. E.g., `origin/master`.')
         )
 
         argparser.add_argument(
