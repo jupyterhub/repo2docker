@@ -169,6 +169,8 @@ USER ${NB_USER}
 # Make sure that postBuild scripts are marked executable before executing them
 {% for s in post_build_scripts -%}
 RUN chmod +x {{ s }}
+# Fix up line endings for users who checked out postBuild scripts on Windows
+RUN python -c "open('{{ s }}', 'w').write(open('{{ s }}').read())"
 RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
