@@ -10,6 +10,9 @@ import docker
 TEMPLATE = r"""
 FROM buildpack-deps:bionic
 
+# avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Set up locales properly
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends locales && \
