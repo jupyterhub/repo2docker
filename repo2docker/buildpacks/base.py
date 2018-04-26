@@ -8,7 +8,7 @@ import logging
 import docker
 
 TEMPLATE = r"""
-FROM buildpack-deps:artful
+FROM buildpack-deps:bionic
 
 # Set up locales properly
 RUN apt-get update && \
