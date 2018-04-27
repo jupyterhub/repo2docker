@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# I contain CRLF line endings on purpose
+echo hello world

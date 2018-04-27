@@ -170,7 +170,7 @@ USER ${NB_USER}
 {% for s in post_build_scripts -%}
 RUN chmod +x {{ s }}
 # Fix up line endings for users who checked out postBuild scripts on Windows
-RUN python -c "open('{{ s }}', 'w').write(open('{{ s }}').read())"
+RUN python3 -c "open('{{ s }}', 'w').write(open('{{ s }}').read())"
 RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
