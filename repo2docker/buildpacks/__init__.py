@@ -1,5 +1,5 @@
 from .base import BuildPack, BaseImage
-from .python import Python2BuildPack, PythonBuildPack
+from .python import PythonBuildPack
 from .conda import CondaBuildPack
 from .julia import JuliaBuildPack
 from .docker import DockerBuildPack

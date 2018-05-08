@@ -29,7 +29,7 @@ from traitlets.config import Application
 from . import __version__
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, JuliaBuildPack, Python2BuildPack, BaseImage,
+    CondaBuildPack, JuliaBuildPack, BaseImage,
     RBuildPack
 )
 from .utils import (
@@ -67,7 +67,6 @@ class Repo2Docker(Application):
             DockerBuildPack,
             JuliaBuildPack,
             CondaBuildPack,
-            Python2BuildPack,
             RBuildPack,
             PythonBuildPack,
         ],
