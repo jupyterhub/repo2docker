@@ -3,6 +3,7 @@ Buildpack for stencila editor for DAR document archives
 """
 
 import os
+import shutil
 
 from ..conda import CondaBuildPack
 
@@ -36,11 +37,10 @@ class StencilaBuildPack(CondaBuildPack):
 
         Currently only checks for 'stencila' in runtime.txt
         """
-        self.manifest_dir = ''
-        for root, dirs, files in os.walk('.'):
-            print(root, dirs, files)
+        self.manifest_dir = ""
+        for root, dirs, files in os.walk("."):
             for f in files:
-                if f == 'manifest.xml':
+                if f == "manifest.xml":
                     self.manifest_dir = os.path.dirname(root)
                     return True
         return self.runtime.startswith("stencila")
@@ -53,9 +53,8 @@ class StencilaBuildPack(CondaBuildPack):
         """
         return super().get_build_env() + [
             # This is the path where stencila is installed
-            ("STENCILA_DIR", "/opt/stencila"),
+            ("STENCILA_DIR", "/opt/stencila")
         ]
-
 
     def get_env(self):
         """
@@ -77,21 +76,8 @@ class StencilaBuildPack(CondaBuildPack):
         It's a dictionary where the key is the source file path in the host
         system, and the value is the destination file path inside the
         container image.
-
-        Includes files required for running stencila
-
-        This currently adds a frozen set of Python requirements to the dict
-        of files.
-
         """
-        files = super().get_build_script_files()
-        files[
-            "stencila/jupyter_notebook_config.py"
-        ] = "/etc/jupyter/jupyter_notebook_config.py"
-        files[
-            "stencila/stencila-ext.json"
-        ] = "/etc/jupyter/jupyter_notebook_config.d/stencila-ext.json"
-        return files
+        return super().get_build_script_files()
 
     def get_build_scripts(self):
         """
@@ -109,7 +95,7 @@ class StencilaBuildPack(CondaBuildPack):
                 "${NB_USER}",
                 # install nbserverproxy
                 r"""
-                pip install https://github.com/minrk/nbserverproxy/archive/del-starting.tar.gz
+                pip install --no-cache https://github.com/minrk/nbserverproxy/archive/del-starting.tar.gz
                 """,
             ),
             (
@@ -117,7 +103,15 @@ class StencilaBuildPack(CondaBuildPack):
                 # install stencila
                 r"""
                 cd ${STENCILA_DIR} && \
-                npm install https://github.com/minrk/jupyter-dar
+                npm install 'https://github.com/minrk/jupyter-dar#2c1c54089502ebdb6ad44d15d63259108a0ab141'
+                """,
+            ),
+            (
+                "${NB_USER}",
+                # install stencila
+                r"""
+                conda install -yq numpy matplotlib && \
+                conda clean -tipsy
                 """,
             ),
         ]
@@ -125,4 +119,17 @@ class StencilaBuildPack(CondaBuildPack):
     def get_assemble_scripts(self):
         """Return assembly scripts to run after staging repo contents"""
         assemble_scripts = super().get_assemble_scripts()
+        assemble_scripts.extend(
+            [
+                (
+                    "${NB_USER}",
+                    r"""
+                    pip install --no-cache https://github.com/minrk/jupyter-dar/archive/master.tar.gz && \
+                    jupyter serverextension enable --sys-prefix --py nbstencilaproxy && \
+                    jupyter nbextension install    --sys-prefix --py nbstencilaproxy && \
+                    jupyter nbextension enable     --sys-prefix --py nbstencilaproxy
+                    """,
+                )
+            ]
+        )
         return assemble_scripts
