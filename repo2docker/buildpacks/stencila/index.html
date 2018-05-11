@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Stencila Project</title>
+    <link rel="stylesheet" type="text/css" href="./node_modules/stencila/dist/stencila.css">
+    <script type="text/javascript" src="./node_modules/stencila/dist/katex/katex.min.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/lib/plotly.min.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/lib/substance.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/lib/texture.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/lib/stencila-mini.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/lib/stencila-envcore.min.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/lib/stencila-libcore.min.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/stencila.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/vfs.js"></script>
+    <script type="text/javascript" src="./node_modules/stencila/dist/env.js"></script>
+    <script type="text/javascript" src="./app.js"></script>
+    <script type="text/javascript">
+        // Set the URL for the Stencila host based on the current window's URL which on Binder looks like:
+        // https://hub.mybinder.org/user/nokome-jupyter-dar-xufgzr0d/stencila/?token=c1KzGj7XRg-Gyur8rr-U3pQ
+        window.STENCILA_HOSTS = (window.location.origin + window.location.pathname).replace('/stencila/', '/stencila-host')
+    </script>
+  </head>
+  <body></body>
+</html>

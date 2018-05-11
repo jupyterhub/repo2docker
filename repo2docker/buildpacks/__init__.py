@@ -5,3 +5,4 @@ from .julia import JuliaBuildPack
 from .docker import DockerBuildPack
 from .legacy import LegacyBinderDockerBuildPack
 from .r import RBuildPack
+from .stencila import StencilaBuildPack
