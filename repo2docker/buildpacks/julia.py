@@ -12,7 +12,7 @@ class JuliaBuildPack(CondaBuildPack):
     See https://github.com/JuliaPy/PyCall.jl/issues/410
 
     """
-    def get_env(self):
+    def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
 
         Returns:
@@ -31,7 +31,7 @@ class JuliaBuildPack(CondaBuildPack):
             For example, a tuple may be `('JULIA_VERSION', '0.6.0')`.
 
         """
-        return super().get_env() + [
+        return super().get_build_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
             ('JULIA_HOME', '${JULIA_PATH}/bin'),
             ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),

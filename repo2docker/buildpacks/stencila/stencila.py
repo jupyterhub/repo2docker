@@ -2,9 +2,7 @@
 Buildpack for stencila editor for DAR document archives
 """
 
-import re
 import os
-import datetime
 
 from ..conda import CondaBuildPack
 
@@ -38,17 +36,35 @@ class StencilaBuildPack(CondaBuildPack):
 
         Currently only checks for 'stencila' in runtime.txt
         """
+        self.manifest_dir = ''
+        for root, dirs, files in os.walk('.'):
+            print(root, dirs, files)
+            for f in files:
+                if f == 'manifest.xml':
+                    self.manifest_dir = os.path.dirname(root)
+                    return True
         return self.runtime.startswith("stencila")
+
+    def get_build_env(self):
+        """
+        Return build environment variables to be set.
+
+        Sets STENCILA_DIR
+        """
+        return super().get_build_env() + [
+            # This is the path where stencila is installed
+            ("STENCILA_DIR", "/opt/stencila"),
+        ]
+
 
     def get_env(self):
         """
         Return environment variables to be set.
 
-        Sets STENCILA_DIR
+        Sets STENCILA_ARCHIVE_DIR
         """
         return super().get_env() + [
-            # This is the path where user libraries are installed
-            ("STENCILA_DIR", "/opt/stencila")
+            ("STENCILA_ARCHIVE_DIR", "${HOME}/" + self.manifest_dir)
         ]
 
     def get_build_script_files(self):
@@ -69,14 +85,6 @@ class StencilaBuildPack(CondaBuildPack):
 
         """
         files = super().get_build_script_files()
-        for f in [
-            "index.html",
-            "stencila.js",
-            "stencila-host.js",
-            "package.json",
-            "package-lock.json",
-        ]:
-            files["stencila/" + f] = "${STENCILA_DIR}/" + f
         files[
             "stencila/jupyter_notebook_config.py"
         ] = "/etc/jupyter/jupyter_notebook_config.py"
@@ -109,7 +117,7 @@ class StencilaBuildPack(CondaBuildPack):
                 # install stencila
                 r"""
                 cd ${STENCILA_DIR} && \
-                npm install
+                npm install https://github.com/minrk/jupyter-dar
                 """,
             ),
         ]

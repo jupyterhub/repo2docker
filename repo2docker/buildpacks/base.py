@@ -65,9 +65,9 @@ RUN apt-get update && \
 
 EXPOSE 8888
 
-{% if env -%}
-# Almost all environment variables
-{% for item in env -%}
+{% if build_env -%}
+# Environment variables required for build
+{% for item in build_env -%}
 ENV {{item[0]}} {{item[1]}}
 {% endfor -%}
 {% endif -%}
@@ -93,6 +93,14 @@ COPY {{ src }} {{ dst }}
 USER root
 COPY src/ ${HOME}
 RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
+
+{% if env -%}
+# The rest of the environment
+{% for item in env -%}
+ENV {{item[0]}} {{item[1]}}
+{% endfor -%}
+{% endif -%}
+
 
 # Run assemble scripts! These will actually build the specification
 # in the repository into the image.
@@ -182,6 +190,21 @@ class BuildPack:
             "unzip",
         }
 
+    def get_build_env(self):
+        """
+        Ordered list of environment variables to be set for this image.
+
+        Ordered so that environment variables can use other environment
+        variables in their values.
+
+        Expects tuples, with the first item being the environment variable
+        name and the second item being the value.
+
+        These environment variables will be set prior to build.
+        Use .get_env() to set environment variables after build.
+        """
+        return []
+
     def get_env(self):
         """
         Ordered list of environment variables to be set for this image.
@@ -191,6 +214,8 @@ class BuildPack:
 
         Expects tuples, with the first item being the environment variable
         name and the second item being the value.
+
+        These variables will not be available to build.
         """
         return []
 
@@ -322,6 +347,7 @@ class BuildPack:
         return t.render(
             packages=sorted(self.get_packages()),
             path=self.get_path(),
+            build_env=self.get_build_env(),
             env=self.get_env(),
             labels=self.get_labels(),
             build_script_directives=build_script_directives,
@@ -388,10 +414,15 @@ class BuildPack:
 
 
 class BaseImage(BuildPack):
-    def get_env(self):
+    def get_build_env(self):
+        """Return env directives required for build"""
         return [
             ("APP_BASE", "/srv")
         ]
+
+    def get_env(self):
+        """Return env directives to be set after build"""
+        return []
 
     def detect(self):
         return True

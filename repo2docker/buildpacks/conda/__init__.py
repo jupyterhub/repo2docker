@@ -18,14 +18,14 @@ class CondaBuildPack(BaseImage):
     Uses miniconda since it is more lightweight than Anaconda.
 
     """
-    def get_env(self):
+    def get_build_env(self):
         """Return environment variables to be set.
 
         We set `CONDA_DIR` to the conda install directory and
         the `NB_PYTHON_PREFIX` to the location of the jupyter binary.
 
         """
-        env = super().get_env() + [
+        env = super().get_build_env() + [
             ('CONDA_DIR', '${APP_BASE}/conda'),
             ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
         ]
