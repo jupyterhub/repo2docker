@@ -72,7 +72,7 @@ ENV {{item[0]}} {{item[1]}}
 {% endif -%}
 
 # So users can move executables here with postBuild, issue #557
-ENV PATH {{ /home/jovyan/{local}/bin:${PATH}}}
+ENV PATH {{ '/home/jovyan/local/bin':${PATH}}}
 
 {% if path -%}
 # Special case PATH
