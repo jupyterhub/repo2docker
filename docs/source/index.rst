@@ -5,6 +5,11 @@ jupyter-repo2docker
 images from source code repositories. See the list below for various
 ways in which you can use ``repo2docker``.
 
+Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
+`ask questions <https://gitter.im/jupyterhub/binder>`_ or
+`contribute to the project <https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md>`_.
+
+
 Site Contents
 -------------
 .. toctree::
@@ -17,4 +22,3 @@ Site Contents
    design
    architecture
    dev_newbuildpack
-
