@@ -9,7 +9,7 @@ If you have a question & have found an answer, send a PR to add it here!
 Currently the best way to do this is by using a conda ``environment.yml``
 file and setting the language to whichever version of Python you like.
 
-## Can I add binary files to the user's PATH?
+## Can I add executable files to the user's PATH?
 
 Yes! Using a ``postBuild`` file, you can place any files that should be called
 from the command line in the folder ``~/.local/``. This folder will be
