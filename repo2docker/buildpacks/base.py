@@ -71,9 +71,6 @@ ENV {{item[0]}} {{item[1]}}
 {% endfor -%}
 {% endif -%}
 
-# So users can move executables here with postBuild, issue #557
-ENV PATH "/home/${NB_USER}/local/bin":${PATH}
-
 {% if path -%}
 # Special case PATH
 ENV PATH {{ ':'.join(path) }}:${PATH}
@@ -200,7 +197,10 @@ class BuildPack:
         Just sets the PATH environment variable. Separated out since
         it is very commonly set by various buildpacks.
         """
-        return []
+        # Allow local user installs into ~/.local, which is where the
+        # XDG desktop standard suggests these should be
+        # See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+        return ['$HOME/.local/bin']
 
     def get_labels(self):
         """
