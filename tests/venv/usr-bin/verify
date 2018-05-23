@@ -2,4 +2,4 @@
 # Verify that ~/.local/bin is on the PATH
 import os
 
-assert "$HOME/.local/bin" in os.getenv("PATH")
+assert os.path.expanduser('~/.local/bin') in os.getenv("PATH"), os.getenv("PATH")
