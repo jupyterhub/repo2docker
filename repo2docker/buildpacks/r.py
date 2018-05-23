@@ -226,6 +226,16 @@ class RBuildPack(PythonBuildPack):
                 echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
                 """.format(mran_url=mran_url)
             ),
+            (
+                # Not all of these locations are configurable; log_dir is
+                "root",
+                r"""
+                install -o ${NB_USER} -g ${NB_USER} -d /var/log/shiny-server && \
+                install -o ${NB_USER} -g ${NB_USER} -d /var/lib/shiny-server && \
+                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/log/shiny-server.log && \
+                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/run/shiny-server.pid
+                """
+            ),
         ]
 
         installR_path = self.binder_path('install.R')
