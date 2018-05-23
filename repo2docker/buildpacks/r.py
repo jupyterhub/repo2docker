@@ -128,6 +128,10 @@ class RBuildPack(PythonBuildPack):
         # This is MD5, because that is what RStudio download page provides!
         rstudio_checksum = '24cd11f0405d8372b4168fc9956e0386'
 
+        # Via https://www.rstudio.com/products/shiny/download-server/
+        shiny_url = 'https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.7.907-amd64.deb'
+        shiny_checksum = '78371a8361ba0e7fec44edd2b8e425ac'
+
         # Version of MRAN to pull devtools from.
         devtools_version = '2018-02-01'
 
@@ -153,6 +157,20 @@ class RBuildPack(PythonBuildPack):
                 """.format(
                     rstudio_url=rstudio_url,
                     rstudio_checksum=rstudio_checksum
+                )
+            ),
+            (
+                "root",
+                # Install Shiny Server!
+                r"""
+                curl --silent --location --fail {url} > {deb} && \
+                echo '{checksum} {deb}' | md5sum -c - && \
+                dpkg -i {deb} && \
+                rm {deb}
+                """.format(
+                    url=shiny_url,
+                    checksum=shiny_checksum,
+                    deb='/tmp/shiny.deb'
                 )
             ),
             (
