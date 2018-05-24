@@ -4,6 +4,7 @@ import datetime
 
 from .python import PythonBuildPack
 
+
 class RBuildPack(PythonBuildPack):
     """
     Setup R for use with a repository
@@ -187,7 +188,7 @@ class RBuildPack(PythonBuildPack):
                 "${NB_USER}",
                 # Install nbrsessionproxy
                 r"""
-                pip install --no-cache-dir nbrsessionproxy==0.6.1 && \
+                pip install --no-cache-dir nbrsessionproxy==0.7.0 && \
                 jupyter serverextension enable nbrsessionproxy --sys-prefix && \
                 jupyter nbextension install --py nbrsessionproxy --sys-prefix && \
                 jupyter nbextension enable --py nbrsessionproxy --sys-prefix
