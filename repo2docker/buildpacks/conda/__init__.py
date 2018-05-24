@@ -136,6 +136,9 @@ class CondaBuildPack(BaseImage):
             py_version = None
             with open(environment_yml) as f:
                 env = YAML().load(f)
+                # set to an empty dictionary when the file is empty
+                if env is None:
+                    env = {}
                 for dep in env.get('dependencies', []):
                     if not isinstance(dep, str):
                         continue
