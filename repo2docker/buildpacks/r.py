@@ -203,6 +203,13 @@ class RBuildPack(PythonBuildPack):
                 """.format(
                     devtools_version=devtools_version,
                     irkernel_version=irkernel_version
+            ),
+            (
+                "${NB_USER}",
+                # Install a pinned version of IRKernel and set it up for use!
+                r"""
+                R --quiet -e "install.packages('shiny', repos='https://mran.microsoft.com/snapshot/{}', method='libcurl')"
+                """.format(self.checkpoint_date.isoformat())
                 )
             )
         ]
