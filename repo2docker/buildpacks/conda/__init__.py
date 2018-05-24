@@ -136,6 +136,12 @@ class CondaBuildPack(BaseImage):
             py_version = None
             with open(environment_yml) as f:
                 env = YAML().load(f)
+                # check if the env file is empty, if so instantiate an empty dictionary.
+                if env is None:
+                    env = {}
+                # check if the env file has a dictionary not a list or other data structure.
+                if not isinstance(env, dict):
+                    raise TypeError("environment.yml should contain a dictionary. Got %r" % env)
                 for dep in env.get('dependencies', []):
                     if not isinstance(dep, str):
                         continue
