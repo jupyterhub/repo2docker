@@ -207,7 +207,7 @@ class RBuildPack(PythonBuildPack):
             ),
             (
                 "${NB_USER}",
-                # Install a pinned version of IRKernel and set it up for use!
+                # Install shiny library
                 r"""
                 R --quiet -e "install.packages('shiny', repos='https://mran.microsoft.com/snapshot/{}', method='libcurl')"
                 """.format(self.checkpoint_date.isoformat())
