@@ -204,15 +204,17 @@ class RBuildPack(PythonBuildPack):
                 """.format(
                     devtools_version=devtools_version,
                     irkernel_version=irkernel_version
+                )
             ),
             (
                 "${NB_USER}",
                 # Install shiny library
                 r"""
                 R --quiet -e "install.packages('shiny', repos='https://mran.microsoft.com/snapshot/{}', method='libcurl')"
-                """.format(self.checkpoint_date.isoformat())
+                """.format(
+                    self.checkpoint_date.isoformat()
                 )
-            )
+            ),
         ]
 
     def get_assemble_scripts(self):
