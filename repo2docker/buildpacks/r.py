@@ -129,6 +129,10 @@ class RBuildPack(PythonBuildPack):
         # This is MD5, because that is what RStudio download page provides!
         rstudio_checksum = '24cd11f0405d8372b4168fc9956e0386'
 
+        # Via https://www.rstudio.com/products/shiny/download-server/
+        shiny_url = 'https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.7.907-amd64.deb'
+        shiny_checksum = '78371a8361ba0e7fec44edd2b8e425ac'
+
         # Version of MRAN to pull devtools from.
         devtools_version = '2018-02-01'
 
@@ -154,6 +158,20 @@ class RBuildPack(PythonBuildPack):
                 """.format(
                     rstudio_url=rstudio_url,
                     rstudio_checksum=rstudio_checksum
+                )
+            ),
+            (
+                "root",
+                # Install Shiny Server!
+                r"""
+                curl --silent --location --fail {url} > {deb} && \
+                echo '{checksum} {deb}' | md5sum -c - && \
+                dpkg -i {deb} && \
+                rm {deb}
+                """.format(
+                    url=shiny_url,
+                    checksum=shiny_checksum,
+                    deb='/tmp/shiny.deb'
                 )
             ),
             (
@@ -187,7 +205,16 @@ class RBuildPack(PythonBuildPack):
                     devtools_version=devtools_version,
                     irkernel_version=irkernel_version
                 )
-            )
+            ),
+            (
+                "${NB_USER}",
+                # Install shiny library
+                r"""
+                R --quiet -e "install.packages('shiny', repos='https://mran.microsoft.com/snapshot/{}', method='libcurl')"
+                """.format(
+                    self.checkpoint_date.isoformat()
+                )
+            ),
         ]
 
     def get_assemble_scripts(self):
@@ -208,6 +235,16 @@ class RBuildPack(PythonBuildPack):
                 r"""
                 echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
                 """.format(mran_url=mran_url)
+            ),
+            (
+                # Not all of these locations are configurable; log_dir is
+                "root",
+                r"""
+                install -o ${NB_USER} -g ${NB_USER} -d /var/log/shiny-server && \
+                install -o ${NB_USER} -g ${NB_USER} -d /var/lib/shiny-server && \
+                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/log/shiny-server.log && \
+                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/run/shiny-server.pid
+                """
             ),
         ]
 
