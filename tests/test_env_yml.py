@@ -19,7 +19,8 @@ def test_empty_env_yml(tmpdir):
 def test_no_dict_env_yml(tmpdir):
     tmpdir.chdir()
     q = tmpdir.join("environment.yml")
-    q.write("list/n ,string")
+    q.write("numpy\n "
+            "matplotlib\n")
     bq = buildpacks.CondaBuildPack()
     with pytest.raises(TypeError):
         py_ver = bq.python_version

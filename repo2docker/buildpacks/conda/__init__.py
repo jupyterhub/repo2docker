@@ -141,7 +141,7 @@ class CondaBuildPack(BaseImage):
                     env = {}
                 # check if the env file has a dictionary not a list or other data structure.
                 if not isinstance(env, dict):
-                    raise TypeError("environment.yml should contain a dictionary. Got %r" % env)
+                    raise TypeError("environment.yml should contain a dictionary. Got %r" % type(env))
                 for dep in env.get('dependencies', []):
                     if not isinstance(dep, str):
                         continue
