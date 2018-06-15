@@ -489,7 +489,18 @@ class Repo2Docker(Application):
                 last_emit_time = time.time()
 
     def run_image(self):
-        """Run docker container from built image"""
+        """Run docker container from built image
+
+        and wait for it to finish.
+        """
+        container = self.start_container()
+        self.wait_for_container(container)
+
+    def start_container(self):
+        """Start docker container from built image
+
+        Returns running container
+        """
         client = docker.from_env(version='auto')
         if not self.run_cmd:
             port = str(self._get_free_port())
@@ -504,6 +515,8 @@ class Repo2Docker(Application):
                 ports = self.ports
             else:
                 ports = {}
+        # store ports on self so they can be retrieved in tests
+        self.ports = ports
         container_volumes = {}
         if self.volumes:
             api_client = docker.APIClient(
@@ -531,6 +544,14 @@ class Repo2Docker(Application):
         while container.status == 'created':
             time.sleep(0.5)
             container.reload()
+
+        return container
+
+    def wait_for_container(self, container):
+        """Wait for a container to finish
+
+        Displaying logs while it's running
+        """
 
         try:
             for line in container.logs(stream=True):
