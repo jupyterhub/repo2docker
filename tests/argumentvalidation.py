@@ -230,13 +230,3 @@ def test_docker_no_build_success():
     builddir = os.path.dirname(__file__) + '/../'
 
     assert validate_arguments(builddir, args_list, "", True)
-
-
-def test_ref_has_correct_form():
-    """
-    Test to check if --ref is given with the form `remote/reference`
-    """
-    builddir = os.path.dirname(__file__)
-    args_list = ['--no-run', '--no-build', '--ref', 'myreference']
-
-    assert not validate_arguments(builddir, args_list, 'Expected --ref to be of the form remote/reference, but got myreference')

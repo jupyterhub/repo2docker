@@ -3,3 +3,8 @@
   url: https://github.com/minrk/ligo-binder/
   ref: origin/b8259dac9eb
   verify: python -c 'import matplotlib'
+# To test that ref is added if not present
+- name: LIGO Gravitational Waves
+  url: https://github.com/minrk/ligo-binder/
+  ref: b8259dac9eb
+  verify: python -c 'import matplotlib'
