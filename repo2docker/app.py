@@ -175,8 +175,10 @@ class Repo2Docker(Application):
             sys.exit(1)
 
         if ref:
-            if self.repo_type == "remote" and len(ref.split('/')) < 2:
+            if self.repo_type == "remote" and not ref.startswith('origin/'):
                 # Ensure that the ref has `origin` in front
+                self.log.info("Ref did not have a remote specified, "
+                              "adding 'origin/' to ref.")
                 ref = '/'.join(["origin", ref])
             try:
                 for line in execute_cmd(['git', 'reset', '--hard', ref],
