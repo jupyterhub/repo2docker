@@ -24,9 +24,9 @@ Preparing your repository
 to determine how to build it. It is philosophically similar to
 `Heroku Build Packs <https://devcenter.heroku.com/articles/buildpacks>`_.
 
-In general, ``repo2docker`` uses configuration files that are already part of
-various data science workflows (e.g., ``requirements.txt``), rather than
-creating new custom configuration files.
+In general, ``repo2docker`` uses the same configuration files as other software
+installation tools, rather than creating new custom configuration files.
+These files are described in :doc:`config-files`.
 
 ``repo2docker`` configuration files are all **composable** - you can use any number
 of them in the same repository.
@@ -41,8 +41,8 @@ Locating and composing configuration files
 
 There are a few notable rules for composition precedence and build priority:
 
-* If the folder ``binder`` is the root
-  directory, **configuration files in the root directory will be ignored**.
+* If the folder ``binder`` is located at the top level of the repository,
+  **only configuration files in the** ``binder`` **folder will be considered**.
 * If a Dockerfile is present, **all other files will be ignored**.
 * ``environment.yml`` **takes precedent over**
   ``requirements.txt``. If you wish to install ``pip`` packages

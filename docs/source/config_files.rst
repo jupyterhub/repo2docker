@@ -21,9 +21,7 @@ images provide core functionality, compact image sizes, and efficient builds. We
 trying the other configuration files before deciding to use your own Dockerfile.
 
 See the `Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
-best-practices with Dockerfiles or
-`our Dockerfile-rstudio example <https://github.com/binder-examples/dockerfile-rstudio>`_
-for using repo2docker to set up RStudio.
+best-practices with Dockerfiles.
 
 ``environment.yml``
 ^^^^^^^^^^^^^^^^^^^
@@ -31,13 +29,13 @@ for using repo2docker to set up RStudio.
 This is a conda environment specification, that lets you install packages with conda.
 You can also install files from pip in your ``environment.yml`` as well.
 Our example `enviornment.yml <https://github.com/binder-examples/python-conda_pip/blob/master/environment.yml>`_
-shows how one can specify a conda enviornment for repo2docker.
+shows how one can specify a conda environment for repo2docker.
 
 ``requirements.txt``
 ^^^^^^^^^^^^^^^^^^^^
 
-This specifies a list of Python packages that should be installed in a
-virtualenv (or conda environment). Our `requirements.txt example <https://github.com/binder-examples/requirements/blob/master/requirements.txt>`_
+This specifies a list of Python packages that should be installed in your
+ environment. Our `requirements.txt example <https://github.com/binder-examples/requirements/blob/master/requirements.txt>`_
 on GitHub shows a typical requirements file.
 
 ``REQUIRE``
@@ -53,7 +51,8 @@ visit `binder-examples/julia-python <https://github.com/binder-examples/julia-py
 
 This is used to install R libraries pinned to a specific snapshot on
 `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
-To see an example, visit our `example install.R file <https://github.com/binder-examples/r/blob/master/install.R>`_.
+To set the date of the snapshot add a runtime.txt_.
+For an example ``install.R`` file, visit our `example install.R file <https://github.com/binder-examples/r/blob/master/install.R>`_.
 
 ``apt.txt``
 ^^^^^^^^^^^
@@ -68,8 +67,10 @@ We use ``apt.txt``, for example, to install LaTeX in our
 ``setup.py``
 ^^^^^^^^^^^^
 
-To install your repository like a Python file, you may include a
-``setup.py`` file. While one can specify dependencies in ``setup.py``,
+To install your repository like a Python package, you may include a
+``setup.py`` file. repo2docker installs ``setup.py`` files by running
+``pip install -e .``.
+While one can specify dependencies in ``setup.py``,
 repo2docker **requires configuration files such as** ``environment.yml`` or
 ``requirements.txt``
 
@@ -77,25 +78,22 @@ repo2docker **requires configuration files such as** ``environment.yml`` or
 ^^^^^^^^^^^^^
 
 A script that can contain arbitrary commands to be run after the whole repository has been built. If you
-want this to be a shell script, make sure the first line is `#!/bin/bash`.
-This file **must be executable** to be used with ``repo2docker``. To do this,
-run the following::
-
-  chmod +x postBuild
+want this to be a shell script, make sure the first line is ```#!/bin/bash``.
 
 An example usecase of ``postBuild`` file is JupyterLab's demo on mybinder.org.
 It uses a ``postBuild`` file in a folder called ``binder`` to `prepare
 their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master/binder/postBuild>`_.
+
+.. _runtime.txt:
 
 ``runtime.txt``
 ^^^^^^^^^^^^^^^
 
 This allows you to control the runtime of Python or R.
 
-To use Python 2, put the line ``python-2.7`` in the file.
-A Python 2 kernel will be installed alongside Python 3. To see a full example
-repository, visit our
-`Python2 example in binder-examples <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
+Adding ``python-2.7`` in the file our repository will run in a virtualenv with
+Python 2 installed. To see a full example repository, visit our
+`Python2 example <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
 
 repo2docker uses R libraries pinned to a specific snapshot on
 `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
