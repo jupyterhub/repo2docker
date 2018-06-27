@@ -24,41 +24,33 @@ Preparing your repository
 to determine how to build it. It is philosophically similar to
 `Heroku Build Packs <https://devcenter.heroku.com/articles/buildpacks>`_.
 
+In general, ``repo2docker`` uses configuration files that are already part of
+various data science workflows (e.g., ``requirements.txt``), rather than
+creating new custom configuration files.
+
+``repo2docker`` configuration files are all **composable** - you can use any number
+of them in the same repository.
+
 Locating and composing configuration files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``repo2docker`` will look for configuration files **located** in two places:
+``repo2docker`` will look for configuration files located in two places:
 
-* A folder called ``binder`` in the root of the repository.
-* The root of the repository. (If a folder called ``binder`` exists in the root
-  of the repository, configuration files outside of that folder will be ignored.)
-
-.. note::
-
-   In general, ``repo2docker`` uses configuration files that are already part of
-   various data science workflows (e.g., ``requirements.txt``), rather than
-   creating new custom configuration files.
-
-``repo2docker`` configuration files are all **composable** - you can use any number
-of them in the same repository. 
+* A folder named ``binder`` in the root of the repository.
+* The root of the repository.
 
 There are a few notable rules for composition precedence and build priority:
 
-* ``Dockerfile``: If a Dockerfile is present in a repository, it will take precedence
-  over all other configuration files (which will be ignored).
-* ``environment.yml`` with ``requirements.txt``: If both of these files are
-  present, then ``environment.yml`` will be used to build the image, **not**
-  ``requirements.txt``. If you wish to ``pip install`` packages using an
-  ``environment.yml`` file, you should do so with the
+* If the folder ``binder`` is the root
+  directory, **configuration files in the root directory will be ignored**.
+* If a Dockerfile is present, **all other files will be ignored**.
+* ``environment.yml`` **takes precedent over**
+  ``requirements.txt``. If you wish to install ``pip`` packages
+  with ``environment.yml``, please use the
   ``pip:`` key as described in the `conda documentation`_.
 
-  .. note::
-
-     For a list of repositories demonstrating various configurations,
-     see :ref:`samples`.
-
-.. *** List of all configuration files ***
-.. include:: config_files.txt
+For a list of repositories demonstrating various configurations, see
+`binder examples <https://github.com/binder-examples>`_.
 
 Preparing a repo to build JupyterHub-ready images
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,12 +66,10 @@ you should put the following in ``requirements.txt`` or ``environment.yml``::
 Running ``repo2docker`` locally
 -------------------------------
 
-For information on installing ``repo2docker``, see :ref:`install`.
-
-.. note::
-
-   Docker must be running on your machine in order to build images
+Docker **must be running on your machine** in order to build images
    with ``repo2docker``.
+   For more information on installing ``repo2docker``, see :ref:`install`.
+
 
 The simplest invocation of ``repo2docker`` performs two steps:
 
