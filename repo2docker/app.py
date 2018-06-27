@@ -34,7 +34,7 @@ from .buildpacks import (
 )
 from .utils import (
     execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
-    validate_and_generate_port_mapping
+    validate_and_generate_port_mapping, check_ref
 )
 
 
@@ -175,11 +175,7 @@ class Repo2Docker(Application):
             sys.exit(1)
 
         if ref:
-            if self.repo_type == "remote" and not ref.startswith('origin/'):
-                # Ensure that the ref has `origin` in front
-                self.log.info("Ref did not have a remote specified, "
-                              "adding 'origin/' to ref.")
-                ref = '/'.join(["origin", ref])
+            ref = check_ref(ref)
             try:
                 for line in execute_cmd(['git', 'reset', '--hard', ref],
                                         cwd=checkout_path,

@@ -177,7 +177,7 @@ def is_valid_docker_image_name(image_name):
         (?:  # start optional group
 
         # multiple repetitions of pattern '.<domain-name-component>'
-        (?:\.(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]))+  
+        (?:\.(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]))+
 
         )?  # end optional grouping part of the '.' separated domain name
 
@@ -270,3 +270,28 @@ class ByteSpecification(Integer):
             )
         else:
             return int(float(num) * self.UNIT_SUFFIXES[suffix])
+
+
+def check_ref(ref):
+    """Prepare a ref and ensure it works with git reset --hard."""
+    ref_checks = {'tag': "refs/tags/{}",
+                  'branch': "refs/heads/{}",
+                  'remote': "refs/remotes/origin/{}",
+                  'commit': "{}^{{commit}}"}
+    chosen_kind = None
+    for kind, check in ref_checks:
+        check = check.split('/')[-1]
+        parts = ["git", "show-ref", "--verify", check.format(ref)]
+        success = subprocess.call(parts)
+        if success:
+            break
+
+    if chosen_kind is None:
+        raise ValueError("Could not resolve the ref properly, ensure that "
+                         "it is a commit hash / tag / branch name.")
+    if chosen_kind == "remote" and not check.startswith('origin/'):
+        # Ensure that the ref has `origin` in front
+        self.log.info("Ref did not have a remote specified, "
+                      "adding 'origin/' to ref.\n")
+        check = '/'.join(["origin", check])
+    return check
