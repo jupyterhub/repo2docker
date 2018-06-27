@@ -9,6 +9,19 @@ If you have a question & have found an answer, send a PR to add it here!
 Currently the best way to do this is by using a conda ``environment.yml``
 file and setting the language to whichever version of Python you like.
 
+## Can I add executable files to the user's PATH?
+
+Yes! Using a ``postBuild`` file, you can place any files that should be called
+from the command line in the folder ``~/.local/``. This folder will be
+available in a user's PATH, and can be run from the command line (or as
+a subsequent build step.)
+
+## How do I set environment variables?
+
+Use the `-e` or `--env` flag for each variable that you want to define.
+
+For example `jupyter-repo2docker -e VAR1=val1 -e VAR2=val2 ...`
+
 ## Can I use repo2docker to bootstrap my own Dockerfile?
 
 No, you can't.
@@ -24,9 +37,3 @@ or similar traditional docker command.
 
 Check out the [binder-examples](http://github.com/binder-examples/) github
 organization for example Dockerfiles you can copy & modify for your own use!
-
-## How do I set environment variables?
-
-Use the `-e` or `--env` flag for each variable that you want to define.
-
-For example `jupyter-repo2docker -e VAR1=val1 -e VAR2=val2 ...` 

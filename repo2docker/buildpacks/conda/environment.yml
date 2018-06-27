@@ -5,4 +5,4 @@ dependencies:
   - tornado==4.5.3
   - notebook==5.4.1
   - pip:
-    - nteract_on_jupyter==1.6.0
+    - nteract_on_jupyter==1.7.0

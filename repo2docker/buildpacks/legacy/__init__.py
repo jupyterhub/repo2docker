@@ -23,7 +23,7 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     RUN conda install -yq conda>=4.3 && \
         conda install -yq conda==4.4.11 && \
         conda env update -n python3 -f /tmp/python3.frozen.yml && \
-        conda remove -yq -n python3 nb_conda_kernels && \
+        conda remove -yq -n python3 nb_conda_kernels _nb_ext_conf && \
         conda env update -n root -f /tmp/root.frozen.yml && \
         /home/main/anaconda2/envs/python3/bin/ipython kernel install --sys-prefix && \
         /home/main/anaconda2/bin/ipython kernel install --prefix=/home/main/anaconda2/envs/python3 && \
