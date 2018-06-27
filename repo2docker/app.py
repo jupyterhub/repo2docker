@@ -175,16 +175,16 @@ class Repo2Docker(Application):
             sys.exit(1)
 
         if ref:
-            ref = check_ref(ref)
-            try:
-                for line in execute_cmd(['git', 'reset', '--hard', ref],
-                                        cwd=checkout_path,
-                                        capture=self.json_logs):
-                    self.log.info(line, extra=dict(phase='fetching'))
-            except subprocess.CalledProcessError:
+            hash = check_ref(ref, checkout_path)
+            if hash is None:
                 self.log.error('Failed to check out ref %s', ref,
                                extra=dict(phase='failed'))
                 sys.exit(1)
+            # If the hash is resolved above, we should be able to reset to it
+            for line in execute_cmd(['git', 'reset', '--hard', hash],
+                                    cwd=checkout_path,
+                                    capture=self.json_logs):
+                self.log.info(line, extra=dict(phase='fetching'))
 
     def validate_image_name(self, image_name):
         """

@@ -272,26 +272,21 @@ class ByteSpecification(Integer):
             return int(float(num) * self.UNIT_SUFFIXES[suffix])
 
 
-def check_ref(ref):
+def check_ref(ref, cwd=None):
     """Prepare a ref and ensure it works with git reset --hard."""
-    ref_checks = {'tag': "refs/tags/{}",
-                  'branch': "refs/heads/{}",
-                  'remote': "refs/remotes/origin/{}",
-                  'commit': "{}^{{commit}}"}
-    chosen_kind = None
-    for kind, check in ref_checks:
-        check = check.split('/')[-1]
-        parts = ["git", "show-ref", "--verify", check.format(ref)]
-        success = subprocess.call(parts)
-        if success:
-            break
+    # Try original ref, then trying a remote ref, then removing remote
+    refs = [ref,                        # Original ref
+            '/'.join(["origin", ref]),  # In case its a remote branch
+            ref.split('/')[-1]]         # In case partial commit w/ remote
 
-    if chosen_kind is None:
-        raise ValueError("Could not resolve the ref properly, ensure that "
-                         "it is a commit hash / tag / branch name.")
-    if chosen_kind == "remote" and not check.startswith('origin/'):
-        # Ensure that the ref has `origin` in front
-        self.log.info("Ref did not have a remote specified, "
-                      "adding 'origin/' to ref.\n")
-        check = '/'.join(["origin", check])
-    return check
+    hash = None
+    for i_ref in refs:
+        call = ["git", "rev-parse", "--quiet", i_ref]
+        try:
+            # If success, output will be <hash>
+            response = subprocess.check_output(call, stderr=subprocess.DEVNULL, cwd=cwd)
+            hash = response.decode().strip()
+        except Exception:
+            # We'll throw an error later if no refs resolve
+            pass
+    return hash
