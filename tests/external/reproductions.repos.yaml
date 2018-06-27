@@ -1,10 +1,26 @@
 # A bunch of external repos that reproduce something cool we care about
+# Test that a full remote/hash works
 - name: LIGO Gravitational Waves
   url: https://github.com/minrk/ligo-binder/
   ref: origin/b8259dac9eb
   verify: python -c 'import matplotlib'
-# To test that ref is added if not present
+# Test that ref is added if not present
 - name: LIGO Gravitational Waves
   url: https://github.com/minrk/ligo-binder/
   ref: b8259dac9eb
+  verify: python -c 'import matplotlib'
+# Test that a full remote/ref works
+- name: Binder Examples - Requirements
+  url: https://github.com/binder-examples/requirements
+  ref: origin/master
+  verify: python -c 'import matplotlib'
+# Test that ref is added to branch if not present
+- name: Binder Examples - Requirements
+  url: https://github.com/binder-examples/requirements
+  ref: master
+  verify: python -c 'import matplotlib'
+# Test that tags work + ref is added to tag if not present
+- name: Binder Examples - Requirements
+  url: https://github.com/binder-examples/requirements
+  ref: test
   verify: python -c 'import matplotlib'
