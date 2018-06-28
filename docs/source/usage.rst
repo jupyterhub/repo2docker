@@ -26,7 +26,7 @@ to determine how to build it. It is philosophically similar to
 
 In general, ``repo2docker`` uses the same configuration files as other software
 installation tools, rather than creating new custom configuration files.
-These files are described in :doc:`config-files`.
+These files are described in :ref:`config-files`.
 
 ``repo2docker`` configuration files are all **composable** - you can use any number
 of them in the same repository.
@@ -66,7 +66,7 @@ you should put the following in ``requirements.txt`` or ``environment.yml``::
 Running ``repo2docker`` locally
 -------------------------------
 
-Docker **must be running on your machine** in order to build images
+`Docker <https://docs.docker.com/>`_ **must be running on your machine** in order to build images
    with ``repo2docker``.
    For more information on installing ``repo2docker``, see :ref:`install`.
 
