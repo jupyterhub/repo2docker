@@ -13,12 +13,12 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
 Site Contents
 -------------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    install
    usage
+   config_files
    faq
-   samples
    design
    architecture
    dev_newbuildpack
