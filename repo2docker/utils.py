@@ -177,7 +177,7 @@ def is_valid_docker_image_name(image_name):
         (?:  # start optional group
 
         # multiple repetitions of pattern '.<domain-name-component>'
-        (?:\.(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]))+  
+        (?:\.(?:[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]))+
 
         )?  # end optional grouping part of the '.' separated domain name
 
@@ -270,3 +270,23 @@ class ByteSpecification(Integer):
             )
         else:
             return int(float(num) * self.UNIT_SUFFIXES[suffix])
+
+
+def check_ref(ref, cwd=None):
+    """Prepare a ref and ensure it works with git reset --hard."""
+    # Try original ref, then trying a remote ref, then removing remote
+    refs = [ref,                        # Original ref
+            '/'.join(["origin", ref]),  # In case its a remote branch
+            ref.split('/')[-1]]         # In case partial commit w/ remote
+
+    hash = None
+    for i_ref in refs:
+        call = ["git", "rev-parse", "--quiet", i_ref]
+        try:
+            # If success, output will be <hash>
+            response = subprocess.check_output(call, stderr=subprocess.DEVNULL, cwd=cwd)
+            hash = response.decode().strip()
+        except Exception:
+            # We'll throw an error later if no refs resolve
+            pass
+    return hash

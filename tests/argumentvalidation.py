@@ -138,7 +138,7 @@ def test_volume_no_run_fail():
 
 def test_env_no_run_fail():
     """
-    Test to check if repo2docker fails when both --no-run and -e arguments are given 
+    Test to check if repo2docker fails when both --no-run and -e arguments are given
     """
     builddir = os.path.dirname(__file__)
     args_list = ['--no-run', '-e', 'FOO=bar', '--']
@@ -230,4 +230,3 @@ def test_docker_no_build_success():
     builddir = os.path.dirname(__file__) + '/../'
 
     assert validate_arguments(builddir, args_list, "", True)
-

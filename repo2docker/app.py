@@ -34,7 +34,7 @@ from .buildpacks import (
 )
 from .utils import (
     execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
-    validate_and_generate_port_mapping
+    validate_and_generate_port_mapping, check_ref
 )
 
 
@@ -103,10 +103,10 @@ class Repo2Docker(Application):
 
         Use a key-value pair, with the key being the volume source &
         value being the destination volume.
-        
-        Both source and destination can be relative. Source is resolved 
+
+        Both source and destination can be relative. Source is resolved
         relative to the current working directory on the host, and
-        destination is resolved relative to the working directory of the 
+        destination is resolved relative to the working directory of the
         image - ($HOME by default)
         """,
         config=True
@@ -175,15 +175,16 @@ class Repo2Docker(Application):
             sys.exit(1)
 
         if ref:
-            try:
-                for line in execute_cmd(['git', 'reset', '--hard', ref],
-                                        cwd=checkout_path,
-                                        capture=self.json_logs):
-                    self.log.info(line, extra=dict(phase='fetching'))
-            except subprocess.CalledProcessError:
+            hash = check_ref(ref, checkout_path)
+            if hash is None:
                 self.log.error('Failed to check out ref %s', ref,
                                extra=dict(phase='failed'))
                 sys.exit(1)
+            # If the hash is resolved above, we should be able to reset to it
+            for line in execute_cmd(['git', 'reset', '--hard', hash],
+                                    cwd=checkout_path,
+                                    capture=self.json_logs):
+                self.log.info(line, extra=dict(phase='fetching'))
 
     def validate_image_name(self, image_name):
         """
@@ -202,7 +203,7 @@ class Repo2Docker(Application):
         Raises:
             ArgumentTypeError: if image_name contains characters that do not
                                meet the logic that container names must start
-                               with an alphanumeric character and can then 
+                               with an alphanumeric character and can then
                                use _ . or - in addition to alphanumeric.
                                [a-zA-Z0-9][a-zA-Z0-9_.-]+
         """
@@ -244,7 +245,8 @@ class Repo2Docker(Application):
 
         argparser.add_argument(
             '--ref',
-            help='If building a git url, which ref to check out'
+            help=('If building a git url, which reference to check out. '
+                  'E.g., `master`.')
         )
 
         argparser.add_argument(

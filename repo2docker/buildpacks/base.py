@@ -6,6 +6,7 @@ import os
 import re
 import logging
 import docker
+import sys
 
 TEMPLATE = r"""
 FROM buildpack-deps:bionic
@@ -147,6 +148,9 @@ class BuildPack:
     def __init__(self):
         self.log = logging.getLogger('repo2docker')
         self.appendix = ''
+        if sys.platform.startswith('win'):
+            self.log.warning("Windows environment detected. Note that Windows "
+                             "support is experimental in repo2docker.")
 
     def get_packages(self):
         """
