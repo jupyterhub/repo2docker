@@ -235,15 +235,10 @@ If you do not have access to any of these, please contact a current maintainer o
 
 ## Release Process Steps
 
-1. Make a PR bumping version number of repo2docker in the
-   `setup.py` file and `reop2docker/__init__.py` ,
-   get it merged, and make sure your local checkout is the
-   same as `master` on GitHub.
-
-2. Make a new release on GitHub. When the tag is create travis will build
+1. Make a new release on GitHub. When the tag is create travis will build
    and deploy that tag as the latest release.
 
-3. Tag and push a docker image:
+2. Tag and push a docker image:
    ```bash
    docker build -t jupyter/repo2docker:v<version> .
    docker push jupyter/repo2docker:v<version>
