@@ -236,34 +236,14 @@ If you do not have access to any of these, please contact a current maintainer o
 ## Release Process Steps
 
 1. Make a PR bumping version number of repo2docker in the
-   `setup.py` file (like https://github.com/jupyter/repo2docker/pull/221),
+   `setup.py` file and `reop2docker/__init__.py` ,
    get it merged, and make sure your local checkout is the
    same as `master` on GitHub.
 
-2. In your environment, install packages needed to make releases:
-   ```bash
-   pip install wheel twine
-   ```
+2. Make a new release on GitHub. When the tag is create travis will build
+   and deploy that tag as the latest release.
 
-3. Clean out the `dist` directory and then build the `wheel` and `tar.gz` files:
-   ```bash
-   rm -f dist/*
-   python setup.py sdist bdist_wheel
-   ```
-4. Once tests pass, time to upload!
-   ```bash
-   twine upload dist/*
-   ```
-
-   This might ask for your PyPI username and password.
-
-5. Make a git tag and push it to GitHub:
-   ```bash
-   git tag -a v<version>
-   git push official --tags
-   ```
-
-6. Tag and push a docker image:
+3. Tag and push a docker image:
    ```bash
    docker build -t jupyter/repo2docker:v<version> .
    docker push jupyter/repo2docker:v<version>
