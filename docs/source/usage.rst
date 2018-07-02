@@ -35,6 +35,13 @@ Building the image may take a few minutes.
 During building, ``repo2docker``
 clones the repository to obtain its contents and inspects the repo for
 :ref:`configuration files <config-files>`.
+
+By default, ``repo2docker`` will assume you are using
+Python 3.6 unless you include the version of Python in your
+:ref:`configuration files <config-files>`.  ``repo2docker`` support is best with
+Python 2.7, 3.5, and 3.6.  In the case of this repo, a Python version is not
+specified in their configuation files and Python 3.6 is installed.
+
 `Python Data Scinece Handbook <https://github.com/jakevdp/PythonDataScienceHandbook>`_
 uses a `requirements.txt file <https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/requirements.txt>`_
 to specify its Python environment. ``repo2docker`` uses ``pip`` to install

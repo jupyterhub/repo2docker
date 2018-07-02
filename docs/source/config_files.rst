@@ -55,6 +55,14 @@ You can also install files from pip in your ``environment.yml`` as well.
 Our example `environment.yml <https://github.com/binder-examples/python-conda_pip/blob/master/environment.yml>`_
 shows how one can specify a conda environment for repo2docker.
 
+You can also specify which Python version you are using with
+``environment.yml``. By default, ``repo2docker`` will assume you are using
+Python 3.6 with your ``environment.yml`` unless you include the version of
+Python in the file.  ``conda`` supports Python versions 2.7, 3.4, 3.5, and 3.6.
+``repo2docker`` support is best with Python 2.7, 3.5, and 3.6. If you include
+a Python version in a ``runtime.txt`` file in addition to your
+``environment.yml``, your ``runtime.txt`` **will be ignored**.
+
 ``requirements.txt``
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -123,6 +131,8 @@ To use python-2.7: add python-2.7 in runtime.txt file.
 The repository will run in a virtualenv with
 Python 2 installed. To see a full example repository, visit our
 `Python2 example <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
+**Python versions in ``runtime.txt`` are ignored when** ``environment.yml`` **is
+present in the same folder**.
 
 repo2docker uses R libraries pinned to a specific snapshot on
 `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
