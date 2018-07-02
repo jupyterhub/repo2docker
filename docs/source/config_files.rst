@@ -1,9 +1,32 @@
 .. _config-files:
 
-Supported configuration files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Configuration Files
+~~~~~~~~~~~~~~~~~~~
 
-Below is a list of supported configuration files (roughly in the order of build priority).
+``repo2docker`` looks for configuration files in the repository being built
+to determine how to build it. It is philosophically similar to
+`Heroku Build Packs <https://devcenter.heroku.com/articles/buildpacks>`_.
+
+In general, ``repo2docker`` uses the same configuration files as other software
+installation tools, rather than creating new custom configuration files.
+These files are described in :ref:`config-files`.
+
+``repo2docker`` configuration files are **composable**- you can use any number
+of them in the same repository.
+
+``repo2docker`` will look for configuration files in either:
+
+* A folder named ``binder`` in the root of the repository.
+* The root of the repository.
+
+If the folder ``binder`` is located at the top level of the repository,
+  **only configuration files in the** ``binder`` **folder will be considered**.
+
+`binder examples <https://github.com/binder-examples>`_ contains a list of
+example repositories that can be built with ``repo2docker`` with various
+configuration files.
+
+Below is a list of supported configuration files (roughly in the order of build priority):
 
 .. contents::
    :local:
@@ -21,6 +44,8 @@ With Dockerfiles, a regular Docker build will be performed.
 
 See the `Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
 best-practices with Dockerfiles.
+
+.. _environment-yml:
 
 ``environment.yml``
 ^^^^^^^^^^^^^^^^^^^
@@ -74,6 +99,8 @@ To install your repository like a Python package, you may include a
 While one can specify dependencies in ``setup.py``,
 repo2docker **requires configuration files such as** ``environment.yml`` or
 ``requirements.txt`` to install dependencies during the build process.
+
+.. _postBuild:
 
 ``postBuild``
 ^^^^^^^^^^^^^

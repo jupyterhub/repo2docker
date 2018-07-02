@@ -3,10 +3,24 @@
 Installing ``repo2docker``
 ==========================
 
+repo2docker requires Python 3.4 and above on Linux and macOS. See
+:ref:`below <windows>` for more information about Windows support.
+
 Prerequisite: docker
 --------------------
 
-Install `Docker <https://www.docker.com>`_ as it is required to build Docker images.
+Install `Docker <https://www.docker.com>`_ as it is required
+to build Docker images. The
+`Community Edition <https://www.docker.com/community-edition>`_,
+is available for free.
+
+Recent versions of Docker are recommended.
+The latest version of Docker, ``18.03``, successfully builds repositories from
+`binder-examples <https://github.com/binder-examples>`_.
+The `BinderHub <https://binderhub.readthedocs.io/>`_ helm chart uses version
+``17.11.0-ce-dind``.  See the
+`helm chart <https://github.com/jupyterhub/binderhub/blob/master/helm-chart/binderhub/values.yaml#L167>`_
+for more details.
 
 Installing with ``pip``
 -----------------------
@@ -30,13 +44,23 @@ i.e. if you are contributing back to this project::
 That's it! For information on using ``repo2docker``, see
 :ref:`usage`.
 
-Note about Windows support
---------------------------
+.. _windows:
 
-Windows support by ``repo2docker`` is still in the experimental stage. 
+Windows support
+---------------
+
+Windows support by ``repo2docker`` is still in the experimental stage.
 
 An article about `using Windows and the WSL`_ (Windows Subsytem for Linux or
 Bash on Windows) provides additional information about Windows and docker.
 
 
 .. _using Windows and the WSL: https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly
+
+JupyterHub-ready images
+-----------------------
+
+To build `JupyterHub <https://github.com/jupyterhub/jupyterhub>`_-ready
+Docker images with ``repo2docker``, the version of your JupterHub deployment
+must be included in the ``environment.yml`` or ``requiements.txt`` of the
+git repositories you build.
