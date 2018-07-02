@@ -50,6 +50,8 @@ matrix:
 deploy:
   provider: pypi
   user: betatim
+  # this line together with `setup.cfg` creates universal wheels as long as
+  # repo2docker is a python only module (no compiled code)
   distributions: sdist bdist_wheel
   on:
     tags: true
