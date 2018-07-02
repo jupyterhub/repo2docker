@@ -6,11 +6,15 @@ services:
 python:
 - 3.6
 install:
+# Make a wheel and install it to test to catch possible
+# issues with releases
 - pip install --upgrade setuptools pip
 - pip install -r dev-requirements.txt
 - python setup.py bdist_wheel
 - pip install dist/*.whl
 script:
+# cd into tests so CWD being repo2docker does not hide
+# possible issues with MANIFEST.in
 - if [ ${REPO_TYPE} == "r" ]; then cd tests && travis_wait pytest --cov repo2docker
   -v ${REPO_TYPE}; else cd tests && travis_retry pytest --cov repo2docker -v ${REPO_TYPE};
   fi
