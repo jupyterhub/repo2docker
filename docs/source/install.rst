@@ -57,8 +57,17 @@ Bash on Windows) provides additional information about Windows and docker.
 
 .. _using Windows and the WSL: https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly
 
+.. _jupyterhub:
+
 JupyterHub-ready images
 -----------------------
+
+`JupyterHub <https://jupyterhub.readthedocs.io/en/stable/>`_ allows multiple
+users to collaborate on a shared Jupyter server. ``repo2docker`` can build
+Docker images that can be shared within a JupyterHub deployment.  An example
+of using JupyterHub with ``repo2docker`` is Project Jupyter's free online
+service, `mybinder.org <https://mybinder.org>`_, which allows anyone to
+build a Docker image of a git repo online share the image with a URL.
 
 To build `JupyterHub <https://github.com/jupyterhub/jupyterhub>`_-ready
 Docker images with ``repo2docker``, the version of your JupterHub deployment
