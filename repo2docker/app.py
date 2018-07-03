@@ -103,10 +103,10 @@ class Repo2Docker(Application):
 
         Use a key-value pair, with the key being the volume source &
         value being the destination volume.
-        
-        Both source and destination can be relative. Source is resolved 
+
+        Both source and destination can be relative. Source is resolved
         relative to the current working directory on the host, and
-        destination is resolved relative to the working directory of the 
+        destination is resolved relative to the working directory of the
         image - ($HOME by default)
         """,
         config=True
@@ -504,7 +504,7 @@ class Repo2Docker(Application):
         client = docker.from_env(version='auto')
         if not self.run_cmd:
             port = str(self._get_free_port())
-
+            self.port = port
             run_cmd = ['jupyter', 'notebook', '--ip', '0.0.0.0',
                        '--port', port]
             ports = {'%s/tcp' % port: port}

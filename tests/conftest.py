@@ -11,6 +11,8 @@ success.
 import os
 import pipes
 import shlex
+import requests
+import time
 
 import pytest
 import yaml
@@ -30,7 +32,39 @@ def make_test_func(args):
     def test():
         app = Repo2Docker()
         app.initialize(args)
-        app.start()
+        if app.run_cmd:
+            # verify test, run it
+            app.start()
+            return
+        # no run_cmd given, starting notebook server
+        app.run = False
+        app.start()  # This just build the image and does not run it.
+        container = app.start_container()
+        port = app.port
+        # wait a bit for the container to be ready
+        container_url = 'http://localhost:%s/api' % port
+        # give the container a chance to start
+        time.sleep(1)
+        try:
+            # try a few times to connect
+            success = False
+            for i in range(1, 4):
+                container.reload()
+                assert container.status == 'running'
+                try:
+                    info = requests.get(container_url).json()
+                except Exception as e:
+                    print("Error: %s" % e)
+                    time.sleep(i * 3)
+                else:
+                    print(info)
+                    success = True
+                    break
+            assert success, "Notebook never started in %s" % container
+        finally:
+            # stop the container
+            container.stop()
+            app.wait_for_container(container)
     return test
 
 
@@ -66,6 +100,13 @@ class LocalRepo(pytest.File):
                 '--appendix', 'RUN echo "appendix" > /tmp/appendix',
                 self.fspath.dirname,
                 './verify',
+            ],
+        )
+        yield Repo2DockerTest(
+            self.fspath.basename, self,
+            args=[
+                '--appendix', 'RUN echo "appendix" > /tmp/appendix',
+                self.fspath.dirname,
             ],
         )
 
