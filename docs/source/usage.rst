@@ -63,6 +63,11 @@ you should put the following in ``requirements.txt`` or ``environment.yml``::
 
   jupyterhub==0.8.*
 
+If your instance of JupyterHub uses ``DockerSpawner``, you will need to set its
+command to run ``jupyterhub-singleuser`` by adding this line in your configuration file::
+
+  c.DockerSpawner.cmd = ['jupyterhub-singleuser']
+
 Running ``repo2docker`` locally
 -------------------------------
 
