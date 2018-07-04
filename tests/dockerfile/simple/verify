@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/bin/bash
 set -euo pipefail
 /usr/local/bin/sayhi.sh
