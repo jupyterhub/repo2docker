@@ -4,27 +4,25 @@ Configuration Files
 ~~~~~~~~~~~~~~~~~~~
 
 ``repo2docker`` looks for configuration files in the repository being built
-to determine how to build it. It is philosophically similar to
-`Heroku Build Packs <https://devcenter.heroku.com/articles/buildpacks>`_.
+to determine how to build it. In general, ``repo2docker`` uses the same
+configuration files as other software installation tools,
+rather than creating new custom configuration files.
 
-In general, ``repo2docker`` uses the same configuration files as other software
-installation tools, rather than creating new custom configuration files.
-These files are described in :ref:`config-files`.
-
-``repo2docker`` configuration files are **composable**- you can use any number
-of them in the same repository.
+A number of ``repo2docker`` configuration files can be combined to compose more
+complex setups.
 
 ``repo2docker`` will look for configuration files in either:
 
-* A folder named ``binder`` in the root of the repository.
-* The root of the repository.
+* A folder named ``binder/`` in the root of the repository.
+* The root directory of the repository.
 
-If the folder ``binder`` is located at the top level of the repository,
-  **only configuration files in the** ``binder`` **folder will be considered**.
+If the folder ``binder/`` is located at the top level of the repository,
+  **only configuration files in the** ``binder/`` **folder will be considered**.
 
-`binder examples <https://github.com/binder-examples>`_ contains a list of
-example repositories that can be built with ``repo2docker`` with various
-configuration files.
+The `binder examples <https://github.com/binder-examples>`_ organization on
+GitHub contains a list of sample repositories  for common configurations
+that ``repo2docker`` can build with various configuration files such as
+Python and R installation in a repo.
 
 Below is a list of supported configuration files (roughly in the order of build priority):
 
@@ -50,16 +48,17 @@ best-practices with Dockerfiles.
 ``environment.yml``
 ^^^^^^^^^^^^^^^^^^^
 
-This is a conda environment specification, that lets you install packages with conda.
+``environment.yml`` is the standard configuration file used by Anaconda, conda,
+and miniconda that lets you install Python packages.
 You can also install files from pip in your ``environment.yml`` as well.
 Our example `environment.yml <https://github.com/binder-examples/python-conda_pip/blob/master/environment.yml>`_
 shows how one can specify a conda environment for repo2docker.
 
-You can also specify which Python version you are using with
-``environment.yml``. By default, ``repo2docker`` will assume you are using
-Python 3.6 with your ``environment.yml`` unless you include the version of
-Python in the file.  ``conda`` supports Python versions 2.7, 3.4, 3.5, and 3.6.
-``repo2docker`` support is best with Python 2.7, 3.5, and 3.6. If you include
+You can also specify which Python version to install in your built environment
+with ``environment.yml``. By default, ``repo2docker`` **installs
+Python 3.6** with your ``environment.yml`` unless you include the version of
+Python in the file.  ``conda`` supports Python versions 3.6, 3.5, 3.4, and 2.7.
+``repo2docker`` support is best with Python 3.6, 3.5, and 2.7. If you include
 a Python version in a ``runtime.txt`` file in addition to your
 ``environment.yml``, your ``runtime.txt`` **will be ignored**.
 

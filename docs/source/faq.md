@@ -1,7 +1,7 @@
 # Frequently Asked Questions (FAQ)
 
 A collection of frequently asked questions with answers. If you have a question
-and  have found an answer, send a PR to add it here!
+and have found an answer, send a PR to add it here!
 
 ## How should I specify another version of Python 3?
 

@@ -14,7 +14,7 @@ order to run ``repo2docker``. For more information on installing
 
 To ensure you can run the software in your repository, you must
 
-repo2docker is called with a simple command::
+repo2docker is called with this command::
 
   jupyter-repo2docker <URL-or-path to repo>
 
@@ -25,10 +25,15 @@ For example, use the following to build an image of the
 
   jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook
 
-To build a particular branch and commit, we use the argument ``--ref`` to
+To build a particular branch and commit, use the argument ``--ref`` to
 specify the ``branch-name/commit-hash``::
 
   jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook --ref master/599aa0fe3f882c0001670e676e5a8d43b92c35fc
+
+..tip::
+  For reproducibile research, we recommend specifying a commit-hash to
+  deterministcally build a fixed version of a repository. Not specifying a
+  commit-hash will result in the latest commit of the repository being built.
 
 Building the image may take a few minutes.
 
@@ -45,7 +50,7 @@ specified in their configuation files and Python 3.6 is installed.
 `Python Data Scinece Handbook <https://github.com/jakevdp/PythonDataScienceHandbook>`_
 uses a `requirements.txt file <https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/requirements.txt>`_
 to specify its Python environment. ``repo2docker`` uses ``pip`` to install
-dependencies listed in the ``requirement.txt`` in image. To learn more about
+dependencies listed in the ``requirement.txt`` in the image. To learn more about
 configuration files in ``repo2docker`` visit :ref:`config-files`.
 
 When the image is built, a message will be output to your terminal::
