@@ -1,5 +1,15 @@
 # Design
 
+The repo2docker buildpacks are inspired by
+[Heroku's Build Packs](https://devcenter.heroku.com/articles/buildpacks).
+The philosophy for the repo2docker buildpacks includes:
+
+- using common configuration files for familiar installation and packaging tools
+- allowing configuration files to be combined to compose more complex setups
+- specifying default locations for configuration files
+(repo's root directory or .binder directory)
+
+
 When designing `repo2docker` and adding to it in the future, the
 developers are influenced by two primary use cases.
 The use cases for `repo2docker` which drive most design decisions are:
@@ -8,9 +18,6 @@ The use cases for `repo2docker` which drive most design decisions are:
    [BinderHub](http://github.com/jupyterhub/binderhub)
 2. Manual image building and running the image from the command line client,
    `jupyter-repo2docker`, by users interactively on their workstations
-
-We share our guiding design principles here. This is not an exhaustive
-list :)
 
 ## Deterministic output
 

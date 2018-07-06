@@ -1,17 +1,15 @@
 # Frequently Asked Questions (FAQ)
 
-A collection of frequently asked questions with answers!
-
-If you have a question & have found an answer, send a PR to add it here!
+A collection of frequently asked questions with answers. If you have a question
+and have found an answer, send a PR to add it here!
 
 ## How should I specify another version of Python 3?
 
-Currently the best way to do this is by using a conda ``environment.yml``
-file and setting the language to whichever version of Python you like.
+One can specify a Python version in the ``environment.yml`` file of a repo.
 
 ## Can I add executable files to the user's PATH?
 
-Yes! Using a ``postBuild`` file, you can place any files that should be called
+Yes! With a :ref:`postBuild` file, you can place any files that should be called
 from the command line in the folder ``~/.local/``. This folder will be
 available in a user's PATH, and can be run from the command line (or as
 a subsequent build step.)
@@ -36,4 +34,4 @@ Hence the output of `--debug` can not be built with a normal `docker build -t .`
 or similar traditional docker command.
 
 Check out the [binder-examples](http://github.com/binder-examples/) github
-organization for example Dockerfiles you can copy & modify for your own use!
+organization for example repositories you can copy & modify for your own use!
