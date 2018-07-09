@@ -3,7 +3,7 @@
 Using ``repo2docker``
 =====================
 
-`Docker <https://docs.docker.com/>`_ **must be running ** in
+`Docker <https://docs.docker.com/>`_ **must be running** in
 order to run ``repo2docker``. For more information on installing
 ``repo2docker``, see :ref:`install`.
 
@@ -26,14 +26,14 @@ For example, use the following to build an image of the
   jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook
 
 To build a particular branch and commit, use the argument ``--ref`` to
-specify the ``branch-name/commit-hash``::
+specify the ``branch-name`` or ``commit-hash``::
 
-  jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook --ref master/599aa0fe3f882c0001670e676e5a8d43b92c35fc
+  jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook --ref 599aa0fe3f882c0001670e676e5a8d43b92c35fc
 
-..tip::
-  For reproducibile research, we recommend specifying a commit-hash to
-  deterministcally build a fixed version of a repository. Not specifying a
-  commit-hash will result in the latest commit of the repository being built.
+.. tip::
+   For reproducibile research, we recommend specifying a commit-hash to
+   deterministcally build a fixed version of a repository. Not specifying a
+   commit-hash will result in the latest commit of the repository being built.
 
 Building the image may take a few minutes.
 
@@ -68,13 +68,13 @@ you can launch JupyterLab by opening Jupyter Notebook and visiting the
 
 .. code-block:: none
 
-http(s)://<server:port>/<lab-location>/lab
+   http(s)://<server:port>/<lab-location>/lab
 
 To switch back to the classic notebook, add ``/tree`` to the URL:
 
 .. code-block:: none
 
-http(s)://<server:port>/<lab-location>/tree
+   http(s)://<server:port>/<lab-location>/tree
 
 To learn more about URLs in JupyterLab and Jupyter Notebook, visit
 `starting JupyterLab <http://jupyterlab.readthedocs.io/en/latest/getting_started/starting.html>`_.
