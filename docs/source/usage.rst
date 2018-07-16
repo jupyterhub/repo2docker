@@ -21,7 +21,7 @@ repo2docker is called with this command::
 where ``<URL-or-path to repo>`` is a URL or path to the source repository.
 
 For example, use the following to build an image of the
-`Python Data Scinece Handbook <https://github.com/jakevdp/PythonDataScienceHandbook>`_::
+`Python Data Science Handbook <https://github.com/jakevdp/PythonDataScienceHandbook>`_::
 
   jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook
 
@@ -47,7 +47,7 @@ Python 3.6 unless you include the version of Python in your
 Python 2.7, 3.5, and 3.6.  In the case of this repo, a Python version is not
 specified in their configuation files and Python 3.6 is installed.
 
-`Python Data Scinece Handbook <https://github.com/jakevdp/PythonDataScienceHandbook>`_
+`Python Data Science Handbook <https://github.com/jakevdp/PythonDataScienceHandbook>`_
 uses a `requirements.txt file <https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/requirements.txt>`_
 to specify its Python environment. ``repo2docker`` uses ``pip`` to install
 dependencies listed in the ``requirement.txt`` in the image. To learn more about
