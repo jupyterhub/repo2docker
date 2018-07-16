@@ -79,10 +79,8 @@ jobs:
             echo "Container name is ${CONTAINER_NAME}"
             echo "Repository name is ${REPO_NAME}"
             echo "2. Running jupyter-repo2docker..."
-            echo "jupyter-repo2docker --debug --user-name username --user-id 1000 --no-run --image-name ${CONTAINER_NAME} ${REPO_NAME}"
-            jupyter-repo2docker --debug --user-name username --user-id 1000 --no-run --image-name "${CONTAINER_NAME}" "${REPO_NAME}"
-            echo "3. Running without server (example)"
-            docker run -td --name repo2docker --entrypoint /bin/bash "${CONTAINER_NAME}"
+            echo "jupyter-repo2docker --debug --user-name username --user-id 1000 --no-run --image-name ${CONTAINER_NAME}:${DOCKER_TAG} ${REPO_NAME}"
+            jupyter-repo2docker --debug --user-name username --user-id 1000 --no-run --image-name "${CONTAINER_NAME}:${DOCKER_TAG}" "${REPO_NAME}"
             docker ps
             docker images
       - run:
