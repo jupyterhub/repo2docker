@@ -5,7 +5,7 @@ import shutil
 import subprocess
 import sys
 
-from traitlets import Integer
+from traitlets import Integer, TraitError
 
 
 def execute_cmd(cmd, capture=False, **kwargs):
