@@ -217,6 +217,7 @@ class Repo2Docker(Application):
     def get_argparser(self):
         """Get arguments that may be used by repo2docker"""
         argparser = argparse.ArgumentParser()
+
         argparser.add_argument(
             '--config',
             default='repo2docker_config.py',
@@ -342,6 +343,15 @@ class Repo2Docker(Application):
             type=str,
             help=self.traits()['appendix'].help,
         )
+
+        argparser.add_argument(
+            '--version',
+            dest='version',
+            action='store_true',
+            help='Print the repo2docker version and exit.'
+        )
+
+
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -353,10 +363,16 @@ class Repo2Docker(Application):
                        exc_info=(etype, evalue, traceback),
                        extra=dict(phase='failed'))
 
+
     def initialize(self, argv=None):
         """Init repo2docker configuration before start"""
         if argv is None:
             argv = sys.argv[1:]
+
+        if '--version' in argv:
+            print(self.version)
+            sys.exit(0)
+
         args = self.get_argparser().parse_args(argv)
 
         if args.debug:
