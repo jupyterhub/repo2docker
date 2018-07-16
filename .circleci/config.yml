@@ -2,8 +2,11 @@ version: 2
 jobs:
 
   # If you want to deploy your container to Docker Hub, you must
-  #  1. define the CONTAINER_NAME environment variable for the project 
-  #  2. Also define DOCKER_USER and DOCKER_PASS
+  #  1. define the CONTAINER_NAME environment variable for the project
+  #     If not defined, will use the repo that is being built from.
+  #  2. define the REPO_NAME with the juypter notebook you want to build. If not
+  #     defined, will use https://www.github.com/{CONTAINER_NAME}
+  #  2. Also define DOCKER_USER and DOCKER_PASS (for deploy, if wanted)
   setup:
     environment:
       - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
@@ -70,7 +73,11 @@ jobs:
             echo "Repository name is ${REPO_NAME}"
             echo "2. Running jupyter-repo2docker..."
             echo "jupyter-repo2docker --debug --image-name ${CONTAINER_NAME} ${REPO_NAME}"
-            jupyter-repo2docker --debug --user-name username --user-id 1000 --image-name "${CONTAINER_NAME}" "${REPO_NAME}"
+            jupyter-repo2docker --debug --user-name username --user-id 1000 --no-run --image-name "${CONTAINER_NAME}" "${REPO_NAME}"
+            echo "3. Running without server (example)"
+            docker run -td --name repo2docker --entrypoint /bin/bash "${CONTAINER_NAME}"
+            docker ps
+            docker images
       - run:
           name: Docker Save
           no_output_timeout: 40m
