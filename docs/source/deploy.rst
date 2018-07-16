@@ -54,8 +54,9 @@ name to get to your project settings. Under settings, click on the "Environment
 Variables" tab. In this section, you want to define the following:
 
 1. ``CONTAINER_NAME`` should be the name of the Docker Hub repository you just created.
-2. ``DOCKER_USER`` and ``DOCKER_PASS`` should be your credentials (to allowing pushing)
-3. ``REPO_NAME`` should be the full Github url (or other) of the repository with the notebook.
+2. ``DOCKER_TAG`` is the tag you want to use. If not defined, will use first 10 characters of commit.
+3. ``DOCKER_USER`` and ``DOCKER_PASS`` should be your credentials (to allowing pushing)
+4. ``REPO_NAME`` should be the full Github url (or other) of the repository with the notebook.
 
 If you don't define the ``CONTAINER_NAME`` it will default to be the repository where it is 
 building from, which you should only do if the Docker Hub repository is named equivalently.

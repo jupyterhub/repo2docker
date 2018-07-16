@@ -4,9 +4,11 @@ jobs:
   # If you want to deploy your container to Docker Hub, you must
   #  1. define the CONTAINER_NAME environment variable for the project
   #     If not defined, will use the repo that is being built from.
-  #  2. define the REPO_NAME with the juypter notebook you want to build. If not
+  #  2. Define the DOCKER_TAG if you have preference. If not defined, will use
+  #     the commit associated with the build.
+  #  3. define the REPO_NAME with the juypter notebook you want to build. If not
   #     defined, will use https://www.github.com/{CONTAINER_NAME}
-  #  2. Also define DOCKER_USER and DOCKER_PASS (for deploy, if wanted)
+  #  4. Also define DOCKER_USER and DOCKER_PASS (for deploy, if wanted)
   setup:
     environment:
       - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
@@ -59,6 +61,11 @@ jobs:
             echo "repo2docker version: ${VERSION}"
             echo "1. Preparing building environment"
             echo "Working directory is ${PWD}"
+            # If not set, define DOCKER_TAG
+            if [ ! -n "${DOCKER_TAG:-}" ]
+                then
+                    DOCKER_TAG=$(echo "${CIRCLE_SHA1}" | cut -c1-10)
+            fi
             # If not set, define CONTAINER_NAME
             if [ ! -n "${CONTAINER_NAME:-}" ]
                 then
@@ -82,14 +89,19 @@ jobs:
           name: Docker Save
           no_output_timeout: 40m
           command: |
+            # If not set, use commit id as tag
+            if [ ! -n "${DOCKER_TAG:-}" ]
+                then
+                    DOCKER_TAG=$(echo "${CIRCLE_SHA1}" | cut -c1-10)
+            fi
             # If not set, define CONTAINER_NAME
             if [ ! -n "${CONTAINER_NAME:-}" ]
                 then
                     CONTAINER_NAME="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
             fi
-            echo "Saving ${CONTAINER_NAME} to container.tar.gz"
+            echo "Saving ${CONTAINER_NAME}:${DOCKER_TAG} to container.tar.gz"
             mkdir -p /tmp/cache
-            docker save ${CONTAINER_NAME}:latest \
+            docker save ${CONTAINER_NAME}:${DOCKER_TAG} \
               | pigz -2 -p 3 > /tmp/cache/container.tar.gz
       - persist_to_workspace:
           root: /tmp
@@ -134,15 +146,19 @@ jobs:
           no_output_timeout: 40m
           command: |
             echo "Looking for Docker deployment options"
+            if [ ! -n "${DOCKER_TAG:-}" ]
+                then
+                    DOCKER_TAG=$(echo "${CIRCLE_SHA1}" | cut -c1-10)
+            fi
             # If not set, define CONTAINER_NAME
             if [[ ! -n "${CONTAINER_NAME:-}" ]]
                 then
                     CONTAINER_NAME="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
             fi
-            echo "Container name set to ${CONTAINER_NAME}"
+            echo "Container name set to ${CONTAINER_NAME}:${DOCKER_TAG}"
             if [[ -n "$DOCKER_PASS" ]]; then
                   docker login -u $DOCKER_USER -p $DOCKER_PASS
-                  docker push ${CONTAINER_NAME}:latest
+                  docker push ${CONTAINER_NAME}:${DOCKER_TAG}
             fi
 workflows:
   version: 2
