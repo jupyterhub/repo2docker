@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-05-08 20:15:09 UTC
+# Frozen on 2018-07-16 23:03:29 UTC
 name: r2d
 channels:
   - conda-forge
@@ -14,27 +14,27 @@ dependencies:
   - decorator=4.3.0=py_0
   - enum34=1.1.6=py27_1
   - ipykernel=4.8.2=py27_0
-  - ipython=5.6.0=py27_0
-  - ipython_genutils=0.2.0=py27_0
-  - jupyter_client=5.2.3=py27_0
+  - ipython=5.7.0=py27_0
+  - ipython_genutils=0.2.0=py_1
+  - jupyter_client=5.2.3=py_1
   - jupyter_core=4.4.0=py_0
   - libsodium=1.0.16=0
   - ncurses=5.9=10
   - openssl=1.0.2o=0
   - pathlib2=2.3.2=py27_0
-  - pexpect=4.5.0=py27_0
+  - pexpect=4.6.0=py27_0
   - pickleshare=0.7.4=py27_0
   - pip=9.0.3=py27_0
   - prompt_toolkit=1.0.15=py27_0
-  - ptyprocess=0.5.2=py27_0
-  - pygments=2.2.0=py27_0
+  - ptyprocess=0.6.0=py27_0
+  - pygments=2.2.0=py_1
   - python=2.7.15=0
-  - python-dateutil=2.7.2=py_0
-  - pyzmq=17.0.0=py27_4
+  - python-dateutil=2.7.3=py_0
+  - pyzmq=17.1.0=py27hae99301_0
   - readline=7.0=0
-  - scandir=1.7=py27_0
-  - setuptools=39.1.0=py27_0
-  - simplegeneric=0.8.1=py27_0
+  - scandir=1.7=py27h470a237_1
+  - setuptools=40.0.0=py27_0
+  - simplegeneric=0.8.1=py_1
   - singledispatch=3.4.0.3=py27_0
   - six=1.11.0=py27_1
   - sqlite=3.20.1=2
@@ -42,10 +42,12 @@ dependencies:
   - tk=8.6.7=0
   - tornado=4.5.3=py27_0
   - traitlets=4.3.2=py27_0
-  - wcwidth=0.1.7=py27_0
-  - wheel=0.31.0=py27_0
-  - zeromq=4.2.5=1
-  - zlib=1.2.11=0
+  - wcwidth=0.1.7=py_1
+  - wheel=0.31.1=py27_0
+  - zeromq=4.2.5=hfc679d8_3
+  - zlib=1.2.11=h470a237_3
+  - libgcc-ng=7.2.0=hdf63c60_3
+  - libstdcxx-ng=7.2.0=hdf63c60_3
   - pip:
     - backports.ssl-match-hostname==3.5.0.1
 prefix: /opt/conda/envs/r2d
