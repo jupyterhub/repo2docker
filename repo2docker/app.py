@@ -351,7 +351,6 @@ class Repo2Docker(Application):
             help='Print the repo2docker version and exit.'
         )
 
-
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -362,7 +361,6 @@ class Repo2Docker(Application):
         self.log.error("Error during build: %s", evalue,
                        exc_info=(etype, evalue, traceback),
                        extra=dict(phase='failed'))
-
 
     def initialize(self, argv=None):
         """Init repo2docker configuration before start"""
