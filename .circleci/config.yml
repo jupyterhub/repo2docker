@@ -44,18 +44,16 @@ jobs:
               pigz -d --stdout /tmp/cache/container.tar.gz | docker load
             fi
             docker images
-      - run: # install and activate virtual environment with pip
-          name: Install Repo2Docker
+      - run:
+          name: Generate Docker Image
+          no_output_timeout: 60m
           command: |
+            echo "0. Installing dependencies..."
             python3 -m venv venv
             . venv/bin/activate
             pip install jupyter-repo2docker
             export VERSION=$(python3 -c "import repo2docker; print(repo2docker.__version__)")
             echo "repo2docker version: ${VERSION}"
-      - run:
-          name: Generate Docker Image
-          no_output_timeout: 60m
-          command: |
             echo "1. Preparing building environment"
             echo "Working directory is ${PWD}"
             # If not set, define CONTAINER_NAME
