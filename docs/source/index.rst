@@ -22,6 +22,7 @@ Site Contents
    usage
    config_files
    faq
+   deploy
    design
    architecture
    dev_newbuildpack
