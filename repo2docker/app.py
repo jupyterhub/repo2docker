@@ -367,6 +367,8 @@ class Repo2Docker(Application):
         if argv is None:
             argv = sys.argv[1:]
 
+        # version must be checked before parse, as repo/cmd are required and
+        # will spit out an error if allowed to be parsed first.
         if '--version' in argv:
             print(self.version)
             sys.exit(0)
