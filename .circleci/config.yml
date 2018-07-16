@@ -45,7 +45,7 @@ jobs:
             fi
             docker images
       - run:
-          name: Generate Docker Image
+          name: Run jupyter-repo2docker to generate Docker Container
           no_output_timeout: 60m
           command: |
             echo "0. Installing dependencies..."
@@ -70,7 +70,7 @@ jobs:
             echo "Repository name is ${REPO_NAME}"
             echo "2. Running jupyter-repo2docker..."
             echo "jupyter-repo2docker --debug --image-name ${CONTAINER_NAME} ${REPO_NAME}"
-            jupyter-repo2docker --debug --image-name "${CONTAINER_NAME}" "${REPO_NAME}"
+            USER=username jupyter-repo2docker --debug --image-name "${CONTAINER_NAME}" "${REPO_NAME}"
       - run:
           name: Docker Save
           no_output_timeout: 40m
