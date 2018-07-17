@@ -20,15 +20,15 @@ repo2docker is called with this command::
 
 where ``<URL-or-path to repo>`` is a URL or path to the source repository.
 
-For example, use the following to build an image of the
-`Python Data Science Handbook <https://github.com/jakevdp/PythonDataScienceHandbook>`_::
+For example, use the following to build an image of Peter Norvig's
+`Pytudes <https://github.com/norvig/pytudes/>`_::
 
-  jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook
+  jupyter-repo2docker https://github.com/norvig/pytudes
 
 To build a particular branch and commit, use the argument ``--ref`` to
 specify the ``branch-name`` or ``commit-hash``::
 
-  jupyter-repo2docker https://github.com/jakevdp/PythonDataScienceHandbook --ref 599aa0fe3f882c0001670e676e5a8d43b92c35fc
+  jupyter-repo2docker https://github.com/norvig/pytudes --ref 9ced85dd9a84859d0767369e58f33912a214a3cf
 
 .. tip::
    For reproducibile research, we recommend specifying a commit-hash to
@@ -47,8 +47,8 @@ Python 3.6 unless you include the version of Python in your
 Python 2.7, 3.5, and 3.6.  In the case of this repo, a Python version is not
 specified in their configuation files and Python 3.6 is installed.
 
-`Python Data Science Handbook <https://github.com/jakevdp/PythonDataScienceHandbook>`_
-uses a `requirements.txt file <https://github.com/jakevdp/PythonDataScienceHandbook/blob/master/requirements.txt>`_
+`Pytudes <https://github.com/norvig/pytudes>`_
+uses a `requirements.txt file <https://github.com/norvig/pytudes/blob/master/requirements.txt>`_
 to specify its Python environment. ``repo2docker`` uses ``pip`` to install
 dependencies listed in the ``requirement.txt`` in the image. To learn more about
 configuration files in ``repo2docker`` visit :ref:`config-files`.
@@ -86,7 +86,7 @@ To debug the docker image being built, pass the ``--debug`` parameter:
 
   .. code-block:: bash
 
-     jupyter-repo2docker --debug https://github.com/jakevdp/PythonDataScienceHandbook
+     jupyter-repo2docker --debug https://github.com/norvig/pytudes
 
 This will print the generated ``Dockerfile``, build it, and run it.
 
@@ -97,4 +97,4 @@ be used by docker directly.
 
   .. code-block:: bash
 
-     jupyter-repo2docker --no-build --debug https://github.com/jakevdp/PythonDataScienceHandbook
+     jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
