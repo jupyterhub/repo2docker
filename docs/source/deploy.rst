@@ -1,17 +1,18 @@
 .. _usage:
 
-Deploy Using ``repo2docker``
-==========================
+Deploy ``repo2docker`` 
+======================
 
-You can deploy a `Docker <https://docs.docker.com/>`_ container 
-to `Docker Hub <https://hub.docker.com/>`_ directly from a GIthub repository
+We've created for you the `continuous-build <https://www.github.com/jupyter/continuous-build/>`_ 
+repository so that you can deploy a `Docker <https://docs.docker.com/>`_ container 
+to `Docker Hub <https://hub.docker.com/>`_ directly from a Github repository
 that has a Jupyter notebook. Here are instructions to do this.
 
 Getting Started
 ---------------
 Today you will be doing the following:
 
- 1. Fork and clone the repo2docker Github repository to obtain the hidden ``.circleci`` folder.
+ 1. Fork and clone the continuous-build Github repository to obtain the hidden ``.circleci`` folder.
  2. creating an image repository on Docker Hub
  3. connecting your repository to CircleCI
  4. push, commit, or create a pull request to trigger a build.
@@ -23,16 +24,49 @@ to pull from Docker Hub.
 
 Step 1. Clone the Repository
 ............................
-First, fork the  `repo2docker <https://www.github.com/jupyter/repo2docker/>`_ Github
+First, fork the `continuous-build <https://www.github.com/jupyter/continuous-build/>`_ Github
 repository to your account, and clone the branch. 
 
-
-   git clone https://www.github.com/<username>/repo2docker
+   git clone https://www.github.com/<username>/continuous-build
    # or
-   git clone git@github.com:<username>/repo2docker.git
+   git clone git@github.com:<username>/continuous-build.git
 
 
-Step 2. Docker Hub
+Step 2. Choose your Configuration
+.................................
+
+The hidden folder `.circleci/config.yml` has instructions for `CircleCI <https://circleci.com/dashboard/>`_ 
+to automatically discover and build your repo2docker jupyter notebook container.
+The default template provided in the repository in this folder will do the most basic steps, 
+including:
+
+1. clone of the repository with the notebook that you specify
+2. build
+3. push to Docker Hub
+
+Also provided (or will be provided as they are requested) are other configuration templates in
+the subfolders of that repository. The README.md in each template example folder describes its
+functions. If you have a request for a template that is not provided, please 
+`let us know <https://www.github.com/jupyter/continuous-build/issues/>`_.
+We will add templates as they are requested to do additional tasks like test containers, run
+nbconvert, etc.
+
+Thus, if I have a repository named ``myrepo`` and I want to use the default configuration on circleCI,
+I would copy it there from the ``continuous-build`` folder. In the example below, I'm
+creating a new folder called "myrepo" and then copying the entire folder there.
+
+    mkdir -p myrepo
+    cp -R continuous-build/.circleci myrepo/
+
+You would then logically create a Github repository in the "myrepo" folder, 
+add the circleci configuration folder, and continue on to the next steps.
+
+    cd myrepo
+    git init
+    git add .circleci
+
+
+Step 3. Docker Hub
 ..................
 Go to `Docker Hub <https://hub.docker.com/>`_, log in, and click the big blue
 button that says "create repository" (not an automated build). Choose an organization
@@ -40,7 +74,7 @@ and name that you like, and remember it! We will be adding it, along with your
 Docker credentials, to be encrypted CircleCI environment variables.
 
 
-Step 3. Connect to CircleCI
+Step 4. Connect to CircleCI
 ...........................
 If you navigate to the main `app page <https://circleci.com/dashboard/>`_ you
 should be able to click "Add Projects" and then select your repository. If you don't
@@ -56,15 +90,15 @@ Variables" tab. In this section, you want to define the following:
 1. ``CONTAINER_NAME`` should be the name of the Docker Hub repository you just created.
 2. ``DOCKER_TAG`` is the tag you want to use. If not defined, will use first 10 characters of commit.
 3. ``DOCKER_USER`` and ``DOCKER_PASS`` should be your credentials (to allowing pushing)
-4. ``REPO_NAME`` should be the full Github url (or other) of the repository with the notebook.
+4. ``REPO_NAME`` should be the full Github url (or other) of the repository with the notebook. This doesn't have to coincide with the repository you are using to do the build (e.g., "myrepo" in our example).
 
 If you don't define the ``CONTAINER_NAME`` it will default to be the repository where it is 
 building from, which you should only do if the Docker Hub repository is named equivalently.
-If you don't define either of the variables from 2. for the Docker credentials, your
+If you don't define either of the variables from step 3. for the Docker credentials, your
 image will build but not be deployed to Docker Hub. Finally, if you don't define the ``REPO_NAME``
 it will again use the name of the repository defined for the ``CONTAINER_NAME``.
 
-Step 4. Push Away, Merrill!
+Step 5. Push Away, Merrill!
 ...........................
 
 Once the environment variables are set up, you can push or issue a pull request
