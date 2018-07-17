@@ -3,7 +3,7 @@
 Deploy ``repo2docker`` 
 ======================
 
-We've created for you the `continuous-build <https://www.github.com/jupyter/continuous-build/>`_ 
+We've created for you the `continuous-build <https://www.github.com/binder-examples/continuous-build/>`_ 
 repository so that you can deploy a `Docker <https://docs.docker.com/>`_ container 
 to `Docker Hub <https://hub.docker.com/>`_ directly from a Github repository
 that has a Jupyter notebook. Here are instructions to do this.
@@ -24,7 +24,7 @@ to pull from Docker Hub.
 
 Step 1. Clone the Repository
 ............................
-First, fork the `continuous-build <https://www.github.com/jupyter/continuous-build/>`_ Github
+First, fork the `continuous-build <https://www.github.com/binder-examples/continuous-build/>`_ Github
 repository to your account, and clone the branch. 
 
    git clone https://www.github.com/<username>/continuous-build
@@ -47,7 +47,7 @@ including:
 Also provided (or will be provided as they are requested) are other configuration templates in
 the subfolders of that repository. The README.md in each template example folder describes its
 functions. If you have a request for a template that is not provided, please 
-`let us know <https://www.github.com/jupyter/continuous-build/issues/>`_.
+`let us know <https://www.github.com/binder-examples/continuous-build/issues/>`_.
 We will add templates as they are requested to do additional tasks like test containers, run
 nbconvert, etc.
 
