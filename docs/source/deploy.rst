@@ -1,10 +1,10 @@
 .. _usage:
 
-Deploy ``repo2docker`` 
-======================
+Using ``repo2docker`` as part of your Continuous Integration
+============================================================
 
 We've created for you the `continuous-build <https://www.github.com/binder-examples/continuous-build/>`_ 
-repository so that you can deploy a `Docker <https://docs.docker.com/>`_ container 
+repository so that you can push a `Docker <https://docs.docker.com/>`_ container 
 to `Docker Hub <https://hub.docker.com/>`_ directly from a Github repository
 that has a Jupyter notebook. Here are instructions to do this.
 
@@ -44,9 +44,8 @@ including:
 2. build
 3. push to Docker Hub
 
-Also provided (or will be provided as they are requested) are other configuration templates in
-the subfolders of that repository. The README.md in each template example folder describes its
-functions. If you have a request for a template that is not provided, please 
+This repository aims to provide templates for your use.
+If you have a request for a new template, please 
 `let us know <https://www.github.com/binder-examples/continuous-build/issues/>`_.
 We will add templates as they are requested to do additional tasks like test containers, run
 nbconvert, etc.
@@ -70,7 +69,8 @@ Step 3. Docker Hub
 ..................
 Go to `Docker Hub <https://hub.docker.com/>`_, log in, and click the big blue
 button that says "create repository" (not an automated build). Choose an organization
-and name that you like, and remember it! We will be adding it, along with your
+and name that you like (in the traditional format ``<ORG>/<NAME>``), and 
+remember it! We will be adding it, along with your
 Docker credentials, to be encrypted CircleCI environment variables.
 
 
@@ -95,7 +95,7 @@ Variables" tab. In this section, you want to define the following:
 If you don't define the ``CONTAINER_NAME`` it will default to be the repository where it is 
 building from, which you should only do if the Docker Hub repository is named equivalently.
 If you don't define either of the variables from step 3. for the Docker credentials, your
-image will build but not be deployed to Docker Hub. Finally, if you don't define the ``REPO_NAME``
+image will build but not be pushed to Docker Hub. Finally, if you don't define the ``REPO_NAME``
 it will again use the name of the repository defined for the ``CONTAINER_NAME``.
 
 Step 5. Push Away, Merrill!
@@ -118,9 +118,15 @@ Step 5. Use Your Container!
 
 You should then be able to pull your new container, and run it! Here is an example:
 
+  docker pull <ORG>/<NAME>
+  docker run -it --name repo2docker -p 8888:8888 <ORG>/<NAME> jupyter notebook --ip 0.0.0.0
+  
+
+For a pre-built working example, try the following:
+
   docker pull vanessa/repo2docker
   docker run -it --name repo2docker -p 8888:8888 vanessa/repo2docker jupyter notebook --ip 0.0.0.0
-  
+
 You can then enter the url and token provided in the browser to access your notebook. When you are done and need to stop and remove the container:
 
   docker stop repo2docker
