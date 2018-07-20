@@ -18,6 +18,7 @@ import tempfile
 import time
 
 import docker
+from urllib.parse import urlparse
 from docker.utils import kwargs_from_env
 from docker.errors import DockerException
 import escapism
@@ -517,6 +518,14 @@ class Repo2Docker(Application):
                 ports = {}
         # store ports on self so they can be retrieved in tests
         self.ports = ports
+
+        docker_host = os.environ.get('DOCKER_HOST')
+        if docker_host:
+            host_name = urlparse(docker_host).host_name
+        else:
+            host_name = '127.0.0.1'
+        self.hostname = host_name
+
         container_volumes = {}
         if self.volumes:
             api_client = docker.APIClient(
@@ -536,6 +545,7 @@ class Repo2Docker(Application):
             self.output_image_spec,
             publish_all_ports=self.all_ports,
             ports=ports,
+            hostname=host_name,
             detach=True,
             command=run_cmd,
             volumes=container_volumes,
