@@ -3,8 +3,9 @@
 set -ex
 
 cd $(dirname $0)
-CONDA_VERSION=4.5.1
-URL="https://repo.continuum.io/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh"
+MINICONDA_VERSION=4.5.4
+CONDA_VERSION=4.5.8
+URL="https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
 
 wget --quiet $URL -O ${INSTALLER_PATH}
@@ -12,7 +13,7 @@ chmod +x ${INSTALLER_PATH}
 
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
-MD5SUM="0c28787e3126238df24c5d4858bd0744"
+MD5SUM="a946ea1d0c4a642ddf0c3a26a18bb16d"
 
 if ! echo "${MD5SUM}  ${INSTALLER_PATH}" | md5sum  --quiet -c -; then
     echo "md5sum mismatch for ${INSTALLER_PATH}, exiting!"
@@ -28,6 +29,9 @@ conda config --system --add channels conda-forge
 # Do not attempt to auto update conda or dependencies
 conda config --system --set auto_update_conda false
 conda config --system --set show_channel_urls true
+
+# install conda itself
+conda install -yq conda==${CONDA_VERSION}
 
 # switch Python in its own step
 # since switching Python during an env update can

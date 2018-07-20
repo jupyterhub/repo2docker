@@ -19,9 +19,7 @@ import sys
 from ruamel.yaml import YAML
 
 
-MINICONDA_VERSION = '4.3.27'
-# need conda ≥ 4.4 to avoid bug adding spurious pip dependencies
-CONDA_VERSION = '4.4.11'
+MINICONDA_VERSION = '4.5.4'
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
@@ -59,7 +57,7 @@ def freeze(env_file, frozen_file):
         f"continuumio/miniconda3:{MINICONDA_VERSION}",
         "sh", "-c",
         '; '.join([
-            f"conda install -yq conda={CONDA_VERSION}",
+            # f"conda install -yq conda={CONDA_VERSION}",
             'conda config --add channels conda-forge',
             'conda config --system --set auto_update_conda false',
             f"conda env create -v -f /r2d/{env_file} -n r2d",
