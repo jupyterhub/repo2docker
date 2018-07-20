@@ -1,5 +1,5 @@
 """
-Test if the environment.yml is empty or it constains other data structure than a dictionary
+Test if the explict hostname is supplied correctly to the container
 """
 import os
 import sys
@@ -21,15 +21,11 @@ def test_env_yml(tmpdir):
     app.initialize(argv)
     app.run = False
     app.start()  # This just build the image and does not run it.
-    detect = app.build
-    print("app.build",detect)
     container = app.start_container()
     port = app.port
-    print("port in test", port)
     hostname = app.hostname
     # wait a bit for the container to be ready
     container_url = 'http://{}:{}/api'.format(hostname, port)
-    print("print container url",container_url)
     # wait a bit for the container to be ready
     # give the container a chance to start
     time.sleep(1)
