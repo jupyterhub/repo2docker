@@ -30,7 +30,7 @@ from . import __version__
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
     CondaBuildPack, JuliaBuildPack, BaseImage,
-    RBuildPack, StencilaBuildPack,
+    RBuildPack
 )
 from .utils import (
     execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
@@ -67,7 +67,6 @@ class Repo2Docker(Application):
             DockerBuildPack,
             JuliaBuildPack,
             RBuildPack,
-            StencilaBuildPack,
             CondaBuildPack,
             PythonBuildPack,
         ],

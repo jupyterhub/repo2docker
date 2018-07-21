@@ -250,6 +250,30 @@ class BuildPack:
         """
         return {}
 
+
+    @property
+    def stencila_manifest_dir(self):
+        """Find the stencila manifest dir if it exists"""
+        if hasattr(self, '_stencila_manifest_dir'):
+            return self._stencila_manifest_dir
+
+        # look for a manifest.xml that suggests stencila could be used
+        # when we find one, stencila should be installed
+        # and set environment variables such that
+        # this file is located at:
+        # ${STENCILA_ARCHIVE_DIR}/${STENCILA_ARCHIVE}/manifest.xml
+
+        self._stencila_manifest_dir = None
+        for root, dirs, files in os.walk("."):
+            if "manifest.xml" in files:
+                self._stencila_manifest_dir = root.split(os.path.sep, 1)[1]
+                self.log.info(
+                    "Found stencila manifest.xml in %s",
+                    self._stencila_manifest_dir,
+                )
+                break
+        return self._stencila_manifest_dir
+
     def get_build_scripts(self):
         """
         Ordered list of shell script snippets to build the base image.
@@ -422,7 +446,22 @@ class BaseImage(BuildPack):
 
     def get_env(self):
         """Return env directives to be set after build"""
-        return []
+        env = []
+        if self.stencila_manifest_dir:
+            # manifest_dir is the path containing the manifest.xml
+            # archive_dir is the directory containing archive directories (one level up)
+            # default archive is the name of the directory in the archive_dir
+            # such that
+            # ${STENCILA_ARCHIVE_DIR}/${STENCILA_ARCHIVE}/manifest.xml
+            # exists.
+
+            archive_dir, archive = os.path.split(self.stencila_manifest_dir)
+            env.extend([
+                ("STENCILA_ARCHIVE_DIR", "${HOME}/" + archive_dir),
+                ("STENCILA_ARCHIVE", archive),
+            ])
+        return env
+
 
     def detect(self):
         return True
@@ -456,6 +495,22 @@ class BaseImage(BuildPack):
             ))
         except FileNotFoundError:
             pass
+        if self.stencila_manifest_dir:
+            assemble_scripts.extend(
+                [
+                    (
+                        "${NB_USER}",
+                        r"""
+                        ${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache https://github.com/stencila/py/archive/f6a245fd.tar.gz && \
+                        ${KERNEL_PYTHON_PREFIX}/bin/python -m stencila register && \
+                        ${NB_PYTHON_PREFIX}/bin/pip install --no-cache nbstencilaproxy==0.1.1 && \
+                        jupyter serverextension enable --sys-prefix --py nbstencilaproxy && \
+                        jupyter nbextension install    --sys-prefix --py nbstencilaproxy && \
+                        jupyter nbextension enable     --sys-prefix --py nbstencilaproxy
+                        """,
+                    )
+                ]
+            )
         return assemble_scripts
 
     def get_post_build_scripts(self):
