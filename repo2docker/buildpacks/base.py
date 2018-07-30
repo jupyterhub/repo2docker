@@ -118,13 +118,17 @@ RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
 
-# Run launch script
-{% if launch_scripts -%}
-{% for s in launch_scripts -%}
-RUN chmod +x {{ s }}
-ENTRYPOINT ./{{ s }}
-{% endfor %}
+# Add launch script
+{% if start_script -%}
+RUN echo '#!/bin/bash \nexec {{ start_script }} $@ \n' > ./launch
+RUN chmod +x {{ start_script }}
+{% else %}
+RUN echo '#!/bin/bash \nexec $@ \n' > ./launch
 {% endif -%}
+RUN chmod +x ./launch
+
+# Run launch script
+ENTRYPOINT ["./launch"]
 
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
@@ -291,7 +295,7 @@ class BuildPack:
         """
         return []
 
-    def get_launch_scripts(self):
+    def get_start_script(self):
         """
         An ordered list of executable scripts to be executated at runtime.
         These scripts are added as an `ENTRYPOINT` to the container.
@@ -352,7 +356,7 @@ class BuildPack:
             build_script_files=self.get_build_script_files(),
             base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.get_post_build_scripts(),
-            launch_scripts=self.get_launch_scripts(),
+            start_script=self.get_start_script(),
             appendix=self.appendix,
         )
 
@@ -457,8 +461,8 @@ class BaseImage(BuildPack):
             return [post_build]
         return []
 
-    def get_launch_scripts(self):
-        launch = self.binder_path('launch')
+    def get_start_script(self):
+        launch = self.binder_path('start')
         if os.path.exists(launch):
-            return [launch]
-        return []
+            return launch
+        return ''
