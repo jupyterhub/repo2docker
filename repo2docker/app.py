@@ -503,11 +503,26 @@ class Repo2Docker(Application):
         Returns running container
         """
         client = docker.from_env(version='auto')
+
+        docker_host = os.environ.get('DOCKER_HOST')
+        if docker_host:
+            host_name = urlparse(docker_host).hostname
+        else:
+            host_name = '127.0.0.1'
+        self.hostname = host_name
+
         if not self.run_cmd:
             port = str(self._get_free_port())
             self.port = port
-            run_cmd = ['jupyter', 'notebook', '--ip', '0.0.0.0',
-                       '--port', port]
+            # To use the option --NotebookApp.custom_display_url
+            # make sure the base-notebook image is updated: 
+            # docker pull jupyter/base-notebook
+            run_cmd = [
+                'jupyter', 'notebook',
+                '--ip', '0.0.0.0',
+                '--port', port,
+                "--NotebookApp.custom_display_url=http://{}:{}".format(host_name, port),
+            ]
             ports = {'%s/tcp' % port: port}
         else:
             # run_cmd given by user, if port is also given then pass it on
@@ -518,13 +533,6 @@ class Repo2Docker(Application):
                 ports = {}
         # store ports on self so they can be retrieved in tests
         self.ports = ports
-
-        docker_host = os.environ.get('DOCKER_HOST')
-        if docker_host:
-            host_name = urlparse(docker_host).host_name
-        else:
-            host_name = '127.0.0.1'
-        self.hostname = host_name
 
         container_volumes = {}
         if self.volumes:
@@ -545,7 +553,6 @@ class Repo2Docker(Application):
             self.output_image_spec,
             publish_all_ports=self.all_ports,
             ports=ports,
-            hostname=host_name,
             detach=True,
             command=run_cmd,
             volumes=container_volumes,
