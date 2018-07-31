@@ -119,6 +119,20 @@ An example usecase of ``postBuild`` file is JupyterLab's demo on mybinder.org.
 It uses a ``postBuild`` file in a folder called ``binder`` to `prepare
 their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master/binder/postBuild>`_.
 
+.. _start:
+
+``start``
+^^^^^^^^^^^^^
+
+A script that can contain arbitrary commands to be run at runtime (as an
+`ENTRYPOINT <https://docs.docker.com/engine/reference/builder/#entrypoint>`
+to the docker container). If you want this to be a shell script, make sure the
+first line is ```#!/bin/bash``. The last line must be ```exec "$@"```
+equivalent.
+
+.. TODO: Discuss runtime limits, best practices, etc.
+   Also, point to an example.
+
 .. _runtime.txt:
 
 ``runtime.txt``
