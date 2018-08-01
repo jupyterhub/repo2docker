@@ -1,12 +1,8 @@
 """
 Test if the explict hostname is supplied correctly to the container
 """
-import os
-import sys
-import pytest
 import requests
 import time
-import urllib.parse
 from repo2docker.app import Repo2Docker
 
 def test_connect_url(tmpdir):

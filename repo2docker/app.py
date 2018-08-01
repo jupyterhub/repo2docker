@@ -203,7 +203,7 @@ class Repo2Docker(Application):
         Raises:
             ArgumentTypeError: if image_name contains characters that do not
                                meet the logic that container names must start
-                               with an alphanumeric character and can then 
+                               with an alphanumeric character and can then
                                use _ . or - in addition to alphanumeric.
                                [a-zA-Z0-9][a-zA-Z0-9_.-]+
         """
@@ -515,7 +515,7 @@ class Repo2Docker(Application):
             port = str(self._get_free_port())
             self.port = port
             # To use the option --NotebookApp.custom_display_url
-            # make sure the base-notebook image is updated: 
+            # make sure the base-notebook image is updated:
             # docker pull jupyter/base-notebook
             run_cmd = [
                 'jupyter', 'notebook',
