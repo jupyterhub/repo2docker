@@ -82,7 +82,7 @@ class RBuildPack(PythonBuildPack):
             '/usr/lib/rstudio-server/bin/'
         ]
 
-    def get_env(self):
+    def get_build_env(self):
         """
         Return environment variables to be set.
 
@@ -90,7 +90,7 @@ class RBuildPack(PythonBuildPack):
         without needing root. This is set via the `R_LIBS_USER` environment
         variable, so we set that here.
         """
-        return super().get_env() + [
+        return super().get_build_env() + [
             # This is the path where user libraries are installed
             ('R_LIBS_USER', '${APP_BASE}/rlibs')
         ]
