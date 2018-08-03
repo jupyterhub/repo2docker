@@ -122,7 +122,7 @@ their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master
 .. _start:
 
 ``start``
-^^^^^^^^^^^^^
+^^^^^^^^^
 
 A script that can contain arbitrary commands to be run at runtime (as an
 `ENTRYPOINT <https://docs.docker.com/engine/reference/builder/#entrypoint>`

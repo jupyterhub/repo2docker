@@ -305,7 +305,7 @@ class BuildPack:
         applied at runtime (set environment variables).
 
         The scripts should be as deterministic as possible - running it twice
-        should not produce different results.!
+        should not produce different results.
 
         """
         return []
