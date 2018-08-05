@@ -18,6 +18,8 @@ script:
 - if [ ${REPO_TYPE} == "r" ]; then cd tests && travis_wait pytest --cov repo2docker
   -v ${REPO_TYPE}; else cd tests && travis_retry pytest --cov repo2docker -v ${REPO_TYPE};
   fi
+- pip install -r docs/doc-requirements.txt
+- cd docs && make html
 after_success:
 - pip install codecov
 - codecov
