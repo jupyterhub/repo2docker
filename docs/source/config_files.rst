@@ -1,7 +1,9 @@
+.. NOTE: the header characters are different in this file because it is 'included' in another site
+.. see https://raw.githubusercontent.com/jupyterhub/binder/master/doc/using.rst
 .. _config-files:
 
 Configuration Files
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 ``repo2docker`` looks for configuration files in the repository being built
 to determine how to build it. In general, ``repo2docker`` uses the same
@@ -31,7 +33,7 @@ Below is a list of supported configuration files (roughly in the order of build 
    :depth: 1
 
 ``Dockerfile``
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 In the majority of cases, providing your own Dockerfile is not necessary as the base
 images provide core functionality, compact image sizes, and efficient builds. We recommend
@@ -46,7 +48,7 @@ best-practices with Dockerfiles.
 .. _environment-yml:
 
 ``environment.yml``
-^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~
 
 ``environment.yml`` is the standard configuration file used by Anaconda, conda,
 and miniconda that lets you install Python packages.
@@ -63,7 +65,7 @@ a Python version in a ``runtime.txt`` file in addition to your
 ``environment.yml``, your ``runtime.txt`` **will be ignored**.
 
 ``requirements.txt``
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~
 
 This specifies a list of Python packages that should be installed in your
 environment. Our
@@ -71,7 +73,7 @@ environment. Our
 on GitHub shows a typical requirements file.
 
 ``REQUIRE``
-^^^^^^^^^^^
+~~~~~~~~~~~
 
 This specifies a list of Julia packages. Repositories with a  ``REQUIRE`` file
 **must also contain an** ``environment.yml`` **file**.  To see an example of a
@@ -79,7 +81,7 @@ Julia repository with ``REQUIRE`` and ``environment.yml``,
 visit `binder-examples/julia-python <https://github.com/binder-examples/julia-python>`_.
 
 ``install.R``
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 This is used to install R libraries pinned to a specific snapshot on
 `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
@@ -87,7 +89,7 @@ To set the date of the snapshot add a runtime.txt_.
 For an example ``install.R`` file, visit our `example install.R file <https://github.com/binder-examples/r/blob/master/install.R>`_.
 
 ``apt.txt``
-^^^^^^^^^^^
+~~~~~~~~~~~
 
 A list of Debian packages that should be installed. The base image used is usually the latest released
 version of Ubuntu.
@@ -97,7 +99,7 @@ We use ``apt.txt``, for example, to install LaTeX in our
 
 
 ``setup.py``
-^^^^^^^^^^^^
+~~~~~~~~~~~~
 
 To install your repository like a Python package, you may include a
 ``setup.py`` file. repo2docker installs ``setup.py`` files by running
@@ -110,7 +112,7 @@ repo2docker **requires configuration files such as** ``environment.yml`` or
 .. _postBuild:
 
 ``postBuild``
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 A script that can contain arbitrary commands to be run after the whole repository has been built. If you
 want this to be a shell script, make sure the first line is ```#!/bin/bash``.
@@ -122,7 +124,7 @@ their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master
 .. _runtime.txt:
 
 ``runtime.txt``
-^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~
 
 This allows you to control the runtime of Python or R.
 
