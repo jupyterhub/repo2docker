@@ -1,3 +1,5 @@
 #!/bin/sh
 
-node --version | grep v1234
+set -e
+node --version | grep v10
+npm --version | grep v6.2
