@@ -1,0 +1,3 @@
+#!/bin/sh
+
+node --version | grep v1234
