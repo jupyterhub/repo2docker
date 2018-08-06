@@ -35,6 +35,7 @@ jobs:
         branch: master
 env:
   matrix:
+  - REPO_TYPE=base
   - REPO_TYPE=conda
   - REPO_TYPE=venv
   - REPO_TYPE=stencila
