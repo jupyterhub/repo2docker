@@ -24,3 +24,9 @@
   url: https://github.com/binder-examples/requirements
   ref: test
   verify: python -c 'import matplotlib'
+# Test that custom channels and downgrades don't
+# get blocked by pinning
+- name: Xeus-Cling
+  url: https://github.com/QuantStack/xeus-cling
+  ref: 0.4.5
+  verify: jupyter kernelspec list
