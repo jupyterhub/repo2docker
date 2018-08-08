@@ -21,7 +21,7 @@ repo2docker is called with this command::
 where ``<URL-or-path to repo>`` is a URL or path to the source repository.
 
 For example, use the following to build an image of Peter Norvig's
-`Pytudes <https://github.com/norvig/pytudes/>`_::
+Pytudes_::
 
   jupyter-repo2docker https://github.com/norvig/pytudes
 
@@ -47,11 +47,13 @@ Python 3.6 unless you include the version of Python in your
 Python 2.7, 3.5, and 3.6.  In the case of this repo, a Python version is not
 specified in their configuation files and Python 3.6 is installed.
 
-`Pytudes <https://github.com/norvig/pytudes>`_
+Pytudes_
 uses a `requirements.txt file <https://github.com/norvig/pytudes/blob/master/requirements.txt>`_
 to specify its Python environment. ``repo2docker`` uses ``pip`` to install
 dependencies listed in the ``requirement.txt`` in the image. To learn more about
 configuration files in ``repo2docker`` visit :ref:`config-files`.
+
+.. _Pytudes: https://github.com/norvig/pytudes
 
 When the image is built, a message will be output to your terminal::
 
