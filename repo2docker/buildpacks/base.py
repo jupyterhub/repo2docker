@@ -133,15 +133,15 @@ RUN ./{{ s }}
 
 # Add launch script
 {% if start_script -%}
-RUN echo '#!/bin/bash \nexec {{ start_script }} $@ \n' > ./launch
+RUN echo '#!/bin/bash \nexec {{ start_script }} $@ \n' > ${HOME}/launch
 RUN chmod +x {{ start_script }}
 {% else %}
-RUN echo '#!/bin/bash \nexec $@ \n' > ./launch
+RUN echo '#!/bin/bash \nexec $@ \n' > ${HOME}/launch
 {% endif -%}
-RUN chmod +x ./launch
+RUN chmod +x ${HOME}/launch
 
 # Run launch script
-ENTRYPOINT ["./launch"]
+ENTRYPOINT ["${HOME}/launch"]
 
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
