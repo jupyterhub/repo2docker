@@ -15,9 +15,17 @@ install:
 script:
 # cd into tests so CWD being repo2docker does not hide
 # possible issues with MANIFEST.in
-- if [ ${REPO_TYPE} == "r" ]; then cd tests && travis_wait pytest --cov repo2docker
-  -v ${REPO_TYPE}; else cd tests && travis_retry pytest --cov repo2docker -v ${REPO_TYPE};
-  fi
+- pushd tests;
+  if [ ${REPO_TYPE} == "r" ]; then
+    travis_wait pytest --cov repo2docker -v ${REPO_TYPE};
+  else
+    travis_retry pytest --cov repo2docker -v ${REPO_TYPE};
+  fi;
+  popd;
+- pip install -r docs/doc-requirements.txt
+- pushd docs;
+  make html;
+  popd;
 after_success:
 - pip install codecov
 - codecov
@@ -35,8 +43,10 @@ jobs:
         branch: master
 env:
   matrix:
+  - REPO_TYPE=base
   - REPO_TYPE=conda
   - REPO_TYPE=venv
+  - REPO_TYPE=stencila
   - REPO_TYPE=julia
   - REPO_TYPE=r
   - REPO_TYPE=dockerfile

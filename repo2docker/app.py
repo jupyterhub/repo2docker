@@ -18,6 +18,7 @@ import tempfile
 import time
 
 import docker
+from urllib.parse import urlparse
 from docker.utils import kwargs_from_env
 from docker.errors import DockerException
 import escapism
@@ -520,11 +521,26 @@ class Repo2Docker(Application):
         Returns running container
         """
         client = docker.from_env(version='auto')
+
+        docker_host = os.environ.get('DOCKER_HOST')
+        if docker_host:
+            host_name = urlparse(docker_host).hostname
+        else:
+            host_name = '127.0.0.1'
+        self.hostname = host_name
+
         if not self.run_cmd:
             port = str(self._get_free_port())
             self.port = port
-            run_cmd = ['jupyter', 'notebook', '--ip', '0.0.0.0',
-                       '--port', port]
+            # To use the option --NotebookApp.custom_display_url
+            # make sure the base-notebook image is updated:
+            # docker pull jupyter/base-notebook
+            run_cmd = [
+                'jupyter', 'notebook',
+                '--ip', '0.0.0.0',
+                '--port', port,
+                "--NotebookApp.custom_display_url=http://{}:{}".format(host_name, port),
+            ]
             ports = {'%s/tcp' % port: port}
         else:
             # run_cmd given by user, if port is also given then pass it on
@@ -535,6 +551,7 @@ class Repo2Docker(Application):
                 ports = {}
         # store ports on self so they can be retrieved in tests
         self.ports = ports
+
         container_volumes = {}
         if self.volumes:
             api_client = docker.APIClient(
