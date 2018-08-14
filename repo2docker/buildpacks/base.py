@@ -131,17 +131,11 @@ RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
 
-# Add launch script
+# Add start script
 {% if start_script -%}
-RUN echo '#!/bin/bash \nexec {{ start_script }} $@ \n' > ${HOME}/launch
-RUN chmod +x {{ start_script }}
-{% else %}
-RUN echo '#!/bin/bash \nexec $@ \n' > ${HOME}/launch
+RUN chmod +x "{{ start_script }}"
+ENTRYPOINT ["{{ start_script }}"]
 {% endif -%}
-RUN chmod +x ${HOME}/launch
-
-# Run launch script
-ENTRYPOINT ["${HOME}/launch"]
 
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
@@ -358,7 +352,7 @@ class BuildPack:
         should not produce different results.
 
         """
-        return []
+        return ''
 
     def binder_path(self, path):
         """Locate a file"""
@@ -549,7 +543,7 @@ class BaseImage(BuildPack):
         return []
 
     def get_start_script(self):
-        launch = self.binder_path('start')
-        if os.path.exists(launch):
-            return launch
+        start = self.binder_path('start')
+        if os.path.exists(start):
+            return start
         return ''
