@@ -132,7 +132,7 @@ RUN ./{{ s }}
 {% endif -%}
 
 # Add start script
-{% if start_script -%}
+{% if start_script is not none -%}
 RUN chmod +x "{{ start_script }}"
 ENTRYPOINT ["{{ start_script }}"]
 {% endif -%}
@@ -331,8 +331,8 @@ class BuildPack:
         """
         An ordered list of executable scripts to execute after build.
 
-        Is run as a non-root user, and must be executable. Used for doing
-        things that are currently not supported by other means!
+        Is run as a non-root user, and must be executable. Used for performing
+        build time steps that can not be perfomed with standard tools.
 
         The scripts should be as deterministic as possible - running it twice
         should not produce different results!
@@ -341,18 +341,18 @@ class BuildPack:
 
     def get_start_script(self):
         """
-        An ordered list of executable scripts to be executated at runtime.
-        These scripts are added as an `ENTRYPOINT` to the container.
+        The path to a script to be executated at container start up.
 
-        Is run as a non-root user, and must be executable. Used for doing
-        things that are currently not supported by other means and need to be
-        applied at runtime (set environment variables).
+        This script is added as the `ENTRYPOINT` to the container.
 
-        The scripts should be as deterministic as possible - running it twice
+        It is run as a non-root user, and must be executable. Used for performing
+        run time steps that can not be perfomed with standard tools. For example
+        setting environment variables for your repository.
+
+        The script should be as deterministic as possible - running it twice
         should not produce different results.
-
         """
-        return ''
+        return None
 
     def binder_path(self, path):
         """Locate a file"""
@@ -546,4 +546,4 @@ class BaseImage(BuildPack):
         start = self.binder_path('start')
         if os.path.exists(start):
             return start
-        return ''
+        return None

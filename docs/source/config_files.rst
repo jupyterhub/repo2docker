@@ -117,7 +117,7 @@ repo2docker **requires configuration files such as** ``environment.yml`` or
 A script that can contain arbitrary commands to be run after the whole repository has been built. If you
 want this to be a shell script, make sure the first line is ```#!/bin/bash``.
 
-An example usecase of ``postBuild`` file is JupyterLab's demo on mybinder.org.
+An example use-case of ``postBuild`` file is JupyterLab's demo on mybinder.org.
 It uses a ``postBuild`` file in a folder called ``binder`` to `prepare
 their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master/binder/postBuild>`_.
 
@@ -126,11 +126,17 @@ their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master
 ``start``
 ^^^^^^^^^
 
-A script that can contain arbitrary commands to be run at runtime (as an
+A script that can contain simple commands to be run at runtime (as an
 `ENTRYPOINT <https://docs.docker.com/engine/reference/builder/#entrypoint>`
 to the docker container). If you want this to be a shell script, make sure the
 first line is ```#!/bin/bash``. The last line must be ```exec "$@"```
 equivalent.
+
+Use this to set environment variables that software installed in your container
+expects to be set. This script is executed each time your binder is started and
+should at most take a few seconds to run.
+
+If you only need to run things once during the build phase use :ref:`postBuild`.
 
 .. TODO: Discuss runtime limits, best practices, etc.
    Also, point to an example.
