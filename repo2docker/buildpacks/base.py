@@ -131,6 +131,12 @@ RUN ./{{ s }}
 {% endfor %}
 {% endif -%}
 
+# Add start script
+{% if start_script -%}
+RUN chmod +x "{{ start_script }}"
+ENTRYPOINT ["{{ start_script }}"]
+{% endif -%}
+
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
 
@@ -333,6 +339,21 @@ class BuildPack:
         """
         return []
 
+    def get_start_script(self):
+        """
+        An ordered list of executable scripts to be executated at runtime.
+        These scripts are added as an `ENTRYPOINT` to the container.
+
+        Is run as a non-root user, and must be executable. Used for doing
+        things that are currently not supported by other means and need to be
+        applied at runtime (set environment variables).
+
+        The scripts should be as deterministic as possible - running it twice
+        should not produce different results.
+
+        """
+        return ''
+
     def binder_path(self, path):
         """Locate a file"""
         if os.path.exists('binder'):
@@ -380,6 +401,7 @@ class BuildPack:
             build_script_files=self.get_build_script_files(),
             base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.get_post_build_scripts(),
+            start_script=self.get_start_script(),
             appendix=self.appendix,
         )
 
@@ -519,3 +541,9 @@ class BaseImage(BuildPack):
         if os.path.exists(post_build):
             return [post_build]
         return []
+
+    def get_start_script(self):
+        start = self.binder_path('start')
+        if os.path.exists(start):
+            return start
+        return ''
