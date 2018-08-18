@@ -53,7 +53,9 @@ class PythonBuildPack(CondaBuildPack):
             if os.path.exists(nb_requirements_file):
                 assemble_scripts.append((
                     '${NB_USER}',
-                    '${NB_PYTHON_PREFIX}/bin/pip install --no-cache-dir -r "{}"'.format(nb_requirements_file)
+                    # want the $NB_PYHTON_PREFIX environment variable, not for
+                    # Python's string formatting to try and replace this
+                    '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(nb_requirements_file)
                 ))
 
         # install requirements.txt in the kernel env
