@@ -28,8 +28,8 @@ dependencies:
   - jsonschema=2.6.0=py36_1
   - jupyter_client=5.2.3=py_1
   - jupyter_core=4.4.0=py_0
-  - jupyterlab=0.32.1=py36_0
-  - jupyterlab_launcher=0.10.5=py36_0
+  - jupyterlab=0.34.0=py36_0
+  - jupyterlab_launcher=0.13.1=py36_0
   - libsodium=1.0.16=0
   - markupsafe=1.0=py36_0
   - mistune=0.8.3=py36_1
