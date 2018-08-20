@@ -1,6 +1,7 @@
 """BuildPack for conda environments"""
 import os
 import re
+from collections import Mapping
 
 from ruamel.yaml import YAML
 
@@ -139,8 +140,8 @@ class CondaBuildPack(BaseImage):
                 # check if the env file is empty, if so instantiate an empty dictionary.
                 if env is None:
                     env = {}
-                # check if the env file has a dictionary not a list or other data structure.
-                if not isinstance(env, dict):
+                # check if the env file provided a dick-like thing not a list or other data structure.
+                if not isinstance(env, Mapping):
                     raise TypeError("environment.yml should contain a dictionary. Got %r" % type(env))
                 for dep in env.get('dependencies', []):
                     if not isinstance(dep, str):
