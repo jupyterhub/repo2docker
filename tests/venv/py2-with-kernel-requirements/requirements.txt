@@ -1,0 +1,2 @@
+# install this in the kernel's environment, the user wants Python 2 there
+numpy
