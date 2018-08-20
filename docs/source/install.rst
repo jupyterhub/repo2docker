@@ -29,7 +29,7 @@ We recommend installing ``repo2docker`` with the ``pip`` tool::
 
     python3 -m pip install jupyter-repo2docker
 
-For infomation on using ``repo2docker``, see :ref:`usage`.
+For information on using ``repo2docker``, see :ref:`usage`.
 
 Installing from source code
 ---------------------------
@@ -69,10 +69,10 @@ Docker images that can be shared within a JupyterHub deployment.  For example,
 to allow anyone to build a Docker image of a git repository online and
 share an executable version of the repository with a URL to the built image.
 
-To build JupyterHub_-ready
-Docker images with ``repo2docker``, the version of your JupterHub deployment
-must be included in the ``environment.yml`` or ``requiements.txt`` of the
-git repositories you build.
+To build JupyterHub_-ready Docker images with ``repo2docker``, the
+version of your JupterHub deployment must be included in the
+``environment.yml`` or ``requirements.txt`` of the git repositories you
+build.
 
 If your instance of JupyterHub uses ``DockerSpawner``, you will need to set its
 command to run ``jupyterhub-singleuser`` by adding this line in your

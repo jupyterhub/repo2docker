@@ -33,7 +33,7 @@ make that your current directory with `cd repo2docker`.
 
 ### Set up a local virtual environment
 
-After cloning the repository (or your fork of the repo), you should set up an
+After cloning the repository (or your fork of the repository), you should set up an
 isolated environment to install libraries required for running / developing
 repo2docker. There are many ways to do this, and a `virtual environment` is
 one of them.
@@ -102,7 +102,7 @@ py.test -s tests/<path-to-test>
 
 ## Update and Freeze BuildPack Dependencies
 
-### Updating libraries installed for all repos
+### Updating libraries installed for all repositories
 
 For both the `conda` and `virtualenv` (`pip`) base environments in the **Conda BuildPack** and **Python BuildPack**,
 we install specific pinned versions of all dependencies. We explicitly list the dependencies
@@ -210,7 +210,7 @@ individuals to be responsible and tread softly when doing so. Below a few
 standard procedures that have proven useful over time that we do follow:
 
 * do not merge your own PR
-* wait for travis to complete
+* wait for Travis to complete
 * check if test coverage has gone up or down, consider discussing additional
   tests to keep coverage at the same level or even increase it
 * do use merge commits instead of merge-by-squashing/-rebasing. This makes it
@@ -229,7 +229,7 @@ To release repo2docker, you will need proper access credentials prior to beginni
 
 1. Access to the PyPI package for repo2docker
 2. Access to push tags to the jupyter/repo2docker repository
-3. Acess to push images to dockerhub on jupyter/repo2docker
+3. Access to push images to dockerhub on jupyter/repo2docker
 
 If you do not have access to any of these, please contact a current maintainer of the project!
 

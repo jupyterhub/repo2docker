@@ -5,7 +5,7 @@ and have found an answer, send a PR to add it here!
 
 ## How should I specify another version of Python 3?
 
-One can specify a Python version in the ``environment.yml`` file of a repo.
+One can specify a Python version in the ``environment.yml`` file of a repository.
 
 ## Can I add executable files to the user's PATH?
 
@@ -33,5 +33,5 @@ Dockerfile, and is meant to be built in
 Hence the output of `--debug` can not be built with a normal `docker build -t .`
 or similar traditional docker command.
 
-Check out the [binder-examples](http://github.com/binder-examples/) github
+Check out the [binder-examples](http://github.com/binder-examples/) GitHub
 organization for example repositories you can copy & modify for your own use!

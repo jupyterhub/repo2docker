@@ -7,7 +7,7 @@ The philosophy for the repo2docker buildpacks includes:
 - using common configuration files for familiar installation and packaging tools
 - allowing configuration files to be combined to compose more complex setups
 - specifying default locations for configuration files
-(repo's root directory or .binder directory)
+(the repository's root directory or .binder directory)
 
 
 When designing `repo2docker` and adding to it in the future, the
@@ -57,7 +57,7 @@ Bionic Beaver (18.04).
 The version of `repo2docker` used to build an image can influence which packages
 are installed by default and which features are supported during the build
 process. We will periodically update those packages to keep step with releases
-of jupyter notebook, jupyterlab, etc. For packages that are installed by
+of Jupyter Notebook, JupyterLab, etc. For packages that are installed by
 default but where you want to control the version we recommend you specify them
 explicitly in your dependencies.
 
