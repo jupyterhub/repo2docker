@@ -79,7 +79,7 @@ Step 4. Connect to CircleCI
 If you navigate to the main `app page <https://circleci.com/dashboard/>`_ you
 should be able to click "Add Projects" and then select your repository. If you don't
 see it on the list, then select a different organization in the top left. Once
-you find the repository, you can click the button to "Start Building" adn accept
+you find the repository, you can click the button to "Start Building" and accept
 the defaults.
 
 Before you push or trigger a build, let's set up the following environment variables.

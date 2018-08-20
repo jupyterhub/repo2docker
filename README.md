@@ -9,7 +9,7 @@ repository. It then builds, runs, and/or pushes Docker images built from that so
 See the [repo2docker documentation](http://repo2docker.readthedocs.io)
 for more information.
 
-## Pre-requisites
+## Prerequisites
 
 1. Docker to build & run the repositories. The [community edition](https://store.docker.com/search?type=edition&offering=community)
    is recommended.
@@ -35,7 +35,7 @@ pip install -e .
 
 ## Usage
 
-The core feature of repo2docker is to fetch a repository (from github or locally),
+The core feature of repo2docker is to fetch a repository (from GitHub or locally),
 build a container image based on the specifications found in the repository &
 optionally launch a local Jupyter Notebook you can use to explore it.
 

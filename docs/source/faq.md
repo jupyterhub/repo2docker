@@ -33,5 +33,5 @@ Dockerfile, and is meant to be built in
 Hence the output of `--debug` can not be built with a normal `docker build -t .`
 or similar traditional docker command.
 
-Check out the [binder-examples](http://github.com/binder-examples/) github
+Check out the [binder-examples](http://github.com/binder-examples/) GitHub
 organization for example repositories you can copy & modify for your own use!
