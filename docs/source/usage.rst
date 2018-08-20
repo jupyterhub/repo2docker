@@ -10,15 +10,15 @@ order to run ``repo2docker``. For more information on installing
 ``repo2docker`` performs two steps:
 
 1. builds a Docker image from a git repo
-2. runs a Jupyter server within the image to explore the repo
+2. runs a Jupyter server within the image to explore the repository
 
 To ensure you can run the software in your repository, you must
 
 repo2docker is called with this command::
 
-  jupyter-repo2docker <URL-or-path to repo>
+  jupyter-repo2docker <URL-or-path to repository>
 
-where ``<URL-or-path to repo>`` is a URL or path to the source repository.
+where ``<URL-or-path to repository>`` is a URL or path to the source repository.
 
 For example, use the following to build an image of Peter Norvig's
 Pytudes_::
@@ -38,14 +38,14 @@ specify the ``branch-name`` or ``commit-hash``::
 Building the image may take a few minutes.
 
 During building, ``repo2docker``
-clones the repository to obtain its contents and inspects the repo for
+clones the repository to obtain its contents and inspects the repository for
 :ref:`configuration files <config-files>`.
 
 By default, ``repo2docker`` will assume you are using
 Python 3.6 unless you include the version of Python in your
 :ref:`configuration files <config-files>`.  ``repo2docker`` support is best with
-Python 2.7, 3.5, and 3.6.  In the case of this repo, a Python version is not
-specified in their configuation files and Python 3.6 is installed.
+Python 2.7, 3.5, and 3.6.  In the case of this repository, a Python version is not
+specified in their configuration files and Python 3.6 is installed.
 
 Pytudes_
 uses a `requirements.txt file <https://github.com/norvig/pytudes/blob/master/requirements.txt>`_

@@ -33,7 +33,7 @@ make that your current directory with `cd repo2docker`.
 
 ### Set up a local virtual environment
 
-After cloning the repository (or your fork of the repo), you should set up an
+After cloning the repository (or your fork of the repository), you should set up an
 isolated environment to install libraries required for running / developing
 repo2docker. There are many ways to do this, and a `virtual environment` is
 one of them.
@@ -102,7 +102,7 @@ py.test -s tests/<path-to-test>
 
 ## Update and Freeze BuildPack Dependencies
 
-### Updating libraries installed for all repos
+### Updating libraries installed for all repositories
 
 For both the `conda` and `virtualenv` (`pip`) base environments in the **Conda BuildPack** and **Python BuildPack**,
 we install specific pinned versions of all dependencies. We explicitly list the dependencies

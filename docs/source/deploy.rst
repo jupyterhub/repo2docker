@@ -103,7 +103,7 @@ Step 5. Push Away, Merrill!
 
 Once the environment variables are set up, you can push or issue a pull request
 to see circle build the workflow. Remember that you only need the ``.circleci/config.yml``
-and not any other files in the repository. If your notebook is hosted in the same repo,
+and not any other files in the repository. If your notebook is hosted in the same repository,
 you might want to add these, along with your requirements.txt, etc.
 
 .. tip::

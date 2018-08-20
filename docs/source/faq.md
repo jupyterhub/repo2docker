@@ -5,7 +5,7 @@ and have found an answer, send a PR to add it here!
 
 ## How should I specify another version of Python 3?
 
-One can specify a Python version in the ``environment.yml`` file of a repo.
+One can specify a Python version in the ``environment.yml`` file of a repository.
 
 ## Can I add executable files to the user's PATH?
 

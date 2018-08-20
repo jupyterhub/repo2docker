@@ -4,7 +4,7 @@
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
 
 **jupyter-repo2docker** takes as input a repository source, such as a GitHub
-repo. It then builds, runs, and/or pushes Docker images built from that source.
+repository. It then builds, runs, and/or pushes Docker images built from that source.
 
 See the [repo2docker documentation](http://repo2docker.readthedocs.io)
 for more information.
@@ -35,8 +35,8 @@ pip install -e .
 
 ## Usage
 
-The core feature of repo2docker is to fetch a repo (from github or locally),
-build a container image based on the specifications found in the repo &
+The core feature of repo2docker is to fetch a repository (from github or locally),
+build a container image based on the specifications found in the repository &
 optionally launch a local Jupyter Notebook you can use to explore it.
 
 **Note that Docker needs to be running on your machine for this to work.**
