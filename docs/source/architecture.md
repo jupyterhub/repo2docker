@@ -7,7 +7,7 @@ from various perspectives.
 
 The **buildpack** concept comes from [Heroku](https://devcenter.heroku.com/articles/buildpacks)
 and Ruby on Rails' [Convention over Configuration](http://rubyonrails.org/doctrine/#convention-over-configuration)
-doctrine. 
+doctrine.
 
 Instead of the user specifying a complete specification of exactly how they want
 their environment to be, they can focus only on how their environment differs from a conventional
@@ -31,7 +31,7 @@ It takes the following steps to determine this:
 
 1. Look at the ordered list of `BuildPack` objects listed in `Repo2Docker.buildpacks`
    traitlet. This is populated with a default set of buildpacks in most-specific-to-least-specific
-   order. Other applications using this can add / change this using traditional 
+   order. Other applications using this can add / change this using traditional
    [traitlet](http://traitlets.readthedocs.io/en/stable/) configuration mechanisms.
 2. Calls the `detect` method of each `BuildPack` object. This method assumes that the repository
    is present in the current working directory, and should return `True` if the repository is
@@ -39,24 +39,24 @@ It takes the following steps to determine this:
    libraries can check for presence of an `environment.yml` file and say 'yes, I can handle this
    repository' by returning `True`. Usually buildpacks look for presence of specific files
    (`requirements.txt`, `environment.yml`, `install.R`, etc) to determine if they can handle a
-   repository or not. 
+   repository or not.
 3. If no `BuildPack` returns true, then repo2docker will use the default `BuildPack` (defined in
    `Repo2Docker.default_buildpack` traitlet).
 
 ## Build base environment
 
 Once a buildpack is chosen, it builds a **base environment** that is mostly the same for various
-repositories built with the same buildpack. 
+repositories built with the same buildpack.
 
 For example, in `CondaBuildPack`, the base environment consists of installing [miniconda](https://conda.io/miniconda.html)
 and basic notebook packages (from `repo2docker/buildpacks/conda/environment.yml`). This is going
-to be the same for most repositories built with `CondaBuildPack`, so we want to use 
-[docker layer caching](https://thenewstack.io/understanding-the-docker-cache-for-faster-builds/) as 
+to be the same for most repositories built with `CondaBuildPack`, so we want to use
+[docker layer caching](https://thenewstack.io/understanding-the-docker-cache-for-faster-builds/) as
 much as possible for performance reasons. Next time a repository is built with `CondaBuildPack`,
 we can skip straight to the **copy** step (since the base environment docker image *layers* have
 already been built and cached).
 
-The `get_build_scripts` and `get_build_script_files` methods are primarily used for this. 
+The `get_build_scripts` and `get_build_script_files` methods are primarily used for this.
 `get_build_scripts` can return arbitrary bash script lines that can be run as different users,
 and `get_build_script_files` is used to copy specific scripts (such as a conda installer) into
 the image to be run as pat of `get_build_scripts`. Code in either has following constraints:
@@ -82,10 +82,10 @@ the `build` method of the `BuildPack` base class.
 
 The **assemble** stage builds the specific environment that is requested by the repository.
 This usually means installing required libraries specified in a format native to the language
-(`requirements.txt`, `environment.yml`, `REQUIRE`, `install.R`, etc). 
+(`requirements.txt`, `environment.yml`, `REQUIRE`, `install.R`, etc).
 
 Most of this work is done in `get_assemble_scripts` method. It can return arbitrary bash script
-lines that can be run as different users, and has access to the repository contents (unlike 
+lines that can be run as different users, and has access to the repository contents (unlike
 `get_build_scripts`). The docker image layers produced by this usually can not be cached,
 so less restrictions apply to this than to `get_build_scripts`.
 
