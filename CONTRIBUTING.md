@@ -15,7 +15,7 @@ To develop & test repo2docker locally, you need:
 1. Familiarity with using a command line terminal
 2. A computer running macOS / Linux
 3. Some knowledge of git
-4. At least python 3.4
+4. At least python 3.6
 5. Your favorite text editor
 6. A recent version of [Docker Community Edition](https://www.docker.com/community-edition)
 
