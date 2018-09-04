@@ -15,7 +15,7 @@ To develop & test repo2docker locally, you need:
 1. Familiarity with using a command line terminal
 2. A computer running macOS / Linux
 3. Some knowledge of git
-4. At least python 3.4
+4. At least python 3.6
 5. Your favorite text editor
 6. A recent version of [Docker Community Edition](https://www.docker.com/community-edition)
 
@@ -114,45 +114,11 @@ To update one of the dependencies shared across all `repo2docker` builds, you
 must follow these steps (with more detailed information in the sections below):
 
 * Make sure you have [Docker](https://www.docker.com/) running on your computer
-* Bump the version number in `virtualenv` ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#virtualenv-dependencies))
 * Bump the version number in the `conda` environment ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#conda-dependencies))
 * Make a pull request with your changes ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#make-a-pull-request))
 
 See the subsections below for more detailed instructions.
 
-### Virtualenv dependencies
-
-1. There are two files related to virtualenv dependencies. Edit as needed.
-
-    - `repo2docker/buildpacks/python/requirements.txt`
-
-       Contains list of packages to install in Python3 virtualenvs,
-       which are the default. **This where all Notebook versions &
-       notebook extensions (such as JupyterLab / nteract) go**.
-
-    - `repo2docker/buildpacks/python/requirements2.txt`
-
-       Contains list of packages to install in Python2 virtualenvs, which
-       can be specifically requested by users. **This only needs `IPyKernel`
-       and kernel related libraries** Notebook / Notebook Extension need
-       not be installed here.
-
-2. After you edit either of these files to add a new package / bump version on
-   an existing package, run:
-
-   ```bash
-   ./repo2docker/buildpacks/python/freeze.bash
-   ```
-
-   This script will resolve dependencies and write them to the respective `.frozen.txt`
-   files.
-
-   Note: If you do not have Python3 and Python2 with virtualenv, the script
-   will create and build Docker containers to process the frozen files.
-
-3. All the `.txt` files in `repo2docker/buildpacks/python/` should be committed to git.
-
-4. Make a pull request.
 
 ### Conda dependencies
 
