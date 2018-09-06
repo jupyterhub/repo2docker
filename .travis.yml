@@ -63,13 +63,11 @@ matrix:
     - REPO_TYPE=venv
 deploy:
   provider: pypi
-  user: betatim
-  # this line together with `setup.cfg` creates universal wheels as long as
-  # repo2docker is a python only module (no compiled code)
+  user: mybinderteam
   distributions: sdist bdist_wheel
   on:
     tags: true
     repo: jupyter/repo2docker
     condition: "$REPO_TYPE = conda"
   password:
-    secure: pF7wWm9m0tR+IXd8YBsYj4iqV+MlaM01I/fi3V/jDGDUNxLI8G4/0tJWeT1qIMY0YNr3QE2AE09UNdYkxz3A3bEw+3cNwIzAYAuwgFl7RO9xjMQvXMhiH9MNFJ2DKmHqPdMg/gI9g6WGUvGCLNhXT7DJmNiEE6D2mD6v8MN+E8rrv2TIej/f7nbPR2yfpHO54/PtLqiRAouGg6HaUkOmuzi84d1bexjpAhVBux/U6zSRy0wWOXzq6kuZpP3xO0xt5po3sYAZT3njB6ca2dxeaoPj2bb66JQ2mHT5snKpkMuJZfl66L55ItVnCnS0YpIa+j5MoW9pJAacmTEQ+hmWDxOj7yBFKjZ35PIhywde38+UuEZ3wU3TNp9wySTKEnxr9d2GX7K0d2X+G3DaN1AcFtQLjTJiJbLdIy5CuhCEFHX53w09H6MuAwbFMj6d4gkVhd2tBI8tv3G1bCQAu7lc8F1q0wRF9C1uvd/nqL+BDHab1VyeC5d96E2WdtqkqbGGIQ7IRzqlrCFKUiDLhRAkZxAdxc98lFfSiBgKeJDEja7gX1kQ4z/YSlBkUjRQb7InBfKjUQFhLVV/zSFX/UOw0/J5wi/xGOFHILbt5vWQ5CHjDr/gXeXzF3lcKzl97uuZFHwkuzsaHJMZeM2++F4sGw9OkQ9GDLDOD0EBeMvsP5Q=
+    secure: Vcbr4UtckHRjKKhOFKyHkmBQRB9H3SnJvOoxuqXhzCR6JtVe2L1m4UJaSk5aq6CDauZI6fejYhMxJ6W5oqz2q7DH8RnemIVCmTaqTNqblQy6s1XK7iUjtWUtr+MfjFWNx99hqAy9VGVoi++9w4ZaDba448D69rkzVqQTJUjHTlJql66ZIyuPWLhgkWRxMNd5Hnwjf+ETc7efasD2NsvsASsI0AEZijjb+Lbi9V+hR1e1JTn+a8Gz4zskPGVT2kMTobLGE6ucfsYyPy/FxAp5GedEZdAaipjdHmN64ylV8fxDrsCKj4zwD+w43XJzJPJVpqmeYm93SKhWr2v5xn/IGFH/Ea/9/rzFogpDdCUIgv4/xNKgVFVaMalTSUs9aOwYoBVFrmWNkyPSv7vihgWtO2ljo239Eb81SHMiwnbsHG5Ao0XY32USn7CmLO7/BbnY+JVJpNHWoG/jdTn73OzXextGK30f7fp1IxSxhnGdMBkNbKeujOfmhtDj1DIyMM2eNy0YMprv90+d9zxn15PG3TjspXzM6d9wd7BhmuPfMnD6pC51l83S7kmTMJ9nK+WexACpZ0+jwLYsJUnwXClD4S1nZxaEW6cMfSEYFU/l93eyBQqiQC0EjvWCBXwfl8ZMVQr3gr/ZbqCVSaqtINri4JqA3iqHJl3mEdA2WJ5VDZw=
