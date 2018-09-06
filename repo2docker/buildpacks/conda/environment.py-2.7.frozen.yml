@@ -1,54 +1,53 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-07-16 23:03:29 UTC
+# Frozen on 2018-09-06 21:13:00 UTC
 name: r2d
 channels:
   - conda-forge
   - defaults
   - conda-forge/label/broken
 dependencies:
-  - backports=1.0=py27_1
+  - backports=1.0=py_2
   - backports.shutil_get_terminal_size=1.0.0=py_3
-  - backports_abc=0.5=py27_0
-  - ca-certificates=2018.4.16=0
-  - certifi=2018.4.16=py27_0
+  - backports_abc=0.5=py_1
+  - bzip2=1.0.6=h470a237_2
+  - ca-certificates=2018.8.24=ha4d7672_0
+  - certifi=2018.8.24=py27_1
   - decorator=4.3.0=py_0
   - enum34=1.1.6=py27_1
   - ipykernel=4.8.2=py27_0
-  - ipython=5.7.0=py27_0
+  - ipython=5.8.0=py27_0
   - ipython_genutils=0.2.0=py_1
   - jupyter_client=5.2.3=py_1
   - jupyter_core=4.4.0=py_0
+  - libgcc-ng=7.2.0=hdf63c60_3
   - libsodium=1.0.16=0
-  - ncurses=5.9=10
-  - openssl=1.0.2o=0
+  - libstdcxx-ng=7.2.0=hdf63c60_3
+  - ncurses=6.1=hfc679d8_1
+  - openssl=1.0.2p=h470a237_0
   - pathlib2=2.3.2=py27_0
   - pexpect=4.6.0=py27_0
   - pickleshare=0.7.4=py27_0
-  - pip=9.0.3=py27_0
-  - prompt_toolkit=1.0.15=py27_0
+  - pip=18.0=py27_1
+  - prompt_toolkit=1.0.15=py_1
   - ptyprocess=0.6.0=py27_0
   - pygments=2.2.0=py_1
-  - python=2.7.15=0
+  - python=2.7.15=h9fef7bc_0
   - python-dateutil=2.7.3=py_0
-  - pyzmq=17.1.0=py27hae99301_0
-  - readline=7.0=0
-  - scandir=1.7=py27h470a237_1
-  - setuptools=40.0.0=py27_0
+  - pyzmq=17.1.2=py27hae99301_0
+  - readline=7.0=haf1bffa_1
+  - scandir=1.9.0=py27h470a237_0
+  - setuptools=40.2.0=py27_0
   - simplegeneric=0.8.1=py_1
   - singledispatch=3.4.0.3=py27_0
   - six=1.11.0=py27_1
-  - sqlite=3.20.1=2
+  - sqlite=3.24.0=h2f33b56_1
   - ssl_match_hostname=3.5.0.1=py27_1
-  - tk=8.6.7=0
+  - tk=8.6.8=0
   - tornado=4.5.3=py27_0
   - traitlets=4.3.2=py27_0
   - wcwidth=0.1.7=py_1
-  - wheel=0.31.1=py27_0
-  - zeromq=4.2.5=hfc679d8_3
+  - wheel=0.31.1=py27_1
+  - zeromq=4.2.5=hfc679d8_5
   - zlib=1.2.11=h470a237_3
-  - libgcc-ng=7.2.0=hdf63c60_3
-  - libstdcxx-ng=7.2.0=hdf63c60_3
-  - pip:
-    - backports.ssl-match-hostname==3.5.0.1
 prefix: /opt/conda/envs/r2d
 
