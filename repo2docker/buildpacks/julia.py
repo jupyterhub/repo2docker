@@ -121,7 +121,7 @@ class JuliaBuildPack(CondaBuildPack):
                 # HACK: Can't seem to tell IJulia to install in sys-prefix
                 # FIXME: Find way to get it to install under /srv and not $HOME?
                 r"""
-                julia -e 'Pkg.init(); Pkg.add("IJulia"); using IJulia;' && \
+                julia -e 'if (VERSION > v"0.7-") using Pkg; else Pkg.init(); end; Pkg.add("IJulia"); using IJulia;' && \
                 mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
                 """
             )
@@ -142,19 +142,47 @@ class JuliaBuildPack(CondaBuildPack):
 
         """
         require = self.binder_path('REQUIRE')
-        # TODO: I think this only works or v0.6... How do we do the equivalent
-        # of this for 1.0?
         return super().get_assemble_scripts() + [(
             "${NB_USER}",
-            # Pre-compile all libraries if they've opted into it.
-            # `using {libraryname}` does the right thing
+            # Install and pre-compile all libraries if they've opted into it.
+            # In v0.6, Pkg.resolve() installs all the packages, but in v0.7+, we
+            # have to manually Pkg.add() each of them (since the REQUIRES file
+            # format is deprecated).
+            # The precompliation is done via `using {libraryname}`.
             r"""
-            cat "%(require)s" >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
             julia -e ' \
-               Pkg.resolve(); \
-               for pkg in keys(Pkg.Reqs.parse("%(require)s")) \
-                pkg != "julia" && eval(:(using $(Symbol(pkg)))) \
-               end \
+                require_file = "%(require)s" ;\
+                if VERSION < v"0.7-" ;\
+                  pkg_dir = "$(ENV["JULIA_PKGDIR"])/v$(VERSION.major).$(VERSION.minor)" ;\
+                  open("$pkg_dir/REQUIRE", "a") do io ;\
+                    write(io, read(require_file)) ;\
+                  end ;\
+                  Pkg.resolve(); ;\
+                  Reqs = Pkg.Reqs ;\
+                else ;\
+                  using Pkg ;\
+                  Reqs = Pkg.Pkg2.Reqs ;\
+                  emptyversionlower = v"0.0.0-" ;\
+                  for reqline in Reqs.read(require_file) ;\
+                    if reqline isa Reqs.Requirement ;\
+                        pkg = String(reqline.package) ;\
+                        if pkg == "julia" continue end ;\
+                        version = try; reqline.versions.intervals[1].lower; catch; emptyversionlower; end ;\
+                        if version != emptyversionlower ;\
+                          Pkg.add(PackageSpec(name=pkg, version=version)) ;\
+                        else ;\
+                          Pkg.add(pkg) ;\
+                        end ;\
+                    end ;\
+                  end ;\
+                end ;\
+                # Precompile the packages ;\
+                for reqline in Reqs.read(require_file) ;\
+                  if reqline isa Reqs.Requirement ;\
+                      pkg = reqline.package ;\
+                      pkg != "julia" && eval(:(using $(Symbol(pkg)))) ;\
+                  end ;\
+                end ;\
             '
             """ % { "require" : require }
         )]
