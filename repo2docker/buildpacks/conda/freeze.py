@@ -19,7 +19,10 @@ import sys
 from ruamel.yaml import YAML
 
 
-MINICONDA_VERSION = '4.5.11'
+# Docker image version can be different than conda version,
+# since miniconda3 docker images seem to lag conda releases.
+MINICONDA_DOCKER_VERSION = '4.5.4'
+CONDA_VERSION = '4.5.11'
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
@@ -54,10 +57,10 @@ def freeze(env_file, frozen_file):
         '--rm',
         '-v' f"{HERE}:/r2d",
         '-it',
-        f"continuumio/miniconda3:{MINICONDA_VERSION}",
+        f"continuumio/miniconda3:{MINICONDA_DOCKER_VERSION}",
         "sh", "-c",
         '; '.join([
-            # f"conda install -yq conda={CONDA_VERSION}",
+            f"conda install -yq conda={CONDA_VERSION}",
             'conda config --add channels conda-forge',
             'conda config --system --set auto_update_conda false',
             f"conda env create -v -f /r2d/{env_file} -n r2d",
