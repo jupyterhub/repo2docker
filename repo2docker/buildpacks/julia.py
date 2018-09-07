@@ -12,6 +12,47 @@ class JuliaBuildPack(CondaBuildPack):
     See https://github.com/JuliaPy/PyCall.jl/issues/410
 
     """
+
+    minor_julias = {
+        '0.6': '0.6.4',
+        '0.7': '0.7.0',
+        '1.0': '1.0.0',
+    }
+    major_julias = {
+        '1': '1.0.0',
+    }
+
+    def _short_version(version_str):
+        return '.'.join(version_str.split('.')[:2])
+
+    @property
+    def julia_version(self):
+        require = self.binder_path('REQUIRE')
+        try:
+            with open(require) as f:
+                julia_version_line = f.readline().strip()  # First line is optionally a julia version
+        except FileNotFoundError:
+             julia_version_line = ''
+
+        if not julia_version_line.startswith('julia '):
+            # not a Julia version line.
+            # use the default Julia.
+            self._julia_version = self.minor_julias['0.6']
+            return self._julia_version
+
+        julia_version_info = julia_version_line.split(' ', 1)[1].split('.')
+        julia_version = ''
+        if len(julia_version_info) == 1:
+            julia_version = self.major_julias[julia_version_info[0]]
+        elif len(julia_version_info) == 2:
+            # get major.minor
+            julia_version = self.minor_julias['.'.join(julia_version_info)]
+        else:
+            # use supplied julia version
+            julia_version = '.'.join(julia_version_info)
+        self._julia_version = julia_version
+        return self._julia_version
+
     def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
 
@@ -35,7 +76,7 @@ class JuliaBuildPack(CondaBuildPack):
             ('JULIA_PATH', '${APP_BASE}/julia'),
             ('JULIA_HOME', '${JULIA_PATH}/bin'),
             ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),
-            ('JULIA_VERSION', '0.6.0'),
+            ('JULIA_VERSION', self.julia_version),
             ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
         ]
 
@@ -81,10 +122,15 @@ class JuliaBuildPack(CondaBuildPack):
                 # FIXME: Find way to get it to install under /srv and not $HOME?
                 r"""
                 julia -e 'Pkg.init(); Pkg.add("IJulia"); using IJulia;' && \
-                mv ${HOME}/.local/share/jupyter/kernels/julia-0.6  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-0.6
+                mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
                 """
             )
         ]
+        require = "/Users/daly/Documents/developer/website/nhdaly.github.io/notebooks/REQUIRE"
+        f = open(require)
+        julia_version_line = list(filter(lambda l: l != "", map(lambda l:l.strip(), f.readlines())))[0]
+        julia_version_line = f.readline().strip()
+
 
     def get_assemble_scripts(self):
         """
@@ -96,6 +142,8 @@ class JuliaBuildPack(CondaBuildPack):
 
         """
         require = self.binder_path('REQUIRE')
+        # TODO: I think this only works or v0.6... How do we do the equivalent
+        # of this for 1.0?
         return super().get_assemble_scripts() + [(
             "${NB_USER}",
             # Pre-compile all libraries if they've opted into it.
