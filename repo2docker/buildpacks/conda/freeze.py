@@ -19,7 +19,7 @@ import sys
 from ruamel.yaml import YAML
 
 
-MINICONDA_VERSION = '4.5.4'
+MINICONDA_VERSION = '4.5.11'
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
