@@ -1,0 +1,14 @@
+#!/usr/bin/env julia
+# Verify the version:
+if VERSION != v"0.6.3"
+    exit(1)
+end
+
+# Test that the package was installed.
+try
+    using Compat
+catch
+    exit(1)
+end
+
+exit(0)
