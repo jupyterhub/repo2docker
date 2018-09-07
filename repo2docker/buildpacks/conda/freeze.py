@@ -60,6 +60,7 @@ def freeze(env_file, frozen_file):
         f"continuumio/miniconda3:{MINICONDA_DOCKER_VERSION}",
         "sh", "-c",
         '; '.join([
+            'set -e',
             f"conda install -yq conda={CONDA_VERSION}",
             'conda config --add channels conda-forge',
             'conda config --system --set auto_update_conda false',
