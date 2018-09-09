@@ -26,6 +26,8 @@ setup(
         'Source': 'https://github.com/jupyter/repo2docker/',
         'Tracker': 'https://github.com/jupyter/repo2docker/issues',
     },
+    # this should be a whitespace separated string of keywords, not a list
+    keywords="reproducible science environments docker",
     description = "Repo2docker: Turn git repositories into Jupyter enabled Docker Images",
     long_description = readme,
     long_description_content_type = 'text/markdown',
