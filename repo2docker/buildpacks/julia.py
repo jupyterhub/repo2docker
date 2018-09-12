@@ -22,9 +22,6 @@ class JuliaBuildPack(CondaBuildPack):
         '1': '1.0.0',
     }
 
-    def _short_version(version_str):
-        return '.'.join(version_str.split('.')[:2])
-
     @property
     def julia_version(self):
         require = self.binder_path('REQUIRE')
