@@ -1,6 +1,6 @@
 """Generates a Dockerfile based on an input matrix for Julia"""
 import os
-from .conda import CondaBuildPack
+from ..conda import CondaBuildPack
 
 
 class JuliaBuildPack(CondaBuildPack):
@@ -128,7 +128,6 @@ class JuliaBuildPack(CondaBuildPack):
         julia_version_line = list(filter(lambda l: l != "", map(lambda l:l.strip(), f.readlines())))[0]
         julia_version_line = f.readline().strip()
 
-
     def get_assemble_scripts(self):
         """
         Return series of build-steps specific to "this" Julia repository
@@ -147,42 +146,17 @@ class JuliaBuildPack(CondaBuildPack):
             # format is deprecated).
             # The precompliation is done via `using {libraryname}`.
             r"""
-            julia -e ' \
-                require_file = "%(require)s" ;\
-                if VERSION < v"0.7-" ;\
-                  pkg_dir = "$(ENV["JULIA_PKGDIR"])/v$(VERSION.major).$(VERSION.minor)" ;\
-                  open("$pkg_dir/REQUIRE", "a") do io ;\
-                    write(io, read(require_file)) ;\
-                  end ;\
-                  Pkg.resolve(); ;\
-                  Reqs = Pkg.Reqs ;\
-                else ;\
-                  using Pkg ;\
-                  Reqs = Pkg.Pkg2.Reqs ;\
-                  emptyversionlower = v"0.0.0-" ;\
-                  for reqline in Reqs.read(require_file) ;\
-                    if reqline isa Reqs.Requirement ;\
-                        pkg = String(reqline.package) ;\
-                        if pkg == "julia" continue end ;\
-                        version = try; reqline.versions.intervals[1].lower; catch; emptyversionlower; end ;\
-                        if version != emptyversionlower ;\
-                          Pkg.add(PackageSpec(name=pkg, version=version)) ;\
-                        else ;\
-                          Pkg.add(pkg) ;\
-                        end ;\
-                    end ;\
-                  end ;\
-                end ;\
-                # Precompile the packages ;\
-                for reqline in Reqs.read(require_file) ;\
-                  if reqline isa Reqs.Requirement ;\
-                      pkg = reqline.package ;\
-                      pkg != "julia" && eval(:(using $(Symbol(pkg)))) ;\
-                  end ;\
-                end ;\
-            '
+            julia /tmp/install-repo-dependencies.jl "%(require)s" && \
+            rm /tmp/install-repo-dependencies.jl
             """ % { "require" : require }
         )]
+
+    def get_build_script_files(self):
+        files = {
+            'julia/install-repo-dependencies.jl': '/tmp/install-repo-dependencies.jl',
+        }
+        files.update(super().get_build_script_files())
+        return files
 
     def detect(self):
         """
