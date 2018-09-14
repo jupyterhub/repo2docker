@@ -543,7 +543,7 @@ class BaseImage(BuildPack):
         return []
 
     def get_start_script(self):
-        start = self.binder_path('start')
+        start = self.binder_path('./start')
         if os.path.exists(start):
             return start
         return None
