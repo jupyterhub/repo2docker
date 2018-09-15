@@ -1,1 +1,1 @@
-Test that node 10 is installed and runnable.
+Test that node 10 and npm 6 are installed and runnable.

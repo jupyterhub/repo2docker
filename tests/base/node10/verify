@@ -2,6 +2,9 @@
 
 set -e
 which node
+node --version
 node --version | grep v10
+
 which npm
-npm --version | grep 6.2
+npm --version
+npm --version | grep 6.4
