@@ -49,6 +49,7 @@ env:
   - REPO_TYPE=stencila
   - REPO_TYPE=julia
   - REPO_TYPE=r
+  - REPO_TYPE=nix
   - REPO_TYPE=dockerfile
   - REPO_TYPE=external/*
   - REPO_TYPE=**/*.py

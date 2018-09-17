@@ -1,0 +1,15 @@
+#!/bin/bash
+
+_term() {
+  echo "Caught SIGTERM signal!"
+  # kill -TERM "$PID" 2>/dev/null
+  exit 0
+}
+
+trap _term SIGTERM
+
+echo "$*"
+nix-shell default.nix --command "$*" &
+
+PID=$!
+wait "$PID"
