@@ -257,4 +257,16 @@ class RBuildPack(PythonBuildPack):
                 )
             ]
 
+        descriptionR_path = self.binder_path('DESCRIPTION')
+        if os.path.exists(descriptionR_path):
+            assemble_scripts += [
+                (
+                    "${NB_USER}",
+                    r"""
+                    R CMD build . && \
+                    R CMD install .
+                    """
+                )
+            ]
+
         return assemble_scripts
