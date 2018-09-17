@@ -44,7 +44,7 @@ source_parsers = {
 }
 
 def setup(app):
-    app.add_stylesheet('custom.css')  # may also be an URL
+    app.add_stylesheet('_static/custom.css')  # may also be an URL
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -188,38 +188,31 @@ epub_copyright = copyright
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
 
-# Build the repo2docker test syntax
-import os
-s = ''
-FILE_ORDER_PREFERENCE = ['System', 'Python', 'Julia', 'Docker', 'Misc']
-SKIP_FOLDERS = ['binder-dir']
-FILES_DICT = {ii: [] for ii in FILE_ORDER_PREFERENCE}
-for root, _, files in os.walk(os.path.join('..', '..', 'tests')):
-    depth = len(root.split('/')) - 3
-    if 'README.rst' not in files or depth > 2:
-        continue
-    if any(folder in root for folder in SKIP_FOLDERS):
-        continue
-    header = files.pop(files.index('README.rst'))
-    with open(os.path.join(root, header), 'r') as ff:
-        this_s = ff.read() + '\n\n'
-        title = this_s.split('\n')[0]
-    for ifile in files:
-        filename = os.path.basename(ifile)
-        if filename == 'verify':
-            continue
-        with open(os.path.join(root, ifile), 'r') as ff:
-            lines = ff.readlines()
-        lines = ['   ' + line for line in lines]
-        this_s += 'File: ``{}``\n{}\n\n**Contents**::\n\n'.format(
-            filename, '~' * (len(filename) + 10))
-        this_s += '\n'.join(lines)
-        this_s += '\n\n'
-        usename = [ii for ii in FILE_ORDER_PREFERENCE if ii in title]
-        usename = 'Misc' if len(usename) == 0 else usename[0]
-    FILES_DICT[usename].append(this_s)
-for key in FILE_ORDER_PREFERENCE:
-    for istring in FILES_DICT[key]:
-        s += istring
-with open('./test_file_text.txt', 'w') as ff:
-    ff.write(s)
+# Update the example_repos text file
+# import requests
+#
+# config_files = ['start', 'postBuild', 'apt.txt', 'runtime.txt',
+#                 'environment.yml', 'requirements.txt', 'setup.py',
+#                 'REQUIRE', 'install.R', 'Dockerfile']
+# config_dict = {ii: [] for ii in config_files}
+# repos = requests.get('https://api.github.com/orgs/jupyterhub/repos').json()
+# repo_names = [ii['full_name'].split('/')[-1] for ii in repos]
+# repo_descriptions = {name: repo['description'] for repo, name in zip(repos, repo_names)}
+#
+# files = {}
+# for repo_name in repo_names:
+#     this_files = requests.get('https://api.github.com/repos/binder-examples/{}/contents'.format(repo_name)).json()
+#     for ifile in this_files:
+#         if ifile['name'] in config_dict:
+#             config_dict[ifile['name']].append(repo_name)
+#
+# s = ''
+# for file_name, repos in config_dict.items():
+#     header_chars = '=' * len(file_name)
+#     s = '{}\n{}\n\n'.format(file_name, header_chars)
+#     for repo_name in repos:
+#         this_url = "https://github.com/binder-examples/{}".format(repo_name)
+#         this_desc = repo_descriptions['repo_name']
+#         s += '`{} <{}>`_\n'.format(this_desc, this_url)
+# with open('example_repos.txt', 'w') as ff:
+#     ff.write(s)
