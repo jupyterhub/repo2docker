@@ -17,9 +17,9 @@ script:
 # possible issues with MANIFEST.in
 - pushd tests;
   if [ ${REPO_TYPE} == "r" ]; then
-    travis_wait pytest --cov repo2docker -v ${REPO_TYPE};
+    travis_wait pytest --cov repo2docker -v ${REPO_TYPE} || exit 1;
   else
-    travis_retry pytest --cov repo2docker -v ${REPO_TYPE};
+    travis_retry pytest --cov repo2docker -v ${REPO_TYPE} || exit 1;
   fi;
   popd;
 - pip install -r docs/doc-requirements.txt
