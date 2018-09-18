@@ -27,7 +27,6 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    :caption: Configuration files and examples
 
    config_files
-   examples
 
 .. toctree::
    :maxdepth: 1
