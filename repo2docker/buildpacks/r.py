@@ -25,6 +25,11 @@ class RBuildPack(PythonBuildPack):
     The `r-base` package from Ubuntu apt repositories is used to install
     R itself, rather than any of the methods from https://cran.r-project.org/.
     """
+
+    # cannot assemble from subset because INSTALL.r could
+    # refer to local files (right?)
+    assemble_from_subset = False
+
     @property
     def runtime(self):
         """

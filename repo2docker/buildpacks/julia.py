@@ -12,6 +12,10 @@ class JuliaBuildPack(CondaBuildPack):
     See https://github.com/JuliaPy/PyCall.jl/issues/410
 
     """
+
+    # REQUIRE can't refer to local files, can it?
+    assemble_from_subset = True
+
     def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
 
@@ -85,6 +89,14 @@ class JuliaBuildPack(CondaBuildPack):
                 """
             )
         ]
+
+    def get_assemble_files(self):
+        """Add environment files required for assembly step"""
+        assemble_files = super().get_assemble_files()
+        require = self.binder_path('REQUIRE')
+        if os.path.exists(require):
+            assemble_files.append(require)
+        return assemble_files
 
     def get_assemble_scripts(self):
         """

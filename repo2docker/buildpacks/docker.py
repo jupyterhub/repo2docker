@@ -9,6 +9,8 @@ class DockerBuildPack(BuildPack):
     """Docker BuildPack"""
     dockerfile = "Dockerfile"
 
+    assemble_from_subset = False
+
     def detect(self):
         """Check if current repo should be built with the Docker BuildPack"""
         return os.path.exists(self.binder_path('Dockerfile'))
