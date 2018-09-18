@@ -34,6 +34,62 @@ class PythonBuildPack(CondaBuildPack):
         self._python_version = py_version
         return self._python_version
 
+    def get_assemble_files(self):
+        assemble_files = super().get_assemble_files()
+        for name in ('requirements.txt', 'requirements3.txt'):
+            requirements_txt = self.binder_path(name)
+            if os.path.exists(requirements_txt):
+                assemble_files.append(requirements_txt)
+        return assemble_files
+
+    def _is_local_requirement(self, line):
+        """Return whether a line in a requirements.txt file references a local file"""
+        # trim comments and skip empty lines
+        line = line.split('#', 1)[0].strip()
+        if not line:
+            return False
+        if line.startswith(('-r', '-c')):
+            # local -r or -c references break isolation
+            return True
+        # strip off `-e, etc.`
+        if line.startswith('-'):
+            line = line.split(None, 1)[1]
+        if 'file://' in line:
+            # file references break isolation
+            return True
+        if '://' in line:
+            # handle git://../local/file
+            path = line.split('://', 1)[1]
+        else:
+            path = line
+        if path.startswith('.'):
+            # references a local file
+            return True
+        return False
+
+    @property
+    def assemble_from_subset(self):
+        """Peek in requirements.txt to determine if we can assemble from only env files
+
+        If there are any local references, e.g. `-e .`,
+        stage the whole repo prior to installation.
+        """
+        if not os.path.exists('binder') and os.path.exists('setup.py'):
+            # can't install from subset if we're using setup.py
+            return False
+        for name in ('requirements.txt', 'requirements3.txt'):
+            requirements_txt = self.binder_path(name)
+            if not os.path.exists(requirements_txt):
+                continue
+            with open(requirements_txt) as f:
+                for line in f:
+                    if self._is_local_requirement(line):
+                        return False
+
+        # didn't find any local references,
+        # allow assembly from subset
+        return True
+
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository.
         """
