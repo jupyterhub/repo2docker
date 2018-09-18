@@ -263,8 +263,7 @@ class RBuildPack(PythonBuildPack):
                 (
                     "${NB_USER}",
                     r"""
-                    R CMD build . && \
-                    R CMD install .
+                    R --quiet -e "devtools::install_git('.')"
                     """
                 )
             ]

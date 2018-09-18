@@ -30,3 +30,7 @@
   url: https://github.com/QuantStack/xeus-cling
   ref: 0.4.5
   verify: jupyter kernelspec list
+- name: Test compiling R package
+  url: https://github.com/gedankenstuecke/binder-r-description
+  ref: master
+  verify: R --quiet -e 'binderdescription::print_something()'

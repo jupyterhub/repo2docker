@@ -109,6 +109,17 @@ While one can specify dependencies in ``setup.py``,
 repo2docker **requires configuration files such as** ``environment.yml`` or
 ``requirements.txt`` to install dependencies during the build process.
 
+``DESCRIPTION``
+~~~~~~~~~~~~~~~
+
+To install your repository like an R package, you may include a
+``DESCRIPTION`` file. repo2docker installs the package and dependencies
+ from the ``DESCRIPTION`` by running ``devtools:install_git(".")``.
+
+ You also need to have a ``runtime.txt`` file that is formatted as
+ ``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot at MRAN that will be
+ used for your R installation.
+
 .. _postBuild:
 
 ``postBuild``
