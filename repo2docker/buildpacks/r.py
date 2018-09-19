@@ -262,9 +262,8 @@ class RBuildPack(PythonBuildPack):
             assemble_scripts += [
                 (
                     "${NB_USER}",
-                    r"""
-                    R --quiet -e "devtools::install_git('.')"
-                    """
+                    'R --quiet -e "devtools::install_git(\'{}\')"'.format(
+                        self.binder_path('.'))
                 )
             ]
 
