@@ -69,7 +69,14 @@ class RBuildPack(PythonBuildPack):
         """
         # If no date is found, then self.checkpoint_date will be False
         # Otherwise, it'll be a date object, which will evaluate to True
-        return bool(self.checkpoint_date)
+        if bool(self.checkpoint_date):
+            return True
+        description_R = 'DESCRIPTION'
+        if not os.path.exists('binder') and os.path.exists(description_R):
+            if not self.checkpoint_date:
+                self._checkpoint_date = datetime.date.today() - datetime.timedelta(days=2)
+                self._runtime = "r-{}".format(str(self._checkpoint_date))
+            return True
 
     def get_path(self):
         """
@@ -257,13 +264,12 @@ class RBuildPack(PythonBuildPack):
                 )
             ]
 
-        descriptionR_path = self.binder_path('DESCRIPTION')
-        if os.path.exists(descriptionR_path):
+        description_R = 'DESCRIPTION'
+        if not os.path.exists('binder') and os.path.exists(description_R):
             assemble_scripts += [
                 (
                     "${NB_USER}",
-                    'R --quiet -e "devtools::install_git(\'{}\')"'.format(
-                        self.binder_path('.'))
+                    'R --quiet -e "devtools::install_git(\'.\')"'
                 )
             ]
 
