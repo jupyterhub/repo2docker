@@ -23,8 +23,16 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    usage
 
 .. toctree::
+   :maxdepth: 1
+   :caption: How-to...
+
+   howto/user_interface
+   howto/languages
+   howto/jupyterhub_images
+
+.. toctree::
    :maxdepth: 2
-   :caption: Configuration files and examples
+   :caption: Complete list of configuration files
 
    config_files
 

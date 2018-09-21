@@ -87,47 +87,6 @@ If the folder ``binder/`` is located at the top level of the repository,
    :ref:`configuration files <config-files>`.
 
 
-.. _user_interface:
-
-Specifying the user interface
-=============================
-
-repo2docker can build several user interfaces into the resulting Docker image.
-This is controlled with various :ref:`configuration files <config-files>`.
-
-JupyterLab
-----------
-
-repo2docker does not need any extra configuration in order to allow the use
-of the JupyterLab interface. You can launch JupyterLab from within a repo2docker
-image by opening the Jupyter Notebook and appending ``/lab`` to the end of the URL
-like so:
-
-.. code-block:: none
-
-   http(s)://<server:port>/lab
-
-To switch back to the classic notebook, add ``/tree`` to the URL like so:
-
-.. code-block:: none
-
-   http(s)://<server:port>/tree
-
-To learn more about URLs in JupyterLab and Jupyter Notebook, visit
-`starting JupyterLab <http://jupyterlab.readthedocs.io/en/latest/getting_started/starting.html>`_.
-
-RStudio
--------
-
-The RStudio user interface is enabled when repo2docker detects a configuration
-for R (an R version specified in ``runtime.txt``). If this is detected,
-RStudio will be accessible by appending ``/rstudio`` to the URL, like so:
-
-.. code-block:: none
-
-   http(s)://<server:port>/rstudio
-
-
 Debugging repo2docker with ``--debug`` and ``--no-build``
 =========================================================
 
@@ -148,27 +107,4 @@ be used by docker directly.
 
      jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
 
-
-Building JupyterHub-ready images
-================================
-
-JupyterHub_ allows multiple
-users to collaborate on a shared Jupyter server. ``repo2docker`` can build
-Docker images that can be shared within a JupyterHub deployment.  For example,
-`mybinder.org <https://mybinder.org>`_ uses JupyterHub and ``repo2docker``
-to allow anyone to build a Docker image of a git repository online and
-share an executable version of the repository with a URL to the built image.
-
-To build JupyterHub_-ready Docker images with ``repo2docker``, the
-version of your JupterHub deployment must be included in the
-``environment.yml`` or ``requirements.txt`` of the git repositories you
-build.
-
-If your instance of JupyterHub uses ``DockerSpawner``, you will need to set its
-command to run ``jupyterhub-singleuser`` by adding this line in your
-configuration file::
-
-  c.DockerSpawner.cmd = ['jupyterhub-singleuser']
-
-.. _JupyterHub: https://github.com/jupyterhub/jupyterhub
 .. _Pytudes: https://github.com/norvig/pytudes

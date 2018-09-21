@@ -67,10 +67,6 @@ To install your repository like a Python package, you may include a
 ``setup.py`` file. repo2docker installs ``setup.py`` files by running
 ``pip install -e .``.
 
-While one can specify dependencies in ``setup.py``,
-repo2docker **requires configuration files such as** ``environment.yml`` or
-``requirements.txt`` to install dependencies during the build process.
-
 
 ``REQUIRE`` - Install a Julia environment
 =========================================
@@ -141,7 +137,7 @@ If you only need to run things once during the build phase use :ref:`postBuild`.
 
 This allows you to control the runtime of Python or R.
 
-To use python-2.7: add python-2.7 in runtime.txt file.
+To use python-2.7: add ``python-2.7`` in runtime.txt file.
 The repository will run in a virtualenv with
 Python 2 installed. To see a full example repository, visit our
 `Python2 example <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
@@ -168,5 +164,5 @@ trying the other configuration files before deciding to use your own Dockerfile.
 With Dockerfiles, a regular Docker build will be performed.
 **If a Dockerfile is present, all other configuration files will be ignored.**
 
-See the `Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
+See the `Advanced Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
 best-practices with Dockerfiles.
