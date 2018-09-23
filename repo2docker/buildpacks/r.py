@@ -269,7 +269,7 @@ class RBuildPack(PythonBuildPack):
             assemble_scripts += [
                 (
                     "${NB_USER}",
-                    'R --quiet -e "devtools::install_git(\'.\')"'
+                    'R --quiet -e "devtools::install_local(getwd())"'
                 )
             ]
 
