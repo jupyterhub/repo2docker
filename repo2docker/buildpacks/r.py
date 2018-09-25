@@ -69,11 +69,13 @@ class RBuildPack(PythonBuildPack):
         """
         # If no date is found, then self.checkpoint_date will be False
         # Otherwise, it'll be a date object, which will evaluate to True
-        if bool(self.checkpoint_date):
+        if self.checkpoint_date:
             return True
         description_R = 'DESCRIPTION'
         if not os.path.exists('binder') and os.path.exists(description_R):
             if not self.checkpoint_date:
+                # no R snapshot date set through runtime.txt
+                # set the R runtime to the latest date that is guaranteed to be on MRAN across timezones
                 self._checkpoint_date = datetime.date.today() - datetime.timedelta(days=2)
                 self._runtime = "r-{}".format(str(self._checkpoint_date))
             return True

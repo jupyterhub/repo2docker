@@ -95,16 +95,6 @@ version of Ubuntu.
 We use ``apt.txt``, for example, to install LaTeX in our
 `example apt.txt for LaTeX <https://github.com/binder-examples/latex/blob/master/apt.txt>`_.
 
-``setup.py``
-~~~~~~~~~~~~
-
-To install your repository like a Python package, you may include a
-``setup.py`` file. repo2docker installs ``setup.py`` files by running
-``pip install -e .``.
-
-While one can specify dependencies in ``setup.py``,
-repo2docker **requires configuration files such as** ``environment.yml`` or
-``requirements.txt`` to install dependencies during the build process.
 
 ``DESCRIPTION``
 ~~~~~~~~~~~~~~~
