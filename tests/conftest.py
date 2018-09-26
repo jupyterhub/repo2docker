@@ -68,6 +68,14 @@ def make_test_func(args):
     return test
 
 
+# Provide a fixture for testing in .py files
+@pytest.fixture()
+def run_repo2docker():
+    def run_test(args):
+        return make_test_func(args)()
+    return run_test
+
+
 class Repo2DockerTest(pytest.Function):
     """A pytest.Item for running repo2docker"""
     def __init__(self, name, parent, args):

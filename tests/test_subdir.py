@@ -6,13 +6,14 @@ from os.path import abspath, dirname
 
 import pytest
 from repo2docker.app import Repo2Docker
-from tests.conftest import make_test_func
 
 repo_path = dirname(dirname(abspath(__file__)))
 
-def test_subdir():
+
+def test_subdir(run_repo2docker):
     argv = ['--subdir', 'tests/conda/simple', repo_path]
-    make_test_func(argv)()
+    run_repo2docker(argv)
+
 
 def test_subdir_invalid(caplog):
     caplog.set_level(logging.INFO, logger='Repo2Docker')
