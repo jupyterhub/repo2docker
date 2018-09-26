@@ -96,8 +96,8 @@ We use ``apt.txt``, for example, to install LaTeX in our
 `example apt.txt for LaTeX <https://github.com/binder-examples/latex/blob/master/apt.txt>`_.
 
 
-``DESCRIPTION``
-~~~~~~~~~~~~~~~
+``DESCRIPTION`` - Install an R package
+======================================
 
 To install your repository like an R package, you may include a
 ``DESCRIPTION`` file. repo2docker installs the package and dependencies
