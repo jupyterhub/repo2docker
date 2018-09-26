@@ -123,10 +123,6 @@ class JuliaBuildPack(CondaBuildPack):
                 """
             )
         ]
-        require = "/Users/daly/Documents/developer/website/nhdaly.github.io/notebooks/REQUIRE"
-        f = open(require)
-        julia_version_line = list(filter(lambda l: l != "", map(lambda l:l.strip(), f.readlines())))[0]
-        julia_version_line = f.readline().strip()
 
     def get_assemble_scripts(self):
         """
@@ -146,9 +142,10 @@ class JuliaBuildPack(CondaBuildPack):
             # format is deprecated).
             # The precompliation is done via `using {libraryname}`.
             r"""
-            julia /tmp/install-repo-dependencies.jl "%(require)s" && \
-            rm /tmp/install-repo-dependencies.jl
+            julia /tmp/install-repo-dependencies.jl "%(require)s"
             """ % { "require" : require }
+            # TODO: For some reason, `rm`ing the file fails with permission denied.
+            # && rm /tmp/install-repo-dependencies.jl
         )]
 
     def get_build_script_files(self):
@@ -169,4 +166,6 @@ class JuliaBuildPack(CondaBuildPack):
         Instead we just check if the path to `REQUIRE` exists
 
         """
+        # TODO(nhdaly): Add support for value in variable:
+            pass Project.toml here as well.
         return os.path.exists(self.binder_path('REQUIRE'))
