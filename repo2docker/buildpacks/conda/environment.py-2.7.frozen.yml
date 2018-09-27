@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-09-07 17:36:45 UTC
+# Frozen on 2018-09-17 08:27:26 UTC
 name: r2d
 channels:
   - conda-forge

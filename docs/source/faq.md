@@ -3,9 +3,44 @@
 A collection of frequently asked questions with answers. If you have a question
 and have found an answer, send a PR to add it here!
 
-## How should I specify another version of Python 3?
+## How should I specify another version of Python?
 
 One can specify a Python version in the ``environment.yml`` file of a repository.
+
+## What versions of Python (or R or Julia...) are supported?
+
+### Python
+
+Repo2docker officially supports the following versions of Python (specified in environment.yml or runtime.txt):
+
+- 3.7 (added in 0.7)
+- 3.6 (default)
+- 3.5
+
+Additional versions may work, as long as the
+[base environment](https://github.com/jupyter/repo2docker/blob/master/repo2docker/buildpacks/conda/environment.yml)
+can be installed for your version of Python.
+The most likely source of incompatibility is if one of the packages
+in the base environment is not packaged for your Python,
+either because the version of the package is too new and your chosen Python is too old,
+or vice versa.
+
+Additionally, if Python 2.7 is specified,
+a separate environment for the kernel will be installed with Python 2.
+The notebook server will run in the default Python 3.6 environment.
+
+### Julia
+
+The following versions of Julia are supported (specified in REQUIRE):
+
+- 1.0 (added in 0.7)
+- 0.7 (added in 0.7)
+- 0.6 (default)
+
+### R
+
+Only R 3.4.4 is currently supported, which is installed via `apt` from the
+[ubuntu bionic repository](https://packages.ubuntu.com/bionic/r-base).
 
 ## Can I add executable files to the user's PATH?
 
