@@ -1,5 +1,5 @@
 """
-Test if the explict hostname is supplied correctly to the container
+Test if the subdirectory is correctly navigated to
 """
 import logging
 from os.path import abspath, dirname
