@@ -96,16 +96,16 @@ We use ``apt.txt``, for example, to install LaTeX in our
 `example apt.txt for LaTeX <https://github.com/binder-examples/latex/blob/master/apt.txt>`_.
 
 
-``DESCRIPTION``
-~~~~~~~~~~~~~~~
+``DESCRIPTION`` - Install an R package
+======================================
 
 To install your repository like an R package, you may include a
 ``DESCRIPTION`` file. repo2docker installs the package and dependencies
- from the ``DESCRIPTION`` by running ``devtools:install_git(".")``.
+from the ``DESCRIPTION`` by running ``devtools:install_git(".")``.
 
- You also need to have a ``runtime.txt`` file that is formatted as
- ``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot of MRAN that will be
- used for your R installation.
+You also need to have a ``runtime.txt`` file that is formatted as
+``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot of MRAN that will be
+used for your R installation.
 
 .. _postBuild:
 
