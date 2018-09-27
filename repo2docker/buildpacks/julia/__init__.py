@@ -166,6 +166,5 @@ class JuliaBuildPack(CondaBuildPack):
         Instead we just check if the path to `REQUIRE` exists
 
         """
-        # TODO(nhdaly): Add support for value in variable:
-            pass Project.toml here as well.
+        # TODO(nhdaly): Add support for Project.toml here as well.
         return os.path.exists(self.binder_path('REQUIRE'))
