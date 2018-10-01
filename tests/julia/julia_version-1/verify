@@ -4,9 +4,12 @@ if VERSION < v"1"
     exit(1)
 end
 
-# Test that the package was installed.
 try
+    # Test that the package was installed.
     using Compat
+
+    # Verify that the environment variables are set correctly for julia 1.0+
+    @assert "julia" ∈ readdir(Sys.BINDIR)
 catch
     exit(1)
 end

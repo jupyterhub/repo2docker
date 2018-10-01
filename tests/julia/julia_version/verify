@@ -4,9 +4,12 @@ if VERSION != v"0.6.3"
     exit(1)
 end
 
-# Test that the package was installed.
 try
+    # Test that the package was installed.
     using Compat
+
+    # Verify that the environment variables are set correctly for julia <= 0.6
+    @assert "julia" ∈ readdir(Base.JULIA_HOME)
 catch
     exit(1)
 end

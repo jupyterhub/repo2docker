@@ -71,7 +71,8 @@ class JuliaBuildPack(CondaBuildPack):
         """
         return super().get_build_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
-            ('JULIA_HOME', '${JULIA_PATH}/bin'),
+            ('JULIA_HOME', '${JULIA_PATH}/bin'),  # julia <= 0.6
+            ('JULIA_BINDIR', '${JULIA_HOME}'),  # julia >= 0.7
             ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),
             ('JULIA_VERSION', self.julia_version),
             ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
