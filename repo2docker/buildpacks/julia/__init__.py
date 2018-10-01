@@ -1,6 +1,6 @@
 """Generates a Dockerfile based on an input matrix for Julia"""
 import os
-from .conda import CondaBuildPack
+from ..conda import CondaBuildPack
 
 
 class JuliaBuildPack(CondaBuildPack):
@@ -12,6 +12,44 @@ class JuliaBuildPack(CondaBuildPack):
     See https://github.com/JuliaPy/PyCall.jl/issues/410
 
     """
+
+    minor_julias = {
+        '0.6': '0.6.4',
+        '0.7': '0.7.0',
+        '1.0': '1.0.0',
+    }
+    major_julias = {
+        '1': '1.0.0',
+    }
+
+    @property
+    def julia_version(self):
+        require = self.binder_path('REQUIRE')
+        try:
+            with open(require) as f:
+                julia_version_line = f.readline().strip()  # First line is optionally a julia version
+        except FileNotFoundError:
+             julia_version_line = ''
+
+        if not julia_version_line.startswith('julia '):
+            # not a Julia version line.
+            # use the default Julia.
+            self._julia_version = self.minor_julias['0.6']
+            return self._julia_version
+
+        julia_version_info = julia_version_line.split(' ', 1)[1].split('.')
+        julia_version = ''
+        if len(julia_version_info) == 1:
+            julia_version = self.major_julias[julia_version_info[0]]
+        elif len(julia_version_info) == 2:
+            # get major.minor
+            julia_version = self.minor_julias['.'.join(julia_version_info)]
+        else:
+            # use supplied julia version
+            julia_version = '.'.join(julia_version_info)
+        self._julia_version = julia_version
+        return self._julia_version
+
     def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
 
@@ -33,9 +71,10 @@ class JuliaBuildPack(CondaBuildPack):
         """
         return super().get_build_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
-            ('JULIA_HOME', '${JULIA_PATH}/bin'),
+            ('JULIA_HOME', '${JULIA_PATH}/bin'),  # julia <= 0.6
+            ('JULIA_BINDIR', '${JULIA_HOME}'),  # julia >= 0.7
             ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),
-            ('JULIA_VERSION', '0.6.0'),
+            ('JULIA_VERSION', self.julia_version),
             ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
         ]
 
@@ -80,8 +119,8 @@ class JuliaBuildPack(CondaBuildPack):
                 # HACK: Can't seem to tell IJulia to install in sys-prefix
                 # FIXME: Find way to get it to install under /srv and not $HOME?
                 r"""
-                julia -e 'Pkg.init(); Pkg.add("IJulia"); using IJulia;' && \
-                mv ${HOME}/.local/share/jupyter/kernels/julia-0.6  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-0.6
+                julia -e 'if (VERSION > v"0.7-") using Pkg; else Pkg.init(); end; Pkg.add("IJulia"); using IJulia;' && \
+                mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
                 """
             )
         ]
@@ -98,18 +137,24 @@ class JuliaBuildPack(CondaBuildPack):
         require = self.binder_path('REQUIRE')
         return super().get_assemble_scripts() + [(
             "${NB_USER}",
-            # Pre-compile all libraries if they've opted into it.
-            # `using {libraryname}` does the right thing
+            # Install and pre-compile all libraries if they've opted into it.
+            # In v0.6, Pkg.resolve() installs all the packages, but in v0.7+, we
+            # have to manually Pkg.add() each of them (since the REQUIRES file
+            # format is deprecated).
+            # The precompliation is done via `using {libraryname}`.
             r"""
-            cat "%(require)s" >> ${JULIA_PKGDIR}/v0.6/REQUIRE && \
-            julia -e ' \
-               Pkg.resolve(); \
-               for pkg in keys(Pkg.Reqs.parse("%(require)s")) \
-                pkg != "julia" && eval(:(using $(Symbol(pkg)))) \
-               end \
-            '
+            julia /tmp/install-repo-dependencies.jl "%(require)s"
             """ % { "require" : require }
+            # TODO: For some reason, `rm`ing the file fails with permission denied.
+            # && rm /tmp/install-repo-dependencies.jl
         )]
+
+    def get_build_script_files(self):
+        files = {
+            'julia/install-repo-dependencies.jl': '/tmp/install-repo-dependencies.jl',
+        }
+        files.update(super().get_build_script_files())
+        return files
 
     def detect(self):
         """
@@ -122,4 +167,5 @@ class JuliaBuildPack(CondaBuildPack):
         Instead we just check if the path to `REQUIRE` exists
 
         """
+        # TODO(nhdaly): Add support for Project.toml here as well.
         return os.path.exists(self.binder_path('REQUIRE'))
