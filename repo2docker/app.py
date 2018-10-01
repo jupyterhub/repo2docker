@@ -343,6 +343,13 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
+            '--editable', '-E',
+            dest='editable',
+            action='store_true',
+            help='Use the local repository in edit mode',
+        )
+
+        argparser.add_argument(
             '--appendix',
             type=str,
             help=self.traits()['appendix'].help,
@@ -392,6 +399,8 @@ class Repo2Docker(Application):
             self.repo = args.repo
             self.ref = None
             self.cleanup_checkout = False
+            if args.editable:
+                self.volumes[os.path.abspath(args.repo)] = '.'
         else:
             self.repo_type = 'remote'
             self.repo = args.repo
