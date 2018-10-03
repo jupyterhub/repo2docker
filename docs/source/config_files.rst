@@ -173,7 +173,9 @@ images provide core functionality, compact image sizes, and efficient builds. We
 trying the other configuration files before deciding to use your own Dockerfile.
 
 With Dockerfiles, a regular Docker build will be performed.
-**If a Dockerfile is present, all other configuration files will be ignored.**
+
+.. note::
+    If a Dockerfile is present, all other configuration files will be ignored.
 
 See the `Advanced Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
 best-practices with Dockerfiles.
