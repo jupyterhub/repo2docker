@@ -48,7 +48,7 @@ Python in the file.  ``conda`` supports Python versions 3.6, 3.5, 3.4, and 2.7.
 
 .. warning::
    If you include a Python version in a ``runtime.txt`` file in addition to your
-   ``environment.yml``, your ``runtime.txt`` **will be ignored**.
+   ``environment.yml``, your ``runtime.txt`` will be ignored.
 
 
 ``requirements.txt`` - Install a Python environment
