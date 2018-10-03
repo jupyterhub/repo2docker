@@ -113,7 +113,7 @@ used for your R installation.
 =========================================================
 
 A script that can contain arbitrary commands to be run after the whole repository has been built. If you
-want this to be a shell script, make sure the first line is ```#!/bin/bash``.
+want this to be a shell script, make sure the first line is ``#!/bin/bash``.
 
 An example use-case of ``postBuild`` file is JupyterLab's demo on mybinder.org.
 It uses a ``postBuild`` file in a folder called ``binder`` to `prepare
