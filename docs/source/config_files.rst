@@ -48,7 +48,7 @@ Python in the file.  ``conda`` supports Python versions 3.6, 3.5, 3.4, and 2.7.
 
 .. warning::
    If you include a Python version in a ``runtime.txt`` file in addition to your
-   ``environment.yml``, your ``runtime.txt`` **will be ignored**.
+   ``environment.yml``, your ``runtime.txt`` will be ignored.
 
 
 ``requirements.txt`` - Install a Python environment
@@ -113,7 +113,7 @@ used for your R installation.
 =========================================================
 
 A script that can contain arbitrary commands to be run after the whole repository has been built. If you
-want this to be a shell script, make sure the first line is ```#!/bin/bash``.
+want this to be a shell script, make sure the first line is ``#!/bin/bash``.
 
 An example use-case of ``postBuild`` file is JupyterLab's demo on mybinder.org.
 It uses a ``postBuild`` file in a folder called ``binder`` to `prepare
@@ -152,7 +152,7 @@ To use python-2.7: add ``python-2.7`` in runtime.txt file.
 The repository will run in a virtualenv with
 Python 2 installed. To see a full example repository, visit our
 `Python2 example <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
-**Python versions in ``runtime.txt`` are ignored when** ``environment.yml`` **is
+**Python versions in** ``runtime.txt`` **are ignored when** ``environment.yml`` **is
 present in the same folder**.
 
 repo2docker uses R libraries pinned to a specific snapshot on
@@ -173,7 +173,9 @@ images provide core functionality, compact image sizes, and efficient builds. We
 trying the other configuration files before deciding to use your own Dockerfile.
 
 With Dockerfiles, a regular Docker build will be performed.
-**If a Dockerfile is present, all other configuration files will be ignored.**
+
+.. note::
+    If a Dockerfile is present, all other configuration files will be ignored.
 
 See the `Advanced Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
 best-practices with Dockerfiles.
