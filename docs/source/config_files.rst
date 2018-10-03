@@ -152,7 +152,7 @@ To use python-2.7: add ``python-2.7`` in runtime.txt file.
 The repository will run in a virtualenv with
 Python 2 installed. To see a full example repository, visit our
 `Python2 example <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
-**Python versions in ``runtime.txt`` are ignored when** ``environment.yml`` **is
+**Python versions in** ``runtime.txt`` **are ignored when** ``environment.yml`` **is
 present in the same folder**.
 
 repo2docker uses R libraries pinned to a specific snapshot on

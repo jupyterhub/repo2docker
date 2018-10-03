@@ -23,7 +23,7 @@ Specifying a version of Python
 
 To specify a specific version of Python, you have two options:
 
-* **use ``runtime.txt``**. Include a line that specifies the Python version in
+* Use ``runtime.txt``. Include a line that specifies the Python version in
   this file. This line takes the following form::
 
     python=X.X
@@ -31,7 +31,7 @@ To specify a specific version of Python, you have two options:
   For example,::
 
     python=2.7
-* **Use ``environment.yml``**. The Anaconda distribution also lets you define
+* Use ``environment.yml``. The Anaconda distribution also lets you define
   the Python environment within ``environment.yml``. To do so, add ``python=X.X``
   to your dependencies section, like so::
 
