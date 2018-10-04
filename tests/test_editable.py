@@ -1,7 +1,10 @@
 import pytest
 import os
 import time
+import re
+import tempfile
 from conftest import make_test_func
+from repo2docker.app import Repo2Docker
 
 
 DIR = os.path.join(os.path.dirname(__file__), 'dockerfile', 'editable')
@@ -32,3 +35,30 @@ def test_editable(run_repo2docker):
         assert contents == "new contents\n"
     finally:
         os.remove(newfile)
+
+
+def test_editable_by_host():
+    """Test whether a new file created by the host environment, is
+    detected in the container"""
+
+    app = Repo2Docker()
+    app.initialize(['--editable', DIR])
+    app.run = False
+    app.start()  # This just build the image and does not run it.
+    container = app.start_container()
+    # give the container a chance to start
+    time.sleep(1)
+    try:
+        with tempfile.NamedTemporaryFile(dir=DIR, prefix='testfile', suffix='.txt'):
+            status, output = container.exec_run(['sh', '-c', 'ls testfile????????.txt'])
+            assert status == 0
+            assert re.match(br'^testfile\w{8}\.txt\n$', output) is not None
+        # File should be removed in the container as well
+        status, output = container.exec_run(['sh', '-c', 'ls testfile????????.txt'])
+        assert status != 1
+        assert re.match(br'^testfile\w{8}\.txt\n$', output) is None
+
+    finally:
+        # stop the container
+        container.stop()
+        app.wait_for_container(container)
