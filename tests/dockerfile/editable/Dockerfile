@@ -5,7 +5,6 @@ RUN pip install --no-cache notebook
 CMD "/bin/sh"
 
 ADD change.sh /usr/local/bin/change.sh
-ADD verify verify
 
 ARG NB_UID
 ENV HOME /tmp
