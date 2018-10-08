@@ -6,6 +6,7 @@ This document covers:
 - Setting up for Local Development
 - Running Tests
 - Updating and Freezing BuildPack Dependencies
+- Updating the change log
 - Creating a Release
 
 
@@ -191,7 +192,52 @@ See the subsections below for more detailed instructions.
     repo2docker/buildpacks/conda/environment.py-3.6.frozen.yml
     ```
 
-4. Make a pull request.
+5. Make a pull request; see details below.
+
+6. Once the pull request is approved (but not yet merged), Update the
+   change log (details below) and commit the change log, then update
+   the pull request.
+
+
+### Change log
+
+To add your change to the change log, find the relevant Feature/Bug
+fix/API change section for the next release near the top of the file;
+then add one or two sentences as a new bullet point about your
+changes. Include the pull request or issue number between square
+brackets at the end.
+
+Some details:
+
+- versioning follows the x.y.z, major.minor.bugfix numbering
+
+- bug fixes go into the next bugfix release. If there isn't any, you
+  can create a new section (see point below). Don't worry if you're
+  not sure about that, and think it should go into a next major or
+  minor release: an admin will let you know, or move the change later
+  to the appropriate section
+
+- API changes should preferably go into the next major release, unless
+  they are backward compatible (for example, a deprecated function
+  keyword): then they can go into the next minor release. For release
+  with major release 0, non-backward compatible breaking changes are
+  also fine for the next minor release.
+
+- new features should go into the next minor release.
+
+- if there is no section for the appropriate release, you can add one:
+
+  follow the versioning scheme, by simply increasing the relevant
+  number for one of the major /minor/bugfix numbers, appropriate for
+  your change (see the above bullet points); add the release
+  section. Then add three subsections: new features, api changes, and
+  bug fixes. Leave out the sections that are not appropriate for the
+  newlye added release section.
+
+Release candidate versions in the change log are only temporary, and
+should be superseded by either a next release candidate, or the final
+release for that version (bugfix version 0).
+
 
 ### Make a Pull Request
 
