@@ -70,3 +70,31 @@ or similar traditional docker command.
 
 Check out the [binder-examples](http://github.com/binder-examples/) GitHub
 organization for example repositories you can copy & modify for your own use!
+
+## Can I use repo2docker to edit a local repository within a Docker environment?
+
+Yes: use the `--editable` or `-E` flag (don't confuse it with the `-e`
+flag for environment variables), and run repo2docker on a local
+repository: `repo2docker -E my-repository/.`.
+
+This builds a Docker container from the files in that repository
+(using, for example, a `requirements.txt` file or `Dockerfile`), then
+runs that container, while connecting the home directory inside the
+container to the local repository outside the container. For example,
+in case there is a notebook file (`.ipynb`), this will open in a local
+webbrowser, and one can edit it and save it. The resulting notebook is
+updated in both the Docker container and the local repository. Once
+the container is exited, the changed file will still be in the local
+repository.
+
+This allows for easy testing of the container while debugging some
+items, as well as using a fully customizable container to edit, for
+example, notebooks.
+
+**note**
+
+Editable mode is a convenience option that will mount the repository
+to container working directory (usually `/home/$USER`). If you need to
+mount to a different location in the container, use the `--volumes`
+option instead. Similarly, for a fully customized user Dockerfile,
+this option is not guaranteed to work.
