@@ -1,4 +1,3 @@
-import pytest
 import os
 import time
 import re
@@ -8,13 +7,6 @@ from repo2docker.app import Repo2Docker
 
 
 DIR = os.path.join(os.path.dirname(__file__), 'dockerfile', 'editable')
-
-
-@pytest.fixture(scope="module")
-def run_repo2docker():
-    def run_test(args):
-        return make_test_func(args)()
-    return run_test
 
 
 def test_editable(run_repo2docker):
