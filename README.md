@@ -1,15 +1,19 @@
-# jupyter-repo2docker
+# repo2docker
 
 [![Build Status](https://travis-ci.org/jupyter/repo2docker.svg?branch=master)](https://travis-ci.org/jupyter/repo2docker)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
 
-**jupyter-repo2docker** takes as input a repository source, such as a GitHub
-repository. It then builds, runs, and/or pushes Docker images built from that source.
+`repo2docker` fetches a git repository and builds a container image based on
+the configuration files found in the repository.
 
 See the [repo2docker documentation](http://repo2docker.readthedocs.io)
 for more information.
 
-## Prerequisites
+See the [contributing guide](CONTRIBUTING.md) for information on contributing to
+repo2docker.
+
+## Using repo2docker
+### Prerequisites
 
 1. Docker to build & run the repositories. The [community edition](https://store.docker.com/search?type=edition&offering=community)
    is recommended.
@@ -17,9 +21,11 @@ for more information.
 
 Supported on Linux and macOS. [See documentation note about Windows support.](http://repo2docker.readthedocs.io/en/latest/install.html#note-about-windows-support)
 
-## Installation
+### Installation
 
-To install from PyPI, the python packaging index, using `pip`:
+This a quick guide to installing `repo2docker`, see our documentation for [a full guide](https://repo2docker.readthedocs.io/en/latest/install.html).
+
+To install from PyPI:
 
 ```bash
 pip install jupyter-repo2docker
@@ -33,11 +39,11 @@ cd repo2docker
 pip install -e .
 ```
 
-## Usage
+### Usage
 
-The core feature of repo2docker is to fetch a repository (from GitHub or locally),
+The core feature of repo2docker is to fetch a git repository (from GitHub or locally),
 build a container image based on the specifications found in the repository &
-optionally launch a local Jupyter Notebook you can use to explore it.
+optionally launch the container that you can use to explore the repository.
 
 **Note that Docker needs to be running on your machine for this to work.**
 
@@ -62,11 +68,13 @@ with the contents of the repository you had just built!
 For more information on how to use ``repo2docker``, see the
 [usage guide](http://repo2docker.readthedocs.io/en/latest/usage.html).
 
+
 ## Repository specifications
 
 Repo2Docker looks for configuration files in the source repository to
-determine how the Docker image should be built. It is philosophically similar
-to [Heroku Build Packs](https://devcenter.heroku.com/articles/buildpacks).
+determine how the Docker image should be built. For a list of the configuration
+files that ``repo2docker`` can use, see the
+[complete list of configuration files](https://repo2docker.readthedocs.io/en/latest/config_files.html).
 
-For a list of the configuration files that ``repo2docker`` can use,
-see the [usage guide](http://repo2docker.readthedocs.io/en/latest/usage.html).
+The philosophy of repo2docker is inspired by
+[Heroku Build Packs](https://devcenter.heroku.com/articles/buildpacks).
