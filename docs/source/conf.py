@@ -44,7 +44,7 @@ source_parsers = {
 }
 
 def setup(app):
-    app.add_stylesheet('_static/custom.css')  # may also be an URL
+    app.add_stylesheet('custom.css')  # may also be a URL
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
