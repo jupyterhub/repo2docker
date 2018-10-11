@@ -421,19 +421,24 @@ class Repo2Docker(Application):
         if args.appendix:
             self.appendix = args.appendix
 
+        self.repo = args.repo
+        self.ref = args.ref
+        # if the source exists locally we don't want to delete it at the end
         if os.path.exists(args.repo):
-            # Let's treat this as a local directory we are building
-            self.repo_type = 'local'
-            self.repo = args.repo
-            self.ref = None
             self.cleanup_checkout = False
-            if args.editable:
-                self.volumes[os.path.abspath(args.repo)] = '.'
         else:
-            self.repo_type = 'remote'
-            self.repo = args.repo
-            self.ref = args.ref
             self.cleanup_checkout = args.clean
+
+        # user wants to mount a local directory into the container for
+        # editing
+        if args.editable:
+            if os.path.isdir(args.repo):
+                self.volumes[os.path.abspath(args.repo)] = '.'
+            else:
+                self.log.error('Can not mount "{}" in editable mode '
+                               'as it is not a directory'.format(args.repo),
+                               extra=dict(phase='failed'))
+                sys.exit(1)
 
         if args.json_logs:
             # register JSON excepthook to avoid non-JSON output on errors
@@ -673,7 +678,9 @@ class Repo2Docker(Application):
                     raise e
                 sys.exit(1)
 
-        if self.repo_type == 'local':
+        # if the source is a directory we will keep using it, assuming that
+        # is what the user wanted
+        if os.path.isdir(self.repo):
             checkout_path = self.repo
         else:
             if self.git_workdir is None:
@@ -684,8 +691,7 @@ class Repo2Docker(Application):
         # keep as much as possible in the context manager to make sure we
         # cleanup if things go wrong
         with maybe_cleanup(checkout_path, self.cleanup_checkout):
-            if self.repo_type == 'remote':
-                self.fetch(self.repo, self.ref, checkout_path)
+            self.fetch(self.repo, self.ref, checkout_path)
 
             if self.subdir:
                 checkout_path = os.path.join(checkout_path, self.subdir).rstrip('/')
