@@ -2,7 +2,7 @@
 using PyPlot
 
 # Make sure we are re-using the same conda python
-if PyCall.libpython != "/srv/conda/lib/libpython3.6m"
+if ! startswith(PyCall.libpython, ENV["NB_PYTHON_PREFIX"] * "/lib")
     println("Not re-using conda python! Using " * PyCall.libpython * " instead")
     exit(1)
 end
@@ -16,4 +16,3 @@ if isfile("graph.png")
 else
     exit(1)
 end
-
