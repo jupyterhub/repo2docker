@@ -196,7 +196,7 @@ class Repo2Docker(Application):
         # Pick a content provider based on URL
         picked_content_provider = None
         for CP in self.content_providers:
-            cp = CP(self.log)
+            cp = CP()
             spec = cp.detect(url, ref=ref)
             if spec is not None:
                 picked_content_provider = cp

@@ -4,6 +4,7 @@ Base classes for repo2docker ContentProviders
 ContentProviders accept a `spec` of various kinds, and
 provide the contents from the spec to a given output directory.
 """
+import logging
 import os
 
 
@@ -13,8 +14,8 @@ class ContentProviderException(Exception):
 
 
 class ContentProvider:
-    def __init__(self, logger):
-        self.log = logger
+    def __init__(self):
+        self.log = logging.getLogger("repo2docker")
 
     def detect(self, repo, ref=None, extra_args=None):
         """Determine compatibility between source and this provider.
