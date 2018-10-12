@@ -28,7 +28,7 @@ script:
   popd;
 after_success:
 - pip install codecov
-- codecov
+- cd tests && codecov
 jobs:
   include:
   - stage: deploy
