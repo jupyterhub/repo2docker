@@ -29,7 +29,7 @@ class JuliaBuildPack(CondaBuildPack):
             with open(require) as f:
                 julia_version_line = f.readline().strip()  # First line is optionally a julia version
         except FileNotFoundError:
-             julia_version_line = ''
+            julia_version_line = ''
 
         if not julia_version_line.startswith('julia '):
             # not a Julia version line.
@@ -144,7 +144,7 @@ class JuliaBuildPack(CondaBuildPack):
             # The precompliation is done via `using {libraryname}`.
             r"""
             julia /tmp/install-repo-dependencies.jl "%(require)s"
-            """ % { "require" : require }
+            """ % {"require": require}
             # TODO: For some reason, `rm`ing the file fails with permission denied.
             # && rm /tmp/install-repo-dependencies.jl
         )]
