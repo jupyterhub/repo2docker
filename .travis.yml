@@ -24,11 +24,11 @@ script:
   popd;
 - pip install -r docs/doc-requirements.txt
 - pushd docs;
-  make html;
+  make html || exit 1;
   popd;
 after_success:
 - pip install codecov
-- cd tests && codecov
+- pushd tests && codecov && popd
 jobs:
   include:
   - stage: deploy
