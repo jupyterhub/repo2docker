@@ -7,8 +7,6 @@ and that is the only thing that is tested.
 
 """
 import subprocess
-import requests
-import time
 from repo2docker.app import Repo2Docker
 
 

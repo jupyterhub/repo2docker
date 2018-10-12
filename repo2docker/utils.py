@@ -3,7 +3,6 @@ from functools import partial
 import re
 import shutil
 import subprocess
-import sys
 
 from traitlets import Integer, TraitError
 
