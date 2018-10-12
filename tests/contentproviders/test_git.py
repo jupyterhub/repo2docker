@@ -1,9 +1,8 @@
 from contextlib import contextmanager
-import shutil
 import os
 import subprocess
 from tempfile import TemporaryDirectory
-from repo2docker.contentproviders.git import Git
+from repo2docker.contentproviders import Git
 
 
 @contextmanager
