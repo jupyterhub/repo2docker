@@ -177,5 +177,5 @@ With Dockerfiles, a regular Docker build will be performed.
 .. note::
     If a Dockerfile is present, all other configuration files will be ignored.
 
-See the `Advanced Binder Documentation <https://mybinder.readthedocs.io/en/latest/dockerfile.html>`_ for
+See the `Advanced Binder Documentation <https://mybinder.readthedocs.io/en/latest/tutorials/dockerfile.html>`_ for
 best-practices with Dockerfiles.
