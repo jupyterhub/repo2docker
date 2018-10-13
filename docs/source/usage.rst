@@ -59,9 +59,10 @@ Building a specific branch / commit / tag
 =========================================
 
 To build a particular branch and commit, use the argument ``--ref`` and
-specify the ``branch-name`` or ``commit-hash``. For example::
+specify the ``branch-name`` (use the full remote name) or ``commit-hash``. For example::
 
   jupyter-repo2docker --ref 9ced85dd9a84859d0767369e58f33912a214a3cf https://github.com/norvig/pytudes
+  jupyter-repo2docker --ref origin/master https://github.com/norvig/pytudes
 
 .. tip::
    For reproducible research, we recommend specifying a commit-hash to
