@@ -62,6 +62,16 @@ class Repo2Docker(Application):
         """
     )
 
+    subdir = Unicode(
+        '',
+        config=True,
+        help="""
+        Subdirectory of the git repository to examine.
+
+        Defaults to ''.
+        """
+    )
+
     buildpacks = List(
         [
             LegacyBinderDockerBuildPack,
@@ -356,6 +366,12 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
+            '--subdir',
+            type=str,
+            help=self.traits()['subdir'].help,
+        )
+
+        argparser.add_argument(
             '--version',
             dest='version',
             action='store_true',
@@ -493,6 +509,9 @@ class Repo2Docker(Application):
             print('To specify environment variables, you also need to run '
                   'the container')
             sys.exit(1)
+
+        if args.subdir:
+            self.subdir = args.subdir
 
         self.environment = args.environment
 
@@ -655,6 +674,12 @@ class Repo2Docker(Application):
         with maybe_cleanup(checkout_path, self.cleanup_checkout):
             if self.repo_type == 'remote':
                 self.fetch(self.repo, self.ref, checkout_path)
+
+            if self.subdir:
+                checkout_path = os.path.join(checkout_path, self.subdir).rstrip('/')
+                if not os.path.exists(checkout_path):
+                    self.log.error('Subdirectory %s does not exist', self.subdir, extra=dict(phase='failure'))
+                    sys.exit(1)
 
             os.chdir(checkout_path)
 
