@@ -2,11 +2,43 @@
 
 This document covers:
 
+- Process for making a code contribution
 - Setting up for Local Development
 - Running Tests
 - Updating and Freezing BuildPack Dependencies
-- Merging a Pull Request
+- Updating the change log
 - Creating a Release
+
+
+## Process for making a code contribution
+
+This outlines the process for getting changes to the code of
+repo2docker merged. This serves as information on when a PR is "done".
+
+Contributions should follow these guidelines:
+
+* all changes by pull request (PR);
+* please prefix the title of your pull request with `[MRG]` if the contribution
+  is complete and should be subjected to a detailed review;
+* create a PR as early as possible, marking it with `[WIP]` while you work on
+  it (good to avoid duplicated work, get broad review of functionality or API,
+  or seek collaborators);
+* a PR solves one problem (do not mix problems together in one PR) with the
+  minimal set of changes;
+* describe why you are proposing the changes you are proposing;
+* try to not rush changes (the definition of rush depends on how big your
+  changes are);
+* someone else has to merge your PR;
+* new code needs to come with a test;
+* apply [PEP8](https://www.python.org/dev/peps/pep-0008/) as much
+  as possible, but not too much;
+* no merging if travis is red;
+* do use merge commits instead of merge-by-squashing/-rebasing. This makes it
+  easier to find all changes since the last deployment `git log --merges --pretty=format:"%h %<(10,trunc)%an %<(15)%ar %s" <deployed-revision>..`
+* [when you merge do deploy to mybinder.org](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
+
+These are not hard rules to be enforced by :police_car: but instead guidelines.
+
 
 ## Setting up for Local Development
 
@@ -43,6 +75,7 @@ python3 -m venv .
 source bin/activate
 pip3 install -e .
 pip3 install -r dev-requirements.txt
+pip3 install -r docs/doc-requirements.txt
 ```
 
 This should install all the libraries required for testing & running repo2docker!
@@ -80,6 +113,7 @@ Server:
 ```
 
 Then you are good to go!
+
 
 ## Running tests
 
@@ -159,53 +193,67 @@ See the subsections below for more detailed instructions.
     repo2docker/buildpacks/conda/environment.py-3.6.frozen.yml
     ```
 
-4. Make a pull request.
+5. Make a pull request; see details below.
+
+6. Once the pull request is approved (but not yet merged), Update the
+   change log (details below) and commit the change log, then update
+   the pull request.
+
+
+### Change log
+
+To add your change to the change log, find the relevant Feature/Bug
+fix/API change section for the next release near the top of the file;
+then add one or two sentences as a new bullet point about your
+changes. Include the pull request or issue number between square
+brackets at the end.
+
+Some details:
+
+- versioning follows the x.y.z, major.minor.bugfix numbering
+
+- bug fixes go into the next bugfix release. If there isn't any, you
+  can create a new section (see point below). Don't worry if you're
+  not sure about that, and think it should go into a next major or
+  minor release: an admin will let you know, or move the change later
+  to the appropriate section
+
+- API changes should preferably go into the next major release, unless
+  they are backward compatible (for example, a deprecated function
+  keyword): then they can go into the next minor release. For release
+  with major release 0, non-backward compatible breaking changes are
+  also fine for the next minor release.
+
+- new features should go into the next minor release.
+
+- if there is no section for the appropriate release, you can add one:
+
+  follow the versioning scheme, by simply increasing the relevant
+  number for one of the major /minor/bugfix numbers, appropriate for
+  your change (see the above bullet points); add the release
+  section. Then add three subsections: new features, api changes, and
+  bug fixes. Leave out the sections that are not appropriate for the
+  newlye added release section.
+
+Release candidate versions in the change log are only temporary, and
+should be superseded by either a next release candidate, or the final
+release for that version (bugfix version 0).
+
 
 ### Make a Pull Request
 
-Once you've made the commit, please make a Pull Request to the `jupyter/repo2docker`
+Once you've made the commit, please make a Pull Request to the `jupyterhub/repo2docker`
 repository, with a description of what versions were bumped / what new packages were
 added and why. If you fix a bug or add new functionality consider adding a new
 test to prevent the bug from coming back/the feature breaking in the future.
-
-
-## Merging a Pull Request
-
-There are not a lot of rules around merging a Pull Request (PR), we rely on
-individuals to be responsible and tread softly when doing so. Below a few
-standard procedures that have proven useful over time that we do follow:
-
-* do not merge your own PR
-* wait for Travis to complete
-* check if test coverage has gone up or down, consider discussing additional
-  tests to keep coverage at the same level or even increase it
-* do use merge commits instead of merge-by-squashing/-rebasing. This makes it
-  easier to find all changes since the last deployment `git log --merges --pretty=format:"%h %<(10,trunc)%an %<(15)%ar %s" <deployed-revision>..`
-* [when you merge do deploy to mybinder.org](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
-
 
 
 ## Creating a Release
 
 We try to make a release of repo2docker every few months if possible.
 
-## Obtain access credentials
+We follow semantic versioning.
 
-To release repo2docker, you will need proper access credentials prior to beginning the process.
+Check hat the Change log is ready and then tag a new release on GitHub.
 
-1. Access to the PyPI package for repo2docker
-2. Access to push tags to the jupyter/repo2docker repository
-3. Access to push images to dockerhub on jupyter/repo2docker
-
-If you do not have access to any of these, please contact a current maintainer of the project!
-
-## Release Process Steps
-
-1. Make a new release on GitHub. When the tag is create travis will build
-   and deploy that tag as the latest release.
-
-2. Tag and push a docker image:
-   ```bash
-   docker build -t jupyter/repo2docker:v<version> .
-   docker push jupyter/repo2docker:v<version>
-   ```
+When the travis run completes check that the new release is available on PyPI.

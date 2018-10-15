@@ -1,0 +1,3 @@
+[run]
+# this file comes from versioneer and we don't test it
+omit = */_version.py

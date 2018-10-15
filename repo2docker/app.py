@@ -177,8 +177,11 @@ class Repo2Docker(Application):
     def fetch(self, url, ref, checkout_path):
         """Check out a repo using url and ref to the checkout_path location"""
         try:
-            for line in execute_cmd(['git', 'clone', '--recursive', url, checkout_path],
-                                    capture=self.json_logs):
+            cmd = ['git', 'clone', '--recursive']
+            if not ref:
+                cmd.extend(['--depth', '1'])
+            cmd.extend([url, checkout_path])
+            for line in execute_cmd(cmd, capture=self.json_logs):
                 self.log.info(line, extra=dict(phase='fetching'))
         except subprocess.CalledProcessError:
             self.log.error('Failed to clone repository!',
@@ -350,6 +353,13 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
+            '--editable', '-E',
+            dest='editable',
+            action='store_true',
+            help='Use the local repository in edit mode',
+        )
+
+        argparser.add_argument(
             '--appendix',
             type=str,
             help=self.traits()['appendix'].help,
@@ -405,6 +415,8 @@ class Repo2Docker(Application):
             self.repo = args.repo
             self.ref = None
             self.cleanup_checkout = False
+            if args.editable:
+                self.volumes[os.path.abspath(args.repo)] = '.'
         else:
             self.repo_type = 'remote'
             self.repo = args.repo
