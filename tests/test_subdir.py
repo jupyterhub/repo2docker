@@ -7,6 +7,7 @@ from os.path import abspath, dirname
 import pytest
 from repo2docker.app import Repo2Docker
 
+# This is the path to the repo2docker git repository that this file exists in.
 repo_path = dirname(dirname(abspath(__file__)))
 
 
