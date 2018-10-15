@@ -23,8 +23,11 @@ def test_subdir_invalid(caplog):
     app.initialize(argv)
     app.debug = True
     app.run = False
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as excinfo:
         app.start()  # Just build the image and do not run it.
+
+    # The build should fail
+    assert excinfo.value.code == 1
 
     # Can't get this to record the logs?
     # assert caplog.text == "Subdirectory tests/conda/invalid does not exist"
