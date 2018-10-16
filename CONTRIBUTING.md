@@ -175,7 +175,8 @@ See the subsections below for more detailed instructions.
    an existing package, you should then run:
 
    ```bash
-   python ./repo2docker/buildpacks/conda/freeze.py
+   cd ./repo2docker/buildpacks/conda/
+   python freeze.py
    ```
 
    This script will resolve dependencies and write them to the respective `.frozen.yml`
