@@ -192,11 +192,14 @@ class Repo2Docker(Application):
     )
 
     def fetch(self, url, ref, checkout_path):
-        """Check out a repo using url and ref to the checkout_path location"""
-        # Pick a content provider based on URL
+        """Check out a repo using url and ref to the checkout_path locationself.
+
+        Iterate through possible content providers until a valid provider,
+        based on URL, is found.
+        """
         picked_content_provider = None
-        for CP in self.content_providers:
-            cp = CP()
+        for ContentProvider in self.content_providers:
+            cp = ContentProvider()
             spec = cp.detect(url, ref=ref)
             if spec is not None:
                 picked_content_provider = cp
@@ -433,7 +436,9 @@ class Repo2Docker(Application):
         # editing
         if args.editable:
             # the user has to point at a directory, not just a path for us
-            # to be able to mount it
+            # to be able to mount it. We might have content providers that can
+            # provide content from a local `something.zip` file, which we
+            # couldn't mount in editable mode
             if os.path.isdir(args.repo):
                 self.volumes[os.path.abspath(args.repo)] = '.'
             else:
@@ -680,10 +685,11 @@ class Repo2Docker(Application):
                     raise e
                 sys.exit(1)
 
-        # if the source is a directory we will keep using it, assuming that
-        # is what the user wanted. This is how repo2docker has been working so
-        # far. Reusing a local directory seems better than making a copy of it
-        # as it might contain large files that would be expensive to copy.
+        # If the source to be executed is a directory, continue using the
+        # directory. In the case of a local directory, it is used as both the
+        # source and target. Reusing a local directory seems better than
+        # making a copy of it as it might contain large files that would be
+        # expensive to copy.
         if os.path.isdir(self.repo):
             checkout_path = self.repo
         else:
