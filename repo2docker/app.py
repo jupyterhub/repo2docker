@@ -30,12 +30,12 @@ from traitlets.config import Application
 from . import __version__
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, JuliaBuildPack, BaseImage,
-    RBuildPack
+    CondaBuildPack, JuliaBuildPack, RBuildPack
 )
+from . import contentproviders
 from .utils import (
-    execute_cmd, ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
-    validate_and_generate_port_mapping, check_ref
+    ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
+    validate_and_generate_port_mapping
 )
 
 
@@ -92,6 +92,23 @@ class Repo2Docker(Application):
         config=True,
         help="""
         The default build pack to use when no other buildpacks are found.
+        """
+    )
+
+    # Git is our content provider of last resort. This is to maintain the
+    # old behaviour when git and local directories were the only supported
+    # content providers. We can detect local directories from the path, but
+    # detecting if something will successfully `git clone` is very hard if all
+    # you can do is look at the path/URL to it.
+    content_providers = List(
+        [
+            contentproviders.Local,
+            contentproviders.Git,
+        ],
+        config=True,
+        help="""
+        Ordered list by priority of ContentProviders to try in turn to fetch
+        the contents specified by the user.
         """
     )
 
@@ -175,30 +192,28 @@ class Repo2Docker(Application):
     )
 
     def fetch(self, url, ref, checkout_path):
-        """Check out a repo using url and ref to the checkout_path location"""
-        try:
-            cmd = ['git', 'clone', '--recursive']
-            if not ref:
-                cmd.extend(['--depth', '1'])
-            cmd.extend([url, checkout_path])
-            for line in execute_cmd(cmd, capture=self.json_logs):
-                self.log.info(line, extra=dict(phase='fetching'))
-        except subprocess.CalledProcessError:
-            self.log.error('Failed to clone repository!',
-                           extra=dict(phase='failed'))
-            sys.exit(1)
+        """Check out a repo using url and ref to the checkout_path locationself.
 
-        if ref:
-            hash = check_ref(ref, checkout_path)
-            if hash is None:
-                self.log.error('Failed to check out ref %s', ref,
-                               extra=dict(phase='failed'))
-                sys.exit(1)
-            # If the hash is resolved above, we should be able to reset to it
-            for line in execute_cmd(['git', 'reset', '--hard', hash],
-                                    cwd=checkout_path,
-                                    capture=self.json_logs):
-                self.log.info(line, extra=dict(phase='fetching'))
+        Iterate through possible content providers until a valid provider,
+        based on URL, is found.
+        """
+        picked_content_provider = None
+        for ContentProvider in self.content_providers:
+            cp = ContentProvider()
+            spec = cp.detect(url, ref=ref)
+            if spec is not None:
+                picked_content_provider = cp
+                self.log.info("Picked {cp} content "
+                              "provider.\n".format(cp=cp.__class__.__name__))
+                break
+
+        if picked_content_provider is None:
+            self.log.error("No matching content provider found for "
+                           "{url}.".format(url=url))
+
+        for log_line in picked_content_provider.fetch(
+                spec, checkout_path, yield_output=self.json_logs):
+            self.log.info(log_line, extra=dict(phase='fetching'))
 
     def validate_image_name(self, image_name):
         """
@@ -409,19 +424,28 @@ class Repo2Docker(Application):
         if args.appendix:
             self.appendix = args.appendix
 
+        self.repo = args.repo
+        self.ref = args.ref
+        # if the source exists locally we don't want to delete it at the end
         if os.path.exists(args.repo):
-            # Let's treat this as a local directory we are building
-            self.repo_type = 'local'
-            self.repo = args.repo
-            self.ref = None
             self.cleanup_checkout = False
-            if args.editable:
-                self.volumes[os.path.abspath(args.repo)] = '.'
         else:
-            self.repo_type = 'remote'
-            self.repo = args.repo
-            self.ref = args.ref
             self.cleanup_checkout = args.clean
+
+        # user wants to mount a local directory into the container for
+        # editing
+        if args.editable:
+            # the user has to point at a directory, not just a path for us
+            # to be able to mount it. We might have content providers that can
+            # provide content from a local `something.zip` file, which we
+            # couldn't mount in editable mode
+            if os.path.isdir(args.repo):
+                self.volumes[os.path.abspath(args.repo)] = '.'
+            else:
+                self.log.error('Can not mount "{}" in editable mode '
+                               'as it is not a directory'.format(args.repo),
+                               extra=dict(phase='failed'))
+                sys.exit(1)
 
         if args.json_logs:
             # register JSON excepthook to avoid non-JSON output on errors
@@ -661,7 +685,12 @@ class Repo2Docker(Application):
                     raise e
                 sys.exit(1)
 
-        if self.repo_type == 'local':
+        # If the source to be executed is a directory, continue using the
+        # directory. In the case of a local directory, it is used as both the
+        # source and target. Reusing a local directory seems better than
+        # making a copy of it as it might contain large files that would be
+        # expensive to copy.
+        if os.path.isdir(self.repo):
             checkout_path = self.repo
         else:
             if self.git_workdir is None:
@@ -672,8 +701,7 @@ class Repo2Docker(Application):
         # keep as much as possible in the context manager to make sure we
         # cleanup if things go wrong
         with maybe_cleanup(checkout_path, self.cleanup_checkout):
-            if self.repo_type == 'remote':
-                self.fetch(self.repo, self.ref, checkout_path)
+            self.fetch(self.repo, self.ref, checkout_path)
 
             if self.subdir:
                 checkout_path = os.path.join(checkout_path, self.subdir).rstrip('/')
