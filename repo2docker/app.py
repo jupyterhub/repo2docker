@@ -35,7 +35,7 @@ from .buildpacks import (
 from . import contentproviders
 from .utils import (
     ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
-    validate_and_generate_port_mapping, execute_cmd, check_ref, chdir
+    validate_and_generate_port_mapping, chdir
 )
 
 

@@ -31,8 +31,9 @@ def test_subdir_invalid(caplog):
     argv = ['--subdir', 'invalid-sub-dir', TEST_REPO]
     app.initialize(argv)
     app.debug = True
-    # no build implies no run
+    # no build does not imply no run
     app.build = False
+    app.run = False
     with pytest.raises(SystemExit) as excinfo:
         app.start()  # Just build the image and do not run it.
 
