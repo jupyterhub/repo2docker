@@ -35,7 +35,7 @@ from .buildpacks import (
 from . import contentproviders
 from .utils import (
     ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
-    validate_and_generate_port_mapping
+    validate_and_generate_port_mapping, execute_cmd, check_ref, chdir
 )
 
 
@@ -710,43 +710,42 @@ class Repo2Docker(Application):
                                    self.subdir, extra=dict(phase='failure'))
                     sys.exit(1)
 
-            os.chdir(checkout_path)
+            with chdir(checkout_path):
+                for BP in self.buildpacks:
+                    bp = BP()
+                    if bp.detect():
+                        picked_buildpack = bp
+                        break
+                else:
+                    picked_buildpack = self.default_buildpack()
 
-            for BP in self.buildpacks:
-                bp = BP()
-                if bp.detect():
-                    picked_buildpack = bp
-                    break
-            else:
-                picked_buildpack = self.default_buildpack()
+                picked_buildpack.appendix = self.appendix
 
-            picked_buildpack.appendix = self.appendix
+                self.log.debug(picked_buildpack.render(),
+                               extra=dict(phase='building'))
 
-            self.log.debug(picked_buildpack.render(),
-                           extra=dict(phase='building'))
+                if self.build:
+                    build_args = {
+                        'NB_USER': self.user_name,
+                        'NB_UID': str(self.user_id)
+                    }
+                    self.log.info('Using %s builder\n', bp.__class__.__name__,
+                                  extra=dict(phase='building'))
 
-            if self.build:
-                build_args = {
-                    'NB_USER': self.user_name,
-                    'NB_UID': str(self.user_id)
-                }
-                self.log.info('Using %s builder\n', bp.__class__.__name__,
-                              extra=dict(phase='building'))
-
-                for l in picked_buildpack.build(self.output_image_spec,
-                    self.build_memory_limit, build_args):
-                    if 'stream' in l:
-                        self.log.info(l['stream'],
-                                      extra=dict(phase='building'))
-                    elif 'error' in l:
-                        self.log.info(l['error'], extra=dict(phase='failure'))
-                        sys.exit(1)
-                    elif 'status' in l:
-                            self.log.info('Fetching base image...\r',
+                    for l in picked_buildpack.build(self.output_image_spec,
+                        self.build_memory_limit, build_args):
+                        if 'stream' in l:
+                            self.log.info(l['stream'],
                                           extra=dict(phase='building'))
-                    else:
-                        self.log.info(json.dumps(l),
-                                      extra=dict(phase='building'))
+                        elif 'error' in l:
+                            self.log.info(l['error'], extra=dict(phase='failure'))
+                            sys.exit(1)
+                        elif 'status' in l:
+                                self.log.info('Fetching base image...\r',
+                                              extra=dict(phase='building'))
+                        else:
+                            self.log.info(json.dumps(l),
+                                          extra=dict(phase='building'))
 
         if self.push:
             self.push_image()
