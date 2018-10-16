@@ -148,7 +148,7 @@ To update one of the dependencies shared across all `repo2docker` builds, you
 must follow these steps (with more detailed information in the sections below):
 
 * Make sure you have [Docker](https://www.docker.com/) running on your computer
-* Bump the version number in the `conda` environment ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#conda-dependencies))
+* Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#conda-dependencies))
 * Make a pull request with your changes ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#make-a-pull-request))
 
 See the subsections below for more detailed instructions.
