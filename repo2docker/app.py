@@ -704,9 +704,10 @@ class Repo2Docker(Application):
             self.fetch(self.repo, self.ref, checkout_path)
 
             if self.subdir:
-                checkout_path = os.path.join(checkout_path, self.subdir).rstrip('/')
-                if not os.path.exists(checkout_path):
-                    self.log.error('Subdirectory %s does not exist', self.subdir, extra=dict(phase='failure'))
+                checkout_path = os.path.join(checkout_path, self.subdir)
+                if not os.path.isdir(checkout_path):
+                    self.log.error('Subdirectory %s does not exist',
+                                   self.subdir, extra=dict(phase='failure'))
                     sys.exit(1)
 
             os.chdir(checkout_path)
