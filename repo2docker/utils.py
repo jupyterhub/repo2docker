@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from functools import partial
+import os
 import re
 import shutil
 import subprocess
@@ -49,6 +50,21 @@ def execute_cmd(cmd, capture=False, **kwargs):
         ret = proc.wait()
         if ret != 0:
             raise subprocess.CalledProcessError(ret, cmd)
+
+
+@contextmanager
+def chdir(path):
+    """Change working directory to `path` and restore it again
+
+    This context maanger is useful if `path` stops existing during your
+    operations.
+    """
+    old_dir = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(old_dir)
 
 
 @contextmanager
