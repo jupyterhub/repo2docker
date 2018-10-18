@@ -1,0 +1,8 @@
+[dev-packages]
+pyyaml="*"
+pytest="*"
+wheel="*"
+pytest-cov="*"
+
+[packages]
+repo2docker = {path=".", editable=true}
