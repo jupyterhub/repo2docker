@@ -8,8 +8,20 @@ _term() {
 
 trap _term SIGTERM
 
-echo "$*"
-nix-shell default.nix --command "$*" &
+echo 'command:' "$@"
+
+# a script in the binder sub-directory take precedence
+if [ -f ./binder/start ]; then
+  chmod u+x ./binder/start
+  nix-shell default.nix --command "./binder/start $@" &
+elif [ -f ./start ]; then
+  chmod u+x ./start
+  nix-shell default.nix --command "./start $@" &
+else
+  nix-shell default.nix --command "$@" &
+fi
 
 PID=$!
+echo 'waiting'
+
 wait "$PID"
