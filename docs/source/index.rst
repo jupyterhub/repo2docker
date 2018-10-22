@@ -21,6 +21,7 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
 
    install
    usage
+   faq
 
 .. toctree::
    :maxdepth: 1
@@ -29,6 +30,7 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    howto/user_interface
    howto/languages
    howto/jupyterhub_images
+   howto/deploy
 
 .. toctree::
    :maxdepth: 2
@@ -37,11 +39,11 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    config_files
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Advanced and developer information
+   :maxdepth: 2
+   :caption: Contribute to repo2docker
 
-   faq
-   deploy
-   design
+   contributing/contributing
    architecture
-   dev_newbuildpack
+   design
+   contributing/tasks
+   contributing/buildpack

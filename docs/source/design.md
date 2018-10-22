@@ -1,4 +1,4 @@
-# Design
+# Design of repo2docker
 
 The repo2docker buildpacks are inspired by
 [Heroku's Build Packs](https://devcenter.heroku.com/articles/buildpacks).
