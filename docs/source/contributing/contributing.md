@@ -54,10 +54,10 @@ To develop & test repo2docker locally, you need:
 ### Clone the repository
 
 First, you need to get a copy of the repo2docker git repository on your local
-disk.
+disk. Fork the repository on GitHub, then clone it to your computer:
 
 ```bash
-git clone https://github.com/jupyter/repo2docker
+git clone https://github.com/<your-username>/repo2docker
 ```
 
 This will clone repo2docker into a directory called `repo2docker`. You can
