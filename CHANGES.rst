@@ -6,13 +6,19 @@ Release date: unknown
 New features
 ------------
 
-- Editable mode: allows editing a local repository from a live container [#421]
-
-- Change log added [#426]
+- Build from sub-directory: build the image based on a sub-directory of a
+  repository `#413`_ by `@dsludwig`_.
+- Editable mode: allows editing a local repository from a live container
+  `#421`_ by `@evertrol`_.
+- Change log added `#426`_ by `@evertrol`_.
+- Documentation: improved the documentation for contributors `#453`_ by
+  `@choldgraf`_.
 
 
 API changes
 -----------
+
+- Add content provider abstraction `#421`_ by `@betatim`_.
 
 
 Bug fixes
@@ -54,3 +60,14 @@ Version 0.1
 ===========
 
 Released 2017-04-14
+
+.. _#453: https://github.com/jupyter/repo2docker/pull/453
+.. _#413: https://github.com/jupyter/repo2docker/pull/413
+.. _#421: https://github.com/jupyter/repo2docker/pull/421
+.. _#426: https://github.com/jupyter/repo2docker/pull/426
+.. _#242: https://github.com/jupyter/repo2docker/pull/242
+
+.. _@betatim: https://github.com/betatim
+.. _@choldgraf: https://github.com/choldgraf
+.. _@dsludwig: https://github.com/dsludwig
+.. _@evertrol: https://github.com/evertrol
