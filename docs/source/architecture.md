@@ -1,4 +1,4 @@
-# Architecture
+# Architecture of repo2docker
 
 This is a living document talking about the architecture of repo2docker
 from various perspectives.
