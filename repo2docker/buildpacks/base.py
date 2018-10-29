@@ -273,13 +273,43 @@ class BuildPack:
         self._stencila_manifest_dir = None
         for root, dirs, files in os.walk("."):
             if "manifest.xml" in files:
+                self.log.debug("Found a manifest.xml at %s", root)
                 self._stencila_manifest_dir = root.split(os.path.sep, 1)[1]
                 self.log.info(
-                    "Found stencila manifest.xml in %s",
+                    "Using stencila manifest.xml in %s",
                     self._stencila_manifest_dir,
                 )
                 break
         return self._stencila_manifest_dir
+
+    @property
+    def stencila_manifest_contexts(self):
+        """Find the stencila manifest contexts if it exists"""
+        if hasattr(self, '_stencila_manifest_contexts'):
+            return self._stencila_manifest_contexts
+
+        # look at the content of the jats.xml file to extract the required execution contexts
+
+        self._stencila_manifest_contexts = None
+        for root, dirs, files in os.walk("."):
+            for filename in files:
+                if filename.endswith(".test.jats.xml"):
+                    self.log.debug("Found a .jats.xml: %s", filename)
+                    self._stencila_manifest_contexts = set()
+
+                    # extract code languages from file
+                    with open(os.path.join(root, filename)) as f:
+                        for line in f:
+                            match = re.match('.*language="(.+?)"', line)
+                            if match:
+                                self._stencila_manifest_contexts.add(match.group(1))
+
+                    self.log.info(
+                        "Using stencila executions contexts %s",
+                        self._stencila_manifest_contexts,
+                    )
+                    break
+        return self._stencila_manifest_contexts
 
     def get_build_scripts(self):
         """
@@ -518,14 +548,41 @@ class BaseImage(BuildPack):
             ))
         except FileNotFoundError:
             pass
+        if self.stencila_manifest_contexts:
+            for context in self.stencila_manifest_contexts:
+                if(context == 'r'):
+
+                    # TODO: can I trigger the RBuildPack from here?
+
+                    assemble_scripts.extend(
+                        [
+                            (
+                                "${NB_USER}",
+                                r"""
+                                R --quiet -e "library('devtools'); options(unzip = 'internal'); devtools::install_github('stencila/r', ref = 'f220361438432abca968d2e76a4efe7c5ddde7f1')" && \
+                                R --quiet -e "stencila::register()"
+                                """,
+                            )
+                        ]
+                    )
+                elif(context == 'py' or context == 'pyjp'):
+                    assemble_scripts.extend(
+                        [
+                            (
+                                "${NB_USER}",
+                                r"""
+                                ${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache https://github.com/stencila/py/archive/f6a245fd.tar.gz && \
+                                ${KERNEL_PYTHON_PREFIX}/bin/python -m stencila register
+                                """,
+                            )
+                        ]
+                    )
         if self.stencila_manifest_dir:
             assemble_scripts.extend(
                 [
                     (
                         "${NB_USER}",
                         r"""
-                        ${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache https://github.com/stencila/py/archive/f6a245fd.tar.gz && \
-                        ${KERNEL_PYTHON_PREFIX}/bin/python -m stencila register && \
                         ${NB_PYTHON_PREFIX}/bin/pip install --no-cache nbstencilaproxy==0.1.1 && \
                         jupyter serverextension enable --sys-prefix --py nbstencilaproxy && \
                         jupyter nbextension install    --sys-prefix --py nbstencilaproxy && \
