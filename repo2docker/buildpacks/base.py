@@ -332,7 +332,7 @@ class BuildPack:
         An ordered list of executable scripts to execute after build.
 
         Is run as a non-root user, and must be executable. Used for performing
-        build time steps that can not be perfomed with standard tools.
+        build time steps that can not be performed with standard tools.
 
         The scripts should be as deterministic as possible - running it twice
         should not produce different results!
@@ -341,12 +341,12 @@ class BuildPack:
 
     def get_start_script(self):
         """
-        The path to a script to be executated at container start up.
+        The path to a script to be executed at container start up.
 
         This script is added as the `ENTRYPOINT` to the container.
 
         It is run as a non-root user, and must be executable. Used for performing
-        run time steps that can not be perfomed with standard tools. For example
+        run time steps that can not be performed with standard tools. For example
         setting environment variables for your repository.
 
         The script should be as deterministic as possible - running it twice
