@@ -271,6 +271,10 @@ class BuildPack:
         # ${STENCILA_ARCHIVE_DIR}/${STENCILA_ARCHIVE}/manifest.xml
 
         self._stencila_manifest_dir = None
+
+        if os.path.exists('binder'):
+            return self._stencila_manifest_dir
+
         for root, dirs, files in os.walk("."):
             if "manifest.xml" in files:
                 self.log.debug("Found a manifest.xml at %s", root)
@@ -291,6 +295,10 @@ class BuildPack:
         # look at the content of the jats.xml file to extract the required execution contexts
 
         self._stencila_manifest_contexts = None
+
+        if os.path.exists('binder'):
+            return self._stencila_manifest_contexts
+
         for root, dirs, files in os.walk("."):
             for filename in files:
                 if filename.endswith(".test.jats.xml"):
