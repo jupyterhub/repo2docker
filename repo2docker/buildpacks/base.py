@@ -7,6 +7,7 @@ import re
 import logging
 import docker
 import sys
+import xml.etree.ElementTree as ET
 
 TEMPLATE = r"""
 FROM buildpack-deps:bionic
@@ -289,28 +290,31 @@ class BuildPack:
         if hasattr(self, '_stencila_contexts'):
             return self._stencila_contexts
 
-        # look at the content of the jats.xml file to extract the required execution contexts
+        # look at the content of the documents in the manifest to extract the required execution contexts
+        self._stencila_contexts = set()
 
-        self._stencila_contexts = []
+        # get paths to the article files from manifest
+        files = []
+        if (self.stencila_manifest_dir):
+            manifest = ET.parse(os.path.join(self.stencila_manifest_dir, 'manifest.xml'))
+            files = list(map(lambda x: os.path.join(self.stencila_manifest_dir, x.get('path')), manifest.findall('./documents/document')))
+        else:
+            return self._stencila_contexts
 
-        for root, dirs, files in os.walk("."):
-            for filename in files:
-                if filename.endswith(".jats.xml"):
-                    self.log.debug("Found a .jats.xml: %s", filename)
-                    self._stencila_contexts = set()
+        for filename in files:
+            self.log.debug("Extracting contexts from %s", filename)
 
-                    # extract code languages from file
-                    with open(os.path.join(root, filename)) as f:
-                        for line in f:
-                            match = re.match('.*language="(.+?)"', line)
-                            if match:
-                                self._stencila_contexts.add(match.group(1))
+            # extract code languages from file
+            document = ET.parse(filename)
+            languages = list(map(lambda x: x.get('language'), document.findall('.//code[@specific-use="source"]')))
+            self._stencila_contexts.update(languages)
 
-                    self.log.info(
-                        "Using stencila executions contexts %s",
-                        self._stencila_contexts,
-                    )
-                    break
+            self.log.info(
+                "Added executions contexts, now have %s",
+                self._stencila_contexts,
+            )
+            break
+        
         return self._stencila_contexts
 
     def get_build_scripts(self):
