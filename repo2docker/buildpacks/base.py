@@ -301,7 +301,7 @@ class BuildPack:
 
         for root, dirs, files in os.walk("."):
             for filename in files:
-                if filename.endswith(".test.jats.xml"):
+                if filename.endswith(".jats.xml"):
                     self.log.debug("Found a .jats.xml: %s", filename)
                     self._stencila_manifest_contexts = set()
 
@@ -558,22 +558,7 @@ class BaseImage(BuildPack):
             pass
         if self.stencila_manifest_contexts:
             for context in self.stencila_manifest_contexts:
-                if(context == 'r'):
-
-                    # TODO: can I trigger the RBuildPack from here?
-
-                    assemble_scripts.extend(
-                        [
-                            (
-                                "${NB_USER}",
-                                r"""
-                                R --quiet -e "library('devtools'); options(unzip = 'internal'); devtools::install_github('stencila/r', ref = 'f220361438432abca968d2e76a4efe7c5ddde7f1')" && \
-                                R --quiet -e "stencila::register()"
-                                """,
-                            )
-                        ]
-                    )
-                elif(context == 'py' or context == 'pyjp'):
+                if(context == 'py' or context == 'pyjp'):
                     assemble_scripts.extend(
                         [
                             (
@@ -585,6 +570,8 @@ class BaseImage(BuildPack):
                             )
                         ]
                     )
+                #elif(context == 'r'):
+                    # handled in RBuildPack
         if self.stencila_manifest_dir:
             assemble_scripts.extend(
                 [
