@@ -117,7 +117,7 @@ If your repository contains a Stencila document, repo2docker detects it based on
 The required `execution contexts <https://stenci.la/learn/intro.html>` are extracted from a Dar article (i.e.
 files named ``*.jats.xml``).
 
-You may also have a ``runtime.txt`` and/or an ``install.R`` to manually configure the your R installation.
+You may also have a ``runtime.txt`` and/or an ``install.R`` to manually configure your R installation.
 
 To see example repositories, visit our
 `Stencila with R <https://github.com/binder-examples/stencila-r/>`_ and 
