@@ -557,21 +557,20 @@ class BaseImage(BuildPack):
         except FileNotFoundError:
             pass
         if self.stencila_manifest_contexts:
-            for context in self.stencila_manifest_contexts:
-                if(context == 'py' or context == 'pyjp'):
-                    assemble_scripts.extend(
-                        [
-                            (
-                                "${NB_USER}",
-                                r"""
-                                ${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache https://github.com/stencila/py/archive/f1260796.tar.gz && \
-                                ${KERNEL_PYTHON_PREFIX}/bin/python -m stencila register
-                                """,
-                            )
-                        ]
-                    )
-                #elif(context == 'r'):
-                    # handled in RBuildPack
+            if {'py', 'pyjp'}.intersection(self.stencila_manifest_contexts):
+                assemble_scripts.extend(
+                    [
+                        (
+                            "${NB_USER}",
+                            r"""
+                            ${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache https://github.com/stencila/py/archive/f1260796.tar.gz && \
+                            ${KERNEL_PYTHON_PREFIX}/bin/python -m stencila register
+                            """,
+                        )
+                    ]
+                )
+            #if {'r'}.intersection(self.stencila_manifest_contexts):
+                # handled in RBuildPack
         if self.stencila_manifest_dir:
             assemble_scripts.extend(
                 [
