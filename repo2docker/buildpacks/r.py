@@ -79,14 +79,13 @@ class RBuildPack(PythonBuildPack):
             return True
 
         description_R = 'DESCRIPTION'
-        if not os.path.exists('binder'): 
-            if os.path.exists(description_R) or (self.stencila_manifest_contexts and "r" in self.stencila_manifest_contexts):
-                if not self.checkpoint_date:
-                    # no R snapshot date set through runtime.txt
-                    # set the R runtime to the latest date that is guaranteed to be on MRAN across timezones
-                    self._checkpoint_date = datetime.date.today() - datetime.timedelta(days=2)
-                    self._runtime = "r-{}".format(str(self._checkpoint_date))
-                return True
+        if (not os.path.exists('binder') and os.path.exists(description_R)) or 'r' in self.stencila_manifest_contexts:
+            if not self.checkpoint_date:
+                # no R snapshot date set through runtime.txt
+                # set the R runtime to the latest date that is guaranteed to be on MRAN across timezones
+                self._checkpoint_date = datetime.date.today() - datetime.timedelta(days=2)
+                self._runtime = "r-{}".format(str(self._checkpoint_date))
+            return True
 
     def get_path(self):
         """
