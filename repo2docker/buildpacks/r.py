@@ -19,15 +19,22 @@ class RBuildPack(PythonBuildPack):
        date snapshot of https://mran.microsoft.com/timemachine
        from which libraries are to be installed.
 
-    2. A `DESCRIPTION` file signaling an R package, or
-       a Stencila document (*.jats.xml) with R code chunks (i.e. language="r")
-       is found:
+    2. A `DESCRIPTION` file signaling an R package
 
-       MRAN snapshot is set to latest date that is guaranteed to exist
-       across timezones.
+    3. A Stencila document (*.jats.xml) with R code chunks (i.e. language="r")
 
-    3. (Optional) An `install.R` file that will be executed at build time,
-       and can be used for installing packages from both MRAN and GitHub.
+    If there is no `runtime.txt`, then the MRAN snapshot is set to latest
+    date that is guaranteed to exist across timezones.
+
+    R packages are installed if specified either
+
+    - in a file `install.R`, that will be executed at build time,
+      and can be used for installing packages from both MRAN and GitHub
+
+    - as dependencies in a `DESCRIPTION` file
+
+    - are needed by a specific tool, for example the package `stencila` is
+      installed and configured if a Stencila document is given.
 
     The `r-base` package from Ubuntu apt repositories is used to install
     R itself, rather than any of the methods from https://cran.r-project.org/.
@@ -70,8 +77,6 @@ class RBuildPack(PythonBuildPack):
         super().detect() is not called in this function - it would return false
         unless a `requirements.txt` is present and we do not want to require the
         presence of a `requirements.txt` to use R.
-
-        Instead we check the options described in the class comment above.
         """
         # If no date is found, then self.checkpoint_date will be False
         # Otherwise, it'll be a date object, which will evaluate to True
