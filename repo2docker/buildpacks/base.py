@@ -284,34 +284,34 @@ class BuildPack:
         return self._stencila_manifest_dir
 
     @property
-    def stencila_manifest_contexts(self):
+    def stencila_contexts(self):
         """Find the stencila manifest contexts if it exists"""
-        if hasattr(self, '_stencila_manifest_contexts'):
-            return self._stencila_manifest_contexts
+        if hasattr(self, '_stencila_contexts'):
+            return self._stencila_contexts
 
         # look at the content of the jats.xml file to extract the required execution contexts
 
-        self._stencila_manifest_contexts = []
+        self._stencila_contexts = []
 
         for root, dirs, files in os.walk("."):
             for filename in files:
                 if filename.endswith(".jats.xml"):
                     self.log.debug("Found a .jats.xml: %s", filename)
-                    self._stencila_manifest_contexts = set()
+                    self._stencila_contexts = set()
 
                     # extract code languages from file
                     with open(os.path.join(root, filename)) as f:
                         for line in f:
                             match = re.match('.*language="(.+?)"', line)
                             if match:
-                                self._stencila_manifest_contexts.add(match.group(1))
+                                self._stencila_contexts.add(match.group(1))
 
                     self.log.info(
                         "Using stencila executions contexts %s",
-                        self._stencila_manifest_contexts,
+                        self._stencila_contexts,
                     )
                     break
-        return self._stencila_manifest_contexts
+        return self._stencila_contexts
 
     def get_build_scripts(self):
         """
@@ -550,8 +550,8 @@ class BaseImage(BuildPack):
             ))
         except FileNotFoundError:
             pass
-        if self.stencila_manifest_contexts:
-            if {'py', 'pyjp'}.intersection(self.stencila_manifest_contexts):
+        if self.stencila_contexts:
+            if {'py', 'pyjp'}.intersection(self.stencila_contexts):
                 assemble_scripts.extend(
                     [
                         (
@@ -563,8 +563,6 @@ class BaseImage(BuildPack):
                         )
                     ]
                 )
-            #if {'r'}.intersection(self.stencila_manifest_contexts):
-                # handled in RBuildPack
         if self.stencila_manifest_dir:
             assemble_scripts.extend(
                 [
