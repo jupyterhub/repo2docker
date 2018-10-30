@@ -564,7 +564,7 @@ class BaseImage(BuildPack):
                             (
                                 "${NB_USER}",
                                 r"""
-                                ${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache https://github.com/stencila/py/archive/f6a245fd.tar.gz && \
+                                ${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache https://github.com/stencila/py/archive/f1260796.tar.gz && \
                                 ${KERNEL_PYTHON_PREFIX}/bin/python -m stencila register
                                 """,
                             )

@@ -242,7 +242,8 @@ class RBuildPack(PythonBuildPack):
                     "${NB_USER}",
                     # Install and register stencila library
                     r"""
-                    R --quiet -e "devtools::install_github('stencila/r', ref = 'f220361438432abca968d2e76a4efe7c5ddde7f1')" && \
+                    R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
+                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
                     R --quiet -e "stencila::register()"
                     """
                 ),
