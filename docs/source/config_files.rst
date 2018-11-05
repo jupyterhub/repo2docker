@@ -164,7 +164,6 @@ used for installing libraries.
 To see an example R repository, visit our `R
 example in binder-examples <https://github.com/binder-examples/r/blob/master/runtime.txt>`_.
 
-
 ``Dockerfile`` - Advanced environments
 ======================================
 
@@ -179,3 +178,26 @@ With Dockerfiles, a regular Docker build will be performed.
 
 See the `Advanced Binder Documentation <https://mybinder.readthedocs.io/en/latest/tutorials/dockerfile.html>`_ for
 best-practices with Dockerfiles.
+
+.. _default.nix:
+
+``default.nix``
+~~~~~~~~~~~~~~~
+
+This allows you to use the `nix package manager <https://github.com/NixOS/nixpkgs>`_. It is hard to explain what nix
+is to new users and why it is usefull. If you are inclined please read
+more at the `nix homepage <https://nixos.org/nix/>`_. It is currently
+the largest package repository, offers reproducible builds, multiple
+versions of same package coexisting, source and binary based, and
+packages many languages such as python, R, go, javascript, haskell,
+ruby, etc. .
+
+A ``default.nix`` file allows you to use `nix-shell <https://nixos.org/nix/manual/#sec-nix-shell>`_
+to evaluate a ``nix`` expression to define a reproducible nix environment.
+The only requirement is that you expose a ``jupyter`` command within the shell
+(since jupyterlab is currently what ``repo2docker`` is designed
+around). While the ``nix`` environment does have ``NIX_PATH`` set with
+``nixpkgs=...`` you should not rely on it and make sure to
+`pin your nixpkgs <https://discourse.nixos.org/t/nixops-pinning-nixpkgs/734>`_.
+By doing this you are truley producing a reproducible environment. To see an
+example repository visit a `nix binder example <https://gitlab.com/costrouc/nix-binder-example>`_.
