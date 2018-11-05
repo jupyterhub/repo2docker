@@ -554,7 +554,7 @@ class BaseImage(BuildPack):
             ))
         except FileNotFoundError:
             pass
-        if {'py', 'pyjp'}.intersection(self.stencila_contexts):
+        if {'py'}.intersection(self.stencila_contexts):
             assemble_scripts.extend(
                 [
                     (
