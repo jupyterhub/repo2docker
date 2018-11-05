@@ -95,7 +95,7 @@ pygments_style = 'sphinx'
 todo_include_todos = False
 
 # repo2docker Logo
-html_logo = '_static/images/repo2docker.png'
+html_logo = '_static/images/repo2docker.svg'
 html_favicon = '_static/images/favicon.ico'
 
 # -- Options for HTML output ----------------------------------------------
