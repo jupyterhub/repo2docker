@@ -13,6 +13,8 @@ New features
 - Change log added `#426`_ by `@evertrol`_.
 - Documentation: improved the documentation for contributors `#453`_ by
   `@choldgraf`_.
+- Buildpack: added support for the nix package manager `#407`_ by
+  `@costrouc`_.
 
 
 API changes
@@ -66,8 +68,10 @@ Released 2017-04-14
 .. _#421: https://github.com/jupyter/repo2docker/pull/421
 .. _#426: https://github.com/jupyter/repo2docker/pull/426
 .. _#242: https://github.com/jupyter/repo2docker/pull/242
+.. _#407: https://github.com/jupyter/repo2docker/pull/407
 
 .. _@betatim: https://github.com/betatim
 .. _@choldgraf: https://github.com/choldgraf
+.. _@costrouc: https://github.com/costrouc
 .. _@dsludwig: https://github.com/dsludwig
 .. _@evertrol: https://github.com/evertrol
