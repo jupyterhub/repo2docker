@@ -16,7 +16,7 @@ script:
 # cd into tests so CWD being repo2docker does not hide
 # possible issues with MANIFEST.in
 - pushd tests;
-  if [ ${REPO_TYPE} == "r" ] || [ ${REPO_TYPE} == "stencila" ]; then
+  if [ ${REPO_TYPE} == "r" ] || [ ${REPO_TYPE} == "stencila-r" ] || [ ${REPO_TYPE} == "stencila-py" ]; then
     travis_wait 30 pytest --cov repo2docker -v ${REPO_TYPE} || exit 1;
   else
     travis_retry pytest --cov repo2docker -v ${REPO_TYPE} || exit 1;
@@ -46,7 +46,8 @@ env:
   - REPO_TYPE=base
   - REPO_TYPE=conda
   - REPO_TYPE=venv
-  - REPO_TYPE=stencila
+  - REPO_TYPE=stencila-r
+  - REPO_TYPE=stencila-py
   - REPO_TYPE=julia
   - REPO_TYPE=r
   - REPO_TYPE=dockerfile
