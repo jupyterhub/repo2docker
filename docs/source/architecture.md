@@ -38,8 +38,12 @@ It takes the following steps to determine this:
    something that it should be used for. For example, a `BuildPack` that uses `conda` to install
    libraries can check for presence of an `environment.yml` file and say 'yes, I can handle this
    repository' by returning `True`. Usually buildpacks look for presence of specific files
-   (`requirements.txt`, `environment.yml`, `install.R`, etc) to determine if they can handle a
-   repository or not.
+   (`requirements.txt`, `environment.yml`, `install.R`, `manifest.xml` etc) to determine if they can handle a
+   repository or not. Buildpacks may also look into specific files to determine specifics of the 
+   required environment, such as the Stencila integration which extracts the required language-specific
+   executions contexts from an XML file (see base `BuildPack`). More than one buildpack may use such 
+   information, as properties can be inherited (e.g. the R buildpack uses the list of required Stencila
+   contexts to see if R must be installed).
 3. If no `BuildPack` returns true, then repo2docker will use the default `BuildPack` (defined in
    `Repo2Docker.default_buildpack` traitlet).
 
