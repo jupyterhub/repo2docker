@@ -7,7 +7,7 @@
 the configuration files found in the repository.
 
 See the [repo2docker documentation](http://repo2docker.readthedocs.io)
-for more information.
+for more information on using repo2docker.
 
 See the [contributing guide](CONTRIBUTING.md) for information on contributing to
 repo2docker.

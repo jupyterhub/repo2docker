@@ -43,6 +43,7 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    :caption: Contribute to repo2docker
 
    contributing/contributing
+   contributing/roadmap
    architecture
    design
    contributing/tasks
