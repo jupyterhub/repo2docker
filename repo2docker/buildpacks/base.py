@@ -295,7 +295,7 @@ class BuildPack:
 
         # get paths to the article files from manifest
         files = []
-        if (self.stencila_manifest_dir):
+        if self.stencila_manifest_dir:
             manifest = ET.parse(os.path.join(self.stencila_manifest_dir, 'manifest.xml'))
             files = list(map(lambda x: os.path.join(self.stencila_manifest_dir, x.get('path')), manifest.findall('./documents/document')))
         else:
