@@ -26,7 +26,7 @@ class RBuildPack(PythonBuildPack):
     If there is no `runtime.txt`, then the MRAN snapshot is set to latest
     date that is guaranteed to exist across timezones.
 
-    R packages are installed if specified either
+    Additional R packages are installed if specified either
 
     - in a file `install.R`, that will be executed at build time,
       and can be used for installing packages from both MRAN and GitHub
