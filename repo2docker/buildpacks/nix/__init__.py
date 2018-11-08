@@ -57,8 +57,8 @@ class NixBuildPack(BaseImage):
             ('${NB_USER}', """
             nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
             nix-channel --update && \
-            nix-shell default.nix
-            """)
+            nix-shell {}
+            """.format(self.binder_path('default.nix')))
         ]
 
     def get_start_script(self):
