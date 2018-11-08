@@ -12,6 +12,9 @@ for more information on using repo2docker.
 See the [contributing guide](CONTRIBUTING.md) for information on contributing to
 repo2docker.
 
+See [our roadmap](https://repo2docker.readthedocs.io/en/latest/contributing/roadmap.html)
+to learn about where the project is heading.
+
 ## Using repo2docker
 ### Prerequisites
 
