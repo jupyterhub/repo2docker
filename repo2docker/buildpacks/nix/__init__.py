@@ -64,7 +64,8 @@ class NixBuildPack(BaseImage):
     def get_start_script(self):
         """The path to a script to be executed as ENTRYPOINT"""
         # the shell wrapper script duplicates the behaviour of other buildpacks
-        # when it coems to the `start` script
+        # when it comes to the `start` script as well as handling a binder/
+        # sub-directory when it exists
         return "/usr/local/bin/nix-shell-wrapper"
 
     def detect(self):
