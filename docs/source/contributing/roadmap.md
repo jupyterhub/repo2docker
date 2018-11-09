@@ -6,8 +6,8 @@ the community of users, contributors, and maintainers.
 The goal is to communicate priorities and upcoming release plans.
 It is not a aimed at limiting contributions to what is listed here.
 
-
-## Sharing Feedback on the Roadmap
+## Using the roadmap
+### Sharing Feedback on the Roadmap
 
 All of the community is encouraged to provide feedback as well as share new
 ideas with the community. Please do so by submitting an issue. If you want to
@@ -17,7 +17,7 @@ respond with questions or comments they have to clarify the issue. The
 maintainers will help identify what a good next step is for the issue.
 
 
-## What do we mean by "next step"?
+### What do we mean by "next step"?
 
 When submitting an issue, think about what "next step" category best describes
 your issue:
@@ -35,7 +35,7 @@ contain concrete/actionable steps that have been postponed on purpose
 them later)
 
 
-## Reviewing and Updating the Roadmap
+### Reviewing and Updating the Roadmap
 
 The roadmap will get updated as time passes (next review by 1st December) based
 on discussions and ideas captured as issues.
@@ -49,13 +49,14 @@ The roadmap should give the reader an idea of what is happening next, what needs
 input and discussion before it can happen and what has been postponed.
 
 
-## Project vision
+## The roadmap proper
+### Project vision
 
 Repo2docker is a dependable tool used by humans that reduces the complexity of
 creating the environment in which a piece of software can be executed.
 
 
-## Now
+### Now
 
 These "Now" items are considered active areas of focus for the project:
 * reduce documentation typos and syntax errors
@@ -65,7 +66,7 @@ These "Now" items are considered active areas of focus for the project:
 * make a new release once Pipfile and nix support have been merged
 
 
-## Soon
+### Soon
 
 These "Soon" items are under discussion. Once an item reaches the point of an
 actionable plan, the item will be moved to the "Now" section. Typically,
@@ -77,7 +78,7 @@ these will be moved at a future review of the roadmap.
 * support for running with GPU acceleration
 
 
-## Later
+### Later
 
 The "Later" items are things that are at the back of the project's mind. At this
 time there is no active plan for an item. The project would like to find the
