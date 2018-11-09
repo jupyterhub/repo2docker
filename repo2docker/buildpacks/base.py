@@ -286,18 +286,23 @@ class BuildPack:
 
     @property
     def stencila_contexts(self):
-        """Find the stencila manifest contexts if it exists"""
+        """Find the stencila manifest contexts from file path in manifest"""
         if hasattr(self, '_stencila_contexts'):
             return self._stencila_contexts
 
-        # look at the content of the documents in the manifest to extract the required execution contexts
+        # look at the content of the documents in the manifest
+        # to extract the required execution contexts
         self._stencila_contexts = set()
 
         # get paths to the article files from manifest
         files = []
         if self.stencila_manifest_dir:
-            manifest = ET.parse(os.path.join(self.stencila_manifest_dir, 'manifest.xml'))
-            files = list(map(lambda x: os.path.join(self.stencila_manifest_dir, x.get('path')), manifest.findall('./documents/document')))
+            manifest = ET.parse(os.path.join(self.stencila_manifest_dir,
+                                             'manifest.xml'))
+            documents = manifest.findall('./documents/document')
+            files = [os.path.join(self.stencila_manifest_dir, x.get('path'))
+                     for x in documents]
+            
         else:
             return self._stencila_contexts
 
@@ -306,7 +311,8 @@ class BuildPack:
 
             # extract code languages from file
             document = ET.parse(filename)
-            languages = list(map(lambda x: x.get('language'), document.findall('.//code[@specific-use="source"]')))
+            code_chunks = document.findall('.//code[@specific-use="source"]')
+            languages = [x.get('language') for x in code_chunks]
             self._stencila_contexts.update(languages)
 
             self.log.info(
