@@ -258,7 +258,6 @@ class BuildPack:
         """
         return {}
 
-
     @property
     def stencila_manifest_dir(self):
         """Find the stencila manifest dir if it exists"""
@@ -320,7 +319,7 @@ class BuildPack:
                 self._stencila_contexts,
             )
             break
-        
+
         return self._stencila_contexts
 
     def get_build_scripts(self):
@@ -387,9 +386,9 @@ class BuildPack:
 
         This script is added as the `ENTRYPOINT` to the container.
 
-        It is run as a non-root user, and must be executable. Used for performing
-        run time steps that can not be performed with standard tools. For example
-        setting environment variables for your repository.
+        It is run as a non-root user, and must be executable. Used for
+        performing run time steps that can not be performed with standard
+        tools. For example setting environment variables for your repository.
 
         The script should be as deterministic as possible - running it twice
         should not produce different results.
@@ -514,9 +513,9 @@ class BaseImage(BuildPack):
         env = []
         if self.stencila_manifest_dir:
             # manifest_dir is the path containing the manifest.xml
-            # archive_dir is the directory containing archive directories (one level up)
-            # default archive is the name of the directory in the archive_dir
-            # such that
+            # archive_dir is the directory containing archive directories
+            # (one level up) default archive is the name of the directory
+            # in the archive_dir such that
             # ${STENCILA_ARCHIVE_DIR}/${STENCILA_ARCHIVE}/manifest.xml
             # exists.
 

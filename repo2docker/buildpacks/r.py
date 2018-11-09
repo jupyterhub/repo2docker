@@ -74,9 +74,9 @@ class RBuildPack(PythonBuildPack):
         """
         Check if current repo should be built with the R Build pack
 
-        super().detect() is not called in this function - it would return false
-        unless a `requirements.txt` is present and we do not want to require the
-        presence of a `requirements.txt` to use R.
+        super().detect() is not called in this function - it would return
+        false unless a `requirements.txt` is present and we do not want
+        to require the presence of a `requirements.txt` to use R.
         """
         # If no date is found, then self.checkpoint_date will be False
         # Otherwise, it'll be a date object, which will evaluate to True
@@ -84,10 +84,12 @@ class RBuildPack(PythonBuildPack):
             return True
 
         description_R = 'DESCRIPTION'
-        if (not os.path.exists('binder') and os.path.exists(description_R)) or 'r' in self.stencila_contexts:
+        if ((not os.path.exists('binder') and os.path.exists(description_R))
+          or 'r' in self.stencila_contexts):
             if not self.checkpoint_date:
                 # no R snapshot date set through runtime.txt
-                # set the R runtime to the latest date that is guaranteed to be on MRAN across timezones
+                # set the R runtime to the latest date that is guaranteed to
+                # be on MRAN across timezones
                 self._checkpoint_date = datetime.date.today() - datetime.timedelta(days=2)
                 self._runtime = "r-{}".format(str(self._checkpoint_date))
             return True
@@ -140,9 +142,11 @@ class RBuildPack(PythonBuildPack):
 
         This sets up:
 
-        - A directory owned by non-root in ${R_LIBS_USER} for installing R packages into
+        - A directory owned by non-root in ${R_LIBS_USER}
+          for installing R packages into
         - RStudio
-        - R's devtools package, at a particular frozen version (determined by MRAN)
+        - R's devtools package, at a particular frozen version
+          (determined by MRAN)
         - IRKernel
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
         - stencila R package (if Stencila document with R code chunks detected)
