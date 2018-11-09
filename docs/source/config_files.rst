@@ -182,7 +182,7 @@ a ``nix`` expression written in a ``default.nix`` file. Make sure to
 to produce a reproducible environment.
 
 To see an example repository visit
-`nix binder example <https://gitlab.com/costrouc/nix-binder-example>`_.
+`nix binder example <https://github.com/binder-examples/nix>`_.
 
 
 ``Dockerfile`` - Advanced environments
