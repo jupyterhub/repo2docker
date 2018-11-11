@@ -1,4 +1,5 @@
-pyyaml
+# Note that there is also a Pipfile for this project if you are updating this 
+# file do not forget to update thr Pipfile accordingly
 pytest
 wheel
 pytest-cov
