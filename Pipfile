@@ -1,5 +1,5 @@
 # Note that there is a dev-requirements.txt file in this project, if you are 
-# updating this Pipfile make sure to update the devrequirements.txt accordingly
+# updating this Pipfile make sure to update the dev-requirements.txt accordingly
 
 [dev-packages]
 pytest="*"
