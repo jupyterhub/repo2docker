@@ -1,4 +1,4 @@
-# Note that there is a devrequirements.txt file in this project, if you are 
+# Note that there is a dev-requirements.txt file in this project, if you are 
 # updating this Pipfile make sure to update the devrequirements.txt accordingly
 
 [dev-packages]

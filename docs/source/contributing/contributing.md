@@ -67,8 +67,11 @@ make that your current directory with `cd repo2docker`.
 
 After cloning the repository (or your fork of the repository), you should set up an
 isolated environment to install libraries required for running / developing
-repo2docker. There are many ways to do this, and a `virtual environment` is
-one of them.
+repo2docker. 
+
+There are many ways to do this but here we present you with two approaches: `virtual environment` or `pipenv`.
+
+- Using `virtual environment`
 
 ```bash
 python3 -m venv .
@@ -79,6 +82,19 @@ pip3 install -r docs/doc-requirements.txt
 ```
 
 This should install all the libraries required for testing & running repo2docker!
+
+- Using `pipenv`
+
+Note that you will need to install pipenv first using `pip3 install pipenv`. 
+Then from the root directory of this project you can use the following commands:
+
+```bash
+pipenv install --dev
+```
+
+This should install both the dev and docs requirements at once!
+
+### Set up 
 
 ### Verify that docker is installed and running
 
