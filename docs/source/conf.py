@@ -43,8 +43,15 @@ source_parsers = {
     '.md': 'recommonmark.parser.CommonMarkParser',
 }
 
+from recommonmark.transform import AutoStructify
+
 def setup(app):
     app.add_stylesheet('custom.css')  # may also be a URL
+    app.add_config_value('recommonmark_config', {
+                'auto_toc_tree_section': 'Contents',
+                }, True)
+    app.add_transform(AutoStructify)
+
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -110,7 +117,7 @@ html_theme_path = [alabaster_jupyterhub.get_html_theme_path()]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
+html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
 
 # -- Options for HTMLHelp output ------------------------------------------
 

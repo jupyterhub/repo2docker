@@ -19,8 +19,22 @@ class RBuildPack(PythonBuildPack):
        date snapshot of https://mran.microsoft.com/timemachine
        from which libraries are to be installed.
 
-    2. An optional `install.R` file that will be executed at build time,
-       and can be used for installing packages from both MRAN and GitHub.
+    2. A `DESCRIPTION` file signaling an R package
+
+    3. A Stencila document (*.jats.xml) with R code chunks (i.e. language="r")
+
+    If there is no `runtime.txt`, then the MRAN snapshot is set to latest
+    date that is guaranteed to exist across timezones.
+
+    Additional R packages are installed if specified either
+
+    - in a file `install.R`, that will be executed at build time,
+      and can be used for installing packages from both MRAN and GitHub
+
+    - as dependencies in a `DESCRIPTION` file
+
+    - are needed by a specific tool, for example the package `stencila` is
+      installed and configured if a Stencila document is given.
 
     The `r-base` package from Ubuntu apt repositories is used to install
     R itself, rather than any of the methods from https://cran.r-project.org/.
@@ -60,22 +74,22 @@ class RBuildPack(PythonBuildPack):
         """
         Check if current repo should be built with the R Build pack
 
-        super().detect() is not called in this function - it would return false
-        unless a `requirements.txt` is present and we do not want to require the
-        presence of a `requirements.txt` to use R.
-
-        Instead we just check if runtime.txt contains a string of the form
-        `r-<YYYY>-<MM>-<DD>`
+        super().detect() is not called in this function - it would return
+        false unless a `requirements.txt` is present and we do not want
+        to require the presence of a `requirements.txt` to use R.
         """
         # If no date is found, then self.checkpoint_date will be False
         # Otherwise, it'll be a date object, which will evaluate to True
         if self.checkpoint_date:
             return True
+
         description_R = 'DESCRIPTION'
-        if not os.path.exists('binder') and os.path.exists(description_R):
+        if ((not os.path.exists('binder') and os.path.exists(description_R))
+          or 'r' in self.stencila_contexts):
             if not self.checkpoint_date:
                 # no R snapshot date set through runtime.txt
-                # set the R runtime to the latest date that is guaranteed to be on MRAN across timezones
+                # set the R runtime to the latest date that is guaranteed to
+                # be on MRAN across timezones
                 self._checkpoint_date = datetime.date.today() - datetime.timedelta(days=2)
                 self._runtime = "r-{}".format(str(self._checkpoint_date))
             return True
@@ -128,11 +142,14 @@ class RBuildPack(PythonBuildPack):
 
         This sets up:
 
-        - A directory owned by non-root in ${R_LIBS_USER} for installing R packages into
+        - A directory owned by non-root in ${R_LIBS_USER}
+          for installing R packages into
         - RStudio
-        - R's devtools package, at a particular frozen version (determined by MRAN)
+        - R's devtools package, at a particular frozen version
+          (determined by MRAN)
         - IRKernel
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
+        - stencila R package (if Stencila document with R code chunks detected)
         """
         rstudio_url = 'https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb'
         # This is MD5, because that is what RStudio download page provides!
@@ -148,7 +165,7 @@ class RBuildPack(PythonBuildPack):
         # IRKernel version - specified as a tag in the IRKernel repository
         irkernel_version = '0.8.11'
 
-        return super().get_build_scripts() + [
+        scripts = [
             (
                 "root",
                 r"""
@@ -225,6 +242,21 @@ class RBuildPack(PythonBuildPack):
                 )
             ),
         ]
+
+        if "r" in self.stencila_contexts:
+            scripts += [
+            (
+                "${NB_USER}",
+                # Install and register stencila library
+                r"""
+                R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
+                R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
+                R --quiet -e "stencila::register()"
+                """
+            ),
+        ]
+
+        return super().get_build_scripts() + scripts
 
     def get_assemble_scripts(self):
         """
