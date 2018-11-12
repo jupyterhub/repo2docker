@@ -7,3 +7,4 @@ dependencies:
   - notebook==5.6.0
   - pip:
     - nteract_on_jupyter==1.9.6
+    - jupyterhub==0.9.4
