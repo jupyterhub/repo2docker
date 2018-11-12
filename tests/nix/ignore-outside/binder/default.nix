@@ -10,7 +10,6 @@ let
 in
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    python36Packages.numpy
     python36Packages.notebook
   ];
 

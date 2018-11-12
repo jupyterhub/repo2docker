@@ -8,8 +8,32 @@ _term() {
 
 trap _term SIGTERM
 
-echo "$*"
-nix-shell default.nix --command "$*" &
+# if there is a binder/ sub-directory it takes precedence
+# files outside it are ignored
+if [ -e ./binder ]; then
+  nixpath="./binder/default.nix";
+  if [ -f ./binder/start ]; then
+    chmod u+x ./binder/start
+    # Using `$@`` here which is what the internet recommends leads to
+    # errors when the command is something like `jupyter --ip=0.0.0.0 ...`
+    # as nix-shell picks that up as an argument to it instead of the command.
+    # There are several issues on the nix repos discussing this and adding support
+    # for -- to indicate "all arguments after this are for the command, not nix-shell"
+    # but it seems they have stalled/not yet produced an implementation.
+    # So let's use `$*` for now.
+    nix-shell $nixpath --command "./binder/start $*" &
+  else
+    nix-shell $nixpath --command "$*" &
+  fi
+else
+  nixpath="./default.nix";
+  if [ -f ./start ]; then
+    chmod u+x ./start
+    nix-shell $nixpath --command "./start $*" &
+  else
+    nix-shell $nixpath --command "$*" &
+  fi
+fi
 
 PID=$!
 wait "$PID"

@@ -11,6 +11,7 @@ in
 pkgs.mkShell {
   buildInputs = with pkgs; [
     python36Packages.numpy
+    __THIS_IS_A_SYNTAX_ERROR_THAT_SHOULD_NOT_MATTER_AS_IT_ISNT_EXECUTED__
     python36Packages.notebook
   ];
 

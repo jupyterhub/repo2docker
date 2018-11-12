@@ -1,10 +1,10 @@
 """BuildPack for nixpkgs environments"""
 import os
 
-from ..base import BuildPack
+from ..base import BuildPack, BaseImage
 
 
-class NixBuildPack(BuildPack):
+class NixBuildPack(BaseImage):
     """A nix Package Manager BuildPack"""
 
     def get_path(self):
@@ -57,12 +57,15 @@ class NixBuildPack(BuildPack):
             ('${NB_USER}', """
             nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
             nix-channel --update && \
-            nix-shell default.nix --command "command -v jupyter"
-            """)
+            nix-shell {}
+            """.format(self.binder_path('default.nix')))
         ]
 
     def get_start_script(self):
         """The path to a script to be executed as ENTRYPOINT"""
+        # the shell wrapper script duplicates the behaviour of other buildpacks
+        # when it comes to the `start` script as well as handling a binder/
+        # sub-directory when it exists
         return "/usr/local/bin/nix-shell-wrapper"
 
     def detect(self):
