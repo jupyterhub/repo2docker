@@ -14,6 +14,13 @@ if [ -e ./binder ]; then
   nixpath="./binder/default.nix";
   if [ -f ./binder/start ]; then
     chmod u+x ./binder/start
+    # Using `$@`` here which is what the internet recommends leads to
+    # errors when the command is something like `jupyter --ip=0.0.0.0 ...`
+    # as nix-shell picks that up as an argument to it instead of the command.
+    # There are several issues on the nix repos discussing this and adding support
+    # for -- to indicate "all arguments after this are for the command, not nix-shell"
+    # but it seems they have stalled/not yet produced an implementation.
+    # So let's use `$*` for now.
     nix-shell $nixpath --command "./binder/start $*" &
   else
     nix-shell $nixpath --command "$*" &
