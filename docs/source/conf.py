@@ -94,8 +94,8 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
-# Jupyter Logo
-html_logo = '_static/images/logo.svg'
+# repo2docker Logo
+html_logo = '_static/images/repo2docker.svg'
 html_favicon = '_static/images/favicon.ico'
 
 # -- Options for HTML output ----------------------------------------------
