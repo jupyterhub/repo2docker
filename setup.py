@@ -1,6 +1,10 @@
 from setuptools import setup, find_packages
 import versioneer
 
+import sys
+if sys.version_info[0] < 3:
+    sys.stderr.write('jupyter-repo2docker requires Python 3 but the running Python is %s.%s.%s' % sys.version_info[:3])
+    sys.exit(1)
 
 with open('README.md', encoding="utf8") as f:
     readme = f.read()
