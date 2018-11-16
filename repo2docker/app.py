@@ -194,7 +194,10 @@ class Repo2Docker(Application):
     )
 
     def fetch(self, url, ref, checkout_path):
-        """Check out a repo using url and ref to the checkout_path locationself.
+        """Fetch the contents of `url` and place it in `checkout_path`.
+
+        The `ref` parameter specifies what "version" of the contents should be
+        fetched. In the case of a git repository `ref` is the SHA-1 of a commit.
 
         Iterate through possible content providers until a valid provider,
         based on URL, is found.
