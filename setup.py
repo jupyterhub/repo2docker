@@ -1,9 +1,12 @@
 from setuptools import setup, find_packages
+import sys
 import versioneer
 
-
-with open('README.md', encoding="utf8") as f:
-    readme = f.read()
+if sys.version_info[0] < 3:
+    readme = None
+else:
+    with open('README.md', encoding="utf8") as f:
+        readme = f.read()
 
 setup(
     name='jupyter-repo2docker',
