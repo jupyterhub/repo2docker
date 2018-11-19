@@ -3,8 +3,7 @@ dependencies:
   - ipywidgets==7.2.1
   - jupyterlab==0.34.9
   - nbconvert==5.4.0
-  - tornado==4.5.3
-  - notebook==5.6.0
+  - notebook==5.7.2
   - pip:
     - nteract_on_jupyter==1.9.6
     - jupyterhub==0.9.4

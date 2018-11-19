@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-11-12 20:38:27 UTC
+# Frozen on 2018-11-20 06:13:10 UTC
 name: r2d
 channels:
   - conda-forge
@@ -34,7 +34,7 @@ dependencies:
   - nbconvert=5.4.0=1
   - nbformat=4.4.0=py_1
   - ncurses=6.1=hfc679d8_1
-  - notebook=5.6.0=py37_1
+  - notebook=5.7.2=py37_1000
   - openssl=1.0.2p=h470a237_1
   - pandoc=1.19.2=0
   - pandocfilters=1.4.2=py_1
@@ -46,31 +46,31 @@ dependencies:
   - prompt_toolkit=2.0.7=py_0
   - ptyprocess=0.6.0=py37_1000
   - pygments=2.2.0=py_1
-  - pyrsistent=0.14.5=py37h470a237_1
-  - python=3.7.0=h5001a0f_6
+  - pyrsistent=0.14.6=py37h470a237_0
+  - python=3.7.1=h5001a0f_0
   - python-dateutil=2.7.5=py_0
   - pyzmq=17.1.2=py37hae99301_1
   - readline=7.0=haf1bffa_1
   - send2trash=1.5.0=py_0
-  - setuptools=40.5.0=py37_0
+  - setuptools=40.6.2=py37_0
   - six=1.11.0=py37_1001
   - sqlite=3.25.3=hb1c47c0_0
   - terminado=0.8.1=py37_1001
   - testpath=0.4.2=py37_1000
-  - tk=8.6.8=ha92aebf_0
+  - tk=8.6.9=ha92aebf_0
+  - tornado=5.1.1=py37h470a237_0
   - traitlets=4.3.2=py37_1000
   - wcwidth=0.1.7=py_1
   - webencodings=0.5.1=py_1
-  - wheel=0.32.2=py37_0
+  - wheel=0.32.3=py37_0
   - widgetsnbextension=3.4.2=py37_1000
   - xz=5.2.4=h470a237_1
   - zeromq=4.2.5=hfc679d8_6
   - zlib=1.2.11=h470a237_3
   - ipywidgets=7.2.1=py37_0
   - jupyterlab=0.34.9=py37_0
-  - tornado=4.5.3=py37_0
   - pip:
-    - alembic==1.0.2
+    - alembic==1.0.3
     - async-generator==1.10
     - chardet==3.0.4
     - idna==2.7
@@ -84,3 +84,4 @@ dependencies:
     - sqlalchemy==1.2.14
     - urllib3==1.24.1
 prefix: /opt/conda/envs/r2d
+
