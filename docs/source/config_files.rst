@@ -71,8 +71,7 @@ To install your repository like a Python package, you may include a
 ``REQUIRE`` - Install a Julia environment
 =========================================
 
-This specifies a list of Julia packages. Repositories with a  ``REQUIRE`` file
-**must also contain an** ``environment.yml`` **file**.  To see an example of a
+This specifies a list of Julia packages. To see an example of a
 Julia repository with ``REQUIRE`` and ``environment.yml``,
 visit `binder-examples/julia-python <https://github.com/binder-examples/julia-python>`_.
 
