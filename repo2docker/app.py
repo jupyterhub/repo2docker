@@ -406,6 +406,13 @@ class Repo2Docker(Application):
             help='Print the repo2docker version and exit.'
         )
 
+        argparser.add_argument(
+            '--cache-from',
+            action='append',
+            default=[],
+            help='Docker images to attempt to re-use cached layers from'
+        )
+
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -544,6 +551,9 @@ class Repo2Docker(Application):
 
         if args.subdir:
             self.subdir = args.subdir
+
+        if args.cache_from:
+            self.cache_from = args.cache_from
 
         self.environment = args.environment
 
@@ -719,7 +729,7 @@ class Repo2Docker(Application):
                               extra=dict(phase='building'))
 
                 for l in picked_buildpack.build(self.output_image_spec,
-                    self.build_memory_limit, build_args):
+                    self.build_memory_limit, build_args, self.cache_from):
                     if 'stream' in l:
                         self.log.info(l['stream'],
                                       extra=dict(phase='building'))
