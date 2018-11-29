@@ -53,6 +53,6 @@ class Git(ContentProvider):
     def content_id(self):
         """A unique ID to represent the version of the content.
 
-        Uses the git commit ID of the repository.
+        Uses the first seven characters of the git commit ID of the repository.
         """
-        return self._sha1
+        return self._sha1[:7]
