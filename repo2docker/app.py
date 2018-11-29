@@ -72,6 +72,18 @@ class Repo2Docker(Application):
         """
     )
 
+    reuse_layers_from = List(
+        [],
+        config=True,
+        help="""
+        List of images to try & re-use cached image layers from.
+
+        Docker only tries to re-use image layers from images built locally,
+        not pulled from a registry. We can ask it to explicitly re-use layers
+        from non-locally built images by through the 'cache_from' parameter.
+        """
+    )
+
     buildpacks = List(
         [
             LegacyBinderDockerBuildPack,
@@ -407,7 +419,7 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
-            '--cache-from',
+            '--reuse-layers-from',
             action='append',
             default=[],
             help='Docker images to attempt to re-use cached layers from'
@@ -552,8 +564,8 @@ class Repo2Docker(Application):
         if args.subdir:
             self.subdir = args.subdir
 
-        if args.cache_from:
-            self.cache_from = args.cache_from
+        if args.reuse_layers_from:
+            self.reuse_layers_from = args.reuse_layers_from
 
         self.environment = args.environment
 
@@ -729,7 +741,7 @@ class Repo2Docker(Application):
                               extra=dict(phase='building'))
 
                 for l in picked_buildpack.build(self.output_image_spec,
-                    self.build_memory_limit, build_args, self.cache_from):
+                    self.build_memory_limit, build_args, self.reuse_layers_from):
                     if 'stream' in l:
                         self.log.info(l['stream'],
                                       extra=dict(phase='building'))
