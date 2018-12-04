@@ -13,7 +13,6 @@ import sys
 import logging
 import os
 import pwd
-import subprocess
 import tempfile
 import time
 
@@ -219,6 +218,15 @@ class Repo2Docker(Application):
         for log_line in picked_content_provider.fetch(
                 spec, checkout_path, yield_output=self.json_logs):
             self.log.info(log_line, extra=dict(phase='fetching'))
+
+        self.output_image_spec = (
+            'r2d' +
+            escapism.escape(self.repo, escape_char='-').lower()
+        )
+        if picked_content_provider.content_id is not None:
+            self.output_image_spec += picked_content_provider.content_id
+        else:
+            self.output_image_spec += str(int(time.time()))
 
     def validate_image_name(self, image_name):
         """
@@ -476,13 +484,8 @@ class Repo2Docker(Application):
         if args.image_name:
             self.output_image_spec = args.image_name
         else:
-            # Attempt to set a sane default!
-            # HACK: Provide something more descriptive?
-            self.output_image_spec = (
-                'r2d' +
-                escapism.escape(self.repo, escape_char='-').lower() +
-                str(int(time.time()))
-            )
+            # we will pick a name after fetching the repository
+            self.output_image_spec = None
 
         self.push = args.push
         self.run = args.run
@@ -674,14 +677,68 @@ class Repo2Docker(Application):
         s.close()
         return port
 
+    def find_image(self):
+        # check if we already have an image for this content
+        client = docker.APIClient(version='auto', **kwargs_from_env())
+        for image in client.images():
+            if image['RepoTags'] is not None:
+                for tags in image['RepoTags']:
+                    if tags == self.output_image_spec + ":latest":
+                        return True
+
+        return False
+
+    def _build_image(self, checkout_path):
+        if self.subdir:
+            checkout_path = os.path.join(checkout_path, self.subdir)
+            if not os.path.isdir(checkout_path):
+                self.log.error('Subdirectory %s does not exist',
+                               self.subdir, extra=dict(phase='failure'))
+                sys.exit(1)
+
+        with chdir(checkout_path):
+            for BP in self.buildpacks:
+                bp = BP()
+                if bp.detect():
+                    picked_buildpack = bp
+                    break
+            else:
+                picked_buildpack = self.default_buildpack()
+
+            picked_buildpack.appendix = self.appendix
+
+            self.log.debug(picked_buildpack.render(),
+                           extra=dict(phase='building'))
+
+            if self.build:
+                build_args = {
+                    'NB_USER': self.user_name,
+                    'NB_UID': str(self.user_id)
+                }
+                self.log.info('Using %s builder\n', bp.__class__.__name__,
+                              extra=dict(phase='building'))
+
+                for l in picked_buildpack.build(self.output_image_spec,
+                    self.build_memory_limit, build_args):
+                    if 'stream' in l:
+                        self.log.info(l['stream'],
+                                      extra=dict(phase='building'))
+                    elif 'error' in l:
+                        self.log.info(l['error'], extra=dict(phase='failure'))
+                        sys.exit(1)
+                    elif 'status' in l:
+                            self.log.info('Fetching base image...\r',
+                                          extra=dict(phase='building'))
+                    else:
+                        self.log.info(json.dumps(l),
+                                      extra=dict(phase='building'))
+
     def start(self):
         """Start execution of repo2docker"""
         # Check if r2d can connect to docker daemon
         if self.build:
             try:
-                client = docker.APIClient(version='auto',
-                                          **kwargs_from_env())
-                del client
+                docker.APIClient(version='auto', **kwargs_from_env())
             except DockerException as e:
                 print("Docker client initialization error. Check if docker is"
                       " running on the host.")
@@ -708,49 +765,12 @@ class Repo2Docker(Application):
         with maybe_cleanup(checkout_path, self.cleanup_checkout):
             self.fetch(self.repo, self.ref, checkout_path)
 
-            if self.subdir:
-                checkout_path = os.path.join(checkout_path, self.subdir)
-                if not os.path.isdir(checkout_path):
-                    self.log.error('Subdirectory %s does not exist',
-                                   self.subdir, extra=dict(phase='failure'))
-                    sys.exit(1)
+            if self.find_image():
+                self.log.info("Reusing existing image ({}), not "
+                              "building.".format(self.output_image_spec))
 
-            with chdir(checkout_path):
-                for BP in self.buildpacks:
-                    bp = BP()
-                    if bp.detect():
-                        picked_buildpack = bp
-                        break
-                else:
-                    picked_buildpack = self.default_buildpack()
-
-                picked_buildpack.appendix = self.appendix
-
-                self.log.debug(picked_buildpack.render(),
-                               extra=dict(phase='building'))
-
-                if self.build:
-                    build_args = {
-                        'NB_USER': self.user_name,
-                        'NB_UID': str(self.user_id)
-                    }
-                    self.log.info('Using %s builder\n', bp.__class__.__name__,
-                                  extra=dict(phase='building'))
-
-                    for l in picked_buildpack.build(self.output_image_spec,
-                        self.build_memory_limit, build_args):
-                        if 'stream' in l:
-                            self.log.info(l['stream'],
-                                          extra=dict(phase='building'))
-                        elif 'error' in l:
-                            self.log.info(l['error'], extra=dict(phase='failure'))
-                            sys.exit(1)
-                        elif 'status' in l:
-                                self.log.info('Fetching base image...\r',
-                                              extra=dict(phase='building'))
-                        else:
-                            self.log.info(json.dumps(l),
-                                          extra=dict(phase='building'))
+            else:
+                self._build_image(checkout_path)
 
         if self.push:
             self.push_image()
