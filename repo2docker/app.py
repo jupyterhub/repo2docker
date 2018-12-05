@@ -72,7 +72,7 @@ class Repo2Docker(Application):
         """
     )
 
-    reuse_layers_from = List(
+    cache_from = List(
         [],
         config=True,
         help="""
@@ -419,10 +419,10 @@ class Repo2Docker(Application):
         )
 
         argparser.add_argument(
-            '--reuse-layers-from',
+            '--cache-from',
             action='append',
             default=[],
-            help='Docker images to attempt to re-use cached layers from'
+            help=self.traits()['cache_from'].help
         )
 
         return argparser
@@ -564,8 +564,8 @@ class Repo2Docker(Application):
         if args.subdir:
             self.subdir = args.subdir
 
-        if args.reuse_layers_from:
-            self.reuse_layers_from = args.reuse_layers_from
+        if args.cache_from:
+            self.cache_from = args.cache_from
 
         self.environment = args.environment
 
@@ -741,7 +741,7 @@ class Repo2Docker(Application):
                               extra=dict(phase='building'))
 
                 for l in picked_buildpack.build(self.output_image_spec,
-                    self.build_memory_limit, build_args, self.reuse_layers_from):
+                    self.build_memory_limit, build_args, self.cache_from):
                     if 'stream' in l:
                         self.log.info(l['stream'],
                                       extra=dict(phase='building'))
