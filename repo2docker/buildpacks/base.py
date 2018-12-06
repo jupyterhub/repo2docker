@@ -16,10 +16,10 @@ FROM buildpack-deps:bionic
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Set up locales properly
-RUN apt-get update -qq && \
-    apt-get install -qq --yes --no-install-recommends locales && \
-    apt-get purge -qq && \
-    apt-get clean -qq && \
+RUN apt-get -qq update && \
+    apt-get -qq install --yes --no-install-recommends locales && \
+    apt-get -qq purge && \
+    apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
@@ -51,24 +51,24 @@ RUN wget --quiet -O - https://deb.nodesource.com/gpgkey/nodesource.gpg.key |  ap
 
 # Base package installs are not super interesting to users, so hide their outputs
 # If install fails for some reason, errors will still be printed
-RUN apt-get update -qq && \
-    apt-get install -qq --yes --no-install-recommends \
+RUN apt-get -qq update && \
+    apt-get -qq install --yes --no-install-recommends \
        {% for package in base_packages -%}
        {{ package }} \
        {% endfor -%}
-    && apt-get purge -qq && \
-    apt-get clean -qq && \
+    && apt-get -qq purge && \
+    apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
 
 # This apt-get install is *not* quiet, so users see their packages being installed
 {% if packages -%}
-RUN apt-get update -qq && \
-    apt-get install --yes \
+RUN apt-get -qq update && \
+    apt-get -qq install --yes \
        {% for package in packages -%}
        {{ package }} \
        {% endfor -%}
-    && apt-get purge -qq && \
-    apt-get clean -qq && \
+    && apt-get -qq purge && \
+    apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
 {% endif -%}
 
@@ -553,10 +553,10 @@ class BaseImage(BuildPack):
             assemble_scripts.append((
                 'root',
                 r"""
-                apt-get update && \
+                apt-get -qq update && \
                 apt-get install --yes --no-install-recommends {} && \
-                apt-get purge && \
-                apt-get clean && \
+                apt-get -qq purge && \
+                apt-get -qq clean && \
                 rm -rf /var/lib/apt/lists/*
                 """.format(' '.join(extra_apt_packages))
             ))
