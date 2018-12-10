@@ -758,7 +758,7 @@ class Repo2Docker(Application):
                                   extra=dict(phase='building'))
 
                     for l in picked_buildpack.build(api_client, self.output_image_spec,
-                        self.build_memory_limit, build_args):
+                        self.build_memory_limit, build_args, self.cache_from):
                         if 'stream' in l:
                             self.log.info(l['stream'],
                                           extra=dict(phase='building'))
