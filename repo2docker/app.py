@@ -697,13 +697,11 @@ class Repo2Docker(Application):
         return port
 
     def start(self):
-        """Start execution of repo2docker"""
-        # Check if r2d can connect to docker daemon
+        """Start execution of repo2docker""" # Check if r2d can connect to docker daemon
         if self.build:
             try:
-                client = docker.APIClient(version='auto',
-                                          **kwargs_from_env())
-                del client
+                api_client = docker.APIClient(version='auto',
+                                              **kwargs_from_env())
             except DockerException as e:
                 print("Docker client initialization error. Check if docker is"
                       " running on the host.")
@@ -759,7 +757,7 @@ class Repo2Docker(Application):
                     self.log.info('Using %s builder\n', bp.__class__.__name__,
                                   extra=dict(phase='building'))
 
-                    for l in picked_buildpack.build(self.output_image_spec,
+                    for l in picked_buildpack.build(api_client, self.output_image_spec,
                         self.build_memory_limit, build_args):
                         if 'stream' in l:
                             self.log.info(l['stream'],

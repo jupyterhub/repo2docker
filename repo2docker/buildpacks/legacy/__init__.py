@@ -83,7 +83,7 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
             'legacy/python3.frozen.yml': '/tmp/python3.frozen.yml',
         }
             
-    def build(self, image_spec, memory_limit, build_args, cache_from):
+    def build(self, client, image_spec, memory_limit, build_args, cache_from):
         """Build a legacy Docker image."""
         with open(self.dockerfile, 'w') as f:
             f.write(self.render())
@@ -94,7 +94,7 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
                 env_file,
             )
             shutil.copy(src_path, env_file)
-        return super().build(image_spec, memory_limit, build_args, cache_from)
+        return super().build(client, image_spec, memory_limit, build_args, cache_from)
 
     def detect(self):
         """Check if current repo should be built with the Legacy BuildPack.
