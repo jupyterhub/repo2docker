@@ -37,7 +37,7 @@ them later)
 
 ### Reviewing and Updating the Roadmap
 
-The roadmap will get updated as time passes (next review by 1st December) based
+The roadmap will get updated as time passes (next review by 31st January 2019) based
 on discussions and ideas captured as issues.
 This means this list should not be exhaustive, it should only represent
 the "top of the stack" of ideas. It should
@@ -58,30 +58,29 @@ creating the environment in which a piece of software can be executed.
 
 ### Now
 
-These "Now" items are considered active areas of focus for the project:
+The "Now" items are being actively worked on by the project:
 * reduce documentation typos and syntax errors
-* add Julia Manifest support (https://docs.julialang.org/en/v1/stdlib/Pkg/index.html)
-* increase test coverage (see https://codecov.io/gh/jupyter/repo2docker/tree/master/repo2docker for low coverage files)
-* reduce execution time of tests
-* make a new release once Pipfile and nix support have been merged
+* increase test coverage to 80% (see https://codecov.io/gh/jupyter/repo2docker/tree/master/repo2docker for low coverage files)
+* mounting repository contents in locations that is not `/home/jovyan`
+* investigate options for pinning repo2docker versions ([#490](https://github.com/jupyter/repo2docker/issues/490))
 
 
 ### Soon
 
-These "Soon" items are under discussion. Once an item reaches the point of an
-actionable plan, the item will be moved to the "Now" section. Typically,
-these will be moved at a future review of the roadmap.
+The "Soon" items are being discussed/a plan of action is being made. Once an
+item reaches the point of an actionable plan and person who wants to work on
+it, the item will be moved to the "Now" section. Typically, these will be moved
+at a future review of the roadmap.
 * create the contributor highway, define the route from newcomer to project lead
-* add support for using ZIP files as the repo (`repo2docker https://example.com/an-archive.zip`) this will give us access to several archives (like Zenodo) that expose things as ZIP files.
-* add support for Zenodo (`repo2docker 10.5281/zenodo.1476680`) so Zenodo software archives can be used as the source in addition to a git repository
-* tooling to make it easier to produce good `requirements.txt`, `environment.yml`, etc files. They should help users create versions of these files that have a high chance of still working in a few months
-* support for running with GPU acceleration
+* add Julia Manifest support (https://docs.julialang.org/en/v1/stdlib/Pkg/index.html, [#486](https://github.com/jupyter/repo2docker/issues/486))
+* support different base images/build pack stacks ([#487](https://github.com/jupyter/repo2docker/issues/487))
 
 
 ### Later
 
 The "Later" items are things that are at the back of the project's mind. At this
 time there is no active plan for an item. The project would like to find the
-resources and time to discuss these ideas.
-* repo2docker in repo2docker, to reproduce an environment users need to specify the repository and the version of repo2docker to use. Add support for repo2docker inspecting a repo and then starting a different version of itself to build the image
+resources and time to discuss and then execute these ideas.
 * support execution on a remote host (with more resources than available locally) via the command-line
+* add support for using ZIP files as the repo (`repo2docker https://example.com/an-archive.zip`) this will give us access to several archives (like Zenodo) that expose things as ZIP files.
+* add support for Zenodo (`repo2docker 10.5281/zenodo.1476680`) so Zenodo software archives can be used as the source in addition to a git repository
