@@ -69,14 +69,6 @@ def chdir(path):
         os.chdir(old_dir)
 
 
-@contextmanager
-def maybe_cleanup(path, cleanup=False):
-    """Delete the directory at passed path if cleanup flag is True."""
-    yield
-    if cleanup:
-        shutil.rmtree(path, ignore_errors=True)
-
-
 def validate_and_generate_port_mapping(port_mapping):
     """
     Validate the port mapping list and return a list of validated tuples.
