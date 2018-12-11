@@ -73,6 +73,18 @@ class Repo2Docker(Application):
         """
     )
 
+    cache_from = List(
+        [],
+        config=True,
+        help="""
+        List of images to try & re-use cached image layers from.
+
+        Docker only tries to re-use image layers from images built locally,
+        not pulled from a registry. We can ask it to explicitly re-use layers
+        from non-locally built images by through the 'cache_from' parameter.
+        """
+    )
+
     buildpacks = List(
         [
             LegacyBinderDockerBuildPack,
@@ -398,6 +410,13 @@ class Repo2Docker(Application):
             help='Print the repo2docker version and exit.'
         )
 
+        argparser.add_argument(
+            '--cache-from',
+            action='append',
+            default=[],
+            help=self.traits()['cache_from'].help
+        )
+
         return argparser
 
     def json_excepthook(self, etype, evalue, traceback):
@@ -542,6 +561,9 @@ class Repo2Docker(Application):
         if args.subdir:
             self.subdir = args.subdir
 
+        if args.cache_from:
+            self.cache_from = args.cache_from
+
         self.environment = args.environment
 
     def push_image(self):
@@ -675,13 +697,11 @@ class Repo2Docker(Application):
         return port
 
     def start(self):
-        """Start execution of repo2docker"""
-        # Check if r2d can connect to docker daemon
+        """Start execution of repo2docker""" # Check if r2d can connect to docker daemon
         if self.build:
             try:
-                client = docker.APIClient(version='auto',
-                                          **kwargs_from_env())
-                del client
+                api_client = docker.APIClient(version='auto',
+                                              **kwargs_from_env())
             except DockerException as e:
                 print("Docker client initialization error. Check if docker is"
                       " running on the host.")
@@ -737,8 +757,8 @@ class Repo2Docker(Application):
                     self.log.info('Using %s builder\n', bp.__class__.__name__,
                                   extra=dict(phase='building'))
 
-                    for l in picked_buildpack.build(self.output_image_spec,
-                        self.build_memory_limit, build_args):
+                    for l in picked_buildpack.build(api_client, self.output_image_spec,
+                        self.build_memory_limit, build_args, self.cache_from):
                         if 'stream' in l:
                             self.log.info(l['stream'],
                                           extra=dict(phase='building'))

@@ -449,7 +449,7 @@ class BuildPack:
             appendix=self.appendix,
         )
 
-    def build(self, image_spec, memory_limit, build_args):
+    def build(self, client, image_spec, memory_limit, build_args, cache_from):
         tarf = io.BytesIO()
         tar = tarfile.open(fileobj=tarf, mode='w')
         dockerfile_tarinfo = tarfile.TarInfo("Dockerfile")
@@ -489,8 +489,6 @@ class BuildPack:
         }
         if memory_limit:
             limits['memory'] = memory_limit
-        client = docker.APIClient(version='auto',
-                                  **docker.utils.kwargs_from_env())
         for line in client.build(
                 fileobj=tarf,
                 tag=image_spec,
@@ -499,7 +497,8 @@ class BuildPack:
                 decode=True,
                 forcerm=True,
                 rm=True,
-                container_limits=limits
+                container_limits=limits,
+                cache_from=cache_from
         ):
             yield line
 

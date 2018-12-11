@@ -19,7 +19,7 @@ class DockerBuildPack(BuildPack):
         with open(Dockerfile) as f:
             return f.read()
 
-    def build(self, image_spec, memory_limit, build_args):
+    def build(self, client, image_spec, memory_limit, build_args, cache_from):
         """Build a Docker image based on the Dockerfile in the source repo."""
         limits = {
             # Always disable memory swap for building, since mostly
@@ -28,7 +28,6 @@ class DockerBuildPack(BuildPack):
         }
         if memory_limit:
             limits['memory'] = memory_limit
-        client = docker.APIClient(version='auto', **docker.utils.kwargs_from_env())
         for line in client.build(
                 path=os.getcwd(),
                 dockerfile=self.binder_path(self.dockerfile),
@@ -37,6 +36,7 @@ class DockerBuildPack(BuildPack):
                 decode=True,
                 forcerm=True,
                 rm=True,
-                container_limits=limits
+                container_limits=limits,
+                cache_from=cache_from
         ):
             yield line
