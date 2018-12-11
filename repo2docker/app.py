@@ -551,6 +551,10 @@ class Repo2Docker(Application):
                     raise e
                 sys.exit(1)
 
+    def build(self):
+        """
+        Build docker image
+        """
         # If the source to be executed is a directory, continue using the
         # directory. In the case of a local directory, it is used as both the
         # source and target. Reusing a local directory seems better than
@@ -619,6 +623,9 @@ class Repo2Docker(Application):
             # Cheanup checkout if necessary
             if self.cleanup_checkout:
                 shutil.rmtree(checkout_path, ignore_errors=True)
+
+    def start(self):
+        self.build()
 
         if self.push:
             self.push_image()

@@ -237,15 +237,18 @@ def make_r2d(argv=None):
     if args.image_name:
         r2d.output_image_spec = args.image_name
 
-    r2d.push = args.push
-    r2d.run = args.run
     r2d.json_logs = args.json_logs
 
     r2d.build = args.build
-    if not r2d.build:
+
+    if not args.build:
         # Can't push nor run if we aren't building
-        r2d.run = False
-        r2d.push = False
+        args.run = False
+        args.push = False
+
+    r2d.build = args.build
+    r2d.run = args.run
+    r2d.push = args.push
 
     # check against r2d.run and not args.run as r2d.run is false on
     # --no-build
