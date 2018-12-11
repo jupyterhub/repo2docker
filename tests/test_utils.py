@@ -1,6 +1,7 @@
 """
 Tests for repo2docker/utils.py
 """
+import traitlets
 import os
 from tempfile import TemporaryDirectory
 from repo2docker import utils
@@ -45,3 +46,21 @@ def test_chdir():
         with utils.chdir(d):
             assert os.getcwd() == d
         assert os.getcwd() == cur_cwd
+
+
+def test_byte_spec_validation():
+    bs = utils.ByteSpecification()
+
+    assert bs.validate(None, 1) == 1
+    assert bs.validate(None, 1.0) == 1.0
+
+    assert bs.validate(None, '1K') == 1024
+    assert bs.validate(None, '1M') == 1024 * 1024
+    assert bs.validate(None, '1G') == 1024 * 1024 * 1024
+    assert bs.validate(None, '1T') == 1024 * 1024 * 1024 * 1024
+
+    with pytest.raises(traitlets.TraitError):
+        bs.validate(None, 'NK')
+
+    with pytest.raises(traitlets.TraitError):
+        bs.validate(None, '1m')
