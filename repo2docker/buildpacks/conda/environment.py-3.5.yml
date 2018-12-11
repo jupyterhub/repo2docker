@@ -1,3 +1,5 @@
+# py3.5 is not being auto-generated from this file anymore
+# update environment.py-3.5.frozen.yml directly
 dependencies:
 - python=3.5.*
 - ipywidgets==7.2.1

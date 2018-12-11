@@ -1,5 +1,6 @@
-# AUTO GENERATED FROM environment.py-3.5.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-11-20 06:16:12 UTC
+# py3.5 conda packages are no longer being updated as of 12/2018
+# this file is hand-maintained now
+# and should only receive security fixes, no new features
 name: r2d
 channels:
   - conda-forge
@@ -75,6 +76,7 @@ dependencies:
     - idna==2.7
     - jupyterhub==0.9.4
     - mako==1.0.7
+    - notebook==5.7.2
     - nteract-on-jupyter==1.9.6
     - pamela==0.3.0
     - python-editor==1.0.3
