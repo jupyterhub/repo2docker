@@ -1,2 +1,86 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-12-11 09:51:24 UTC
+# Frozen on 2018-12-11 21:19:13 UTC
+name: r2d
+channels:
+  - conda-forge
+  - defaults
+  - conda-forge/label/broken
+dependencies:
+  - attrs=18.2.0=py_0
+  - backcall=0.1.0=py_0
+  - bleach=3.0.2=py_0
+  - ca-certificates=2018.11.29=ha4d7672_0
+  - certifi=2018.11.29=py36_1000
+  - decorator=4.3.0=py_0
+  - defusedxml=0.5.0=py_1
+  - entrypoints=0.2.3=py36_1002
+  - gmp=6.1.2=hfc679d8_0
+  - ipykernel=5.1.0=py36h24bf2e0_1001
+  - ipython=7.2.0=py36h24bf2e0_1000
+  - ipython_genutils=0.2.0=py_1
+  - ipywidgets=7.2.1=py36_1
+  - jedi=0.13.1=py36_1000
+  - jinja2=2.10=py_1
+  - jsonschema=3.0.0a3=py36_1000
+  - jupyter_client=5.2.4=py_0
+  - jupyter_core=4.4.0=py_0
+  - jupyterlab=0.34.9=py36_0
+  - jupyterlab_launcher=0.13.1=py_2
+  - libffi=3.2.1=hfc679d8_5
+  - libgcc-ng=7.2.0=hdf63c60_3
+  - libsodium=1.0.16=h470a237_1
+  - libstdcxx-ng=7.2.0=hdf63c60_3
+  - markupsafe=1.1.0=py36h470a237_0
+  - mistune=0.8.4=py36h470a237_0
+  - nbconvert=5.4.0=1
+  - nbformat=4.4.0=py_1
+  - ncurses=6.1=hfc679d8_2
+  - notebook=5.7.2=py36_1000
+  - openssl=1.0.2p=h470a237_1
+  - pandoc=1.19.2=0
+  - pandocfilters=1.4.2=py_1
+  - parso=0.3.1=py_0
+  - pexpect=4.6.0=py36_1000
+  - pickleshare=0.7.5=py36_1000
+  - pip=18.1=py36_1000
+  - prometheus_client=0.5.0=py_0
+  - prompt_toolkit=2.0.7=py_0
+  - ptyprocess=0.6.0=py36_1000
+  - pygments=2.3.0=py_0
+  - pyrsistent=0.14.7=py36h470a237_0
+  - python=3.6.7=h5001a0f_1
+  - python-dateutil=2.7.5=py_0
+  - pyzmq=17.1.2=py36hae99301_1
+  - readline=7.0=haf1bffa_1
+  - send2trash=1.5.0=py_0
+  - setuptools=40.6.2=py36_0
+  - six=1.12.0=py36_1000
+  - sqlite=3.26.0=hb1c47c0_0
+  - terminado=0.8.1=py36_1001
+  - testpath=0.4.2=py36_1000
+  - tk=8.6.9=ha92aebf_0
+  - tornado=5.1.1=py36h470a237_0
+  - traitlets=4.3.2=py36_1000
+  - wcwidth=0.1.7=py_1
+  - webencodings=0.5.1=py_1
+  - wheel=0.32.3=py36_0
+  - widgetsnbextension=3.2.1=py36_1
+  - xz=5.2.4=h470a237_1
+  - zeromq=4.2.5=hfc679d8_6
+  - zlib=1.2.11=h470a237_3
+  - pip:
+    - alembic==1.0.5
+    - async-generator==1.10
+    - chardet==3.0.4
+    - idna==2.8
+    - jupyterhub==0.9.4
+    - mako==1.0.7
+    - nteract-on-jupyter==1.9.6
+    - pamela==0.3.0
+    - python-editor==1.0.3
+    - python-oauth2==1.1.0
+    - requests==2.21.0
+    - sqlalchemy==1.2.14
+    - urllib3==1.24.1
+prefix: /opt/conda/envs/r2d
+
