@@ -36,7 +36,6 @@ dependencies:
   - nbconvert=5.4.0=1
   - nbformat=4.4.0=py_1
   - ncurses=6.1=hfc679d8_1
-  - notebook=5.7.0=py35_0
   - openssl=1.0.2p=h470a237_1
   - pandoc=1.19.2=0
   - pandocfilters=1.4.2=py_1
@@ -85,4 +84,3 @@ dependencies:
     - sqlalchemy==1.2.14
     - urllib3==1.24.1
 prefix: /opt/conda/envs/r2d
-
