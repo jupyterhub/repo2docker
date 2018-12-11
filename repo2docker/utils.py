@@ -2,7 +2,6 @@ from contextlib import contextmanager
 from functools import partial
 import os
 import re
-import shutil
 import subprocess
 
 from traitlets import Integer, TraitError
