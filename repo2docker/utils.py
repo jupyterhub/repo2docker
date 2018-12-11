@@ -10,7 +10,9 @@ from traitlets import Integer, TraitError
 
 def execute_cmd(cmd, capture=False, **kwargs):
     """
-    Call given command, yielding output line by line if capture=True
+    Call given command, yielding output line by line if capture=True.
+
+    Must be yielded from.
     """
     if capture:
         kwargs['stdout'] = subprocess.PIPE
