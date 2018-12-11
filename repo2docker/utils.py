@@ -2,7 +2,6 @@ from contextlib import contextmanager
 from functools import partial
 import os
 import re
-import shutil
 import subprocess
 
 from traitlets import Integer, TraitError
@@ -10,7 +9,9 @@ from traitlets import Integer, TraitError
 
 def execute_cmd(cmd, capture=False, **kwargs):
     """
-    Call given command, yielding output line by line if capture=True
+    Call given command, yielding output line by line if capture=True.
+
+    Must be yielded from.
     """
     if capture:
         kwargs['stdout'] = subprocess.PIPE
@@ -65,14 +66,6 @@ def chdir(path):
         yield
     finally:
         os.chdir(old_dir)
-
-
-@contextmanager
-def maybe_cleanup(path, cleanup=False):
-    """Delete the directory at passed path if cleanup flag is True."""
-    yield
-    if cleanup:
-        shutil.rmtree(path, ignore_errors=True)
 
 
 def validate_and_generate_port_mapping(port_mapping):

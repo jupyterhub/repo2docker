@@ -14,6 +14,7 @@ import logging
 import os
 import pwd
 import subprocess
+import shutil
 import tempfile
 import time
 
@@ -35,7 +36,7 @@ from .buildpacks import (
 )
 from . import contentproviders
 from .utils import (
-    ByteSpecification, maybe_cleanup, is_valid_docker_image_name,
+    ByteSpecification, is_valid_docker_image_name,
     validate_and_generate_port_mapping, chdir
 )
 
@@ -723,9 +724,7 @@ class Repo2Docker(Application):
             else:
                 checkout_path = self.git_workdir
 
-        # keep as much as possible in the context manager to make sure we
-        # cleanup if things go wrong
-        with maybe_cleanup(checkout_path, self.cleanup_checkout):
+        try:
             self.fetch(self.repo, self.ref, checkout_path)
 
             if self.subdir:
@@ -771,6 +770,10 @@ class Repo2Docker(Application):
                         else:
                             self.log.info(json.dumps(l),
                                           extra=dict(phase='building'))
+        finally:
+            # Cheanup checkout if necessary
+            if self.cleanup_checkout:
+                shutil.rmtree(checkout_path, ignore_errors=True)
 
         if self.push:
             self.push_image()
