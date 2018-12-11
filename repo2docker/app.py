@@ -14,6 +14,7 @@ import logging
 import os
 import pwd
 import subprocess
+import shutil
 import tempfile
 import time
 
