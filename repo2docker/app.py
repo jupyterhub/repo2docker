@@ -391,12 +391,6 @@ class Repo2Docker(Application):
                 fmt='%(message)s'
             )
 
-        # if the source exists locally we don't want to delete it at the end
-        if os.path.exists(self.repo):
-            self.cleanup_checkout = False
-        else:
-            self.cleanup_checkout = args.clean
-
         if self.output_image_spec == "":
             # Attempt to set a sane default!
             # HACK: Provide something more descriptive?

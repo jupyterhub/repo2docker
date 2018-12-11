@@ -1,5 +1,6 @@
 import argparse
 import sys
+import os
 from .app import Repo2Docker
 from . import __version__
 from .utils import validate_and_generate_port_mapping
@@ -298,6 +299,12 @@ def make_r2d(argv=None):
         r2d.cache_from = args.cache_from
 
     r2d.environment = args.environment
+
+    # if the source exists locally we don't want to delete it at the end
+    if os.path.exists(args.repo):
+        r2d.cleanup_checkout = False
+    else:
+        r2d.cleanup_checkout = args.clean
 
     return r2d
 
