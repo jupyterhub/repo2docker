@@ -37,7 +37,7 @@ New features
 - Add JupyterHub back to base environment `#467`_ by
   `@yuvipanda`_.
 - Repo2docker has a logo! by `@agahkarakuzu`_ and `@blairhudson`_.
-- Add support for Stencila `#457`_ by `@nuest`_.
+- Improve support for Stencila, including identifying stencila runtime from document context `#457`_ by `@nuest`_.
 
 
 API changes
