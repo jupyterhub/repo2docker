@@ -589,6 +589,7 @@ class Repo2Docker(Application):
                 self.log.info('Pushing image\n',
                               extra=dict(progress=layers, phase='pushing'))
                 last_emit_time = time.time()
+        self.log.info(f'Successfully pushed {self.output_image_spec}', extra=dict(phase='pushing'))
 
     def run_image(self):
         """Run docker container from built image
