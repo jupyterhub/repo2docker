@@ -415,7 +415,7 @@ class Repo2Docker(Application):
             progress = json.loads(line.decode('utf-8'))
             if 'error' in progress:
                 self.log.error(progress['error'], extra=dict(phase='failed'))
-                sys.exit(1)
+                raise docker.errors.ImageLoadError(progress['error'])
             if 'id' not in progress:
                 continue
             if 'progressDetail' in progress and progress['progressDetail']:
@@ -545,12 +545,8 @@ class Repo2Docker(Application):
                 api_client = docker.APIClient(version='auto',
                                               **kwargs_from_env())
             except DockerException as e:
-                print("Docker client initialization error. Check if docker is"
-                      " running on the host.")
-                print(e)
-                if self.log_level == logging.DEBUG:
-                    raise e
-                sys.exit(1)
+                self.log.exception(e)
+                raise
         # If the source to be executed is a directory, continue using the
         # directory. In the case of a local directory, it is used as both the
         # source and target. Reusing a local directory seems better than
@@ -572,7 +568,7 @@ class Repo2Docker(Application):
                 if not os.path.isdir(checkout_path):
                     self.log.error('Subdirectory %s does not exist',
                                    self.subdir, extra=dict(phase='failure'))
-                    sys.exit(1)
+                    raise FileNotFoundError(f'Could not find {checkout_path}')
 
             with chdir(checkout_path):
                 for BP in self.buildpacks:
@@ -608,7 +604,7 @@ class Repo2Docker(Application):
                                           extra=dict(phase='building'))
                         elif 'error' in l:
                             self.log.info(l['error'], extra=dict(phase='failure'))
-                            sys.exit(1)
+                            raise docker.errors.BuildError(l['error'])
                         elif 'status' in l:
                                 self.log.info('Fetching base image...\r',
                                               extra=dict(phase='building'))

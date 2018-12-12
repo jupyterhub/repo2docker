@@ -38,7 +38,7 @@ class Git(ContentProvider):
             if hash is None:
                 self.log.error('Failed to check out ref %s', ref,
                                extra=dict(phase='failed'))
-                sys.exit(1)
+                raise ValueError(f'Failed to check out ref {ref}')
             # If the hash is resolved above, we should be able to reset to it
             for line in execute_cmd(['git', 'reset', '--hard', hash],
                                     cwd=output_dir,

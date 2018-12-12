@@ -1,6 +1,7 @@
 import argparse
 import sys
 import os
+import docker
 from .app import Repo2Docker
 from . import __version__
 from .utils import validate_and_generate_port_mapping
@@ -314,8 +315,18 @@ def make_r2d(argv=None):
 def main():
     r2d = make_r2d()
     r2d.initialize()
-    r2d.start()
-
+    try:
+        r2d.start()
+    except docker.errors.BuildError as e:
+        # This is only raised by us
+        if r2d.debug:
+            r2d.log.exception(e)
+        sys.exit(1)
+    except docker.errors.ImageLoadError as e:
+        # This is only raised by us
+        if r2d.debug:
+            r2d.log.exception(e)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
