@@ -276,12 +276,10 @@ class Repo2Docker(Application):
 
     # FIXME: Refactor class to be able to do --no-build without needing
     #        deep support for it inside other code
-    build = Bool(
-        True,
+    dry_run = Bool(
+        False,
         help="""
-        Actually build the docker image.
-
-        Can be set to false to do a dry run of rep2docker
+        Do not actually build the docker image, just simulate it.
         """,
         config=True
     )
@@ -400,7 +398,7 @@ class Repo2Docker(Application):
                 str(int(time.time()))
             )
 
-        if not self.build and (self.run or self.push):
+        if self.dry_run and (self.run or self.push):
             raise ValueError("Can not push or run image if we are not building it")
 
         if self.volumes and not self.run:
@@ -537,9 +535,12 @@ class Repo2Docker(Application):
         s.close()
         return port
 
-    def start(self):
-        """Start execution of repo2docker""" # Check if r2d can connect to docker daemon
-        if self.build:
+    def build(self):
+        """
+        Build docker image
+        """
+        # Check if r2d can connect to docker daemon
+        if not self.dry_run:
             try:
                 api_client = docker.APIClient(version='auto',
                                               **kwargs_from_env())
@@ -550,11 +551,6 @@ class Repo2Docker(Application):
                 if self.log_level == logging.DEBUG:
                     raise e
                 sys.exit(1)
-
-    def build(self):
-        """
-        Build docker image
-        """
         # If the source to be executed is a directory, continue using the
         # directory. In the case of a local directory, it is used as both the
         # source and target. Reusing a local directory seems better than
@@ -597,7 +593,7 @@ class Repo2Docker(Application):
                 self.log.debug(picked_buildpack.render(),
                                extra=dict(phase='building'))
 
-                if self.build:
+                if not self.dry_run:
                     build_args = {
                         'NB_USER': self.user_name,
                         'NB_UID': str(self.user_id)

@@ -239,14 +239,13 @@ def make_r2d(argv=None):
 
     r2d.json_logs = args.json_logs
 
-    r2d.build = args.build
+    r2d.dry_run = not args.build
 
-    if not args.build:
+    if r2d.dry_run:
         # Can't push nor run if we aren't building
         args.run = False
         args.push = False
 
-    r2d.build = args.build
     r2d.run = args.run
     r2d.push = args.push
 
