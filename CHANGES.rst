@@ -5,6 +5,8 @@ Release date: the-future
 
 New features
 ------------
+- Add additional metadata to docker images about how they were built `#500`_ by
+  `@jrbourbeau`_.
 
 API changes
 -----------
@@ -99,6 +101,7 @@ Released 2017-04-14
 .. _#475: https://github.com/jupyter/repo2docker/pull/475
 .. _#478: https://github.com/jupyter/repo2docker/pull/478
 .. _#482: https://github.com/jupyter/repo2docker/pull/482
+.. _#500: https://github.com/jupyter/repo2docker/pull/500
 
 .. _@agahkarakuzu: https://github.com/agahkarakuzu
 .. _@betatim: https://github.com/betatim
@@ -110,3 +113,4 @@ Released 2017-04-14
 .. _@minrk: https://github.com/minrk
 .. _@nuest: https://github.com/nuest
 .. _@yuvipanda: https://github.com/yuvipanda
+.. _@jrbourbeau: https://github.com/jrbourbeau
