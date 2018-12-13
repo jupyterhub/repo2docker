@@ -171,6 +171,7 @@ class BuildPack:
     def __init__(self):
         self.log = logging.getLogger('repo2docker')
         self.appendix = ''
+        self.labels = {}
         if sys.platform.startswith('win'):
             self.log.warning("Windows environment detected. Note that Windows "
                              "support is experimental in repo2docker.")
@@ -246,7 +247,7 @@ class BuildPack:
         """
         Docker labels to set on the built image.
         """
-        return getattr(self, 'labels', {})
+        return self.labels
 
     def get_build_script_files(self):
         """
