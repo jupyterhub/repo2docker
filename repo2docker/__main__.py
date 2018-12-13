@@ -5,7 +5,7 @@ import logging
 import docker
 from .app import Repo2Docker
 from . import __version__
-from .utils import validate_and_generate_port_mapping
+from .utils import validate_and_generate_port_mapping, is_valid_docker_image_name
 
 def validate_image_name(image_name):
     """

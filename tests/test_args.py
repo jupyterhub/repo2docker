@@ -77,3 +77,11 @@ def test_clean():
     assert not make_r2d(['.']).cleanup_checkout
     # Don't clean when repo exists locally and we explicitly ask it to not clean
     assert not make_r2d(['--no-clean', '.']).cleanup_checkout
+
+
+def test_invalid_image_name():
+    """
+    Test validating image names
+    """
+    with pytest.raises(SystemExit):
+        make_r2d(['--image-name', '_invalid', '.'])
