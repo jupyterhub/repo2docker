@@ -110,7 +110,7 @@ Released 2017-04-14
 .. _@costrouc: https://github.com/costrouc
 .. _@dsludwig: https://github.com/dsludwig
 .. _@evertrol: https://github.com/evertrol
+.. _@jrbourbeau: https://github.com/jrbourbeau
 .. _@minrk: https://github.com/minrk
 .. _@nuest: https://github.com/nuest
 .. _@yuvipanda: https://github.com/yuvipanda
-.. _@jrbourbeau: https://github.com/jrbourbeau
