@@ -1,6 +1,7 @@
 import argparse
 import sys
 import os
+import logging
 import docker
 from .app import Repo2Docker
 from . import __version__
@@ -251,8 +252,9 @@ def make_r2d(argv=None):
     r2d.push = args.push
 
     # check against r2d.run and not args.run as r2d.run is false on
-    # --no-build
-    if args.volumes and not r2d.run:
+    # --no-build. Also r2d.volumes and not args.volumes since --editable
+    # modified r2d.volumes
+    if r2d.volumes and not r2d.run:
         # Can't mount if we aren't running
         print('To Mount volumes with -v, you also need to run the '
                 'container')
