@@ -306,6 +306,7 @@ def make_r2d(argv=None):
     r2d.environment = args.environment
 
     # if the source exists locally we don't want to delete it at the end
+    # FIXME: Find a better way to figure out if repo is 'local'. Push this into ContentProvider?
     if os.path.exists(args.repo):
         r2d.cleanup_checkout = False
     else:

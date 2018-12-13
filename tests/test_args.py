@@ -62,3 +62,18 @@ def test_run_required():
     # Can't publish any ports while running if we don't specify a command explicitly
     with pytest.raises(SystemExit):
         make_r2d(['-p', '8000:8000', '.'])
+
+def test_clean():
+    """
+    Test checkout is cleaned appropriately
+    """
+
+    # Don't clean when repo isn't local and we explicitly ask it to not clean
+    assert not make_r2d(['--no-clean', 'https://github.com/blah.git']).cleanup_checkout
+    # Do clean repo when repo isn't localj
+    assert make_r2d(['https://github.com/blah.git']).cleanup_checkout
+
+    # Don't clean by default when repo exists locally
+    assert not make_r2d(['.']).cleanup_checkout
+    # Don't clean when repo exists locally and we explicitly ask it to not clean
+    assert not make_r2d(['--no-clean', '.']).cleanup_checkout
