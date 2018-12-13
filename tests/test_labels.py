@@ -3,8 +3,18 @@ Test if labels are supplied correctly to the container
 """
 import time
 from repo2docker.app import Repo2Docker
+from repo2docker.buildpacks import BuildPack
 from repo2docker import __version__
 import pytest
+
+
+def test_buildpack_labels_rendered():
+    bp = BuildPack()
+    assert 'LABEL' not in bp.render()
+    bp.labels['first_label'] = 'firstlabel'
+    assert 'LABEL first_label="firstlabel"\n' in bp.render()
+    bp.labels['second_label'] = 'anotherlabel'
+    assert 'LABEL second_label="anotherlabel"\n' in bp.render()
 
 
 @pytest.mark.parametrize('ref', ['some-branch', None])
