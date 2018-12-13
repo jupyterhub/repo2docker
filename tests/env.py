@@ -2,6 +2,7 @@
 Test that environment variables may be defined
 """
 import os
+import getpass
 import subprocess
 import tempfile
 import time
@@ -12,7 +13,7 @@ def test_env():
     """
     ts = str(time.time())
     with tempfile.TemporaryDirectory() as tmpdir:
-        username = os.getlogin()
+        username = getpass.getuser()
         subprocess.check_call([
             'repo2docker',
             '-v', '{}:/home/{}'.format(tmpdir, username),

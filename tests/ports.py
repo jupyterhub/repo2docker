@@ -2,6 +2,7 @@
 Test Port mappings work on running non-jupyter workflows
 """
 import subprocess
+import getpass
 import requests
 import time
 import os
@@ -29,7 +30,7 @@ def read_port_mapping_response(host, port, protocol = None):
     else:
         host = 'localhost'
     with tempfile.TemporaryDirectory() as tmpdir:
-        username = os.getlogin()
+        username = getpass.getuser()
 
         # Deploy a test container using r2d in a subprocess
         # Added the -v volumes to be able to poll for changes within the container from the
@@ -70,7 +71,7 @@ def test_all_port_mapping_response():
     """
     builddir = os.path.dirname(__file__)
     with tempfile.TemporaryDirectory() as tmpdir:
-        username = os.getlogin()
+        username = getpass.getuser()
 
         # Deploy a test container using r2d in a subprocess
         # Added the -v volumes to be able to poll for changes within the container from the

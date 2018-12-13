@@ -2,6 +2,7 @@
 Test that User name and ID mapping works
 """
 import os
+import getpass
 import subprocess
 import tempfile
 import time
@@ -12,7 +13,7 @@ def test_user():
     """
     ts = str(time.time())
     # FIXME: Use arbitrary login here, We need it now since we wanna put things to volume.
-    username = os.getlogin()
+    username = getpass.getuser()
     userid = str(os.geteuid())
     with tempfile.TemporaryDirectory() as tmpdir:
         subprocess.check_call([

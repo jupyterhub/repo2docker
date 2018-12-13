@@ -1,6 +1,7 @@
 """
 Test that volume mounts work when running
 """
+import getpass
 import os
 import subprocess
 import tempfile
@@ -12,7 +13,7 @@ def test_volume_abspath():
     """
     ts = str(time.time())
     with tempfile.TemporaryDirectory() as tmpdir:
-        username = os.getlogin()
+        username = getpass.getuser()
         subprocess.check_call([
             'repo2docker',
             '-v', '{}:/home/{}'.format(tmpdir, username),
@@ -41,7 +42,7 @@ def test_volume_relpath():
                 'repo2docker',
                 '-v', '.:.',
                 '--user-id', str(os.geteuid()),
-                '--user-name', os.getlogin(),
+                '--user-name', getpass.getuser(),
                 tmpdir,
                 '--',
                 '/bin/bash',
