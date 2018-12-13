@@ -10,28 +10,20 @@ import pytest
 @pytest.mark.parametrize('ref', ['some-branch', None])
 def test_labels(ref, tmpdir):
     app = Repo2Docker()
+    repo = str(tmpdir)
     if ref is not None:
-        argv = ['--ref', ref, str(tmpdir)]
+        argv = ['--ref', ref, repo]
     else:
-        argv = [str(tmpdir)]
+        argv = [repo]
     app.initialize(argv)
-    app.debug = True
+    app.build = False
     app.run = False
-    app.start()  # This just build the image and does not run it.
-    container = app.start_container()
+    app.start()
+    labels = app._picked_buildpack.labels
     expected_labels = {
-        'repo2docker.ref': str(ref),
-        'repo2docker.repo': str(tmpdir),
+        'repo2docker.ref': ref,
+        'repo2docker.repo': repo,
         'repo2docker.version': __version__,
     }
 
-    # wait a bit for the container to be ready
-    # give the container a chance to start
-    time.sleep(1)
-
-    try:
-        assert container.labels == expected_labels
-    finally:
-        # stop the container
-        container.stop()
-        app.wait_for_container(container)
+    assert labels == expected_labels

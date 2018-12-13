@@ -744,6 +744,8 @@ class Repo2Docker(Application):
                 else:
                     picked_buildpack = self.default_buildpack()
 
+                self._picked_buildpack = picked_buildpack
+
                 picked_buildpack.appendix = self.appendix
                 picked_buildpack.labels['repo2docker.version'] = self.version
                 picked_buildpack.labels['repo2docker.repo'] = self.repo
