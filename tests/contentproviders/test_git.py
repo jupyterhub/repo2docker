@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import os
 import subprocess
+import pytest
 from tempfile import TemporaryDirectory
 from repo2docker.contentproviders import Git
 
@@ -34,6 +35,16 @@ def test_clone():
                 pass
             assert os.path.exists(os.path.join(clone_dir, 'test'))
 
+def test_bad_ref():
+    """
+    Test trying to checkout a ref that doesn't exist
+    """
+    with git_repo() as upstream:
+        with TemporaryDirectory() as clone_dir:
+            spec = {'repo': upstream, 'ref': 'does-not-exist'}
+            with pytest.raises(ValueError):
+                for _ in Git().fetch(spec, clone_dir):
+                    pass
 
 def test_always_accept():
     # The git content provider should always accept a spec
