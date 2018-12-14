@@ -6,18 +6,15 @@ import pytest
 import logging
 from repo2docker.__main__ import make_r2d
 from repo2docker import __version__
-from contextlib import redirect_stdout
-import io
 
-def test_version():
+
+def test_version(capsys):
     """
     Test passing '--version' to repo2docker
     """
-    stdout = io.StringIO()
-    with redirect_stdout(stdout):
-        with pytest.raises(SystemExit):
-            make_r2d(['--version'])
-    assert stdout.getvalue().strip() == __version__
+    with pytest.raises(SystemExit):
+        make_r2d(['--version'])
+    assert capsys.readouterr().out == f"{__version__}\n"
 
 def test_simple():
     """
