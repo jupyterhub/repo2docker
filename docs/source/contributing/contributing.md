@@ -10,7 +10,7 @@ repo2docker merged.
   community is a great way to save time later.
 * Make edits in your fork of the repo2docker repository
 * Submit a pull request (this is how all changes are made)
-* Edit [the changelog](https://github.com/jupyter/repo2docker/blob/master/CHANGES.rst)
+* Edit [the changelog](./../../changelog.html)
   by appending your feature / bug fix to the development version.
 * Wait for a community member to merge your changes
 * (optional) Deploy a new version of repo2docker to mybinder.org by [following these steps](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)

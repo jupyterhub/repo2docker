@@ -48,3 +48,9 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    design
    contributing/tasks
    contributing/buildpack
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Changelog
+
+   changelog
