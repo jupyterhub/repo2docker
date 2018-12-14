@@ -745,6 +745,11 @@ class Repo2Docker(Application):
                     picked_buildpack = self.default_buildpack()
 
                 picked_buildpack.appendix = self.appendix
+                # Add metadata labels
+                picked_buildpack.labels['repo2docker.version'] = self.version
+                repo_label = 'local' if os.path.isdir(self.repo) else self.repo
+                picked_buildpack.labels['repo2docker.repo'] = repo_label
+                picked_buildpack.labels['repo2docker.ref'] = self.ref
 
                 self.log.debug(picked_buildpack.render(),
                                extra=dict(phase='building'))

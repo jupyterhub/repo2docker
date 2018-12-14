@@ -120,8 +120,8 @@ ENV {{item[0]}} {{item[1]}}
 # Container image Labels!
 # Put these at the end, since we don't want to rebuild everything
 # when these change! Did I mention I hate Dockerfile cache semantics?
-{% for k, v in labels.items() -%}
-LABEL {{k}}={{v}}
+{% for k, v in labels.items() %}
+LABEL {{k}}="{{v}}"
 {%- endfor %}
 
 # We always want containers to run as non-root
@@ -171,6 +171,7 @@ class BuildPack:
     def __init__(self):
         self.log = logging.getLogger('repo2docker')
         self.appendix = ''
+        self.labels = {}
         if sys.platform.startswith('win'):
             self.log.warning("Windows environment detected. Note that Windows "
                              "support is experimental in repo2docker.")
@@ -246,7 +247,7 @@ class BuildPack:
         """
         Docker labels to set on the built image.
         """
-        return {}
+        return self.labels
 
     def get_build_script_files(self):
         """
