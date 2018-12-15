@@ -113,13 +113,13 @@ used for your R installation.
 It is powered by the open file format `Dar <https://github.com/substance/dar>`_.
 
 If your repository contains a Stencila document, repo2docker detects it based on the file ``manifest.xml``.
-The required `execution contexts <https://stenci.la/learn/intro.html>` are extracted from a Dar article (i.e.
+The required `execution contexts <https://stenci.la/learn/intro.html>`_ are extracted from a Dar article (i.e.
 files named ``*.jats.xml``).
 
 You may also have a ``runtime.txt`` and/or an ``install.R`` to manually configure your R installation.
 
 To see example repositories, visit our
-`Stencila with R <https://github.com/binder-examples/stencila-r/>`_ and 
+`Stencila with R <https://github.com/binder-examples/stencila-r/>`_ and
 `Stencila with Python <https://github.com/binder-examples/stencila-py>`_ examples.
 
 .. _postBuild:
@@ -141,9 +141,9 @@ their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master
 ====================================================
 
 A script that can contain simple commands to be run at runtime (as an
-`ENTRYPOINT <https://docs.docker.com/engine/reference/builder/#entrypoint>`
+`ENTRYPOINT <https://docs.docker.com/engine/reference/builder/#entrypoint>`_
 to the docker container). If you want this to be a shell script, make sure the
-first line is ```#!/bin/bash``. The last line must be ```exec "$@"```
+first line is ``#!/bin/bash``. The last line must be ``exec "$@"``
 equivalent.
 
 Use this to set environment variables that software installed in your container
