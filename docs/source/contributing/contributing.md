@@ -18,8 +18,8 @@ repo2docker merged.
 
 ## Guidelines to getting a Pull Request merged
 
-These are not hard rules to be enforced by :police_car: but instead guidelines
-to help you make the most effictive / efficient contribution.
+These are not hard rules to be enforced by 🚓 but instead guidelines
+to help you make a contribution.
 
 * prefix the title of your pull request with `[MRG]` if the contribution
   is complete and should be subjected to a detailed review;
@@ -31,6 +31,7 @@ to help you make the most effictive / efficient contribution.
 * describe why you are proposing the changes you are proposing;
 * try to not rush changes (the definition of rush depends on how big your
   changes are);
+* Enter your changes into the [change log](https://github.com/jupyter/repo2docker/blob/master/CHANGES.rst);
 * someone else has to merge your PR;
 * new code needs to come with a test;
 * apply [PEP8](https://www.python.org/dev/peps/pep-0008/) as much
@@ -67,7 +68,7 @@ make that your current directory with `cd repo2docker`.
 
 After cloning the repository (or your fork of the repository), you should set up an
 isolated environment to install libraries required for running / developing
-repo2docker. 
+repo2docker.
 
 There are many ways to do this but here we present you with two approaches: `virtual environment` or `pipenv`.
 
@@ -85,7 +86,7 @@ This should install all the libraries required for testing & running repo2docker
 
 - Using `pipenv`
 
-Note that you will need to install pipenv first using `pip3 install pipenv`. 
+Note that you will need to install pipenv first using `pip3 install pipenv`.
 Then from the root directory of this project you can use the following commands:
 
 ```bash
@@ -94,7 +95,7 @@ pipenv install --dev
 
 This should install both the dev and docs requirements at once!
 
-### Set up 
+### Set up
 
 ### Verify that docker is installed and running
 
@@ -129,7 +130,3 @@ Server:
 ```
 
 Then you are good to go!
-
-
-
-
