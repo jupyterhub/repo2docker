@@ -9,7 +9,7 @@ install:
 # Make a wheel and install it to test to catch possible
 # issues with releases
 - pip install --upgrade setuptools pip
-- pip install -r dev-requirements.txt
+- pip install --upgrade -r dev-requirements.txt
 - python setup.py bdist_wheel
 - pip install dist/*.whl
 script:
