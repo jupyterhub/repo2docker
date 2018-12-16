@@ -17,9 +17,9 @@ script:
 # possible issues with MANIFEST.in
 - pushd tests;
   if [ ${REPO_TYPE} == "r" ] || [ ${REPO_TYPE} == "stencila-r" ] || [ ${REPO_TYPE} == "stencila-py" ]; then
-    travis_wait 30 pytest --cov repo2docker -v ${REPO_TYPE} || exit 1;
+    travis_wait 30 pytest -n auto --cov repo2docker -v ${REPO_TYPE} || exit 1;
   else
-    travis_retry pytest --cov repo2docker -v ${REPO_TYPE} || exit 1;
+    travis_retry pytest -n auto --cov repo2docker -v ${REPO_TYPE} || exit 1;
   fi;
   popd;
 - pip install -r docs/doc-requirements.txt
