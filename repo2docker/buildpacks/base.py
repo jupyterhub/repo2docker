@@ -38,11 +38,15 @@ ARG NB_UID
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
+# Allow target path repo is cloned to be configurable
+ARG REPO_PATH=${HOME}
+ENV REPO_PATH ${REPO_PATH}
+
 RUN adduser --disabled-password \
     --gecos "Default user" \
     --uid ${NB_UID} \
     ${NB_USER}
-WORKDIR ${HOME}
+WORKDIR ${REPO_PATH}
 
 RUN wget --quiet -O - https://deb.nodesource.com/gpgkey/nodesource.gpg.key |  apt-key add - && \
     DISTRO="bionic" && \
@@ -101,8 +105,8 @@ COPY {{ src }} {{ dst }}
 # Copy and chown stuff. This doubles the size of the repo, because
 # you can't actually copy as USER, only as root! Thanks, Docker!
 USER root
-COPY src/ ${HOME}
-RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
+COPY src/ ${REPO_PATH}
+RUN chown -R ${NB_USER}:${NB_USER} ${REPO_PATH}
 
 {% if env -%}
 # The rest of the environment
@@ -525,7 +529,7 @@ class BaseImage(BuildPack):
 
             archive_dir, archive = os.path.split(self.stencila_manifest_dir)
             env.extend([
-                ("STENCILA_ARCHIVE_DIR", "${HOME}/" + archive_dir),
+                ("STENCILA_ARCHIVE_DIR", "${REPO_PATH}/" + archive_dir),
                 ("STENCILA_ARCHIVE", archive),
             ])
         return env
