@@ -63,7 +63,7 @@ def freeze(env_file, frozen_file):
         'run',
         '--rm',
         '-v' f"{HERE}:/r2d",
-        '-it',
+        '-it' if sys.stdin.isatty() else '-t',
         f"continuumio/miniconda3:{MINICONDA_DOCKER_VERSION}",
         "sh", "-c",
         '; '.join([
@@ -105,14 +105,21 @@ def set_python(py_env_file, py):
         yaml.dump(env, f)
 
 
-if __name__ == '__main__':
-    # allow specifying which Pythons to update on argv
-    pys = sys.argv[1:] or ('2.7', '3.7', '3.5', '3.6')
+def main(*pys):
+    """refreeze base conda environments"""
+    if not pys:
+        # allow specifying which Pythons to update on argv
+        pys = sys.argv[1:] or ('2.7', '3.7', '3.6')
+
     for py in pys:
         env_file = ENV_FILE_T.format(py=py)
         set_python(env_file, py)
         frozen_file = os.path.splitext(env_file)[0] + '.frozen.yml'
         freeze(env_file, frozen_file)
+        if py == '3.6':
+            # use python 3.6 as default
+            shutil.copy(frozen_file, FROZEN_FILE)
 
-    # use last version as default
-    shutil.copy(frozen_file, FROZEN_FILE)
+
+if __name__ == '__main__':
+    main()
