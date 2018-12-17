@@ -38,15 +38,10 @@ ARG NB_UID
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
-# Allow target path repo is cloned to be configurable
-ARG REPO_PATH=${HOME}
-ENV REPO_PATH ${REPO_PATH}
-
 RUN adduser --disabled-password \
     --gecos "Default user" \
     --uid ${NB_UID} \
     ${NB_USER}
-WORKDIR ${REPO_PATH}
 
 RUN wget --quiet -O - https://deb.nodesource.com/gpgkey/nodesource.gpg.key |  apt-key add - && \
     DISTRO="bionic" && \
@@ -101,6 +96,11 @@ COPY {{ src }} {{ dst }}
 {% for sd in build_script_directives -%}
 {{sd}}
 {% endfor %}
+
+# Allow target path repo is cloned to be configurable
+ARG REPO_PATH=${HOME}
+ENV REPO_PATH ${REPO_PATH}
+WORKDIR ${REPO_PATH}
 
 # Copy and chown stuff. This doubles the size of the repo, because
 # you can't actually copy as USER, only as root! Thanks, Docker!
