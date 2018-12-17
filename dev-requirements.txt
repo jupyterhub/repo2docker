@@ -4,4 +4,3 @@ pyyaml
 pytest
 wheel
 pytest-cov
-sphinxcontrib-autoprogram
