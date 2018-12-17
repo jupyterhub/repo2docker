@@ -1,139 +1,124 @@
 """
 Test Port mappings work on running non-jupyter workflows
 """
-import subprocess
+
 import requests
 import time
 import os
 import tempfile
-import signal
 import random
 
+import docker
+import pytest
 
-def read_port_mapping_response(host, port, protocol=None):
+from repo2docker.app import Repo2Docker
+
+
+def read_port_mapping_response(request, tmpdir, host=None, port='',
+                               all_ports=False, protocol=None):
     """
     Deploy container and test if port mappings work as expected
 
     Args:
-        host: the host interface to bind to.
+        request: pytest request fixture
+        host: the host interface to bind to
         port: the random host port to bind to
         protocol: the protocol to use valid values /tcp or /udp
     """
-    builddir = os.path.dirname(__file__)
-    port_protocol = '8000'
+    port_protocol = '8888'
     if protocol:
         port_protocol += protocol
     host_port = port
     if host:
-        host_port = host + ':' + port
+        host_port = (host, port)
     else:
         host = 'localhost'
-    with tempfile.TemporaryDirectory() as tmpdir:
-        username = os.getlogin()
-        tmpdir = os.path.realpath(tmpdir)
 
-        # Deploy a test container using r2d in a subprocess
-        # Added the -v volumes to be able to poll for changes within the container from the
-        # host (In this case container starting up)
-        proc = subprocess.Popen(['repo2docker',
-                                 '-p',
-                                 host_port + ':' + port_protocol,
-                                 '-v', '{}:/home'.format(tmpdir),
-                                 '--user-id', str(os.geteuid()),
-                                 '--user-name', username,
-                                 '.',
-                                 '/bin/bash', '-c', 'echo \'hi\' > /home/ts && python -m http.server 8000'],
-                                 cwd=builddir,
-                                 stderr=subprocess.STDOUT)
+    if port:
+        ports = {port_protocol: host_port}
+    else:
+        ports = {}
+
+    # run in an empty temporary directory
+    td = tempfile.TemporaryDirectory()
+    # cleanup at the end of the test
+    request.addfinalizer(td.cleanup)
+    tmpdir.chdir()
+
+    username = os.getlogin()
+    tmpdir.mkdir('username')
+    r2d = Repo2Docker(
+        repo=str(tmpdir.mkdir('repo')),
+        user_id=os.geteuid(),
+        user_name=username,
+        all_ports=all_ports,
+        ports=ports,
+        run=True,
+        run_cmd=['python', '-m', 'http.server', '8888'],
+    )
+    r2d.initialize()
+    r2d.build()
+    # create container
+    container = r2d.start_container()
+
+    # register cleanup first thing so we don't leave it lying around
+    def _cleanup():
+        container.reload()
+        if container.status == 'running':
+            container.kill()
         try:
-            # Wait till docker builds image and starts up
-            while not os.path.exists(os.path.join(tmpdir, 'ts')):
-                if proc.poll() is not None:
-                    # Break loop on errors from the subprocess
-                    raise Exception("Process running r2d exited")
+            container.remove()
+        except docker.errors.NotFound:
+            pass
+    request.addfinalizer(_cleanup)
 
-            # Sleep to wait for python http server to start
-            time.sleep(20)
-            resp = requests.request("GET", 'http://' + host + ':' + port)
+    container.reload()
+    assert container.status == 'running'
+    port_mapping = container.attrs['NetworkSettings']['Ports']
+    if all_ports:
+        port = port_mapping['8888/tcp'][0]['HostPort']
 
-            # Check if the response is correct
-            assert b'Directory listing' in resp.content
-        finally:
-            if proc.poll() is None:
-                # If the subprocess running the container is still running, interrupt it to close it
-                os.kill(proc.pid, signal.SIGINT)
-                time.sleep(10)
-
-
-def test_all_port_mapping_response():
-    """
-    Deploy container and test if all port expose works as expected
-    """
-    builddir = os.path.dirname(__file__)
-    with tempfile.TemporaryDirectory() as tmpdir:
-        username = os.getlogin()
-        tmpdir = os.path.realpath(tmpdir)
-
-        # Deploy a test container using r2d in a subprocess
-        # Added the -v volumes to be able to poll for changes within the container from the
-        # host (In this case container starting up)
-        proc = subprocess.Popen(['repo2docker',
-                                 "--image-name",
-                                 "testallport:0.1",
-                                 '-P',
-                                 '-v', '{}:/home'.format(tmpdir),
-                                 '--user-id', str(os.geteuid()),
-                                 '--user-name', username,
-                                 '.',
-                                 '/bin/bash', '-c', 'echo \'hi\' > /home/ts && python -m http.server 52000'],
-                                 cwd=builddir,
-                                 stderr=subprocess.STDOUT)
-
+    url = 'http://{}:{}'.format(host, port)
+    for i in range(5):
         try:
-            # Wait till docker builds image and starts up
-            while not os.path.exists(os.path.join(tmpdir, 'ts')):
-                if proc.poll() is not None:
-                    # Break loop on errors from the subprocess
-                    raise Exception("Process running r2d exited")
-
-            # Sleep to wait for python http server to start
-            time.sleep(20)
-            port = subprocess.check_output("docker ps -f ancestor=testallport:0.1 --format '{{.Ports}}' | cut -f 1 -d - | cut -d: -f 2",
-                                            shell=True).decode("utf-8")
-            port = port.strip("\n\t")
-            resp = requests.request("GET", 'http://localhost' + ':' + port)
-
-            # Check if the response is correct
-            assert b'Directory listing' in resp.content
-        finally:
-            if proc.poll() is None:
-                # If the subprocess running the container is still running, interrupt it to close it
-                os.kill(proc.pid, signal.SIGINT)
-                time.sleep(10)
+            r = requests.get(url)
+            r.raise_for_status()
+        except Exception as e:
+            print("No response from {}: {}".format(url, e))
+            container.reload()
+            assert container.status == 'running'
+            time.sleep(3)
+            continue
+        else:
+            break
+    else:
+        pytest.fail("Never succeded in talking to %s" % url)
+    assert 'Directory listing' in r.text
 
 
-def test_port_mapping_random_port():
+def test_all_port_mapping_response(request, tmpdir):
     """
-    Test a simple random port bind
+    Deploy container and test if all port exposed works as expected
     """
+    read_port_mapping_response(request, tmpdir, all_ports=True)
+
+
+@pytest.mark.parametrize(
+    'host, protocol',
+    [
+        (None, None),
+        ('127.0.0.1', None),
+        (None, '/tcp'),
+    ]
+)
+def test_port_mapping(request, tmpdir, host, protocol):
+    """Test a port mapping"""
     port = str(random.randint(50000, 51000))
-    host = None
-    read_port_mapping_response(host, port)
+    read_port_mapping_response(
+        request,
+        tmpdir,
+        host=host,
+        port=port,
+        protocol=protocol,
+    )
 
-
-def test_port_mapping_particular_interface():
-    """
-    Test if binding to a single interface is possible
-    """
-    port = str(random.randint(50000, 51000))
-    host = '127.0.0.1'
-    read_port_mapping_response(host, port)
-
-
-def test_port_mapping_protocol():
-    """
-    Test if a particular protocol can be used
-    """
-    port = str(random.randint(50000, 51000))
-    host = None
-    read_port_mapping_response(host, port, '/tcp')
