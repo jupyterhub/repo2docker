@@ -327,6 +327,16 @@ class Repo2Docker(Application):
         config=True
     )
 
+    repo_path = Unicode(
+        '$HOME',
+        help="""
+        Path inside the image where contents of the repositories are copied to.
+
+        Build arguments in this are expanded.
+        """,
+        config=True
+    )
+
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
 
@@ -593,7 +603,8 @@ class Repo2Docker(Application):
                 if not self.dry_run:
                     build_args = {
                         'NB_USER': self.user_name,
-                        'NB_UID': str(self.user_id)
+                        'NB_UID': str(self.user_id),
+                        'REPO_PATH': self.repo_path
                     }
                     self.log.info('Using %s builder\n', bp.__class__.__name__,
                                   extra=dict(phase='building'))

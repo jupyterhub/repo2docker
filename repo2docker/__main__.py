@@ -169,6 +169,11 @@ def get_argparser():
     )
 
     argparser.add_argument(
+        '--repo-path',
+        help=Repo2Docker.repo_path.help
+    )
+
+    argparser.add_argument(
         '--appendix',
         type=str,
         #help=self.traits()['appendix'].help,
@@ -315,6 +320,9 @@ def make_r2d(argv=None):
         r2d.cleanup_checkout = False
     else:
         r2d.cleanup_checkout = args.clean
+
+    if args.repo_path:
+        r2d.repo_path = args.repo_path
 
     return r2d
 
