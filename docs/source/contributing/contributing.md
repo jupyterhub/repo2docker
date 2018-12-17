@@ -31,7 +31,7 @@ to help you make a contribution.
 * describe why you are proposing the changes you are proposing;
 * try to not rush changes (the definition of rush depends on how big your
   changes are);
-* Enter your changes into the [changelog](https://repo2docker.readthedocs.io/en/latest/changelog.html) in `docs/source/changelog.rst`;
+* Enter your changes into the [changelog](./../../changelog.html) in `docs/source/changelog.rst`;
 * someone else has to merge your PR;
 * new code needs to come with a test;
 * apply [PEP8](https://www.python.org/dev/peps/pep-0008/) as much
