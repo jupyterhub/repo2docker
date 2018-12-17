@@ -37,7 +37,8 @@ extensions = ['sphinx.ext.extlinks']
 
 extlinks = {
     'issue': ('https://github.com/jupyter/repo2docker/issues/%s', 'Issue #'),
-    'pr': ('https://github.com/jupyter/repo2docker/pull/%s', 'PR #')
+    'pr': ('https://github.com/jupyter/repo2docker/pull/%s', 'PR #'),
+    'user': ('https://github.com/%s', '@'),
 }
 
 # Add any paths that contain templates here, relative to this directory.
