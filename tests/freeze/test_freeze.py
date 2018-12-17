@@ -12,8 +12,8 @@ from repo2docker.utils import chdir
 conda_dir = os.path.dirname(conda.__file__)
 
 
-@pytest.mark.parametrize('py', ['2.7', '3.6', '3.7'])
-def test_refreeze(capsys, py):
+@pytest.mark.parametrize('py', ['2.7', '3.6'])
+def test_freeze(capsys, py):
     with chdir(conda_dir):
         freeze.main(py)
         out = check_output(['git', 'diff'], cwd=conda_dir)
