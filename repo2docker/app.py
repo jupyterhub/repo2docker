@@ -328,11 +328,11 @@ class Repo2Docker(Application):
     )
 
     repo_path = Unicode(
-        '$HOME',
+        '',
         help="""
         Path inside the image where contents of the repositories are copied to.
 
-        Build arguments in this are expanded.
+        Defaults to ${HOME} if not set
         """,
         config=True
     )
@@ -604,8 +604,9 @@ class Repo2Docker(Application):
                     build_args = {
                         'NB_USER': self.user_name,
                         'NB_UID': str(self.user_id),
-                        'REPO_PATH': self.repo_path
                     }
+                    if self.repo_path:
+                        build_args['REPO_PATH'] = self.repo_path
                     self.log.info('Using %s builder\n', bp.__class__.__name__,
                                   extra=dict(phase='building'))
 
