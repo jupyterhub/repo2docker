@@ -1,13 +1,15 @@
 """
 Test that --cache-from is passed in to docker API properly.
 """
-import os
+
+from unittest.mock import MagicMock
+
 import docker
-from unittest.mock import MagicMock, patch
+
 from repo2docker.buildpacks import BaseImage, DockerBuildPack, LegacyBinderDockerBuildPack
-from tempfile import TemporaryDirectory
 
-def test_cache_from_base(monkeypatch):
+
+def test_cache_from_base(tmpdir):
     FakeDockerClient = MagicMock()
     cache_from = [
         'image-1:latest'
@@ -16,18 +18,17 @@ def test_cache_from_base(monkeypatch):
     fake_client = MagicMock(spec=docker.APIClient)
     fake_client.build.return_value = iter([fake_log_value])
 
-    with TemporaryDirectory() as d:
-        # Test base image build pack
-        monkeypatch.chdir(d)
-        for line in BaseImage().build(fake_client, 'image-2', '1Gi', {}, cache_from):
-            assert line == fake_log_value
-        called_args, called_kwargs = fake_client.build.call_args
-        assert 'cache_from' in called_kwargs
-        assert called_kwargs['cache_from'] == cache_from
+    # Test base image build pack
+    tmpdir.chdir()
+    for line in BaseImage().build(fake_client, 'image-2', '1Gi', {}, cache_from):
+        assert line == fake_log_value
+    called_args, called_kwargs = fake_client.build.call_args
+    assert 'cache_from' in called_kwargs
+    assert called_kwargs['cache_from'] == cache_from
 
 
 
-def test_cache_from_docker(monkeypatch):
+def test_cache_from_docker(tmpdir):
     FakeDockerClient = MagicMock()
     cache_from = [
         'image-1:latest'
@@ -36,30 +37,19 @@ def test_cache_from_docker(monkeypatch):
     fake_client = MagicMock(spec=docker.APIClient)
     fake_client.build.return_value = iter([fake_log_value])
 
-    with TemporaryDirectory() as d:
-        # Test docker image
-        with open(os.path.join(d, 'Dockerfile'), 'w') as f:
-            f.write('FROM scratch\n')
+    tmpdir.chdir()
+    # test dockerfile
+    with tmpdir.join("Dockerfile").open('w') as f:
+        f.write('FROM scratch\n')
 
-        for line in DockerBuildPack().build(fake_client, 'image-2', '1Gi', {}, cache_from):
-            assert line == fake_log_value
-        called_args, called_kwargs = fake_client.build.call_args
-        assert 'cache_from' in called_kwargs
-        assert called_kwargs['cache_from'] == cache_from
-
-        # Test legacy docker image
-        with open(os.path.join(d, 'Dockerfile'), 'w') as f:
-            f.write('FROM andrewosh/binder-base\n')
-
-        for line in LegacyBinderDockerBuildPack().build(fake_client, 'image-2', '1Gi', {}, cache_from):
-            print(line)
-            assert line == fake_log_value
-        called_args, called_kwargs = fake_client.build.call_args
-        assert 'cache_from' in called_kwargs
-        assert called_kwargs['cache_from'] == cache_from
+    for line in DockerBuildPack().build(fake_client, 'image-2', '1Gi', {}, cache_from):
+        assert line == fake_log_value
+    called_args, called_kwargs = fake_client.build.call_args
+    assert 'cache_from' in called_kwargs
+    assert called_kwargs['cache_from'] == cache_from
 
 
-def test_cache_from_legacy(monkeypatch):
+def test_cache_from_legacy(tmpdir):
     FakeDockerClient = MagicMock()
     cache_from = [
         'image-1:latest'
@@ -68,15 +58,13 @@ def test_cache_from_legacy(monkeypatch):
     fake_client = MagicMock(spec=docker.APIClient)
     fake_client.build.return_value = iter([fake_log_value])
 
-    with TemporaryDirectory() as d:
-        # Test legacy docker image
-        with open(os.path.join(d, 'Dockerfile'), 'w') as f:
-            f.write('FROM andrewosh/binder-base\n')
+    # Test legacy docker image
+    with tmpdir.join("Dockerfile").open('w') as f:
+        f.write('FROM andrewosh/binder-base\n')
 
-        for line in LegacyBinderDockerBuildPack().build(fake_client, 'image-2', '1Gi', {}, cache_from):
-            assert line == fake_log_value
-        called_args, called_kwargs = fake_client.build.call_args
-        assert 'cache_from' in called_kwargs
-        assert called_kwargs['cache_from'] == cache_from
-
+    for line in LegacyBinderDockerBuildPack().build(fake_client, 'image-2', '1Gi', {}, cache_from):
+        assert line == fake_log_value
+    called_args, called_kwargs = fake_client.build.call_args
+    assert 'cache_from' in called_kwargs
+    assert called_kwargs['cache_from'] == cache_from
 

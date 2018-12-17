@@ -10,7 +10,7 @@ import signal
 import random
 
 
-def read_port_mapping_response(host, port, protocol = None):
+def read_port_mapping_response(host, port, protocol=None):
     """
     Deploy container and test if port mappings work as expected
 
@@ -30,6 +30,7 @@ def read_port_mapping_response(host, port, protocol = None):
         host = 'localhost'
     with tempfile.TemporaryDirectory() as tmpdir:
         username = os.getlogin()
+        tmpdir = os.path.realpath(tmpdir)
 
         # Deploy a test container using r2d in a subprocess
         # Added the -v volumes to be able to poll for changes within the container from the
@@ -42,7 +43,7 @@ def read_port_mapping_response(host, port, protocol = None):
                                  '--user-name', username,
                                  '.',
                                  '/bin/bash', '-c', 'echo \'hi\' > /home/ts && python -m http.server 8000'],
-                                 cwd=builddir + "/../",
+                                 cwd=builddir,
                                  stderr=subprocess.STDOUT)
         try:
             # Wait till docker builds image and starts up
@@ -71,6 +72,7 @@ def test_all_port_mapping_response():
     builddir = os.path.dirname(__file__)
     with tempfile.TemporaryDirectory() as tmpdir:
         username = os.getlogin()
+        tmpdir = os.path.realpath(tmpdir)
 
         # Deploy a test container using r2d in a subprocess
         # Added the -v volumes to be able to poll for changes within the container from the
@@ -84,7 +86,7 @@ def test_all_port_mapping_response():
                                  '--user-name', username,
                                  '.',
                                  '/bin/bash', '-c', 'echo \'hi\' > /home/ts && python -m http.server 52000'],
-                                 cwd=builddir + "/../",
+                                 cwd=builddir,
                                  stderr=subprocess.STDOUT)
 
         try:

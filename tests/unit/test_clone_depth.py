@@ -21,15 +21,16 @@ def test_clone_depth():
     """Test a remote repository, without a refspec"""
 
     with TemporaryDirectory() as d:
-        app = Repo2Docker()
-        argv = [URL]
-        app.initialize(argv)
-        app.build = False
-        app.run = False
-        # turn of automatic clean up of the checkout so we can inspect it
-        # we also set the work directory explicitly so we know where to look
-        app.cleanup_checkout = False
-        app.git_workdir = d
+        app = Repo2Docker(
+            repo=URL,
+            dry_run=True,
+            run=False,
+            # turn of automatic clean up of the checkout so we can inspect it
+            # we also set the work directory explicitly so we know where to look
+            cleanup_checkout=False,
+            git_workdir=d,
+        )
+        app.initialize()
         app.start()
 
         cmd = ['git', 'rev-parse', 'HEAD']
@@ -46,15 +47,17 @@ def test_clone_depth_full():
     """Test a remote repository, with a refspec of 'master'"""
 
     with TemporaryDirectory() as d:
-        app = Repo2Docker()
-        argv = ['--ref', 'master', URL]
-        app.initialize(argv)
-        app.run = False
-        app.build = False
-        # turn of automatic clean up of the checkout so we can inspect it
-        # we also set the work directory explicitly so we know where to look
-        app.cleanup_checkout = False
-        app.git_workdir = d
+        app = Repo2Docker(
+            repo=URL,
+            ref='master',
+            dry_run=True,
+            run=False,
+            # turn of automatic clean up of the checkout so we can inspect it
+            # we also set the work directory explicitly so we know where to look
+            cleanup_checkout=False,
+            git_workdir=d,
+        )
+        app.initialize()
         app.start()
 
         # Building the image has already put us in the cloned repository directory
@@ -72,16 +75,17 @@ def test_clone_depth_full2():
     """Test a remote repository, with a refspec of the master commit hash"""
 
     with TemporaryDirectory() as d:
-        app = Repo2Docker()
-        argv = ['--ref', '703322e', URL]
-
-        app.initialize(argv)
-        app.run = False
-        app.build = False
-        # turn of automatic clean up of the checkout so we can inspect it
-        # we also set the work directory explicitly so we know where to look
-        app.cleanup_checkout = False
-        app.git_workdir = d
+        app = Repo2Docker(
+            repo=URL,
+            ref='703322e',
+            dry_run=True,
+            run=False,
+            # turn of automatic clean up of the checkout so we can inspect it
+            # we also set the work directory explicitly so we know where to look
+            cleanup_checkout=False,
+            git_workdir=d,
+        )
+        app.initialize()
         app.start()
 
         # Building the image has already put us in the cloned repository directory
@@ -99,16 +103,17 @@ def test_clone_depth_mid():
     """Test a remote repository, with a refspec of a commit hash halfway"""
 
     with TemporaryDirectory() as d:
-        app = Repo2Docker()
-        argv = ['--ref', '8bc4f21', URL]
-
-        app.initialize(argv)
-        app.run = False
-        app.build = False
-        # turn of automatic clean up of the checkout so we can inspect it
-        # we also set the work directory explicitly so we know where to look
-        app.cleanup_checkout = False
-        app.git_workdir = d
+        app = Repo2Docker(
+            repo=URL,
+            ref='8bc4f21',
+            dry_run=True,
+            run=False,
+            # turn of automatic clean up of the checkout so we can inspect it
+            # we also set the work directory explicitly so we know where to look
+            cleanup_checkout=False,
+            git_workdir=d,
+        )
+        app.initialize()
         app.start()
 
         # Building the image has already put us in the cloned repository directory
