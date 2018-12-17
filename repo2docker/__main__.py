@@ -196,7 +196,6 @@ def get_argparser():
         '--cache-from',
         action='append',
         default=[],
-        #help=self.traits()['cache_from'].help
     )
 
     return argparser
@@ -207,7 +206,6 @@ argparser = get_argparser()
 def make_r2d(argv=None):
     if argv is None:
         argv = sys.argv[1:]
-
 
     # version must be checked before parse, as repo/cmd are required and
     # will spit out an error if allowed to be parsed first.
@@ -244,9 +242,11 @@ def make_r2d(argv=None):
                             extra=dict(phase='failed'))
             sys.exit(1)
 
-
     if args.image_name:
         r2d.output_image_spec = args.image_name
+    else:
+        # we will pick a name after fetching the repository
+        r2d.output_image_spec = ""
 
     r2d.json_logs = args.json_logs
 
@@ -342,6 +342,7 @@ def main():
         if r2d.debug:
             r2d.log.exception(e)
         sys.exit(1)
+
 
 if __name__ == '__main__':
     main()

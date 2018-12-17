@@ -1,50 +1,34 @@
-from contextlib import contextmanager
 import os
-import subprocess
 import pytest
 from tempfile import TemporaryDirectory
 from repo2docker.contentproviders import Git
 
 
-@contextmanager
-def git_repo():
-    """
-    Makes a dummy git repo in which user can perform git operations
-
-    Should be used as a contextmanager, it will delete directory when done
-    """
-
-    with TemporaryDirectory() as gitdir:
-        subprocess.check_call(['git', 'init'], cwd=gitdir)
-        yield gitdir
-
-
-def test_clone():
+def test_clone(repo_with_content):
     """Test simple git clone to a target dir"""
-    with git_repo() as upstream:
-        with open(os.path.join(upstream, 'test'), 'w') as f:
-            f.write("Hello")
+    upstream, sha1 = repo_with_content
 
-        subprocess.check_call(['git', 'add', 'test'], cwd=upstream)
-        subprocess.check_call(['git', 'commit', '-m', 'Test commit'],
-                              cwd=upstream)
+    with TemporaryDirectory() as clone_dir:
+        spec = {'repo': upstream}
+        git_content = Git()
+        for _ in git_content.fetch(spec, clone_dir):
+            pass
+        assert os.path.exists(os.path.join(clone_dir, 'test'))
 
-        with TemporaryDirectory() as clone_dir:
-            spec = {'repo': upstream}
-            for _ in Git().fetch(spec, clone_dir):
-                pass
-            assert os.path.exists(os.path.join(clone_dir, 'test'))
+        assert git_content.content_id == sha1[:7]
 
-def test_bad_ref():
+
+def test_bad_ref(repo_with_content):
     """
     Test trying to checkout a ref that doesn't exist
     """
-    with git_repo() as upstream:
-        with TemporaryDirectory() as clone_dir:
-            spec = {'repo': upstream, 'ref': 'does-not-exist'}
-            with pytest.raises(ValueError):
-                for _ in Git().fetch(spec, clone_dir):
-                    pass
+    upstream, sha1 = repo_with_content
+    with TemporaryDirectory() as clone_dir:
+        spec = {'repo': upstream, 'ref': 'does-not-exist'}
+        with pytest.raises(ValueError):
+            for _ in Git().fetch(spec, clone_dir):
+                pass
+
 
 def test_always_accept():
     # The git content provider should always accept a spec

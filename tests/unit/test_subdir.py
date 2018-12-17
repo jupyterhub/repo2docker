@@ -2,7 +2,8 @@
 Test if the subdirectory is correctly navigated to
 """
 import os
-import logging
+
+import escapism
 
 import pytest
 from repo2docker.app import Repo2Docker
@@ -23,10 +24,20 @@ def test_subdir(run_repo2docker):
     assert cwd == os.getcwd(), "We should be back in %s" % cwd
 
 
+def test_subdir_in_image_name():
+    app = Repo2Docker(
+        repo=TEST_REPO,
+        subdir='a directory',
+    )
+    app.initialize()
+    app.build()
+
+    escaped_dirname = escapism.escape('a directory', escape_char='-').lower()
+    assert escaped_dirname in app.output_image_spec
+
+
 def test_subdir_invalid(caplog):
     # test an error is raised when requesting a non existent subdir
-    #caplog.set_level(logging.INFO, logger='Repo2Docker')
-
     app = Repo2Docker(
         repo=TEST_REPO,
         subdir='invalid-sub-dir',

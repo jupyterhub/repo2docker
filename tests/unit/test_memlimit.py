@@ -66,7 +66,6 @@ def test_memlimit_nondockerfile(tmpdir, test, mem_limit, mem_allocate_mb, expect
     assert success == expected
 
 
-
 def test_memlimit_same_postbuild():
     """
     Validate that the postBuild files for dockerfile & nondockerfile are same
