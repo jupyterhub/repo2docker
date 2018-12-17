@@ -194,6 +194,8 @@ def get_argparser():
 
     return argparser
 
+argparser = get_argparser()
+
 
 def make_r2d(argv=None):
     if argv is None:
