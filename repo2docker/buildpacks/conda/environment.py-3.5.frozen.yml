@@ -75,7 +75,7 @@ dependencies:
     - idna==2.7
     - jupyterhub==0.9.4
     - mako==1.0.7
-    - notebook==5.7.2
+    - notebook==5.7.4
     - nteract-on-jupyter==1.9.6
     - pamela==0.3.0
     - python-editor==1.0.3
