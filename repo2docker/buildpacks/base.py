@@ -469,8 +469,8 @@ class BuildPack:
             # https://github.com/docker/docker-py/pull/1582 is related
             tar.uname = ''
             tar.gname = ''
-            tar.uid = 1000
-            tar.gid = 1000
+            tar.uid = int(build_args.get('NB_UID', 1000))
+            tar.gid = int(build_args.get('NB_UID', 1000))
             return tar
 
         for src in sorted(self.get_build_script_files()):
