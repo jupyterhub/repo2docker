@@ -7,17 +7,11 @@ from repo2docker.app import Repo2Docker
 
 def test_connect_url(tmpdir):
     tmpdir.chdir()
-    #q = tmpdir.join("environment.yml")
-    #q.write("dependencies:\n"
-    #        "  -  notebook==5.6.0")
     p = tmpdir.join("requirements.txt")
-    p.write("notebook==5.6.0")
+    p.write("notebook>=5.6.0")
 
-    app = Repo2Docker()
-    argv = [str(tmpdir), ]
-    app.initialize(argv)
-    app.debug = True
-    app.run = False
+    app = Repo2Docker(repo=str(tmpdir), run=False)
+    app.initialize()
     app.start()  # This just build the image and does not run it.
     container = app.start_container()
     container_url = 'http://{}:{}/api'.format(app.hostname, app.port)

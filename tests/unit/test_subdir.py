@@ -27,18 +27,10 @@ def test_subdir_invalid(caplog):
     # test an error is raised when requesting a non existent subdir
     #caplog.set_level(logging.INFO, logger='Repo2Docker')
 
-    app = Repo2Docker()
-    argv = ['--subdir', 'invalid-sub-dir', TEST_REPO]
-    app.initialize(argv)
-    app.debug = True
-    # no build does not imply no run
-    app.build = False
-    app.run = False
-    with pytest.raises(SystemExit) as excinfo:
-        app.start()  # Just build the image and do not run it.
-
-    # The build should fail
-    assert excinfo.value.code == 1
-
-    # Can't get this to record the logs?
-    #assert caplog.text == "Subdirectory tests/conda/invalid does not exist"
+    app = Repo2Docker(
+        repo=TEST_REPO,
+        subdir='invalid-sub-dir',
+    )
+    app.initialize()
+    with pytest.raises(FileNotFoundError):
+        app.build()  # Just build the image and do not run it.

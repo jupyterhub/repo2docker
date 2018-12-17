@@ -1,12 +1,14 @@
 import os
-import time
 import re
 import tempfile
-from conftest import make_test_func
+import time
+
 from repo2docker.app import Repo2Docker
+from repo2docker.__main__ import make_r2d
 
+from conftest import make_test_func
 
-DIR = os.path.join(os.path.dirname(__file__), 'dockerfile', 'editable')
+DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dockerfile', 'editable')
 
 
 def test_editable(run_repo2docker):
@@ -33,10 +35,9 @@ def test_editable_by_host():
     """Test whether a new file created by the host environment, is
     detected in the container"""
 
-    app = Repo2Docker()
-    app.initialize(['--editable', DIR])
-    app.run = False
-    app.start()  # This just build the image and does not run it.
+    app = make_r2d(['--editable', DIR])
+    app.initialize()
+    app.build()
     container = app.start_container()
     # give the container a chance to start
     time.sleep(1)

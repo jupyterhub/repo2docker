@@ -26,22 +26,19 @@ def test_buildpack_labels_rendered():
     (None, None, 'local'),
 ])
 def test_Repo2Docker_labels(ref, repo, expected_repo_label, tmpdir):
-    if repo is None:
-        repo = str(tmpdir)
-    if ref is not None:
-        argv = ['--ref', ref, repo]
-    else:
-        argv = [repo]
-
-    app = Repo2Docker()
+    app = Repo2Docker(dry_run=True)
     # Add mock BuildPack to app
     mock_buildpack = Mock()
     mock_buildpack.return_value.labels = {}
     app.buildpacks = [mock_buildpack]
 
-    app.initialize(argv)
-    app.build = False
-    app.run = False
+    if repo is None:
+        repo = str(tmpdir)
+    app.repo = repo
+    if ref is not None:
+        app.ref = ref
+
+    app.initialize()
     app.start()
     expected_labels = {
         'repo2docker.ref': ref,

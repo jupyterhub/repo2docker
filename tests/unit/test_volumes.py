@@ -12,6 +12,8 @@ def test_volume_abspath():
     """
     ts = str(time.time())
     with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir = os.path.realpath(tmpdir)
+
         username = os.getlogin()
         subprocess.check_call([
             'repo2docker',

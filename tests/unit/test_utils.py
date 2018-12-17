@@ -40,12 +40,12 @@ def test_capture_cmd_capture_fail():
             assert line == 'test\n'
 
 
-def test_chdir():
-    with TemporaryDirectory() as d:
-        cur_cwd = os.getcwd()
-        with utils.chdir(d):
-            assert os.getcwd() == d
-        assert os.getcwd() == cur_cwd
+def test_chdir(tmpdir):
+    d = str(tmpdir.mkdir('cwd'))
+    cur_cwd = os.getcwd()
+    with utils.chdir(d):
+        assert os.getcwd() == d
+    assert os.getcwd() == cur_cwd
 
 
 def test_byte_spec_validation():

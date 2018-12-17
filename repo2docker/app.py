@@ -399,10 +399,10 @@ class Repo2Docker(Application):
             )
 
         if self.dry_run and (self.run or self.push):
-            raise ValueError("Can not push or run image if we are not building it")
+            raise ValueError("Cannot push or run image if we are not building it")
 
         if self.volumes and not self.run:
-            raise ValueError("Can not mount volumes if container is not run")
+            raise ValueError("Cannot mount volumes if container is not run")
 
     def push_image(self):
         """Push docker image to registry"""

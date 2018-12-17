@@ -15,6 +15,7 @@ def test_user():
     username = os.getlogin()
     userid = str(os.geteuid())
     with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir = os.path.realpath(tmpdir)
         subprocess.check_call([
             'repo2docker',
             '-v', '{}:/home/{}'.format(tmpdir, username),
