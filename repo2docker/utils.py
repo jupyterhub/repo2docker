@@ -122,8 +122,8 @@ def validate_and_generate_port_mapping(port_mapping):
         )$
         """, re.VERBOSE)
     ports = {}
-    if not port_mapping:
-        return None
+    if port_mapping is None:
+        return ports
     for p in port_mapping:
         if reg_regex.match(p) is None:
             raise Exception('Invalid port mapping ' + str(p))
