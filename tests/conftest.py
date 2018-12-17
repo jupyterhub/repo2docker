@@ -18,6 +18,7 @@ import pytest
 import yaml
 
 from repo2docker.app import Repo2Docker
+from repo2docker.__main__ import make_r2d
 
 
 def pytest_collect_file(parent, path):
@@ -30,8 +31,8 @@ def pytest_collect_file(parent, path):
 def make_test_func(args):
     """Generate a test function that runs repo2docker"""
     def test():
-        app = Repo2Docker()
-        app.initialize(args)
+        app = make_r2d(args)
+        app.initialize()
         if app.run_cmd:
             # verify test, run it
             app.start()
