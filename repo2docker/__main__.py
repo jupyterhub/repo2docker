@@ -169,13 +169,13 @@ def get_argparser():
     argparser.add_argument(
         '--appendix',
         type=str,
-        #help=self.traits()['appendix'].help,
+        help=Repo2Docker.appendix.help
     )
 
     argparser.add_argument(
         '--subdir',
         type=str,
-        #help=self.traits()['subdir'].help,
+        help=Repo2Docker.subdir.help
     )
 
     argparser.add_argument(
@@ -189,7 +189,7 @@ def get_argparser():
         '--cache-from',
         action='append',
         default=[],
-        #help=self.traits()['cache_from'].help
+        help=Repo2Docker.cache_from.help
     )
 
     return argparser
