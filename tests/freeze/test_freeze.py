@@ -1,7 +1,7 @@
 """test refreezing base environment"""
 
 import os
-from subprocess import check_output
+from subprocess import Popen, PIPE, STDOUT
 
 import pytest
 from repo2docker.buildpacks import conda
@@ -16,6 +16,12 @@ conda_dir = os.path.dirname(conda.__file__)
 def test_freeze(capsys, py):
     with chdir(conda_dir):
         freeze.main(py)
-        out = check_output(['git', 'diff'], cwd=conda_dir)
+        p = Popen(
+            ['git', 'diff'],
+            stdout=PIPE,
+            stderr=STDOUT,
+            cwd=conda_dir,
+        )
+        out, _ = p.communicate()
     with capsys.disabled():
         print(out.decode())
