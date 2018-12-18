@@ -17,7 +17,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Set up locales properly
 RUN apt-get -qq update && \
-    apt-get -qq install --yes --no-install-recommends locales && \
+    apt-get -qq install --yes --no-install-recommends locales > /dev/null && \
     apt-get -qq purge && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
@@ -56,18 +56,19 @@ RUN apt-get -qq update && \
        {% for package in base_packages -%}
        {{ package }} \
        {% endfor -%}
-    && apt-get -qq purge && \
+    > /dev/null && \
+    apt-get -qq purge && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
 
-# This apt-get install is *not* quiet, so users see their packages being installed
 {% if packages -%}
 RUN apt-get -qq update && \
     apt-get -qq install --yes \
        {% for package in packages -%}
        {{ package }} \
        {% endfor -%}
-    && apt-get -qq purge && \
+    > /dev/null && \
+    apt-get -qq purge && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
 {% endif -%}
@@ -552,6 +553,7 @@ class BaseImage(BuildPack):
 
             assemble_scripts.append((
                 'root',
+                # This apt-get install is *not* quiet, since users explicitly asked for this
                 r"""
                 apt-get -qq update && \
                 apt-get install --yes --no-install-recommends {} && \
