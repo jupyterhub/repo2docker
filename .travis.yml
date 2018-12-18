@@ -3,8 +3,6 @@ sudo: required
 cache: pip
 services:
 - docker
-python:
-- 3.6
 install:
 # Make a wheel and install it to test to catch possible
 # issues with releases
@@ -43,26 +41,38 @@ jobs:
         repo: jupyter/repo2docker
 
 env:
-  matrix:
-  - REPO_TYPE=unit
-  - REPO_TYPE=base
-  - REPO_TYPE=conda
-  - REPO_TYPE=venv
-  - REPO_TYPE=stencila-r
-  - REPO_TYPE=stencila-py
-  - REPO_TYPE=julia
-  - REPO_TYPE=r
-  - REPO_TYPE=nix
-  - REPO_TYPE=dockerfile
-  - REPO_TYPE=external
   global:
   - secure: gX7IOkbjlvcDwIH24sOLhutINx6TZRwujEusMWh1dqgYG2D69qQai/mTrRXO9PGRrsvQwIBk4RcILKAiZnk5O2Z1hLoIHk/oU2mNUmE44dDm4Xf/VTTdeYhjeOTR9B+KJ9NVwPxuSEDSND3lD7yFfvCqNXykipEhBtTliLupjWVxxXnaz0aZTYHUPJwanxdUc06AphSPwZjtm1m3qMUU8v7UdTGGAdW3NlgkKw0Xx2x5W31fW676vskC/GNQAbcRociYipuhSFWV4lu+6d8XF2xVO97xtzf54tBQzt6RgVfAKtiqkEIYSzJQBBpkQ6SM6yg+fQoQpOo8jPU9ZBjvaoopUG9vn8HRS/OtQrDcG3kEFnFAnaes8Iqtidp1deTn27LIlfCTl7kTFOp8yaaNlIMHJTJKTEMRhfdDlBYx7qiH8e9d/z37lupzY2loLHeNHdMRS1uYsfacZsmrnu9vAdpQmP1LuHivBPZEvgerinADaJiekelWOIEn956pDrno/YgnzP0i9LEBYnbbunqT8oEzLintNt5CXGdhkiG60j38McKCIn4sD6jbMMwgsqVFdClCBersyorKhOs7P8at5vX4xf8fMiKPC8LZPzYVIQYzCjmwSOFQ+Rzmz5gSj+DRTANKfHpzZCKZEF6amBYMGE1O5osF8m6M10vtW9ToK+s=
   - secure: Cfhb0BUT54JjEZD8n44Jj+o1lt5p32Lfg7W/euTyZ61YylDx0+XEYTzfWcwxOzH9fLpWr6dDrBMGHA/FPqsWA5BkoGdiBJ1OOVy2tmDRButctobWM3SVwa+Rhh8bZWlK8yKT2S3n6CtK4mesmjzdbUShL7YnKOSl8LBaTT5Y5oT8Oxsq51pfg8fJUImim8H20t8H7emaEzZorF4OSGRtajcAgukt5YoAqTEVDq+bFRBHZalxkcRqLhsGe3CCWa28kjGTL4MPZpCI6/AXIXHzihfG3rGq40ZT8jZ9GPP3MBgkiJWtFiTC9h16G34b/JI/TD40zCmoW9/9oVjRK4UlLGCAv6bgzFhCRof2abhB9NTZDniNzkO0T15uHs3VLbLCPYB0xYyClAFxm2P6e8WPChyENKfTNh+803IKFFo4JaTjOnKzi89N72v5+bT6ghP932nmjJr1AO65xjw63CeDmaLoHDY73n11DibybWQgEeiNzJuSzbIHyqMPhW5XqeroEjKKstdPHtVfOViI9ywjEMy0HCPsspaVI7Aow0Iv8E4Ajvd32W7z0h0fSCx/i25hEOAo2vhBsmQKJA7IquB3N88M11L874h/8J+oc/osW1EB5z7Ukke5YCq94Qh3qImSIhJULXMMc1QjEqYsqhLXtiMG2HUge0Y5hwwnnbEIRMQ=
   - secure: KoOOJUp60vtvx/mXzoZWpvWgB6W3rr8I0gDWL2laCTgxo6HsTL+SSOY1l12SBE2jlvFmQqVwPPBfnp5Dudna2RQFF36eO2jUlISBkvK/q/GRmOQbjpAJRtVlan8Z4dlIf4az/oQ9G0ZUEfgUliVvS5MTrEPvKej3znug2zAH1t+H0U6aon1VJeVC+b94jsETGvQ7HHupqrr+DNGrNVHOgAazw7z4j+VtfZyfNaglnrKwYPeUljw3GIOXyFmP81t/cLiDY+IjPPepUYJFQIjCoVpIDm6UR70d4mzWf/LYWONEdh8LhDJZ2UyEtnUT2IPTdhqem1BfCAKUcLedHPk3S4Lcn0jL23os0klHeQvn9JRPEDV/Ib33XGcNEIXZi0pBkluUyhx8JgTz4e+KL8jKcyf9TRX7o/ViH7Ler6viliyMu15yfs2mJKAxzw6GFMtqGzhJ8tUXjguTozfjKTJKjBpkFoYdYbO9GqNkBQo2F7H+8zAmb4D4K0jzfOo8owjYLXJzOMJN5f5pKBqfLdjOtTxve4PrCgy4B8x7GDkW41SuRz2pkVwRDMMJRCetLcbqpEK+8b9Oy/inlxt7/56oS/tvvAtBj2FlLGBPQJKpwyZozIY9XqXWu8u+VbRsSTqbRtdSHzzKyQ25a03dc7KDHmyoDAlzyehe6cHPWp1UqXg=
+
 matrix:
   include:
+  - python: 3.6
+    env: REPO_TYPE=unit
+  - python: 3.6
+    env: REPO_TYPE=base
+  - python: 3.6
+    env: REPO_TYPE=conda
+  - python: 3.6
+    env: REPO_TYPE=venv
+  - python: 3.6
+    env: REPO_TYPE=stencila-r
+  - python: 3.6
+    env: REPO_TYPE=stencila-py
+  - python: 3.6
+    env: REPO_TYPE=julia
+  - python: 3.6
+    env: REPO_TYPE=r
+  - python: 3.6
+    env: REPO_TYPE=nix
+  - python: 3.6
+    env: REPO_TYPE=dockerfile
+  - python: 3.6
+    env: REPO_TYPE=external
   - python: 3.4
     env: REPO_TYPE=venv
+
 deploy:
   provider: pypi
   user: mybinderteam
