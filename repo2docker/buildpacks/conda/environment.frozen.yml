@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-12-11 21:19:13 UTC
+# Frozen on 2018-12-17 15:24:58 UTC
 name: r2d
 channels:
   - conda-forge
@@ -8,7 +8,7 @@ channels:
 dependencies:
   - attrs=18.2.0=py_0
   - backcall=0.1.0=py_0
-  - bleach=3.0.2=py_0
+  - bleach=3.0.2=py_1
   - ca-certificates=2018.11.29=ha4d7672_0
   - certifi=2018.11.29=py36_1000
   - decorator=4.3.0=py_0
@@ -19,7 +19,7 @@ dependencies:
   - ipython=7.2.0=py36h24bf2e0_1000
   - ipython_genutils=0.2.0=py_1
   - ipywidgets=7.2.1=py36_1
-  - jedi=0.13.1=py36_1000
+  - jedi=0.13.2=py36_1000
   - jinja2=2.10=py_1
   - jsonschema=3.0.0a3=py36_1000
   - jupyter_client=5.2.4=py_0
@@ -35,7 +35,7 @@ dependencies:
   - nbconvert=5.4.0=1
   - nbformat=4.4.0=py_1
   - ncurses=6.1=hfc679d8_2
-  - notebook=5.7.2=py36_1000
+  - notebook=5.7.4=py36_1000
   - openssl=1.0.2p=h470a237_1
   - pandoc=1.19.2=0
   - pandocfilters=1.4.2=py_1
@@ -46,14 +46,14 @@ dependencies:
   - prometheus_client=0.5.0=py_0
   - prompt_toolkit=2.0.7=py_0
   - ptyprocess=0.6.0=py36_1000
-  - pygments=2.3.0=py_0
+  - pygments=2.3.1=py_0
   - pyrsistent=0.14.7=py36h470a237_0
   - python=3.6.7=h5001a0f_1
   - python-dateutil=2.7.5=py_0
   - pyzmq=17.1.2=py36hae99301_1
   - readline=7.0=haf1bffa_1
   - send2trash=1.5.0=py_0
-  - setuptools=40.6.2=py36_0
+  - setuptools=40.6.3=py36_0
   - six=1.12.0=py36_1000
   - sqlite=3.26.0=hb1c47c0_0
   - terminado=0.8.1=py36_1001
@@ -80,7 +80,7 @@ dependencies:
     - python-editor==1.0.3
     - python-oauth2==1.1.0
     - requests==2.21.0
-    - sqlalchemy==1.2.14
+    - sqlalchemy==1.2.15
     - urllib3==1.24.1
 prefix: /opt/conda/envs/r2d
 
