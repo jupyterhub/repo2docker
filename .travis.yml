@@ -33,15 +33,15 @@ jobs:
   include:
   - stage: deploy
     script: skip
-    if: type = push
+    if: type = push AND (branch = master OR tag IS present)
     env:
     - REPO_TYPE=
     deploy:
       provider: script
       script: "./travis/travis-script.bash"
       on:
-        tags: true
-        branch: master
+        repo: jupyter/repo2docker
+
 env:
   matrix:
   - REPO_TYPE=unit
