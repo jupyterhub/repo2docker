@@ -62,8 +62,7 @@ env:
 matrix:
   include:
   - python: 3.4
-    env:
-    - REPO_TYPE=venv
+    env: REPO_TYPE=venv
 deploy:
   provider: pypi
   user: mybinderteam
