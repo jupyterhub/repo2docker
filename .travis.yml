@@ -65,6 +65,8 @@ matrix:
   - python: 3.4
     env:
     - REPO_TYPE=venv
+  allow_failures:
+  - env: REPO_TYPE=freeze
 deploy:
   provider: pypi
   user: mybinderteam
