@@ -617,7 +617,7 @@ class Repo2Docker(Application):
                                           extra=dict(phase='building'))
                         elif 'error' in l:
                             self.log.info(l['error'], extra=dict(phase='failure'))
-                            raise docker.errors.BuildError(l['error'])
+                            raise docker.errors.BuildError(l['error'], build_log='')
                         elif 'status' in l:
                                 self.log.info('Fetching base image...\r',
                                               extra=dict(phase='building'))
