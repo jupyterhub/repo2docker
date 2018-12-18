@@ -102,6 +102,16 @@ ARG REPO_DIR=${HOME}
 ENV REPO_DIR ${REPO_DIR}
 WORKDIR ${REPO_DIR}
 
+# We want to allow two things:
+#   1. If there's a .local/bin directory in the repo, things there
+#      should automatically be in path
+#   2. postBuild and users should be able to install things into ~/.local/bin
+#      and have them be automatically in path
+#
+# The XDG standard suggests ~/.local/bin as the path for local user-specific
+# installs. See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+ENV PATH ${HOME}/.local/bin:${REPO_DIR}/.local/bin:${PATH}
+
 # Copy and chown stuff. This doubles the size of the repo, because
 # you can't actually copy as USER, only as root! Thanks, Docker!
 USER root
@@ -243,10 +253,7 @@ class BuildPack:
         Just sets the PATH environment variable. Separated out since
         it is very commonly set by various buildpacks.
         """
-        # Allow local user installs into ~/.local, which is where the
-        # XDG desktop standard suggests these should be
-        # See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-        return ['$HOME/.local/bin']
+        return []
 
     def get_labels(self):
         """
