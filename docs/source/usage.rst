@@ -107,4 +107,12 @@ be used by docker directly.
 
      jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
 
+
+Command line API
+================
+
+.. autoprogram:: repo2docker.__main__:argparser
+  :prog: jupyter-repo2docker
+
+
 .. _Pytudes: https://github.com/norvig/pytudes

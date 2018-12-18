@@ -37,7 +37,9 @@ def validate_image_name(image_name):
 
 def get_argparser():
     """Get arguments that may be used by repo2docker"""
-    argparser = argparse.ArgumentParser()
+    argparser = argparse.ArgumentParser(
+        description='Fetch a repository and build a container image',
+    )
 
     argparser.add_argument(
         '--config',
@@ -193,6 +195,8 @@ def get_argparser():
     )
 
     return argparser
+
+argparser = get_argparser()
 
 
 def make_r2d(argv=None):
