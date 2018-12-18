@@ -98,15 +98,15 @@ COPY {{ src }} {{ dst }}
 {% endfor %}
 
 # Allow target path repo is cloned to be configurable
-ARG REPO_PATH=${HOME}
-ENV REPO_PATH ${REPO_PATH}
-WORKDIR ${REPO_PATH}
+ARG REPO_DIR=${HOME}
+ENV REPO_DIR ${REPO_DIR}
+WORKDIR ${REPO_DIR}
 
 # Copy and chown stuff. This doubles the size of the repo, because
 # you can't actually copy as USER, only as root! Thanks, Docker!
 USER root
-COPY src/ ${REPO_PATH}
-RUN chown -R ${NB_USER}:${NB_USER} ${REPO_PATH}
+COPY src/ ${REPO_DIR}
+RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 
 {% if env -%}
 # The rest of the environment
@@ -529,7 +529,7 @@ class BaseImage(BuildPack):
 
             archive_dir, archive = os.path.split(self.stencila_manifest_dir)
             env.extend([
-                ("STENCILA_ARCHIVE_DIR", "${REPO_PATH}/" + archive_dir),
+                ("STENCILA_ARCHIVE_DIR", "${REPO_DIR}/" + archive_dir),
                 ("STENCILA_ARCHIVE", archive),
             ])
         return env

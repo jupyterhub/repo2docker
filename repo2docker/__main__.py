@@ -169,8 +169,8 @@ def get_argparser():
     )
 
     argparser.add_argument(
-        '--repo-path',
-        help=Repo2Docker.repo_path.help
+        '--target-repo-dir',
+        help=Repo2Docker.target_repo_dir.help
     )
 
     argparser.add_argument(
@@ -321,8 +321,8 @@ def make_r2d(argv=None):
     else:
         r2d.cleanup_checkout = args.clean
 
-    if args.repo_path:
-        r2d.repo_path = args.repo_path
+    if args.target_repo_dir:
+        r2d.target_repo_dir = args.target_repo_dir
 
     return r2d
 
