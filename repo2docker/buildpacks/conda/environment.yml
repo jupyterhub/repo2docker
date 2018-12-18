@@ -1,9 +1,9 @@
 dependencies:
   - python=3.6.*
-  - ipywidgets==7.2.1
-  - jupyterlab==0.34.9
-  - nbconvert==5.4.0
-  - notebook==5.7.4
   - pip:
     - nteract_on_jupyter==1.9.6
     - jupyterhub==0.9.4
+    - notebook==5.7.4
+    - nbconvert==5.4.0
+    - jupyterlab==0.34.9
+    - ipywidgets==7.2.1
