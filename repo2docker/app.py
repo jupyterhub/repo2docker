@@ -426,7 +426,8 @@ class Repo2Docker(Application):
                 self.log.info('Pushing image\n',
                               extra=dict(progress=layers, phase='pushing'))
                 last_emit_time = time.time()
-        self.log.info(f'Successfully pushed {self.output_image_spec}', extra=dict(phase='pushing'))
+        self.log.info('Successfully pushed {}'.format(self.output_image_spec),
+                      extra=dict(phase='pushing'))
 
     def run_image(self):
         """Run docker container from built image
@@ -568,7 +569,7 @@ class Repo2Docker(Application):
                 if not os.path.isdir(checkout_path):
                     self.log.error('Subdirectory %s does not exist',
                                    self.subdir, extra=dict(phase='failure'))
-                    raise FileNotFoundError(f'Could not find {checkout_path}')
+                    raise FileNotFoundError('Could not find {}'.format(checkout_path))
 
             with chdir(checkout_path):
                 for BP in self.buildpacks:
