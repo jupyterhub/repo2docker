@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# when building jupyter/repo2docker:master also push jupyter/repo2docker:abcd1234
+
+HASH_IMAGE="$DOCKER_REPO:${SOURCE_COMMIT:8}"
+docker tag $DOCKER_REPO:$DOCKER_TAG $HASH_IMAGE
+docker push $HASH_IMAGE
