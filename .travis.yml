@@ -48,30 +48,30 @@ env:
 
 matrix:
   include:
-  - python: 3.6
-    env: REPO_TYPE=unit
-  - python: 3.6
-    env: REPO_TYPE=base
-  - python: 3.6
-    env: REPO_TYPE=conda
-  - python: 3.6
-    env: REPO_TYPE=venv
-  - python: 3.6
-    env: REPO_TYPE=stencila-r
-  - python: 3.6
-    env: REPO_TYPE=stencila-py
-  - python: 3.6
-    env: REPO_TYPE=julia
-  - python: 3.6
-    env: REPO_TYPE=r
-  - python: 3.6
-    env: REPO_TYPE=nix
-  - python: 3.6
-    env: REPO_TYPE=dockerfile
-  - python: 3.6
-    env: REPO_TYPE=external
-  - python: 3.4
-    env: REPO_TYPE=venv
+    - python: "3.6"
+      env: REPO_TYPE=unit
+    - python: "3.6"
+      env: REPO_TYPE=base
+    - python: "3.6"
+      env: REPO_TYPE=conda
+    - python: "3.6"
+      env: REPO_TYPE=venv
+    - python: "3.6"
+      env: REPO_TYPE=stencila-r
+    - python: "3.6"
+      env: REPO_TYPE=stencila-py
+    - python: "3.6"
+      env: REPO_TYPE=julia
+    - python: "3.6"
+      env: REPO_TYPE=r
+    - python: "3.6"
+      env: REPO_TYPE=nix
+    - python: "3.6"
+      env: REPO_TYPE=dockerfile
+    - python: "3.6"
+      env: REPO_TYPE=external
+    - python: "3.4"
+      env: REPO_TYPE=venv
 
 deploy:
   provider: pypi
