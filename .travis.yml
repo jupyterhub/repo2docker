@@ -29,18 +29,6 @@ script:
 after_success:
 - pip install codecov
 - pushd tests && codecov && popd
-jobs:
-  include:
-  - stage: deploy
-    script: skip
-    if: type = push AND (branch = master OR tag IS present)
-    env:
-    - REPO_TYPE=
-    deploy:
-      provider: script
-      script: "./travis/travis-script.bash"
-      on:
-        repo: jupyter/repo2docker
 
 env:
   matrix:
