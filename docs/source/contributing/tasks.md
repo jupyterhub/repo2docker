@@ -106,7 +106,12 @@ We try to make a release of repo2docker every few months if possible.
 
 We follow semantic versioning.
 
-Check that the Change log is ready and then tag a new release on GitHub.
+Check that the Change log is ready and then tag a new release locally:
+
+```bash
+V=0.7.0 git tag -am "release $V" $V
+git push origin --tags
+```
 
 When the travis run completes check that the new release is available on PyPI.
 
@@ -152,6 +157,7 @@ release for that version (bugfix version 0).
 
 
 ### Keeping the Pipfile and requirements files up to date
+
 We now have both a `dev-requirements.txt` and a `Pifile` for repo2docker, as 
 such it is important to keep these in sync/up-to-date. 
 
@@ -160,4 +166,4 @@ in the `doc-requirements.txt` (currently `Sphinx = ">=1.4,!=1.5.4"`) you can use
 same syntax to update the Pipfile and viceversa.
 
 At the moment this has to be done manually so please make sure to update both
-files accordingly. 
+files accordingly.
