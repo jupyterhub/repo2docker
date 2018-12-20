@@ -42,7 +42,6 @@ RUN adduser --disabled-password \
     --gecos "Default user" \
     --uid ${NB_UID} \
     ${NB_USER}
-WORKDIR ${HOME}
 
 RUN wget --quiet -O - https://deb.nodesource.com/gpgkey/nodesource.gpg.key |  apt-key add - && \
     DISTRO="bionic" && \
@@ -98,11 +97,26 @@ COPY {{ src }} {{ dst }}
 {{sd}}
 {% endfor %}
 
+# Allow target path repo is cloned to be configurable
+ARG REPO_DIR=${HOME}
+ENV REPO_DIR ${REPO_DIR}
+WORKDIR ${REPO_DIR}
+
+# We want to allow two things:
+#   1. If there's a .local/bin directory in the repo, things there
+#      should automatically be in path
+#   2. postBuild and users should be able to install things into ~/.local/bin
+#      and have them be automatically in path
+#
+# The XDG standard suggests ~/.local/bin as the path for local user-specific
+# installs. See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+ENV PATH ${HOME}/.local/bin:${REPO_DIR}/.local/bin:${PATH}
+
 # Copy and chown stuff. This doubles the size of the repo, because
 # you can't actually copy as USER, only as root! Thanks, Docker!
 USER root
-COPY src/ ${HOME}
-RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
+COPY src/ ${REPO_DIR}
+RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 
 {% if env -%}
 # The rest of the environment
@@ -239,10 +253,7 @@ class BuildPack:
         Just sets the PATH environment variable. Separated out since
         it is very commonly set by various buildpacks.
         """
-        # Allow local user installs into ~/.local, which is where the
-        # XDG desktop standard suggests these should be
-        # See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-        return ['$HOME/.local/bin']
+        return []
 
     def get_labels(self):
         """
@@ -525,7 +536,7 @@ class BaseImage(BuildPack):
 
             archive_dir, archive = os.path.split(self.stencila_manifest_dir)
             env.extend([
-                ("STENCILA_ARCHIVE_DIR", "${HOME}/" + archive_dir),
+                ("STENCILA_ARCHIVE_DIR", "${REPO_DIR}/" + archive_dir),
                 ("STENCILA_ARCHIVE", archive),
             ])
         return env

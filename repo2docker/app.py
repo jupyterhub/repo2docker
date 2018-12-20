@@ -327,6 +327,16 @@ class Repo2Docker(Application):
         config=True
     )
 
+    target_repo_dir = Unicode(
+        '',
+        help="""
+        Path inside the image where contents of the repositories are copied to.
+
+        Defaults to ${HOME} if not set
+        """,
+        config=True
+    )
+
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
 
@@ -593,8 +603,10 @@ class Repo2Docker(Application):
                 if not self.dry_run:
                     build_args = {
                         'NB_USER': self.user_name,
-                        'NB_UID': str(self.user_id)
+                        'NB_UID': str(self.user_id),
                     }
+                    if self.target_repo_dir:
+                        build_args['REPO_DIR'] = self.target_repo_dir
                     self.log.info('Using %s builder\n', bp.__class__.__name__,
                                   extra=dict(phase='building'))
 
@@ -605,7 +617,7 @@ class Repo2Docker(Application):
                                           extra=dict(phase='building'))
                         elif 'error' in l:
                             self.log.info(l['error'], extra=dict(phase='failure'))
-                            raise docker.errors.BuildError(l['error'])
+                            raise docker.errors.BuildError(l['error'], build_log='')
                         elif 'status' in l:
                                 self.log.info('Fetching base image...\r',
                                               extra=dict(phase='building'))
