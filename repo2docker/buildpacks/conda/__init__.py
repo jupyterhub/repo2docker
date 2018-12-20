@@ -97,6 +97,8 @@ class CondaBuildPack(BaseImage):
         """
         files = {
             'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
+            # FIXME: hardcoded test
+            'conda/environment.py-3.6.tar.gz': '/tmp/environment.tar.gz',
         }
         py_version = self.python_version
         self.log.info("Building conda environment for python=%s" % py_version)

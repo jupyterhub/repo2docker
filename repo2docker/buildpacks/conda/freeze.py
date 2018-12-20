@@ -10,6 +10,7 @@ python freeze.py [3.5]
 """
 
 from datetime import datetime
+from distutils.version import LooseVersion as V
 import os
 import pathlib
 import shutil
@@ -23,6 +24,7 @@ from ruamel.yaml import YAML
 # since miniconda3 docker images seem to lag conda releases.
 MINICONDA_DOCKER_VERSION = '4.5.11'
 CONDA_VERSION = '4.5.11'
+CONDA_PACK_VERSION = '0.3.1'
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
@@ -35,7 +37,7 @@ FROZEN_FILE_T = os.path.splitext(ENV_FILE_T)[0] + '.frozen.yml'
 yaml = YAML(typ='rt')
 
 
-def freeze(env_file, frozen_file):
+def freeze(env_file, frozen_file, root=True):
     """Freeze a conda environment.yml
 
     By running in docker:
@@ -58,6 +60,14 @@ def freeze(env_file, frozen_file):
         f.write(f"# AUTO GENERATED FROM {env_file}, DO NOT MANUALLY MODIFY\n")
         f.write(f"# Frozen on {datetime.utcnow():%Y-%m-%d %H:%M:%S UTC}\n")
 
+    env_pack = os.path.splitext(env_file)[0] + '.tar.gz'
+    if root:
+        env_dir = '/opt/conda'
+        action = 'update'
+    else:
+        env_name = '/tmp/r2d-env'
+        action = 'create'
+
     check_call([
         'docker',
         'run',
@@ -68,16 +78,60 @@ def freeze(env_file, frozen_file):
         "sh", "-c",
         '; '.join([
             'set -e',
-            f"conda install -yq conda={CONDA_VERSION}",
-            'conda config --add channels conda-forge',
             'conda config --system --set auto_update_conda false',
-            f"conda env create -v -f /r2d/{env_file} -n r2d",
+            'echo "update_dependencies: false" >> /opt/conda/.condarc',
+            'conda config --add channels conda-forge',
+            'conda clean -tipsy',
+            f"conda install -yq conda={CONDA_VERSION}",
+            f"conda install -yq conda-pack=={CONDA_PACK_VERSION}",
+            f"conda env {action} -v -f /r2d/{env_file} -p {env_dir}",
             # add conda-forge broken channel as lowest priority in case
             # any of our frozen packages are marked as broken after freezing
             'conda config --append channels conda-forge/label/broken',
-            f"conda env export -n r2d >> /r2d/{frozen_file}",
+            f"conda env export -p {env_dir} >> /r2d/{frozen_file}",
+            f"rm -f /r2d/{env_pack}",
+            f"conda pack -p {env_dir} -o /r2d/{env_pack}",
         ])
     ])
+
+
+def pack(env_file, pack_file, root=False):
+    """Pack a frozen conda environment.yml with conda pack
+
+    By running in docker:
+
+        conda env create
+        conda pack
+
+    Result will be stored in pack_file
+    """
+    pack_dest = HERE / pack_file
+    if pack_dest.exists():
+        # FIXME: check mtime or something
+        print(f"{pack_dest} exists, not re-packing")
+        return pack_dest
+    print(f"Packing {env_file} -> {pack_file}")
+
+    check_call([
+        'docker',
+        'run',
+        '--rm',
+        '-v' f"{HERE}:/r2d",
+        '-it',
+        f"continuumio/miniconda3:{MINICONDA_DOCKER_VERSION}",
+        "sh", "-c",
+        '; '.join([
+            'set -e',
+            'conda config --add channels conda-forge',
+            'conda config --system --set auto_update_conda false',
+            'echo "update_dependencies: false" >> /opt/conda/.condarc',
+            f"conda install -yq conda={CONDA_VERSION}",
+            f"conda install -yq conda-pack=={CONDA_PACK_VERSION}",
+            f"conda env create -v -f /r2d/{env_file} -n r2d",
+            f"conda pack -n r2d -o /r2d/{pack_file}",
+        ])
+    ])
+    return pack_dest
 
 
 def set_python(py_env_file, py):
@@ -110,9 +164,12 @@ if __name__ == '__main__':
     pys = sys.argv[1:] or ('2.7', '3.7', '3.5', '3.6')
     for py in pys:
         env_file = ENV_FILE_T.format(py=py)
-        set_python(env_file, py)
-        frozen_file = os.path.splitext(env_file)[0] + '.frozen.yml'
-        freeze(env_file, frozen_file)
+        base = os.path.splitext(env_file)[0]
+        # set_python(env_file, py)
+        frozen_file = base + '.frozen.yml'
+        pack_file = base + '.pack.tar.gz'
+        freeze(env_file, frozen_file, root=V(py) >= V('3.5'))
+        # pack(frozen_file, pack_file)
 
     # use last version as default
     shutil.copy(frozen_file, FROZEN_FILE)
