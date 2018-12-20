@@ -5,17 +5,17 @@ Using ``repo2docker`` as part of your Continuous Integration
 
 We've created for you the `continuous-build <https://www.github.com/binder-examples/continuous-build/>`_
 repository so that you can push a `Docker <https://docs.docker.com/>`_ container
-to `Docker Hub <https://hub.docker.com/>`_ directly from a Github repository
+to `Docker Hub <https://hub.docker.com/>`_ directly from a GitHub repository
 that has a Jupyter notebook. Here are instructions to do this.
 
 Getting Started
 ---------------
 Today you will be doing the following:
 
- 1. Fork and clone the continuous-build Github repository to obtain the hidden ``.circleci`` folder.
- 2. creating an image repository on Docker Hub
- 3. connecting your repository to CircleCI
- 4. push, commit, or create a pull request to trigger a build.
+ 1. Fork and clone the continuous-build GitHub repository to obtain the hidden ``.circleci`` folder.
+ 2. Creating an image repository on Docker Hub
+ 3. Connecting your repository to CircleCI
+ 4. Push, commit, or create a pull request to trigger a build.
 
 You don't need to install any dependencies on your host to build the container, it will be done
 on a continuous integration server, and the container built and available to you
@@ -24,25 +24,31 @@ to pull from Docker Hub.
 
 Step 1. Clone the Repository
 ............................
-First, fork the `continuous-build <https://www.github.com/binder-examples/continuous-build/>`_ Github
-repository to your account, and clone the branch.
+First, fork the `continuous-build <https://www.github.com/binder-examples/continuous-build/>`_ GitHub
+repository to your account, and clone the branch via either:
 
-   git clone https://www.github.com/<username>/continuous-build
-   # or
-   git clone git@github.com:<username>/continuous-build.git
+.. code-block:: console
+
+    git clone https://www.github.com/<username>/continuous-build
+
+or
+
+.. code-block:: console
+
+    git clone git@github.com:<username>/continuous-build.git
 
 
 Step 2. Choose your Configuration
 .................................
 
-The hidden folder `.circleci/config.yml` has instructions for `CircleCI <https://circleci.com/dashboard/>`_
-to automatically discover and build your repo2docker jupyter notebook container.
+The hidden folder ``.circleci/config.yml`` has instructions for `CircleCI <https://circleci.com/dashboard/>`_
+to automatically discover and build your repo2docker Jupyter notebook container.
 The default template provided in the repository in this folder will do the most basic steps,
 including:
 
-1. clone of the repository with the notebook that you specify
-2. build
-3. push to Docker Hub
+1. Clone the repository with the notebook that you specify
+2. Build a Docker image
+3. Push the build image to Docker Hub
 
 This repository aims to provide templates for your use.
 If you have a request for a new template, please
@@ -52,13 +58,17 @@ nbconvert, etc.
 
 Thus, if I have a repository named ``myrepo`` and I want to use the default configuration on circleCI,
 I would copy it there from the ``continuous-build`` folder. In the example below, I'm
-creating a new folder called "myrepo" and then copying the entire folder there.
+creating a new folder called "myrepo" and then copying the entire folder there:
+
+.. code-block:: console
 
     mkdir -p myrepo
     cp -R continuous-build/.circleci myrepo/
 
-You would then logically create a Github repository in the "myrepo" folder,
+You would then logically create a GitHub repository in the "myrepo" folder,
 add the circleci configuration folder, and continue on to the next steps.
+
+.. code-block:: console
 
     cd myrepo
     git init
@@ -90,7 +100,7 @@ Variables" tab. In this section, you want to define the following:
 1. ``CONTAINER_NAME`` should be the name of the Docker Hub repository you just created.
 2. ``DOCKER_TAG`` is the tag you want to use. If not defined, will use first 10 characters of commit.
 3. ``DOCKER_USER`` and ``DOCKER_PASS`` should be your credentials (to allowing pushing)
-4. ``REPO_NAME`` should be the full Github url (or other) of the repository with the notebook. This doesn't have to coincide with the repository you are using to do the build (e.g., "myrepo" in our example).
+4. ``REPO_NAME`` should be the full GitHub url (or other) of the repository with the notebook. This doesn't have to coincide with the repository you are using to do the build (e.g., "myrepo" in our example).
 
 If you don't define the ``CONTAINER_NAME`` it will default to be the repository where it is
 building from, which you should only do if the Docker Hub repository is named equivalently.
@@ -118,16 +128,22 @@ Step 5. Use Your Container!
 
 You should then be able to pull your new container, and run it! Here is an example:
 
-  docker pull <ORG>/<NAME>
-  docker run -it --name repo2docker -p 8888:8888 <ORG>/<NAME> jupyter notebook --ip 0.0.0.0
+.. code-block:: console
+
+    docker pull <ORG>/<NAME>
+    docker run -it --name repo2docker -p 8888:8888 <ORG>/<NAME> jupyter notebook --ip 0.0.0.0
 
 
 For a pre-built working example, try the following:
 
-  docker pull vanessa/repo2docker
-  docker run -it --name repo2docker -p 8888:8888 vanessa/repo2docker jupyter notebook --ip 0.0.0.0
+.. code-block:: console
+
+    docker pull vanessa/repo2docker
+    docker run -it --name repo2docker -p 8888:8888 vanessa/repo2docker jupyter notebook --ip 0.0.0.0
 
 You can then enter the url and token provided in the browser to access your notebook. When you are done and need to stop and remove the container:
 
-  docker stop repo2docker
-  docker rm repo2docker
+.. code-block:: console
+
+    docker stop repo2docker
+    docker rm repo2docker
