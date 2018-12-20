@@ -106,7 +106,7 @@ We try to make a release of repo2docker every few months if possible.
 
 We follow semantic versioning.
 
-Check that the Change log is ready and then tag a new release on GitHub:
+Check that the Change log is ready and then tag a new release locally:
 
 ```bash
 V=0.7.0 git tag -am "release $V" $V
