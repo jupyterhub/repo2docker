@@ -43,16 +43,16 @@ Stencila
 --------
 
 The Stencila user interface is automatically enabled if a Stencila document (i.e. 
-a file `manifest.xml`) is detected. Stencila will be accessible by appending 
+a file ``manifest.xml``) is detected. Stencila will be accessible by appending
 ``/stencila`` to the URL, like so:
 
 .. code-block:: none
 
    http(s)://<server:port>/stencila
 
-The editor will open the Stencila document corresponding to the last `manifest.xml`
+The editor will open the Stencila document corresponding to the last ``manifest.xml``
 found in the file tree. If you want to open a different document, you can configure
-the path in the URL parameter `archive`:
+the path in the URL parameter ``archive``:
 
 .. code-block:: none
 
