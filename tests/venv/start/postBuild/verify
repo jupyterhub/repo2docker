@@ -1,6 +1,5 @@
 #!/bin/bash
 set -euo pipefail
-jupyter nbextension list | grep 'jupyter-leaflet' | grep enabled
 
 # set value of TEST_START_VAR to empty string when it is not defined
 if [ "${TEST_START_VAR:-}" != "var is set" ]
