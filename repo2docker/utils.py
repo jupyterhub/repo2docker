@@ -90,10 +90,13 @@ def validate_and_generate_port_mapping(port_mappings):
     """
     def check_port(port):
         try:
-            int(port)
+            p = int(port)
         except ValueError as e:
             raise ValueError('Port specification "{}" has '
                              'an invalid port.'.format(mapping))
+        if p > 65535:
+            raise ValueError('Port specification "{}" specifies '
+                             'a port above 65535.'.format(mapping))
         return port
 
     def check_port_string(p):
