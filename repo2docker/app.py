@@ -31,14 +31,10 @@ from traitlets.config import Application
 from . import __version__
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, JuliaBuildPack, BaseImage,
-    RBuildPack, NixBuildPack
+    CondaBuildPack, JuliaBuildPack, RBuildPack, NixBuildPack
 )
 from . import contentproviders
-from .utils import (
-    ByteSpecification, is_valid_docker_image_name,
-    validate_and_generate_port_mapping, chdir
-)
+from .utils import ByteSpecification, chdir
 
 
 class Repo2Docker(Application):
