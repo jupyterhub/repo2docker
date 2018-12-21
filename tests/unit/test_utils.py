@@ -78,3 +78,13 @@ def test_byte_spec_validation():
 def test_valid_port_mapping(input, expected):
     actual = utils.validate_and_generate_port_mapping(input)
     assert actual == expected
+
+
+@pytest.mark.parametrize("port_spec", [
+    "a8888:8888", "888:888/abc"
+])
+def test_invalid_port_mapping(port_spec):
+    with pytest.raises(ValueError) as e:
+        utils.validate_and_generate_port_mapping([port_spec])
+
+    assert 'Port specification "{}"'.format(port_spec) in str(e.value)

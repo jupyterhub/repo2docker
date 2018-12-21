@@ -88,6 +88,14 @@ def validate_and_generate_port_mapping(port_mappings):
         single container_port to multiple host_ports
         (docker-py supports this but repo2docker does not)
     """
+    def check_port(port):
+        try:
+            int(port)
+        except ValueError as e:
+            raise ValueError('Port specification "{}" has '
+                             'an invalid port.'.format(mapping))
+        return port
+
     def check_port_string(p):
         parts = p.split('/')
         if len(parts) == 2:  # 134/tcp
@@ -99,11 +107,7 @@ def validate_and_generate_port_mapping(port_mappings):
             port = parts[0]
             protocol = 'tcp'
 
-        try:
-            int(port)
-        except ValueError as e:
-            raise ValueError('Port specification "{}" has '
-                             'an invalid port.'.format(mapping))
+        check_port(port)
 
         return '/'.join((port, protocol))
 
@@ -117,9 +121,9 @@ def validate_and_generate_port_mapping(port_mappings):
         *host, container_port = parts
         # just a port
         if len(host) == 1:
-            host = host[0]
+            host = check_port(host[0])
         else:
-            host = tuple(host)
+            host = tuple((host[0], check_port(host[1])))
 
         container_port = check_port_string(container_port)
         ports[container_port] = host

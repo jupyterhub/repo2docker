@@ -190,7 +190,7 @@ def test_invalid_port_mapping_fail(temp_cwd):
     # builddir passed in the function will be an argument for the run command
     args_list = ['-p', '75000:80', builddir, 'ls']
 
-    assert not validate_arguments(builddir, args_list, 'Invalid port mapping')
+    assert not validate_arguments(builddir, args_list, 'Port specification')
 
 
 def test_invalid_protocol_port_mapping_fail(temp_cwd):
@@ -201,7 +201,7 @@ def test_invalid_protocol_port_mapping_fail(temp_cwd):
     # builddir passed in the function will be an argument for the run command
     args_list = ['-p', '80/tpc:8000', builddir, 'ls']
 
-    assert not validate_arguments(builddir, args_list, 'Invalid port mapping')
+    assert not validate_arguments(builddir, args_list, 'Port specification')
 
 
 def test_invalid_container_port_protocol_mapping_fail(temp_cwd):
@@ -212,7 +212,7 @@ def test_invalid_container_port_protocol_mapping_fail(temp_cwd):
     # builddir passed in the function will be an argument for the run command
     args_list = ['-p', '80:8000/upd', builddir, 'ls']
 
-    assert not validate_arguments(builddir, args_list, 'Invalid port mapping')
+    assert not validate_arguments(builddir, args_list, 'Port specification')
 
 
 @pytest.mark.xfail(reason="Regression in new arg parsing")
