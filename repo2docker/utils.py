@@ -70,7 +70,7 @@ def chdir(path):
 
 def validate_and_generate_port_mapping(port_mappings):
     """
-    Validate a list of port mappings and return a dictionary of port mappings
+    Validate a list of port mappings and return a dictionary of port mappings.
 
     Args:
         port_mappings (list): List of strings of format
@@ -78,7 +78,8 @@ def validate_and_generate_port_mapping(port_mappings):
             network interface
 
     Returns:
-        Dictionary of port mappings
+        Dictionary of port mappings in the format accepted by docker-py's
+        `containers.run()` method (https://docker-py.readthedocs.io/en/stable/containers.html)
 
     Raises:
         Exception on invalid port mapping
