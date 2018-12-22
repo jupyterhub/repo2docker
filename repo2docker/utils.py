@@ -68,24 +68,18 @@ def chdir(path):
         os.chdir(old_dir)
 
 
-def validate_and_generate_port_mapping(port_mapping):
+def validate_and_generate_port_mapping(port_mappings):
     """
-    Validate the port mapping list and return a list of validated tuples.
-
-    Each entry in the passed port mapping list will be converted to a
-    tuple with a containing a string with the format 'key:value' with the
-    `key` being the container's port and the
-    `value` being `None`, `host_port` or `['interface_ip','host_port']`
-
+    Validate a list of port mappings and return a dictionary of port mappings.
 
     Args:
-        port_mapping (list): List of strings of format
+        port_mappings (list): List of strings of format
             `'host_port:container_port'` with optional tcp udp values and host
             network interface
 
     Returns:
-        List of validated tuples of form ('host_port:container_port') with
-        optional tcp udp values and host network interface
+        Dictionary of port mappings in the format accepted by docker-py's
+        `containers.run()` method (https://docker-py.readthedocs.io/en/stable/containers.html)
 
     Raises:
         Exception on invalid port mapping
@@ -94,55 +88,50 @@ def validate_and_generate_port_mapping(port_mapping):
         One limitation of repo2docker is it cannot bind a
         single container_port to multiple host_ports
         (docker-py supports this but repo2docker does not)
-
-    Examples:
-        Valid port mappings are:
-        - `127.0.0.1:90:900`
-        - `:999`  (match to any host port)
-        - `999:999/tcp` (bind 999 host port to 999 tcp container port)
-
-        Invalid port mapping:
-        - `127.0.0.1::999` (even though docker accepts it)
-        - other invalid ip address combinations
     """
-    reg_regex = re.compile(r"""
-        ^(
-        (                                                 # or capturing group
-        (?:                                               # start capturing ip address of network interface
-        (?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3} # first three parts
-        (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)          # last part of the ip address
-        :(?:6553[0-5]|655[0-2][0-9]|65[0-4](\d){2}|6[0-4](\d){3}|[1-5](\d){4}|(\d){1,4})
-        )?
-        |                                                 # host ip with port or only port
-        (?:6553[0-5]|655[0-2][0-9]|65[0-4](\d){2}|6[0-4](\d){3}|[1-5](\d){4}|(\d){0,4})
-        )
-        :
-        (?:6553[0-5]|655[0-2][0-9]|65[0-4](\d){2}|6[0-4](\d){3}|[1-5](\d){4}|(\d){0,4})
-        (?:/udp|/tcp)?
-        )$
-        """, re.VERBOSE)
-    ports = {}
-    if port_mapping is None:
-        return ports
-    for p in port_mapping:
-        if reg_regex.match(p) is None:
-            raise Exception('Invalid port mapping ' + str(p))
-        # Do a reverse split twice on the separator :
-        port_host = str(p).rsplit(':', 2)
-        host = None
-        if len(port_host) == 3:
-            # host, optional host_port and container port information given
-            host = port_host[0]
-            host_port = port_host[1]
-            container_port = port_host[2]
-        else:
-            host_port = port_host[0] if len(port_host[0]) > 0 else None
-            container_port = port_host[1]
+    def check_port(port):
+        try:
+            p = int(port)
+        except ValueError as e:
+            raise ValueError('Port specification "{}" has '
+                             'an invalid port.'.format(mapping))
+        if p > 65535:
+            raise ValueError('Port specification "{}" specifies '
+                             'a port above 65535.'.format(mapping))
+        return port
 
-        if host is None:
-            ports[str(container_port)] = host_port
+    def check_port_string(p):
+        parts = p.split('/')
+        if len(parts) == 2:  # 134/tcp
+            port, protocol = parts
+            if protocol not in ('tcp', 'udp'):
+                raise ValueError('Port specification "{}" has '
+                                 'an invalid protocol.'.format(mapping))
+        elif len(parts) == 1:
+            port = parts[0]
+            protocol = 'tcp'
+
+        check_port(port)
+
+        return '/'.join((port, protocol))
+
+    ports = {}
+    if port_mappings is None:
+        return ports
+
+    for mapping in port_mappings:
+        parts = mapping.split(':')
+
+        *host, container_port = parts
+        # just a port
+        if len(host) == 1:
+            host = check_port(host[0])
         else:
-            ports[str(container_port)] = (host, host_port)
+            host = tuple((host[0], check_port(host[1])))
+
+        container_port = check_port_string(container_port)
+        ports[container_port] = host
+
     return ports
 
 

@@ -33,10 +33,7 @@ from .buildpacks import (
     CondaBuildPack, JuliaBuildPack, RBuildPack, NixBuildPack
 )
 from . import contentproviders
-from .utils import (
-    ByteSpecification, is_valid_docker_image_name,
-    validate_and_generate_port_mapping, chdir
-)
+from .utils import ByteSpecification, chdir
 
 
 class Repo2Docker(Application):
