@@ -12,7 +12,10 @@ import os
 import pipes
 import shlex
 import requests
+import subprocess
 import time
+
+from tempfile import TemporaryDirectory
 
 import pytest
 import yaml
@@ -75,6 +78,35 @@ def run_repo2docker():
     def run_test(args):
         return make_test_func(args)()
     return run_test
+
+
+@pytest.fixture()
+def git_repo():
+    """
+    Make a dummy git repo in which user can perform git operations
+
+    Should be used as a contextmanager, it will delete directory when done
+    """
+    with TemporaryDirectory() as gitdir:
+        subprocess.check_call(['git', 'init'], cwd=gitdir)
+        yield gitdir
+
+
+@pytest.fixture()
+def repo_with_content(git_repo):
+    """Create a git repository with content"""
+    with open(os.path.join(git_repo, 'test'), 'w') as f:
+        f.write("Hello")
+
+    subprocess.check_call(['git', 'add', 'test'], cwd=git_repo)
+    subprocess.check_call(['git', 'commit', '-m', 'Test commit'],
+                          cwd=git_repo)
+    # get the commit's SHA1
+    sha1 = subprocess.Popen(['git', 'rev-parse', 'HEAD'],
+                            stdout=subprocess.PIPE, cwd=git_repo)
+    sha1 = sha1.stdout.read().decode().strip()
+
+    yield git_repo, sha1
 
 
 class Repo2DockerTest(pytest.Function):

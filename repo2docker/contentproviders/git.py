@@ -44,3 +44,14 @@ class Git(ContentProvider):
                                     cwd=output_dir,
                                     capture=yield_output):
                 yield line
+
+        cmd = ['git', 'rev-parse', 'HEAD']
+        sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)
+        self._sha1 = sha1.stdout.read().decode().strip()
+
+    @property
+    def content_id(self):
+        """A unique ID to represent the version of the content.
+        Uses the first seven characters of the git commit ID of the repository.
+        """
+        return self._sha1[:7]

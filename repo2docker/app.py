@@ -13,7 +13,6 @@ import sys
 import logging
 import os
 import pwd
-import subprocess
 import shutil
 import tempfile
 import time
@@ -31,8 +30,7 @@ from traitlets.config import Application
 from . import __version__
 from .buildpacks import (
     PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, JuliaBuildPack, BaseImage,
-    RBuildPack, NixBuildPack
+    CondaBuildPack, JuliaBuildPack, RBuildPack, NixBuildPack
 )
 from . import contentproviders
 from .utils import (
@@ -364,7 +362,21 @@ class Repo2Docker(Application):
                 spec, checkout_path, yield_output=self.json_logs):
             self.log.info(log_line, extra=dict(phase='fetching'))
 
-
+        if not self.output_image_spec:
+            self.output_image_spec = (
+                'r2d' + escapism.escape(self.repo, escape_char='-').lower()
+                )
+            # if we are building from a subdirectory include that in the
+            # image name so we can tell builds from different sub-directories
+            # apart.
+            if self.subdir:
+                self.output_image_spec += (
+                    escapism.escape(self.subdir, escape_char='-').lower()
+                )
+            if picked_content_provider.content_id is not None:
+                self.output_image_spec += picked_content_provider.content_id
+            else:
+                self.output_image_spec += str(int(time.time()))
 
     def json_excepthook(self, etype, evalue, traceback):
         """Called on an uncaught exception when using json logging
@@ -397,15 +409,6 @@ class Repo2Docker(Application):
             # We don't want a [Repo2Docker] on all messages
             self.log.handlers[0].formatter = logging.Formatter(
                 fmt='%(message)s'
-            )
-
-        if self.output_image_spec == "":
-            # Attempt to set a sane default!
-            # HACK: Provide something more descriptive?
-            self.output_image_spec = (
-                'r2d' +
-                escapism.escape(self.repo, escape_char='-').lower() +
-                str(int(time.time()))
             )
 
         if self.dry_run and (self.run or self.push):
@@ -546,6 +549,20 @@ class Repo2Docker(Application):
         s.close()
         return port
 
+    def find_image(self):
+        # if this is a dry run it is Ok for dockerd to be unreachable so we
+        # always return False for dry runs.
+        if self.dry_run:
+            return False
+        # check if we already have an image for this content
+        client = docker.APIClient(version='auto', **kwargs_from_env())
+        for image in client.images():
+            if image['RepoTags'] is not None:
+                for tag in image['RepoTags']:
+                    if tag == self.output_image_spec + ":latest":
+                        return True
+        return False
+
     def build(self):
         """
         Build docker image
@@ -553,8 +570,8 @@ class Repo2Docker(Application):
         # Check if r2d can connect to docker daemon
         if not self.dry_run:
             try:
-                api_client = docker.APIClient(version='auto',
-                                              **kwargs_from_env())
+                docker_client = docker.APIClient(version='auto',
+                                                 **kwargs_from_env())
             except DockerException as e:
                 self.log.exception(e)
                 raise
@@ -573,6 +590,14 @@ class Repo2Docker(Application):
 
         try:
             self.fetch(self.repo, self.ref, checkout_path)
+
+            if self.find_image():
+                self.log.info("Reusing existing image ({}), not "
+                              "building.".format(self.output_image_spec))
+                # no need to build, so skip to the end by `return`ing here
+                # this will still execute the finally clause and let's us
+                # avoid having to indent the build code by an extra level
+                return
 
             if self.subdir:
                 checkout_path = os.path.join(checkout_path, self.subdir)
@@ -610,8 +635,11 @@ class Repo2Docker(Application):
                     self.log.info('Using %s builder\n', bp.__class__.__name__,
                                   extra=dict(phase='building'))
 
-                    for l in picked_buildpack.build(api_client, self.output_image_spec,
-                        self.build_memory_limit, build_args, self.cache_from):
+                    for l in picked_buildpack.build(docker_client,
+                                                    self.output_image_spec,
+                                                    self.build_memory_limit,
+                                                    build_args,
+                                                    self.cache_from):
                         if 'stream' in l:
                             self.log.info(l['stream'],
                                           extra=dict(phase='building'))
@@ -624,8 +652,9 @@ class Repo2Docker(Application):
                         else:
                             self.log.info(json.dumps(l),
                                           extra=dict(phase='building'))
+
         finally:
-            # Cheanup checkout if necessary
+            # Cleanup checkout if necessary
             if self.cleanup_checkout:
                 shutil.rmtree(checkout_path, ignore_errors=True)
 
