@@ -45,6 +45,12 @@ class Git(ContentProvider):
                                     capture=yield_output):
                 yield line
 
+        # ensure that git submodules are initialised and updated
+        for line in execute_cmd(['git', 'submodule', 'update', '--init', '--recursive'],
+                                cwd=output_dir,
+                                capture=yield_output):
+            yield line
+
         cmd = ['git', 'rev-parse', 'HEAD']
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)
         self._sha1 = sha1.stdout.read().decode().strip()
