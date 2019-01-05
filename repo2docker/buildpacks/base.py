@@ -142,8 +142,8 @@ LABEL {{k}}="{{v}}"
 # We always want containers to run as non-root
 USER ${NB_USER}
 
-# Make sure that postBuild scripts are marked executable before executing them
 {% if post_build_scripts -%}
+# Make sure that postBuild scripts are marked executable before executing them
 {% for s in post_build_scripts -%}
 RUN chmod +x {{ s }}
 RUN ./{{ s }}
@@ -317,7 +317,7 @@ class BuildPack:
             documents = manifest.findall('./documents/document')
             files = [os.path.join(self.stencila_manifest_dir, x.get('path'))
                      for x in documents]
-            
+
         else:
             return self._stencila_contexts
 
