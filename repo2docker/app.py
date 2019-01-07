@@ -18,7 +18,7 @@ import tempfile
 import time
 
 import docker
-from urllib.parse import urlparse
+import urllib
 from docker.utils import kwargs_from_env
 from docker.errors import DockerException
 import escapism
@@ -456,7 +456,7 @@ class Repo2Docker(Application):
 
         docker_host = os.environ.get('DOCKER_HOST')
         if docker_host:
-            host_name = urlparse(docker_host).hostname
+            host_name = urllib.parse.urlparse(docker_host).hostname
         else:
             host_name = '127.0.0.1'
         self.hostname = host_name
@@ -560,10 +560,100 @@ class Repo2Docker(Application):
                         return True
         return False
 
+    def get_r2d_version(self, checkout_path, default_buildpack):
+        """
+        Read the repo2docker.version if present, otherwise return the 
+        current version. Sanity check that an image with the specified 
+        version exists.
+        """
+
+        # Use the default buildpack, since there's a convenience method to read
+        # the binder_path
+        r2d_version_path = default_buildpack.binder_path("repo2docker.version")
+
+        # Read the version file, otherwise default to the current version
+        if os.path.exists(r2d_version_path):
+
+            # This assumes that the file contains the version on a single line
+            with open(r2d_version_path, "r") as f:
+                version = f.readline().strip()
+
+            # Preliminary sanity check that an image with the specified tag version
+            url = "https://hub.docker.com/v2/repositories/jupyter/repo2docker/tags/{}".format(version)
+
+            try:
+                urllib.request.urlopen(url)
+            except urllib.error.HTTPError as e:
+                self.log.error("\nUnable to find requested version %s (%s)\n",
+                               version, e.code, extra=dict(phase="failure"))
+                raise
+        else:
+            version = self.version
+
+        self.log.info("\nRepo specifies version %s, current is %s\n",
+                      version, self.version)
+        return version
+
+    def run_r2d_version(self, version):
+        """
+        Run a previous version of repo2docker via Docker
+        """
+
+        # Stored unparsed argument list is modified below
+        args = self.argv
+
+        # If the user didn't specify an image name, then the generated name will
+        # differ between the current repo2docker session and the call via
+        # container. In this case, inject the name generated in this session as 
+        # an argument. 
+        if '--image-name' not in args:
+            args[0:0] = ['--image-name', self.output_image_spec]
+
+        # Map of volumes to be mounted into the repo2docker container. The
+        # docker socket will always be mounted.
+        volumes = {
+            "/var/run/docker.sock": {"bind": "/var/run/docker.sock", "mode": "rw"}
+        }
+
+        if os.path.isdir(self.repo):
+            # If the specified repo is a local path, we'll use a fixed path
+            # in the container.
+            args[-1] = '/repo2docker'
+
+            # Ensure the path is absolute 
+            source_path = os.path.abspath(self.repo)
+
+            # Mount the local path to the container
+            volumes[source_path] = {"bind": "/repo2docker", "mode": "rw"}
+
+        # Use repo2docker image with specified version tag
+        image = "jupyter/repo2docker:{}".format(version)
+
+        # Reconstruct the (potentially modified) command line 
+        cmd = "jupyter-repo2docker {}".format(" ".join(args))
+
+        self.log.info("Running via Docker with image='%s' command='%s'\n", image, cmd)
+
+        # Run repo2docker in Docker to build the image
+        client = docker.from_env(version="auto")
+        container = client.containers.run(
+            image,
+            command=cmd,
+            privileged=True,
+            detach=True,
+            working_dir="/repo2docker",
+            volumes=volumes,
+            environment=["DOCKER_HOST=unix:///var/run/docker.sock"],
+        )
+
+        self.wait_for_container(container)
+        return
+
     def build(self):
         """
         Build docker image
         """
+
         # Check if r2d can connect to docker daemon
         if not self.dry_run:
             try:
@@ -611,6 +701,15 @@ class Repo2Docker(Application):
                         break
                 else:
                     picked_buildpack = self.default_buildpack()
+
+                # Check for a repo2docker.version file. If one exists and the
+                # specified version doesn't match the running version, run the
+                # correct repo2docker version via Docker. This will only build
+                # the image.
+                repo_version = self.get_r2d_version(checkout_path, picked_buildpack)
+                if repo_version != self.version:
+                    self.run_r2d_version(repo_version)
+                    return
 
                 picked_buildpack.appendix = self.appendix
                 # Add metadata labels
