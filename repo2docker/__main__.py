@@ -217,6 +217,9 @@ def make_r2d(argv=None):
 
     r2d = Repo2Docker()
 
+    # Store the argument list for versioned builds
+    r2d.argv = argv
+
     if args.debug:
         r2d.log_level = logging.DEBUG
 
