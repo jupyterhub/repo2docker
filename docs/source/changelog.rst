@@ -12,6 +12,7 @@ New features
 ------------
 - Add additional metadata to docker images about how they were built :pr:`500` by
   :user:`jrbourbeau`.
+- Add support for repo2docker version :pr:`550` by :user:`craig-willis`
 
 API changes
 -----------

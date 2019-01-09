@@ -23,6 +23,18 @@ Below is a list of supported configuration files (roughly in the order of build 
    :local:
    :depth: 1
 
+
+.. _repo2docker-version:
+
+``repo2docker.version`` - Pins your repo to a specific version 
+==============================================================
+
+``repo2docker.version`` specifies the version of `repo2docker` used to 
+build your repository.  If provided, images built from your repository
+will always be built using the specified version.  If not specified, images
+built from your repository will use the `latest` version of `repo2docker`.
+
+
 .. _environment-yml:
 
 ``environment.yml`` - Install a Python environment
@@ -198,6 +210,7 @@ to produce a reproducible environment.
 
 To see an example repository visit
 `nix binder example <https://github.com/binder-examples/nix>`_.
+
 
 
 ``Dockerfile`` - Advanced environments
