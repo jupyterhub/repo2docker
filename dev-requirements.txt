@@ -1,6 +1,6 @@
 # Note that there is also a Pipfile for this project if you are updating this 
 # file do not forget to update the Pipfile accordingly
 pyyaml
-pytest
+pytest>=3.6
 wheel
 pytest-cov

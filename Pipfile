@@ -3,7 +3,7 @@
 # update these accordingly
 
 [dev-packages]
-pytest="*"
+pytest=">=3.6"
 wheel="*"
 pytest-cov="*"
 PyYAML = "*"
