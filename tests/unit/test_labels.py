@@ -30,6 +30,8 @@ def test_Repo2Docker_labels(ref, repo, expected_repo_label, tmpdir):
     # Add mock BuildPack to app
     mock_buildpack = Mock()
     mock_buildpack.return_value.labels = {}
+    # Required because start() calls build() which depends on binder_path()
+    mock_buildpack.return_value.binder_path.return_value = ''
     app.buildpacks = [mock_buildpack]
 
     if repo is None:
