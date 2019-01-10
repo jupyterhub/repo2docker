@@ -70,4 +70,4 @@ class Local(ContentProvider):
         msg = "Local content provider assumes {} == {}".format(spec['path'],
                                                                output_dir)
         assert output_dir == spec['path'], msg
-        yield
+        yield "Using local repo {}.\n".format(spec['path'])
