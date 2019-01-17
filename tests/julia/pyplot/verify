@@ -16,3 +16,9 @@ if isfile("graph.png")
 else
     exit(1)
 end
+
+# We check that PyPlot is installed inside ${JULIA_DEPOT_PATH}
+if ! isdir(ENV["JULIA_DEPOT_PATH"] * "/packages/PyPlot")
+   println("PyPlot not installed under JULIA_DEPOT_PATH")
+   exit(1)
+end
