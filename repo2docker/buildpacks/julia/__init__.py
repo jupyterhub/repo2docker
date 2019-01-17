@@ -62,6 +62,8 @@ class JuliaBuildPack(CondaBuildPack):
                 will be installed
             - `JULIA_HOME`: path where all Julia Binaries will be installed
             - `JULIA_PKGDIR`: path where all Julia libraries will be installed
+            - `JULIA_DEPOT_PATH`: path where Julia libraries are installed.
+                                  Similar to JULIA_PKGDIR, used in 1.0.
             - `JULIA_VERSION`: default version of julia to be installed
             - `JUPYTER`: environment variable required by IJulia to point to
                 the `jupyter` executable
@@ -74,6 +76,7 @@ class JuliaBuildPack(CondaBuildPack):
             ('JULIA_HOME', '${JULIA_PATH}/bin'),  # julia <= 0.6
             ('JULIA_BINDIR', '${JULIA_HOME}'),  # julia >= 0.7
             ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),
+            ('JULIA_DEPOT_PATH', '${JULIA_PKGDIR}'), # julia >= 0.7
             ('JULIA_VERSION', self.julia_version),
             ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
         ]
