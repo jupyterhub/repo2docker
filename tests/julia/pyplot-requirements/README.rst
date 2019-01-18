@@ -14,4 +14,4 @@ Each one will be installed but **not** pre-compiled. If you'd like to
 pre-compile your Julia packages, consider using a ``postBuild`` file.
 
 Note that this example also specifies Python dependencies with an
-``environment.yml`` file.
+``requirements.txt`` file.
