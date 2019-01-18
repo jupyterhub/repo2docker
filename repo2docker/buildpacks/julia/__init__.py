@@ -1,16 +1,11 @@
 """Generates a Dockerfile based on an input matrix for Julia"""
 import os
-from ..conda import CondaBuildPack
+from ..python import PythonBuildPack
 
 
-class JuliaBuildPack(CondaBuildPack):
+class JuliaBuildPack(PythonBuildPack):
     """
     Julia build pack which uses conda.
-
-    The Julia build pack always uses the parent, `CondaBuildPack`,
-    since Julia does not work with Python virtual environments.
-    See https://github.com/JuliaPy/PyCall.jl/issues/410
-
     """
 
     minor_julias = {
