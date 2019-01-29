@@ -39,17 +39,17 @@ To learn more about URLs in JupyterLab and Jupyter Notebook, visit
 `starting JupyterLab <http://jupyterlab.readthedocs.io/en/latest/getting_started/starting.html>`_.
 
 
-Nteract
+nteract
 =======
 
-`Nteract is a notebook interface <https://nteract.io/>`_ built with React.
+`nteract is a notebook interface <https://nteract.io/>`_ built with React.
 It is similar to a more feature-filled version of the traditional
 Jupyter Notebook interface.
 
-Nteract comes pre-installed in any session that has been built from
+nteract comes pre-installed in any session that has been built from
 a Python repository.
 
-You can launch Nteract from within a user
+You can launch nteract from within a user
 session by replacing ``/tree`` with ``/nteract`` at the end of a notebook
 server's URL like so:
 
@@ -59,14 +59,14 @@ server's URL like so:
 
 For example, the following Binder URL will open the
 `pyTudes repository <https://github.com/norvig/pytudes>`_
-and begin an Nteract session in the ``ipynb`` folder:
+and begin an nteract session in the ``ipynb`` folder:
 
 https://mybinder.org/v2/gh/norvig/pytudes/master?urlpath=nteract/tree/ipynb
 
-The ``/tree/ipynb`` above is how Nteract directs you to a specific file
+The ``/tree/ipynb`` above is how nteract directs you to a specific file
 or folder.
 
-To learn more about Nteract, visit `the Nteract website <https://nteract.io/about>`_.
+To learn more about nteract, visit `the nteract website <https://nteract.io/about>`_.
 
 
 RStudio
