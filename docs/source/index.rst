@@ -24,11 +24,17 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    faq
 
 .. toctree::
-   :maxdepth: 1
-   :caption: How-to...
+   :maxdepth: 2
+   :caption: How-To: User interfaces and environments
 
    howto/user_interface
    howto/languages
+   howto/lab_workspaces
+
+.. toctree::
+   :maxdepth: 2
+   :caption: How-To: Deployment and administration
+
    howto/jupyterhub_images
    howto/deploy
 
