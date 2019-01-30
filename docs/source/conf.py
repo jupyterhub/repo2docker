@@ -72,7 +72,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'repo2docker'
-copyright = '2017, Project Jupyter'
+copyright = '2019, Project Jupyter'
 author = 'Project Jupyter'
 
 # The version info for the project you're documenting, acts as replacement for
