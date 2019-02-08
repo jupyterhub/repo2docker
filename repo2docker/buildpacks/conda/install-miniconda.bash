@@ -4,7 +4,7 @@ set -ex
 
 cd $(dirname $0)
 MINICONDA_VERSION=4.5.11
-CONDA_VERSION=4.5.11
+CONDA_VERSION=4.5.12
 URL="https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
 
@@ -38,7 +38,7 @@ conda install -yq conda==${CONDA_VERSION}
 # prevent pip installation.
 # we wouldn't have this issue if we did `conda env create`
 # instead of `conda env update` in these cases
-conda install -y $(cat /tmp/environment.yml | grep -o '\spython=.*')
+conda install -y $(cat /tmp/environment.yml | grep -o '\spython=.*') conda==${CONDA_VERSION}
 
 # bug in conda 4.3.>15 prevents --set update_dependencies
 echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
@@ -70,3 +70,5 @@ conda clean -tipsy
 rm ${INSTALLER_PATH}
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
+
+conda list
