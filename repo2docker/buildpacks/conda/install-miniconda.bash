@@ -57,12 +57,14 @@ if [[ -f /tmp/kernel-environment.yml ]]; then
 
     conda env create -n kernel -f /tmp/kernel-environment.yml
     ${CONDA_DIR}/envs/kernel/bin/ipython kernel install --prefix "${CONDA_DIR}"
-    rm -f ${CONDA_DIR}/envs/kernel/conda-meta/history
+    echo '' > ${CONDA_DIR}/envs/kernel/conda-meta/history
 fi
-# remove conda history file,
+# empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
-# which we don't intend
-rm -f ${CONDA_DIR}/conda-meta/history
+# which we don't intend.
+# this file must not be *removed*, however
+echo '' > ${CONDA_DIR}/envs/kernel/conda-meta/history
+
 # Clean things out!
 conda clean -tipsy
 
