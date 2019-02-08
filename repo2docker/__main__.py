@@ -334,12 +334,12 @@ def main():
         r2d.start()
     except docker.errors.BuildError as e:
         # This is only raised by us
-        if r2d.debug:
+        if r2d.log_level == logging.DEBUG:
             r2d.log.exception(e)
         sys.exit(1)
     except docker.errors.ImageLoadError as e:
         # This is only raised by us
-        if r2d.debug:
+        if r2d.log_level == logging.DEBUG:
             r2d.log.exception(e)
         sys.exit(1)
 
