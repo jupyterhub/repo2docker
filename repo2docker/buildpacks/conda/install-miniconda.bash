@@ -3,7 +3,7 @@
 set -ex
 
 cd $(dirname $0)
-MINICONDA_VERSION=4.5.11
+MINICONDA_VERSION=4.5.12
 CONDA_VERSION=4.5.12
 URL="https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
@@ -13,7 +13,7 @@ chmod +x ${INSTALLER_PATH}
 
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
-MD5SUM="e1045ee415162f944b6aebfe560b8fee"
+MD5SUM="866ae9dff53ad0874e1d1a60b1ad1ef8"
 
 if ! echo "${MD5SUM}  ${INSTALLER_PATH}" | md5sum  --quiet -c -; then
     echo "md5sum mismatch for ${INSTALLER_PATH}, exiting!"
