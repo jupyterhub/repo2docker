@@ -4,3 +4,5 @@ import sys
 assert sys.version_info[:2] == (3, 5), sys.version
 
 import numpy
+import conda
+assert conda.__version__ == '4.5.12', conda.__version__
