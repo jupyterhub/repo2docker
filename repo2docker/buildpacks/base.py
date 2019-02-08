@@ -356,6 +356,7 @@ class BuildPack:
         You can use environment variable substitutions in both the
         username and the execution script.
         """
+
         return []
 
     def get_assemble_scripts(self):
@@ -520,8 +521,34 @@ class BaseImage(BuildPack):
     def get_build_env(self):
         """Return env directives required for build"""
         return [
-            ("APP_BASE", "/srv")
+            ("APP_BASE", "/srv"),
+            ('NPM_DIR', '${APP_BASE}/npm'),
+            ('NPM_CONFIG_GLOBALCONFIG','${NPM_DIR}/npmrc')
         ]
+
+    def get_path(self):
+        return super().get_path() + [
+            '${NPM_DIR}/bin'
+        ]
+
+    def get_build_scripts(self):
+        scripts = [
+            (
+                "root",
+                r"""
+                mkdir -p ${NPM_DIR} && \
+                chown -R ${NB_USER}:${NB_USER} ${NPM_DIR}
+                """
+            ),
+            (
+                "${NB_USER}",
+                r"""
+                npm config --global set prefix ${NPM_DIR}
+                """
+                ),
+        ]
+
+        return super().get_build_scripts() + scripts
 
     def get_env(self):
         """Return env directives to be set after build"""
@@ -540,7 +567,6 @@ class BaseImage(BuildPack):
                 ("STENCILA_ARCHIVE", archive),
             ])
         return env
-
 
     def detect(self):
         return True
