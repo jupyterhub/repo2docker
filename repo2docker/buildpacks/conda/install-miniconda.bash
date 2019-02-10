@@ -63,7 +63,7 @@ fi
 # which seems to result in some effective pinning of packages in the initial env,
 # which we don't intend.
 # this file must not be *removed*, however
-echo '' > ${CONDA_DIR}/envs/kernel/conda-meta/history
+echo '' > ${CONDA_DIR}/conda-meta/history
 
 # Clean things out!
 conda clean -tipsy
