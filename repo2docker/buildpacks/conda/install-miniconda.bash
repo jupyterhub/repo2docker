@@ -38,7 +38,7 @@ conda install -yq conda==${CONDA_VERSION}
 # prevent pip installation.
 # we wouldn't have this issue if we did `conda env create`
 # instead of `conda env update` in these cases
-conda install -y $(cat /tmp/environment.yml | grep -o '\spython=.*')
+conda install -y $(cat /tmp/environment.yml | grep -o '\spython=.*') conda==${CONDA_VERSION}
 
 # bug in conda 4.3.>15 prevents --set update_dependencies
 echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
@@ -57,12 +57,14 @@ if [[ -f /tmp/kernel-environment.yml ]]; then
 
     conda env create -n kernel -f /tmp/kernel-environment.yml
     ${CONDA_DIR}/envs/kernel/bin/ipython kernel install --prefix "${CONDA_DIR}"
-    rm -f ${CONDA_DIR}/envs/kernel/conda-meta/history
+    echo '' > ${CONDA_DIR}/envs/kernel/conda-meta/history
 fi
-# remove conda history file,
+# empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
-# which we don't intend
-rm -f ${CONDA_DIR}/conda-meta/history
+# which we don't intend.
+# this file must not be *removed*, however
+echo '' > ${CONDA_DIR}/conda-meta/history
+
 # Clean things out!
 conda clean -tipsy
 
@@ -70,3 +72,5 @@ conda clean -tipsy
 rm ${INSTALLER_PATH}
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
+
+conda list
