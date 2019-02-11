@@ -1,5 +1,5 @@
 dependencies:
-  - python=3.6.*
+  - python=3.7.*
   - ipywidgets==7.2.1
   - jupyterlab==0.34.9
   - nbconvert==5.4.0
