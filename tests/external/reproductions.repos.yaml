@@ -22,7 +22,7 @@
 # Test that tags work + ref is added to tag if not present
 - name: Binder Examples - Requirements
   url: https://github.com/binder-examples/requirements
-  ref: test
+  ref: python-3.7
   verify: python -c 'import matplotlib'
 # Test that custom channels and downgrades don't
 # get blocked by pinning
