@@ -1,6 +1,7 @@
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
+import docker
 import escapism
 
 from repo2docker.app import Repo2Docker
@@ -72,3 +73,32 @@ def test_local_dir_image_name(repo_with_content):
     assert app.output_image_spec.startswith(
         'r2d' + escapism.escape(upstream, escape_char='-').lower()
     )
+
+
+def test_build_kwargs(repo_with_content):
+    upstream, sha1 = repo_with_content
+    argv = [upstream]
+    app = make_r2d(argv)
+    app.extra_build_kwargs = {'somekey': "somevalue"}
+
+    with patch.object(docker.APIClient, 'build') as builds:
+        builds.return_value = []
+        app.build()
+    builds.assert_called_once()
+    args, kwargs = builds.call_args
+    assert 'somekey' in kwargs
+    assert kwargs['somekey'] == "somevalue"
+
+
+def test_run_kwargs(repo_with_content):
+    upstream, sha1 = repo_with_content
+    argv = [upstream]
+    app = make_r2d(argv)
+    app.extra_run_kwargs = {'somekey': "somevalue"}
+
+    with patch.object(docker.DockerClient, 'containers') as containers:
+        app.start_container()
+    containers.run.assert_called_once()
+    args, kwargs = containers.run.call_args
+    assert 'somekey' in kwargs
+    assert kwargs['somekey'] == "somevalue"

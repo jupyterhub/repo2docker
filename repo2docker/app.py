@@ -97,6 +97,28 @@ class Repo2Docker(Application):
         """
     )
 
+    extra_build_kwargs = Dict(
+        {},
+        help="""
+        extra kwargs to limit CPU quota when building a docker image.
+        Dictionary that allows the user to set the desired runtime flag
+        to configure the amount of access to CPU resources your container has.
+        Reference https://docs.docker.com/config/containers/resource_constraints/#cpu
+        """,
+        config=True
+    )
+
+    extra_run_kwargs = Dict(
+        {},
+        help="""
+        extra kwargs to limit CPU quota when running a docker image.
+        Dictionary that allows the user to set the desired runtime flag
+        to configure the amount of access to CPU resources your container has.
+        Reference https://docs.docker.com/config/containers/resource_constraints/#cpu
+        """,
+        config=True
+    )
+
     default_buildpack = Any(
         PythonBuildPack,
         config=True,
@@ -499,8 +521,7 @@ class Repo2Docker(Application):
                     'mode': 'rw'
                 }
 
-        container = client.containers.run(
-            self.output_image_spec,
+        run_kwargs = dict(
             publish_all_ports=self.all_ports,
             ports=ports,
             detach=True,
@@ -508,6 +529,12 @@ class Repo2Docker(Application):
             volumes=container_volumes,
             environment=self.environment
         )
+
+        run_kwargs.update(self.extra_run_kwargs)
+
+        container = client.containers.run(
+            self.output_image_spec, **run_kwargs)
+
         while container.status == 'created':
             time.sleep(0.5)
             container.reload()
@@ -636,7 +663,8 @@ class Repo2Docker(Application):
                                                     self.output_image_spec,
                                                     self.build_memory_limit,
                                                     build_args,
-                                                    self.cache_from):
+                                                    self.cache_from,
+                                                    self.extra_build_kwargs):
                         if 'stream' in l:
                             self.log.info(l['stream'],
                                           extra=dict(phase='building'))
