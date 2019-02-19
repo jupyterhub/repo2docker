@@ -532,8 +532,7 @@ class Repo2Docker(Application):
 
         run_kwargs.update(self.extra_run_kwargs)
 
-        container = client.containers.run(
-            self.output_image_spec, **run_kwargs)
+        container = client.containers.run(self.output_image_spec, **run_kwargs)
 
         while container.status == 'created':
             time.sleep(0.5)
@@ -672,7 +671,7 @@ class Repo2Docker(Application):
                             self.log.info(l['error'], extra=dict(phase='failure'))
                             raise docker.errors.BuildError(l['error'], build_log='')
                         elif 'status' in l:
-                                self.log.info('Fetching base image...\r',
+                            self.log.info('Fetching base image...\r',
                                               extra=dict(phase='building'))
                         else:
                             self.log.info(json.dumps(l),
