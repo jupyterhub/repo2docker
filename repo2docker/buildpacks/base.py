@@ -9,6 +9,8 @@ import docker
 import sys
 import xml.etree.ElementTree as ET
 
+from traitlets import Dict
+
 TEMPLATE = r"""
 FROM buildpack-deps:bionic
 
@@ -463,7 +465,7 @@ class BuildPack:
             appendix=self.appendix,
         )
 
-    def build(self, client, image_spec, memory_limit, build_args, cache_from):
+    def build(self, client, image_spec, memory_limit, build_args, cache_from, extra_build_kwargs):
         tarf = io.BytesIO()
         tar = tarfile.open(fileobj=tarf, mode='w')
         dockerfile_tarinfo = tarfile.TarInfo("Dockerfile")
@@ -503,17 +505,22 @@ class BuildPack:
         }
         if memory_limit:
             limits['memory'] = memory_limit
-        for line in client.build(
-                fileobj=tarf,
-                tag=image_spec,
-                custom_context=True,
-                buildargs=build_args,
-                decode=True,
-                forcerm=True,
-                rm=True,
-                container_limits=limits,
-                cache_from=cache_from
-        ):
+
+        build_kwargs = dict(
+            fileobj=tarf,
+            tag=image_spec,
+            custom_context=True,
+            buildargs=build_args,
+            decode=True,
+            forcerm=True,
+            rm=True,
+            container_limits=limits,
+            cache_from=cache_from,
+        )
+
+        build_kwargs.update(extra_build_kwargs)
+
+        for line in client.build(**build_kwargs):
             yield line
 
 
