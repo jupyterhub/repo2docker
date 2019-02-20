@@ -29,17 +29,21 @@ We recommend installing ``repo2docker`` with the ``pip`` tool::
 
     python3 -m pip install jupyter-repo2docker
 
+for the latest release. To install the most recent code from the upstream repository, run::
+
+    python3 -m pip install https://github.com/jupyter/repo2docker/archive/master.zip
+
 For information on using ``repo2docker``, see :ref:`usage`.
 
 Installing from source code
 ---------------------------
 
-Alternatively, you can install repo2docker from source,
-i.e. if you are contributing back to this project::
+Alternatively, you can install repo2docker from a local source tree,
+e.g. in case you are contributing back to this project::
 
   git clone https://github.com/jupyter/repo2docker.git
   cd repo2docker
-  pip install -e .
+  python3 -m pip install -e .
 
 That's it! For information on using ``repo2docker``, see
 :ref:`usage`.
