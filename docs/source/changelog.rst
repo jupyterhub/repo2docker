@@ -3,21 +3,50 @@ Changelog
 =========
 
 
-Upcoming release
-================
+Version 0.8.0
+=============
 
-Release date: TBD
+Release date: 2019-02-16
 
 New features
 ------------
 - Add additional metadata to docker images about how they were built :pr:`500` by
   :user:`jrbourbeau`.
+- Allow users to install global NPM packages: :pr:`573` by :user:`GladysNalvarte`.
+- Add documentation on switching the user interface presented by a
+  container. :pr:`568` by user:`choldgraf`.
+- Increased test coverage to ~87% by :user:`betatim` and :user:`yuvipanda`.
+- Documentation improvements and additions by :user:`lheagy`, :user:`choldgraf`.
+- Remove f-strings from code base, repo2docker is compatible with Python 3.4+
+  again by :user:`jrbourbeau` in :pr:`520`.
+- Local caching of previously built repostories to speed up launch times
+  by :user:`betatim` in :pr:`511`.
+- Make destination of repository content in the container image configurable
+  on the CLI via ``--target-repo-dir``. By :user:`yuvipanda` in :pr:`507`.
+- Expose CPU limit settings for building and running containers. By
+  :user:`GladysNalvarte` in :pr:`579`.
+- Make Python 3.7 the default version. By :user:`yuvipanda` and :user:`minrk` in
+  :pr:`539`.
 
 API changes
 -----------
 
 Bug fixes
 ---------
+- In some cases the version of conda installed in images was not pinned and got
+  upgraded by user actions. Fixed in :pr:`576` by :user:`minrk`.
+- Fix an error related to checking if debug output was enabled or not:
+  :pr:`575` by :user:`yuvipanda`.
+- Update nteract frontend to version 2.0.0 by :user:`yuvipanda` in :pr:`571`.
+- Fix quoting issue in ``GIT_CREDENTIAL_ENV`` environment variable by
+  :user:`minrk` in :pr:`572`.
+- Change to using the first 8 characters of each Git commit, not the last 8,
+  to tag each built docker image of repo2docker itself. :user:`minrk` in :pr:`562`.
+- Allow users to select the Julia when using a ``requirements.txt`` by
+  :user:`yuvipanda` in :pr:`557`.
+- Set ``JULIA_DEPOT_PATH`` to install packages outside the home directory by
+  :user:`yuvipanda` in :pr:`555`.
+- Update to Jupyter notebook 5.7.4 :pr:`519` by :user:`minrk`.
 
 
 Version 0.7.0
@@ -43,7 +72,8 @@ New features
   :user:`yuvipanda`.
 - Add JupyterHub back to base environment :pr:`476` by :user:`yuvipanda`.
 - Repo2docker has a logo! by :user:`agahkarakuzu` and :user:`blairhudson`.
-- Improve support for Stencila, including identifying stencila runtime from document context :pr:`457` by :user:`nuest`.
+- Improve support for Stencila, including identifying stencila runtime from
+  document context :pr:`457` by :user:`nuest`.
 
 
 API changes
