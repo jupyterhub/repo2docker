@@ -23,6 +23,7 @@ Below is a list of supported configuration files (roughly in the order of build 
    :local:
    :depth: 1
 
+
 .. _environment.yml:
 
 ``environment.yml`` - Install a Python environment
@@ -49,7 +50,6 @@ though ``repo2docker`` support is best with Python 3.7, 3.6, 3.5 and 2.7.
    If you include a Python version in a ``runtime.txt`` file in addition to your
    ``environment.yml``, your ``runtime.txt`` will be ignored.
 
-.. _requirements.txt:
 
 .. _requirements.txt:
 
@@ -71,7 +71,6 @@ To install your repository like a Python package, you may include a
 ``setup.py`` file. repo2docker installs ``setup.py`` files by running
 ``pip install -e .``.
 
-.. _REQUIRE:
 
 .. _REQUIRE:
 
@@ -138,6 +137,7 @@ To see example repositories, visit our
 `Stencila with R <https://github.com/binder-examples/stencila-r/>`_ and
 `Stencila with Python <https://github.com/binder-examples/stencila-py>`_ examples.
 
+
 .. _postBuild:
 
 ``postBuild`` - Run code after installing the environment
@@ -202,6 +202,7 @@ used for installing libraries.
 
 To see an example R repository, visit our `R
 example in binder-examples <https://github.com/binder-examples/r/blob/master/runtime.txt>`_.
+
 
 .. _default.nix:
 
