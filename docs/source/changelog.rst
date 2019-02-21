@@ -2,11 +2,10 @@
 Changelog
 =========
 
-
 Version 0.8.0
 =============
 
-Release date: 2019-02-16
+Release date: 2019-02-21
 
 New features
 ------------
