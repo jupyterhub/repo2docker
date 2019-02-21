@@ -209,7 +209,7 @@ def is_valid_docker_image_name(image_name):
 
         (?::([\w][\w.-]{0,127}))?    # optional capture <tag-pattern>=':<tag>'
         # optionally capture <digest-pattern>='@<digest>'
-        (?:@[A-Za-z][A-Za-z0-9]*(?:[-_+.][A-Za-z][A-Za-z0-9]*)*[:][[:xdigit:]]{32,})?
+        (?:@[A-Za-z][A-Za-z0-9]*(?:[-_+.][A-Za-z][A-Za-z0-9]*)*[:][A-Fa-f0-9]{32,})?
         $
         """, re.VERBOSE)
 
