@@ -23,7 +23,7 @@ Below is a list of supported configuration files (roughly in the order of build 
    :local:
    :depth: 1
 
-.. _environment-yml:
+.. _environment.yml:
 
 ``environment.yml`` - Install a Python environment
 ==================================================
@@ -50,6 +50,7 @@ Python in the file.  ``conda`` supports Python versions 3.6, 3.5, 3.4, and 2.7.
    If you include a Python version in a ``runtime.txt`` file in addition to your
    ``environment.yml``, your ``runtime.txt`` will be ignored.
 
+.. _requirements.txt:
 
 ``requirements.txt`` - Install a Python environment
 ===================================================
@@ -67,6 +68,7 @@ To install your repository like a Python package, you may include a
 ``setup.py`` file. repo2docker installs ``setup.py`` files by running
 ``pip install -e .``.
 
+.. _REQUIRE:
 
 ``REQUIRE`` - Install a Julia environment
 =========================================

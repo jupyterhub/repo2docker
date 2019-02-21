@@ -55,7 +55,7 @@ Pasting the URL into your browser will open Jupyter Notebook with the
 dependencies and contents of the source repository in the built image.
 
 
-Building a specific branch / commit / tag
+Building a specific branch, commit or tag
 =========================================
 
 To build a particular branch and commit, use the argument ``--ref`` and
@@ -64,7 +64,7 @@ specify the ``branch-name`` or ``commit-hash``. For example::
   jupyter-repo2docker --ref 9ced85dd9a84859d0767369e58f33912a214a3cf https://github.com/norvig/pytudes
 
 .. tip::
-   For reproducible research, we recommend specifying a commit-hash to
+   For reproducible builds, we recommend specifying a commit-hash to
    deterministically build a fixed version of a repository. Not specifying a
    commit-hash will result in the latest commit of the repository being built.
 
@@ -78,7 +78,10 @@ Where to put configuration files
 * The root directory of the repository.
 
 If the folder ``binder/`` is located at the top level of the repository,
-  **only configuration files in the** ``binder/`` **folder will be considered**.
+only configuration files in the ``binder/`` folder will be considered.
+
+Check the complete list of :ref:`configuration files <config-files>` supported
+by ``repo2docker`` to see how to configure the build process.
 
 .. note::
 

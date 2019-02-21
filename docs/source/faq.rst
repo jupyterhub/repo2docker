@@ -17,11 +17,14 @@ What versions of Python (or R or Julia...) are supported?
 Python
 ~~~~~~
 
-Repo2docker officially supports the following versions of Python (specified in environment.yml or runtime.txt):
+Repo2docker officially supports the following versions of Python
+(specified in your :ref:`environment.yml <environment.yml>` or
+:ref:`runtime.txt <runtime.txt>` file):
 
 - 3.7 (added in 0.7)
 - 3.6 (default)
 - 3.5
+- 2.7
 
 Additional versions may work, as long as the
 `base environment <https://github.com/jupyter/repo2docker/blob/master/repo2docker/buildpacks/conda/environment.yml>`_
@@ -31,14 +34,15 @@ in the base environment is not packaged for your Python,
 either because the version of the package is too new and your chosen Python is too old,
 or vice versa.
 
-Additionally, if Python 2.7 is specified,
-a separate environment for the kernel will be installed with Python 2.
-The notebook server will run in the default Python 3.6 environment.
+I Python 2.7 is specified, a separate environment for the kernel will be
+installed with Python 2. The notebook server will run in the default Python 3.6
+environment.
 
 Julia
 ~~~~~
 
-The following versions of Julia are supported (specified in REQUIRE):
+The following versions of Julia are supported (specified in the
+:ref:`REQUIRE <REQUIRE>` configuration file):
 
 - 1.0 (added in 0.7)
 - 0.7 (added in 0.7)
@@ -61,7 +65,11 @@ a subsequent build step.)
 How do I set environment variables?
 -----------------------------------
 
-Use the ``-e`` or ``--env`` flag for each variable that you want to define.
+To configure environment variables for all users of a repository use the
+:ref:`start <start>` configuration file.
+
+When running repo2docker locally you can use the ``-e`` or ``--env`` command-line
+flag for each variable that you want to define.
 
 For example ``jupyter-repo2docker -e VAR1=val1 -e VAR2=val2 ...``
 
