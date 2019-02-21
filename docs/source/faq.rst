@@ -9,7 +9,8 @@ and have found an answer, send a PR to add it here!
 How should I specify another version of Python?
 -----------------------------------------------
 
-One can specify a Python version in the ``environment.yml`` file of a repository.
+One can specify a Python version in the ``environment.yml`` file of a repository
+or ``runtime.txt`` file if using ``requirements.txt`` instead of ``environment.yml``.
 
 What versions of Python (or R or Julia...) are supported?
 ---------------------------------------------------------
@@ -19,8 +20,8 @@ Python
 
 Repo2docker officially supports the following versions of Python (specified in environment.yml or runtime.txt):
 
-- 3.7 (added in 0.7)
-- 3.6 (default)
+- 3.7 (added in 0.7, default in 0.8)
+- 3.6 (default in 0.7 and earlier)
 - 3.5
 
 Additional versions may work, as long as the

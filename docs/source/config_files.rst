@@ -23,15 +23,14 @@ Below is a list of supported configuration files (roughly in the order of build 
    :local:
    :depth: 1
 
-.. _environment-yml:
+.. _environment.yml:
 
 ``environment.yml`` - Install a Python environment
 ==================================================
 
-``environment.yml`` is the standard configuration file used by Anaconda, conda,
-and miniconda that lets you install packages in the data analytics stack (it
-primarily installs Python packages, though can be used to install a range of
-non-Python packages as well).
+``environment.yml`` is the standard configuration file used by `conda <https://conda.io>`_
+that lets you install any kind of package,
+including Python, R, and C/C++ packages.
 
 .. note::
 
@@ -41,15 +40,17 @@ non-Python packages as well).
    file.
 
 You can also specify which Python version to install in your built environment
-with ``environment.yml``. By default, ``repo2docker`` **installs
-Python 3.6** with your ``environment.yml`` unless you include the version of
-Python in the file.  ``conda`` supports Python versions 3.6, 3.5, 3.4, and 2.7.
-``repo2docker`` support is best with Python 3.6, 3.5, and 2.7.
+with ``environment.yml``. By default, ``repo2docker`` installs
+|default_python| with your ``environment.yml`` unless you include the version of
+Python in this file.  ``conda`` supports all versions of Python,
+though ``repo2docker`` support is best with Python 3.7, 3.6, 3.5 and 2.7.
 
 .. warning::
    If you include a Python version in a ``runtime.txt`` file in addition to your
    ``environment.yml``, your ``runtime.txt`` will be ignored.
 
+
+.. _requirements.txt:
 
 ``requirements.txt`` - Install a Python environment
 ===================================================
@@ -60,6 +61,8 @@ environment. Our
 on GitHub shows a typical requirements file.
 
 
+.. _setup.py:
+
 ``setup.py`` - Install Python packages
 ======================================
 
@@ -67,6 +70,8 @@ To install your repository like a Python package, you may include a
 ``setup.py`` file. repo2docker installs ``setup.py`` files by running
 ``pip install -e .``.
 
+
+.. _REQUIRE:
 
 ``REQUIRE`` - Install a Julia environment
 =========================================
@@ -76,6 +81,8 @@ Julia repository with ``REQUIRE`` and ``environment.yml``,
 visit `binder-examples/julia-python <https://github.com/binder-examples/julia-python>`_.
 
 
+.. _install.R:
+
 ``install.R`` - Install an R/RStudio environment
 ================================================
 
@@ -84,6 +91,8 @@ This is used to install R libraries pinned to a specific snapshot on
 To set the date of the snapshot add a runtime.txt_.
 For an example ``install.R`` file, visit our `example install.R file <https://github.com/binder-examples/r/blob/master/install.R>`_.
 
+
+.. _apt.txt:
 
 ``apt.txt`` - Install packages with apt-get
 ===========================================
@@ -95,6 +104,8 @@ We use ``apt.txt``, for example, to install LaTeX in our
 `example apt.txt for LaTeX <https://github.com/binder-examples/latex/blob/master/apt.txt>`_.
 
 
+.. _DESCRIPTION:
+
 ``DESCRIPTION`` - Install an R package
 ======================================
 
@@ -105,6 +116,9 @@ from the ``DESCRIPTION`` by running ``devtools:install_git(".")``.
 You also need to have a ``runtime.txt`` file that is formatted as
 ``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot of MRAN that will be
 used for your R installation.
+
+
+.. _manifest.xml:
 
 ``manifest.xml`` - Install Stencila
 ===================================
@@ -154,21 +168,29 @@ If you only need to run things once during the build phase use :ref:`postBuild`.
 
 
 .. TODO: Discuss runtime limits, best practices, etc.
-   Also, point to an example.
 
 .. _runtime.txt:
 
 ``runtime.txt`` - Specifying runtimes
 =====================================
 
-This allows you to control the runtime of Python or R.
+Sometimes you want to specify the version of the runtime
+(e.g. the version of Python or R),
+but the environment specification format don't let you specify this information
+(e.g. requirements.txt or install.R).
+For these cases, we have a special file, ``runtime.txt``.
+
+.. note::
+
+   ``runtime.txt`` is only supported when used with environment specifications
+   that do not already support specifying the runtime
+   (e.g. when using ``environment.yml`` for conda or ``REQUIRE`` for Julia,
+   ``runtime.txt`` will be ignored).
 
 To use python-2.7: add ``python-2.7`` in runtime.txt file.
-The repository will run in a virtualenv with
+The repository will run in an env with
 Python 2 installed. To see a full example repository, visit our
 `Python2 example <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
-**Python versions in** ``runtime.txt`` **are ignored when** ``environment.yml`` **is
-present in the same folder**.
 
 repo2docker uses R libraries pinned to a specific snapshot on
 `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
