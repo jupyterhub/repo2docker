@@ -16,29 +16,40 @@ you use one of the following configuration files:
 * ``requirements.txt``
 * ``environment.yml``
 
-Note that by default, the environment will have **Python 3** installed.
+.. note::
+
+  By default, the environment will have |default_python|.
+
+.. versionchanged:: 0.8
+
+  Upgraded default Python from 3.6 to 3.7.
+
 
 Specifying a version of Python
 ------------------------------
 
 To specify a specific version of Python, you have two options:
 
-* Use ``runtime.txt``. Include a line that specifies the Python version in
-  this file. This line takes the following form::
-
-    python=X.X
-
-  For example,::
-
-    python=2.7
-* Use ``environment.yml``. The Anaconda distribution also lets you define
-  the Python environment within ``environment.yml``. To do so, add ``python=X.X``
-  to your dependencies section, like so::
+* Use :ref:`environment.yml <environment.yml>`. Conda environments let you define
+  the Python version in ``environment.yml``.
+  To do so, add ``python=X.X`` to your dependencies section, like so::
 
     name: python 2.7
     dependencies:
       - python=2.7
       - numpy
+
+* Use :ref:`runtime.txt <runtime.txt>` with :ref:`requirements.txt <requirements.txt>`.
+  If you are using ``requirements.txt`` instead of ``environment.yml``,
+  you can specify the Python runtime version in a separate file called ``runtime.txt``.
+  This file contains a single line of the following form::
+
+    python-X.X
+
+  For example::
+
+    python-3.6
+
 
 The R Language
 ==============
