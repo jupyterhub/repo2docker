@@ -26,10 +26,10 @@ CONDA_VERSION = '4.5.11'
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
-ENV_FILE = 'environment.yml'
+ENV_FILE = HERE / 'environment.yml'
 FROZEN_FILE = os.path.splitext(ENV_FILE)[0] + '.frozen.yml'
 
-ENV_FILE_T = 'environment.py-{py}.yml'
+ENV_FILE_T = HERE / 'environment.py-{py}.yml'
 FROZEN_FILE_T = os.path.splitext(ENV_FILE_T)[0] + '.frozen.yml'
 
 yaml = YAML(typ='rt')
