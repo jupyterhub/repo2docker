@@ -11,10 +11,11 @@ class JuliaBuildPack(PythonBuildPack):
     minor_julias = {
         '0.6': '0.6.4',
         '0.7': '0.7.0',
-        '1.0': '1.0.0',
+        '1.0': '1.0.3',
+        '1.1': '1.1.0',
     }
     major_julias = {
-        '1': '1.0.0',
+        '1': '1.1.0',
     }
 
     @property
@@ -58,7 +59,7 @@ class JuliaBuildPack(PythonBuildPack):
             - `JULIA_HOME`: path where all Julia Binaries will be installed
             - `JULIA_PKGDIR`: path where all Julia libraries will be installed
             - `JULIA_DEPOT_PATH`: path where Julia libraries are installed.
-                                  Similar to JULIA_PKGDIR, used in 1.0.
+                                  Similar to JULIA_PKGDIR, used in 1.x.
             - `JULIA_VERSION`: default version of julia to be installed
             - `JUPYTER`: environment variable required by IJulia to point to
                 the `jupyter` executable
