@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
 # Verify the version:
-if VERSION < v"1" || VERSION >= v"2"
+if VERSION < v"1" || VERSION >= v"1.1"
     exit(1)
 end
 
