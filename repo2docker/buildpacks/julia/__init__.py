@@ -19,32 +19,40 @@ class JuliaBuildPack(PythonBuildPack):
     }
 
     @property
+    def julia_env_exists(self):
+        return os.path.exists(self.binder_path('Project.toml')) or os.path.exists(self.binder_path('JuliaProject.toml'))
+
+    @property
     def julia_version(self):
-        require = self.binder_path('REQUIRE')
-        try:
-            with open(require) as f:
-                julia_version_line = f.readline().strip()  # First line is optionally a julia version
-        except FileNotFoundError:
-            julia_version_line = ''
-
-        if not julia_version_line.startswith('julia '):
-            # not a Julia version line.
-            # use the default Julia.
-            self._julia_version = self.minor_julias['0.6']
-            return self._julia_version
-
-        julia_version_info = julia_version_line.split(' ', 1)[1].split('.')
-        julia_version = ''
-        if len(julia_version_info) == 1:
-            julia_version = self.major_julias[julia_version_info[0]]
-        elif len(julia_version_info) == 2:
-            # get major.minor
-            julia_version = self.minor_julias['.'.join(julia_version_info)]
+        if self.julia_env_exists():
+            # TODO Read version out of the file
+            return self.major_julias['1']
         else:
-            # use supplied julia version
-            julia_version = '.'.join(julia_version_info)
-        self._julia_version = julia_version
-        return self._julia_version
+            require = self.binder_path('REQUIRE')
+            try:
+                with open(require) as f:
+                    julia_version_line = f.readline().strip()  # First line is optionally a julia version
+            except FileNotFoundError:
+                julia_version_line = ''
+
+            if not julia_version_line.startswith('julia '):
+                # not a Julia version line.
+                # use the default Julia.
+                self._julia_version = self.minor_julias['0.6']
+                return self._julia_version
+
+            julia_version_info = julia_version_line.split(' ', 1)[1].split('.')
+            julia_version = ''
+            if len(julia_version_info) == 1:
+                julia_version = self.major_julias[julia_version_info[0]]
+            elif len(julia_version_info) == 2:
+                # get major.minor
+                julia_version = self.minor_julias['.'.join(julia_version_info)]
+            else:
+                # use supplied julia version
+                julia_version = '.'.join(julia_version_info)
+            self._julia_version = julia_version
+            return self._julia_version
 
     def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
@@ -98,31 +106,57 @@ class JuliaBuildPack(PythonBuildPack):
         (from get_assemble_scripts).
 
         """
-        return super().get_build_scripts() + [
-            (
-                "root",
-                r"""
-                mkdir -p ${JULIA_PATH} && \
-                curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
-                """
-            ),
-            (
-                "root",
-                r"""
-                mkdir -p ${JULIA_PKGDIR} && \
-                chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
-                """
-            ),
-            (
-                "${NB_USER}",
-                # HACK: Can't seem to tell IJulia to install in sys-prefix
-                # FIXME: Find way to get it to install under /srv and not $HOME?
-                r"""
-                julia -e 'if (VERSION > v"0.7-") using Pkg; else Pkg.init(); end; Pkg.add("IJulia"); using IJulia;' && \
-                mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
-                """
-            )
-        ]
+        if self.julia_env_exists():
+            return super().get_build_scripts() + [
+                (
+                    "root",
+                    r"""
+                    mkdir -p ${JULIA_PATH} && \
+                    curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
+                    """
+                ),
+                (
+                    "root",
+                    r"""
+                    mkdir -p ${JULIA_PKGDIR} && \
+                    chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
+                    """
+                ),
+                (
+                    "${NB_USER}",
+                    # HACK: Can't seem to tell IJulia to install in sys-prefix
+                    # FIXME: Find way to get it to install under /srv and not $HOME?
+                    r"""
+                    julia -e 'using Pkg; Pkg.add("IJulia"); using IJulia; installkernel("Julia", "--project=.", env=Dict("JUPYTER_DATA_DIR"=>"${NB_PYTHON_PREFIX}/share/jupyter/kernels"));'
+                    """
+                )
+            ]            
+        else:
+            return super().get_build_scripts() + [
+                (
+                    "root",
+                    r"""
+                    mkdir -p ${JULIA_PATH} && \
+                    curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
+                    """
+                ),
+                (
+                    "root",
+                    r"""
+                    mkdir -p ${JULIA_PKGDIR} && \
+                    chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
+                    """
+                ),
+                (
+                    "${NB_USER}",
+                    # HACK: Can't seem to tell IJulia to install in sys-prefix
+                    # FIXME: Find way to get it to install under /srv and not $HOME?
+                    r"""
+                    julia -e 'if (VERSION > v"0.7-") using Pkg; else Pkg.init(); end; Pkg.add("IJulia"); using IJulia;' && \
+                    mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
+                    """
+                )
+            ]
 
     def get_assemble_scripts(self):
         """
@@ -133,20 +167,35 @@ class JuliaBuildPack(PythonBuildPack):
         any needed Python packages found in environment.yml.
 
         """
-        require = self.binder_path('REQUIRE')
-        return super().get_assemble_scripts() + [(
-            "${NB_USER}",
-            # Install and pre-compile all libraries if they've opted into it.
-            # In v0.6, Pkg.resolve() installs all the packages, but in v0.7+, we
-            # have to manually Pkg.add() each of them (since the REQUIRES file
-            # format is deprecated).
-            # The precompliation is done via `using {libraryname}`.
-            r"""
-            julia /tmp/install-repo-dependencies.jl "%(require)s"
-            """ % {"require": require}
-            # TODO: For some reason, `rm`ing the file fails with permission denied.
-            # && rm /tmp/install-repo-dependencies.jl
-        )]
+        if self.julia_env_exists():
+            return super().get_assemble_scripts() + [(
+                "${NB_USER}",
+                # Install and pre-compile all libraries if they've opted into it.
+                # In v0.6, Pkg.resolve() installs all the packages, but in v0.7+, we
+                # have to manually Pkg.add() each of them (since the REQUIRES file
+                # format is deprecated).
+                # The precompliation is done via `using {libraryname}`.
+                r"""
+                julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'"
+                """
+                # TODO: For some reason, `rm`ing the file fails with permission denied.
+                # && rm /tmp/install-repo-dependencies.jl
+            )]
+        else:
+            require = self.binder_path('REQUIRE')
+            return super().get_assemble_scripts() + [(
+                "${NB_USER}",
+                # Install and pre-compile all libraries if they've opted into it.
+                # In v0.6, Pkg.resolve() installs all the packages, but in v0.7+, we
+                # have to manually Pkg.add() each of them (since the REQUIRES file
+                # format is deprecated).
+                # The precompliation is done via `using {libraryname}`.
+                r"""
+                julia /tmp/install-repo-dependencies.jl "%(require)s"
+                """ % {"require": require}
+                # TODO: For some reason, `rm`ing the file fails with permission denied.
+                # && rm /tmp/install-repo-dependencies.jl
+            )]
 
     def get_build_script_files(self):
         files = {
@@ -163,8 +212,8 @@ class JuliaBuildPack(PythonBuildPack):
         false unless an `environment.yml` is present and we do not want to
         require the presence of a `environment.yml` to use Julia.
 
-        Instead we just check if the path to `REQUIRE` exists
+        Instead we just check if the path to `REQUIRE`, `Project.toml` or
+        `JuliaProject.toml` exists
 
         """
-        # TODO(nhdaly): Add support for Project.toml here as well.
-        return os.path.exists(self.binder_path('REQUIRE'))
+        return os.path.exists(self.binder_path('REQUIRE')) or self.julia_env_exists()
