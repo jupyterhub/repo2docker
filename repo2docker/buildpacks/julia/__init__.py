@@ -23,7 +23,7 @@ class JuliaBuildPack(PythonBuildPack):
 
     @property
     def julia_version(self):
-        if self.julia_env_exists():
+        if self.julia_env_exists:
             # TODO Read version out of the file
             return self.major_julias['1']
         else:
@@ -105,7 +105,7 @@ class JuliaBuildPack(PythonBuildPack):
         (from get_assemble_scripts).
 
         """
-        if self.julia_env_exists():
+        if self.julia_env_exists:
             return super().get_build_scripts() + [
                 (
                     "root",
@@ -166,8 +166,7 @@ class JuliaBuildPack(PythonBuildPack):
         any needed Python packages found in environment.yml.
 
         """
-        if self.julia_env_exists():
-            return super().get_assemble_scripts() + [(
+        if self.julia_env_exists:
                 "${NB_USER}",
                 # Install and pre-compile all libraries if they've opted into it.
                 # In v0.6, Pkg.resolve() installs all the packages, but in v0.7+, we
@@ -215,4 +214,4 @@ class JuliaBuildPack(PythonBuildPack):
         `JuliaProject.toml` exists
 
         """
-        return os.path.exists(self.binder_path('REQUIRE')) or self.julia_env_exists()
+        return os.path.exists(self.binder_path('REQUIRE')) or self.julia_env_exists
