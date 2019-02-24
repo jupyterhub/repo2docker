@@ -121,14 +121,6 @@ class JuliaBuildPack(PythonBuildPack):
                     mkdir -p ${JULIA_PKGDIR} && \
                     chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
                     """
-                ),
-                (
-                    "${NB_USER}",
-                    # HACK: Can't seem to tell IJulia to install in sys-prefix
-                    # FIXME: Find way to get it to install under /srv and not $HOME?
-                    r"""
-                    julia -e 'using Pkg; Pkg.add("IJulia"); using IJulia; installkernel("Julia", "--project=.", env=Dict("JUPYTER_DATA_DIR"=>"${NB_PYTHON_PREFIX}/share/jupyter/kernels"));'
-                    """
                 )
             ]            
         else:
@@ -168,18 +160,37 @@ class JuliaBuildPack(PythonBuildPack):
 
         """
         if self.julia_env_exists:
-                "${NB_USER}",
-                # Install and pre-compile all libraries if they've opted into it.
-                # In v0.6, Pkg.resolve() installs all the packages, but in v0.7+, we
-                # have to manually Pkg.add() each of them (since the REQUIRES file
-                # format is deprecated).
-                # The precompliation is done via `using {libraryname}`.
-                r"""
-                julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'"
-                """
-                # TODO: For some reason, `rm`ing the file fails with permission denied.
-                # && rm /tmp/install-repo-dependencies.jl
-            )]
+            return super().get_assemble_scripts() + [
+                (
+                    "${NB_USER}",
+                    # HACK: Can't seem to tell IJulia to install in sys-prefix
+                    # FIXME: Find way to get it to install under /srv and not $HOME?
+                    r"""
+                    julia -e 'using Pkg; Pkg.add("IJulia"); using IJulia; installkernel("Julia", "--project={0}");'
+                    """.format('~')
+                ),
+                (
+                    "${NB_USER}",
+                    # HACK: Can't seem to tell IJulia to install in sys-prefix
+                    # FIXME: Find way to get it to install under /srv and not $HOME?
+                    r"""
+                    mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
+                    """
+                ),
+                (
+                    "${NB_USER}",
+                    # Install and pre-compile all libraries if they've opted into it.
+                    # In v0.6, Pkg.resolve() installs all the packages, but in v0.7+, we
+                    # have to manually Pkg.add() each of them (since the REQUIRES file
+                    # format is deprecated).
+                    # The precompliation is done via `using {libraryname}`.
+                    r"""
+                    julia --project=. -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
+                    """
+                    # TODO: For some reason, `rm`ing the file fails with permission denied.
+                    # && rm /tmp/install-repo-dependencies.jl
+                )
+            ]
         else:
             require = self.binder_path('REQUIRE')
             return super().get_assemble_scripts() + [(
