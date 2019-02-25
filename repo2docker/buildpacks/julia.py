@@ -88,15 +88,6 @@ class JuliaBuildPack(PythonBuildPack):
                 chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
                 """
             ),
-            (
-                "${NB_USER}",
-                # HACK: Can't seem to tell IJulia to install in sys-prefix
-                # FIXME: Find way to get it to install under /srv and not $HOME?
-                r"""
-                julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
-                mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
-                """
-            )
         ]            
 
     def get_assemble_scripts(self):
@@ -113,6 +104,7 @@ class JuliaBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 r"""
+                julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\", env=Dict(\"JUPYTER_DATA_DIR\"=>\"${NB_PYTHON_PREFIX}/share/jupyter\"));" && \
                 julia --project=. -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
                 """
             )
