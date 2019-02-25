@@ -165,8 +165,8 @@ class JuliaBuildPack(PythonBuildPack):
                     # HACK: Can't seem to tell IJulia to install in sys-prefix
                     # FIXME: Find way to get it to install under /srv and not $HOME?
                     r"""
-                    julia -e 'using Pkg; Pkg.add("IJulia"); using IJulia; installkernel("Julia", "--project={0}");'
-                    """.format('~')
+                    julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");"
+                    """
                 ),
                 (
                     "${NB_USER}",
