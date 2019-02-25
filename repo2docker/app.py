@@ -85,8 +85,8 @@ class Repo2Docker(Application):
         [
             LegacyBinderDockerBuildPack,
             DockerBuildPack,
+            JuliaBuildPack,
             JuliaLegacyBuildPack,
-            JuliaBuildPack,            
             NixBuildPack,
             RBuildPack,
             CondaBuildPack,
