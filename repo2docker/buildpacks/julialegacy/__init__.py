@@ -157,14 +157,14 @@ class JuliaLegacyBuildPack(PythonBuildPack):
 
     def detect(self):
         """
-        Check if current repo should be built with the Julia Build pack
+        Check if current repo should be built with the Julia Legacy Build pack
 
         super().detect() is not called in this function - it would return
         false unless an `environment.yml` is present and we do not want to
         require the presence of a `environment.yml` to use Julia.
 
-        Instead we just check if the path to `REQUIRE` exists
+        Instead we just check if the path to `REQUIRE` exists and that there is
+        no julia 1.0 style environment
 
         """
-        # TODO(nhdaly): Add support for Project.toml here as well.
         return os.path.exists(self.binder_path('REQUIRE')) and not(os.path.exists(self.binder_path('Project.toml')) or os.path.exists(self.binder_path('JuliaProject.toml')))
