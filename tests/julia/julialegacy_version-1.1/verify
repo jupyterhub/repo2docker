@@ -1,12 +1,12 @@
 #!/usr/bin/env julia
 # Verify the version:
-if VERSION < v"1" || VERSION >= v"2"
+if VERSION < v"1.1" || VERSION >= v"1.2"
     exit(1)
 end
 
 try
     # Test that the package was installed.
-    using IteratorInterfaceExtensions
+    using Compat
 
     # Verify that the environment variables are set correctly for julia 1.0+
     @assert "julia" ∈ readdir(Sys.BINDIR)
