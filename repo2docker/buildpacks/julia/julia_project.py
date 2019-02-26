@@ -1,7 +1,7 @@
 """Generates a Dockerfile based on an input matrix for Julia"""
 import os
 import toml
-from .python import PythonBuildPack
+from ..python import PythonBuildPack
 
 
 class JuliaProjectTomlBuildPack(PythonBuildPack):
