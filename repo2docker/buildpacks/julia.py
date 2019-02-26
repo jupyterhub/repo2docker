@@ -1,5 +1,6 @@
 """Generates a Dockerfile based on an input matrix for Julia"""
 import os
+import toml
 from .python import PythonBuildPack
 
 
@@ -19,6 +20,11 @@ class JuliaBuildPack(PythonBuildPack):
     @property
     def julia_version(self):
         # TODO Read version out of the file
+        # TODO Handle JuliaProject.toml
+        project_toml = toml.load(self.binder_path('Project.toml'))
+        if 'compat' in project_toml:
+            if 'julia' in project_toml['compat']:
+                return project_toml['compat']['julia']
         return self.major_julias['1']
 
     def get_build_env(self):
