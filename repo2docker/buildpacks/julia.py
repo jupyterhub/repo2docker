@@ -105,7 +105,7 @@ class JuliaBuildPack(PythonBuildPack):
                 "${NB_USER}",
                 r"""
                 julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\", env=Dict(\"JUPYTER_DATA_DIR\"=>\"${NB_PYTHON_PREFIX}/share/jupyter\"));" && \
-                julia --project=. -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
+                julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
                 """
             )
         ]
