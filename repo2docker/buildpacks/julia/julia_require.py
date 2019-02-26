@@ -3,7 +3,7 @@ import os
 from ..python import PythonBuildPack
 
 
-class JuliaLegacyBuildPack(PythonBuildPack):
+class JuliaRequireBuildPack(PythonBuildPack):
     """
     Julia build pack which uses conda.
     """

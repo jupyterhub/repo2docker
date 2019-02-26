@@ -4,7 +4,7 @@ import toml
 from .python import PythonBuildPack
 
 
-class JuliaBuildPack(PythonBuildPack):
+class JuliaProjectTomlBuildPack(PythonBuildPack):
     """
     Julia build pack which uses conda.
     """
