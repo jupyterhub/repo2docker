@@ -8,6 +8,7 @@ import logging
 import docker
 import sys
 import xml.etree.ElementTree as ET
+import pkg_resources
 
 from traitlets import Dict
 
@@ -158,6 +159,7 @@ RUN chmod +x "{{ start_script }}"
 ENTRYPOINT ["{{ start_script }}"]
 {% endif -%}
 
+
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
 
@@ -274,7 +276,11 @@ class BuildPack:
         system, and the value is the destination file path inside the
         container image.
         """
-        return {}
+        return {
+            "healthcheck.py": "/healthcheck.py",
+            "iframes/custom.js": "/home/jovyan/.jupyter/custom/custom.js",
+            "iframes/jupyter_notebook_config.py": "/home/jovyan/.jupyter/jupyter_notebook_config.py"
+        }
 
     @property
     def stencila_manifest_dir(self):
@@ -428,6 +434,7 @@ class BuildPack:
         """
         Render BuildPack into Dockerfile
         """
+
         t = jinja2.Template(TEMPLATE)
 
         build_script_directives = []
