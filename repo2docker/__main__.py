@@ -198,6 +198,11 @@ def get_argparser():
         default=[],
     )
 
+    argparser.add_argument(
+        '--template',
+        help=Repo2Docker.template.help
+    )
+
     return argparser
 
 argparser = get_argparser()
@@ -323,6 +328,9 @@ def make_r2d(argv=None):
 
     if args.target_repo_dir:
         r2d.target_repo_dir = args.target_repo_dir
+
+    if args.template:
+        r2d.template = args.template
 
     return r2d
 

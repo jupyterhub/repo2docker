@@ -354,6 +354,16 @@ class Repo2Docker(Application):
         config=True
     )
 
+    template = Unicode(
+        'base.tpl',
+        help="""
+        Template to use.
+
+        Defaults to base.tpl if not set
+        """,
+        config=True
+    )
+
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
 
@@ -639,6 +649,7 @@ class Repo2Docker(Application):
                     picked_buildpack = self.default_buildpack()
 
                 picked_buildpack.appendix = self.appendix
+                picked_buildpack.template = self.template
                 # Add metadata labels
                 picked_buildpack.labels['repo2docker.version'] = self.version
                 repo_label = 'local' if os.path.isdir(self.repo) else self.repo

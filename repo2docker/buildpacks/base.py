@@ -435,7 +435,11 @@ class BuildPack:
         Render BuildPack into Dockerfile
         """
 
-        t = jinja2.Template(TEMPLATE)
+        resource_package = __name__  
+        resource_path = '/'.join(('templates', self.template))
+        tpl = pkg_resources.resource_string(resource_package, resource_path)
+        #tpl = pkg_resources.resource_stream(resource_package, resource_path)
+        t = jinja2.Template(tpl.decode('utf-8'))
 
         build_script_directives = []
         last_user = 'root'
