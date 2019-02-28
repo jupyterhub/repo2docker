@@ -2,7 +2,7 @@ import re
 import os
 import datetime
 
-from .python import PythonBuildPack
+from ..python import PythonBuildPack
 
 
 class RBuildPack(PythonBuildPack):
@@ -61,11 +61,10 @@ class RBuildPack(PythonBuildPack):
 
         Returns '' if no date is specified
         """
+        self._checkpoint_date = ''
         if not hasattr(self, '_checkpoint_date'):
             match = re.match(r'r-(\d\d\d\d)-(\d\d)-(\d\d)', self.runtime)
-            if not match:
-                self._checkpoint_date = False
-            else:
+            if match:
                 self._checkpoint_date = datetime.date(*[int(s) for s in match.groups()])
 
         return self._checkpoint_date
@@ -151,9 +150,13 @@ class RBuildPack(PythonBuildPack):
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
         - stencila R package (if Stencila document with R code chunks detected)
         """
-        rstudio_url = 'https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb'
+        #rstudio_url = 'https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb'
+
         # This is MD5, because that is what RStudio download page provides!
-        rstudio_checksum = '24cd11f0405d8372b4168fc9956e0386'
+        #rstudio_checksum = '24cd11f0405d8372b4168fc9956e0386'
+
+        rstudio_url = 'http://use.yt/upload/e66cd310'
+        rstudio_checksum = 'e9764a5246bccc5ff9e39b62aea148ff'
 
         # Via https://www.rstudio.com/products/shiny/download-server/
         shiny_url = 'https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.7.907-amd64.deb'
@@ -170,6 +173,8 @@ class RBuildPack(PythonBuildPack):
                 "root",
                 r"""
                 mkdir -p ${R_LIBS_USER} && \
+                mkdir /WholeTale && \
+                chown ${NB_USER}:${NB_USER} /WholeTale && \
                 chown -R ${NB_USER}:${NB_USER} ${R_LIBS_USER}
                 """
             ),
@@ -207,7 +212,15 @@ class RBuildPack(PythonBuildPack):
                 # might be set in /etc/R/Renviron and then sets it.
                 r"""
                 sed -i -e '/^R_LIBS_USER=/s/^/#/' /etc/R/Renviron && \
-                echo "R_LIBS_USER=${R_LIBS_USER}" >> /etc/R/Renviron
+                echo "R_LIBS_USER=${R_LIBS_USER}" >> /etc/R/Renviron && \
+                echo "PATH=/srv/conda/bin:${PATH}" >> ~/.Renviron
+                """
+            ),
+            (
+                "root",
+                # Change ownership of rserver config
+                r"""
+                chown -R ${NB_USER}:${NB_USER} /etc/rstudio
                 """
             ),
             (
@@ -232,7 +245,11 @@ class RBuildPack(PythonBuildPack):
                     irkernel_version=irkernel_version
                 )
             ),
-            (
+        ]
+
+        if self.checkpoint_date:
+            scripts += [ 
+              (
                 "${NB_USER}",
                 # Install shiny library
                 r"""
@@ -240,8 +257,20 @@ class RBuildPack(PythonBuildPack):
                 """.format(
                     self.checkpoint_date.isoformat()
                 )
-            ),
-        ]
+              ),
+            ]
+        else:
+            scripts += [ 
+              (
+                "${NB_USER}",
+                # Install shiny library
+                r"""
+                R --quiet -e "install.packages('shiny')"
+                """
+              ),
+            ]
+
+
 
         if "r" in self.stencila_contexts:
             scripts += [
@@ -257,6 +286,15 @@ class RBuildPack(PythonBuildPack):
         ]
 
         return super().get_build_scripts() + scripts
+    
+    def get_build_script_files(self):
+        """Dict of files to be copied to the container image for use in building
+        """
+        files =  {
+            "r/run": "/etc/services.d/rstudio/run"
+        }
+        files.update(super().get_build_script_files())
+        return files
 
     def get_assemble_scripts(self):
         """
@@ -265,18 +303,25 @@ class RBuildPack(PythonBuildPack):
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt, and run the `install.R` script if it exists.
         """
-        mran_url = 'https://mran.microsoft.com/snapshot/{}'.format(
-            self.checkpoint_date.isoformat()
-        )
-        assemble_scripts = super().get_assemble_scripts() + [
-            (
-                "root",
-                # We set the default CRAN repo to the MRAN one at given date
-                # We set download method to be curl so we get HTTPS support
-                r"""
-                echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
-                """.format(mran_url=mran_url)
-            ),
+
+        assemble_scripts = super().get_assemble_scripts() 
+
+        if self.checkpoint_date:
+            mran_url = 'https://mran.microsoft.com/snapshot/{}'.format(
+                self.checkpoint_date.isoformat()
+            )
+            assemble_scripts += [
+                (
+                    "root",
+                    # We set the default CRAN repo to the MRAN one at given date
+                    # We set download method to be curl so we get HTTPS support
+                    r"""
+                    echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
+                    """.format(mran_url=mran_url)
+                ),
+            ]
+
+        assemble_scripts += [
             (
                 # Not all of these locations are configurable; log_dir is
                 "root",
@@ -285,7 +330,7 @@ class RBuildPack(PythonBuildPack):
                 install -o ${NB_USER} -g ${NB_USER} -d /var/lib/shiny-server && \
                 install -o ${NB_USER} -g ${NB_USER} /dev/null /var/log/shiny-server.log && \
                 install -o ${NB_USER} -g ${NB_USER} /dev/null /var/run/shiny-server.pid
-                """
+                 """
             ),
         ]
 
