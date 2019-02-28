@@ -4,7 +4,8 @@ if VERSION < v"1" || VERSION >= v"2"
     exit(1)
 end
 
-using Pkg; pkg"activate"
+using Pkg
+pkg"activate"
 
 try
     # Test that the package was installed.
