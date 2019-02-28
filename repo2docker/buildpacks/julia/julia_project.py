@@ -2,30 +2,36 @@
 import os
 import toml
 from ..python import PythonBuildPack
-
+from .julia_semver import find_semver_match
 
 class JuliaProjectTomlBuildPack(PythonBuildPack):
     """
     Julia build pack which uses conda.
     """
 
-    minor_julias = {
-        '1.0': '1.0.3',
-        '1.1': '1.1.0',
-    }
-    major_julias = {
-        '1': '1.1.0',
-    }
+    # ALL EXISTING JULIA VERSIONS
+    # Note that these must remain ordered, in order for the find_semver_match()
+    # function to behave correctly.
+    all_julias = [
+        "0.7.0",
+        "1.0.0", "1.0.1", "1.0.2", "1.0.3",
+        "1.1.0",
+    ]
 
     @property
     def julia_version(self):
-        # TODO Read version out of the file
-        # TODO Handle JuliaProject.toml
+        default_julia_version = '1.1.0'
         project_toml = toml.load(self.binder_path('Project.toml'))
         if 'compat' in project_toml:
             if 'julia' in project_toml['compat']:
-                return project_toml['compat']['julia']
-        return self.major_julias['1']
+                julia_version_str = project_toml['compat']['julia']
+                
+                # For Project.toml files, install the latest julia version that
+                # satisfies the given semver.
+                julia_version = find_semver_match(julia_version_str, self.all_julias)
+                if julia_version is None:
+                    return _default_julia_version
+        return default_julia_version
 
     def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
