@@ -150,7 +150,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
 
     def get_build_script_files(self):
         files = {
-            'julialegacy/install-repo-dependencies.jl': '/tmp/install-repo-dependencies.jl',
+            'julia/install-repo-dependencies.jl': '/tmp/install-repo-dependencies.jl',
         }
         files.update(super().get_build_script_files())
         return files
