@@ -120,7 +120,7 @@ class Repo2Docker(Application):
     )
 
     default_buildpack = Any(
-        PythonBuildPack,
+        RBuildPack,
         config=True,
         help="""
         The default build pack to use when no other buildpacks are found.
