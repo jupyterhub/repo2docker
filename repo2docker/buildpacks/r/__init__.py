@@ -291,7 +291,7 @@ class RBuildPack(PythonBuildPack):
         """Dict of files to be copied to the container image for use in building
         """
         files =  {
-            "r/shart.sh": "/start.sh"
+            "r/start.sh": "/start.sh"
         }
         files.update(super().get_build_script_files())
         return files
