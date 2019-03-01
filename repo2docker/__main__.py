@@ -203,6 +203,11 @@ def get_argparser():
         help=Repo2Docker.template.help
     )
 
+    argparser.add_argument(
+        '--buildpack-name',
+        help=Repo2Docker.template.help
+    )
+
     return argparser
 
 argparser = get_argparser()
@@ -331,6 +336,9 @@ def make_r2d(argv=None):
 
     if args.template:
         r2d.template = args.template
+
+    if args.buildpack_name:
+        r2d.buildpack_name = args.buildpack_name
 
     return r2d
 

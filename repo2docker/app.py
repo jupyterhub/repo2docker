@@ -639,6 +639,12 @@ class Repo2Docker(Application):
                                    self.subdir, extra=dict(phase='failure'))
                     raise FileNotFoundError('Could not find {}'.format(checkout_path))
 
+
+            if self.buildpack_name == 'RBuildPack':
+                self.default_buildpack = RBuildPack
+            else:
+                self.default_buildpack = PythonBuildPack
+
             with chdir(checkout_path):
                 for BP in self.buildpacks:
                     bp = BP()
