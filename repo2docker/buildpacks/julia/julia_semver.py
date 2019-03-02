@@ -94,7 +94,7 @@ def create_semver_matcher(constraint_str):
             # So we need to handle it separately by bumping the first non-zero number.
             for i,n in enumerate(constraint):
                 if n != 0 or i == len(constraint)-1: # (using the last existing number handles situations like "^0.0" or "^0")
-                    upper = (*constraint[0:i], n+1)
+                    upper = constraint[0:i] + (n+1,)
                     break
             return VersionRange(constraint, upper, Exclusivity.EXCLUSIVE)
         else:
