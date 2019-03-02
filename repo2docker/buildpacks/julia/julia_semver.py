@@ -102,7 +102,7 @@ def create_semver_matcher(constraint_str):
 
     # '~' matching (only allowed to bump the last present number by one)
     if (comparison_symbol == "~"):
-        return VersionRange(constraint, (*constraint[:-1], constraint[-1]+1), Exclusivity.INCLUSIVE)
+        return VersionRange(constraint, constraint[:-1] +(constraint[-1]+1,), Exclusivity.INCLUSIVE)
 
     # Use semver package's comparisons for everything else:
 
