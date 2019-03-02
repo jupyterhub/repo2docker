@@ -55,6 +55,34 @@ R
 Only R 3.4.4 is currently supported, which is installed via ``apt`` from the
 `ubuntu bionic repository <https://packages.ubuntu.com/bionic/r-base>`_.
 
+
+Why is my repository is failing to build with ``ResolvePackageNotFound`` ?
+--------------------------------------------------------------------------
+
+If you used ``conda env export`` to generate your ``environment.yml`` it will
+generate a list of packages and versions of packages that is pinned to platform
+specific versions. These very specific versions are not available in the linux
+docker image used by ``repo2docker``. A typical error message will look like
+the following::
+
+  Step 39/44 : RUN conda env update -n root -f "environment.yml" && conda clean -tipsy && conda list -n root
+  ---> Running in ebe9a67762e4
+  Solving environment: ...working... failed
+
+  ResolvePackageNotFound:
+  - jsonschema==2.6.0=py36hb385e00_0
+  - libedit==3.1.20181209=hb402a30_0
+  - tornado==5.1.1=py36h1de35cc_0
+  ...
+
+We recommend to use ``conda env export --no-builds -f environment.yml`` to export
+your environment and then edit the file by hand to remove platform specific
+packages like ``appnope``.
+
+See :ref:`export-environment` for a recipe on how to create strict exports of
+your environment that will work with ``repo2docker``.
+
+
 Can I add executable files to the user's PATH?
 ----------------------------------------------
 
@@ -98,7 +126,7 @@ Yes: use the ``--editable`` or ``-E`` flag (don't confuse this with
 the ``-e`` flag for environment variables), and run repo2docker on a
 local repository::
 
-  repo2docker -E my-repository/.
+  repo2docker -E my-repository/
 
 This builds a Docker container from the files in that repository
 (using, for example, a ``requirements.txt`` or ``install.R`` file),

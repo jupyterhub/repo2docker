@@ -32,6 +32,7 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
 
    howto/user_interface
    howto/languages
+   howto/export_environment
    howto/lab_workspaces
    howto/jupyterhub_images
    howto/deploy
