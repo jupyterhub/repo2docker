@@ -21,11 +21,14 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     @property
     def julia_version(self):
         default_julia_version = '1.1.0'
-        project_toml = toml.load(self.binder_path('Project.toml'))
+        if os.path.exists(self.binder_path('JuliaProject.toml'):
+            project_toml = toml.load(self.binder_path('JuliaProject.toml'))
+        else:
+            project_toml = toml.load(self.binder_path('Project.toml'))
         if 'compat' in project_toml:
             if 'julia' in project_toml['compat']:
                 julia_version_str = project_toml['compat']['julia']
-                
+
                 # For Project.toml files, install the latest julia version that
                 # satisfies the given semver.
                 julia_version = find_semver_match(julia_version_str, self.all_julias)
@@ -100,7 +103,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
                 """
             ),
-        ]            
+        ]
 
     def get_assemble_scripts(self):
         """
@@ -108,7 +111,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
 
         Instantiate and then precompile all packages in the repos julia
         environment.
-        
+
         The parent, CondaBuildPack, will add the build steps for
         any needed Python packages found in environment.yml.
         """
