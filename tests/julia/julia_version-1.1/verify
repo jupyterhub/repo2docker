@@ -5,7 +5,7 @@ if VERSION < v"1" || VERSION >= v"2"
 end
 
 using Pkg
-pkg"activate"
+pkg"activate ."
 
 try
     # Test that the package was installed.
