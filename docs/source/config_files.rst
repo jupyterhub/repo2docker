@@ -71,15 +71,30 @@ To install your repository like a Python package, you may include a
 ``setup.py`` file. repo2docker installs ``setup.py`` files by running
 ``pip install -e .``.
 
+.. _Project.toml:
+
+``Project.toml`` - Install a Julia environment
+==============================================
+
+A ``Project.toml`` (or ``JuliaProject.toml``) file can specify both the
+version of Julia to be used and a list of Julia packages to be installed.
+If a ``Manifest.toml`` is present, it will determine the exact versions
+of the Julia packages that are installed.
+
 
 .. _REQUIRE:
 
-``REQUIRE`` - Install a Julia environment
-=========================================
+``REQUIRE`` - Install a Julia environment (legacy)
+==================================================
 
-This specifies a list of Julia packages. To see an example of a
-Julia repository with ``REQUIRE`` and ``environment.yml``,
-visit `binder-examples/julia-python <https://github.com/binder-examples/julia-python>`_.
+A ``REQUIRE`` file can specify both the version of Julia to be used and
+which Julia packages should be used. The use of ``REQUIRE`` is only
+recommended for pre 1.0 Julia versions, the recommended way of installing
+a Julia environment that uses Julia 1.0 or newer is to use a ``Project.toml``
+file. If both a ``REQUIRE`` and a ``Project.toml`` file are detected,
+the ``REQUIRE`` file is ignored. To see an example of a Julia repository
+with ``REQUIRE`` and ``environment.yml``, visit
+`binder-examples/julia-python <https://github.com/binder-examples/julia-python>`_.
 
 
 .. _install.R:
@@ -186,7 +201,7 @@ For these cases, we have a special file, ``runtime.txt``.
 
    ``runtime.txt`` is only supported when used with environment specifications
    that do not already support specifying the runtime
-   (e.g. when using ``environment.yml`` for conda or ``REQUIRE`` for Julia,
+   (e.g. when using ``environment.yml`` for conda or ``Project.toml`` for Julia,
    ``runtime.txt`` will be ignored).
 
 To use python-2.7: add ``python-2.7`` in runtime.txt file.
