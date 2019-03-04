@@ -73,4 +73,10 @@ rm ${INSTALLER_PATH}
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
 
+# conda puts an environments.txt file under ${HOME}/.conda, and there isn't
+# really a way to turn it off. We explicitly make sure they're owned by the user,
+# since otherwise they may be owned by root when $HOME != $REPO_DIR
+# see https://github.com/jupyter/repo2docker/issues/604
+chown -R ${NB_USER}:${NB_USER} ${HOME}/.conda
+
 conda list
