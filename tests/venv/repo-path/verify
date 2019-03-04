@@ -8,3 +8,7 @@ assert sys.executable == '/srv/conda/bin/python'
 # Repo should be in /srv/repo
 assert os.path.exists('/srv/repo/verify')
 assert os.path.abspath(__file__) == '/srv/repo/verify'
+
+# Verify that ~/.conda is owned by current user, and not root
+assert os.stat(os.path.expanduser('~/.conda')).st_uid == 1000
+assert os.stat(os.path.expanduser('~/.conda/environments.txt')).st_uid == 1000
