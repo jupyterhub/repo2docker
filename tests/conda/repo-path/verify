@@ -8,3 +8,6 @@ assert sys.executable == '/srv/conda/bin/python'
 # Repo should be in /srv/repo
 assert os.path.exists('/srv/repo/verify')
 assert os.path.abspath(__file__) == '/srv/repo/verify'
+
+# We should be able to import the package in environment.yml
+import numpy
