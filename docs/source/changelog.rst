@@ -2,6 +2,21 @@
 Changelog
 =========
 
+Version 0.x.x
+=============
+
+Release date: TBD
+
+New features
+------------
+
+API changes
+-----------
+
+Bug fixes
+---------
+
+
 Version 0.8.0
 =============
 
