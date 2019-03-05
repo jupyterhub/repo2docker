@@ -1,4 +1,4 @@
-"""Generates a Dockerfile based on an input matrix for Julia"""
+"""Generates a Dockerfile based on an input matrix with REQUIRE for legacy Julia"""
 import os
 from ..python import PythonBuildPack
 
