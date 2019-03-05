@@ -2,7 +2,7 @@
 # Versioning) strings in .toml files.
 #
 # It uses the python "semver" package to do most version string comparisons, but
-# the places where julia's SemVer handling differes from the semver package have
+# the places where julia's SemVer handling differs from the semver package have
 # been implemented directly.
 #
 # Here, we use tuples to represent a Version, and functors as "matchers". The matcher
