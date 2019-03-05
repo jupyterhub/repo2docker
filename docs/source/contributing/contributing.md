@@ -1,18 +1,18 @@
 # Contributing to repo2docker development
 
-## Process for making a code contribution
+## Process for making a contribution
 
-This outlines the process for getting changes to the code of
-repo2docker merged.
+This outlines the process for getting changes to the repo2docker project merged.
 
-* If your change is relatively significant, **open an issue to discuss**
-  before spending a lot of time writing code. Getting consensus with the
+* If your change is a big change, **open an issue to discuss**
+  before spending a lot of time writing. Getting consensus with the
   community is a great way to save time later.
 * Make edits in your fork of the repo2docker repository
-* Submit a pull request (this is how all changes are made)
+* All changes are made by submitting a pull request. Read the next section for
+  the guidelines for both reviewers and contributors on merging a PR.
 * Edit [the changelog](./../../changelog)
   by appending your feature / bug fix to the development version.
-* Wait for a community member to merge your changes
+* Wait for a community member to merge your changes.
 * (optional) Deploy a new version of repo2docker to mybinder.org by [following these steps](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
 
 
