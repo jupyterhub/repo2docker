@@ -33,9 +33,9 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
 
                 # For Project.toml files, install the latest julia version that
                 # satisfies the given semver.
-                julia_version = find_semver_match(julia_version_str, self.all_julias)
-                if julia_version is not None:
-                    return julia_version
+                _julia_version = find_semver_match(julia_version_str, self.all_julias)
+                if _julia_version is not None:
+                    return _julia_version
 
         return default_julia_version
 
