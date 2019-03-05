@@ -9,6 +9,7 @@ Release date: TBD
 
 New features
 ------------
+- Support for julia `Project.toml`, `JuliaProject.toml` and `Manifest.toml` files.
 
 API changes
 -----------
