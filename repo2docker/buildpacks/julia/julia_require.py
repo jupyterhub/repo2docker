@@ -5,7 +5,7 @@ from ..python import PythonBuildPack
 
 class JuliaRequireBuildPack(PythonBuildPack):
     """
-    Julia build pack which uses conda.
+    Julia build pack which uses conda and REQUIRE.
     """
 
     minor_julias = {
