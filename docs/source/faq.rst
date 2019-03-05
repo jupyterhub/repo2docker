@@ -44,7 +44,7 @@ Julia
 
 All Julia versions since Julia 0.7.0 are supported via a ``Project.toml``
 file, and this is the recommended way to install Julia environments.
-Julia 0.6.x is supported via a ``REQUIRE`` file.
+Julia 0.6.x is supported via a :ref:`REQUIRE <REQUIRE>` file.
 
 R
 ~
