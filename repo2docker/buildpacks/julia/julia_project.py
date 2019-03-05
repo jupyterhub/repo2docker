@@ -21,10 +21,12 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     @property
     def julia_version(self):
         default_julia_version = '1.1.0'
+
         if os.path.exists(self.binder_path('JuliaProject.toml')):
             project_toml = toml.load(self.binder_path('JuliaProject.toml'))
         else:
             project_toml = toml.load(self.binder_path('Project.toml'))
+
         if 'compat' in project_toml:
             if 'julia' in project_toml['compat']:
                 julia_version_str = project_toml['compat']['julia']
@@ -32,8 +34,9 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 # For Project.toml files, install the latest julia version that
                 # satisfies the given semver.
                 julia_version = find_semver_match(julia_version_str, self.all_julias)
-                if julia_version is None:
-                    return _default_julia_version
+                if julia_version is not None:
+                    return julia_version
+
         return default_julia_version
 
     def get_build_env(self):
