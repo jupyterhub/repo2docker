@@ -50,9 +50,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             - `JULIA_PATH`: base path where all Julia Binaries and libraries
                 will be installed
             - `JULIA_BINDIR`: path where all Julia Binaries will be installed
-            - `JULIA_PKGDIR`: path where all Julia libraries will be installed
             - `JULIA_DEPOT_PATH`: path where Julia libraries are installed.
-                                  Similar to JULIA_PKGDIR, used in 1.0.
             - `JULIA_VERSION`: default version of julia to be installed
             - `JUPYTER`: environment variable required by IJulia to point to
                 the `jupyter` executable
@@ -63,8 +61,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         return super().get_build_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
             ('JULIA_BINDIR', '${JULIA_PATH}/bin'),
-            ('JULIA_PKGDIR', '${JULIA_PATH}/pkg'),
-            ('JULIA_DEPOT_PATH', '${JULIA_PKGDIR}'),
+            ('JULIA_DEPOT_PATH', '${JULIA_PATH}/pkg'),
             ('JULIA_VERSION', self.julia_version),
             ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
         ]
@@ -101,8 +98,8 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             (
                 "root",
                 r"""
-                mkdir -p ${JULIA_PKGDIR} && \
-                chown ${NB_USER}:${NB_USER} ${JULIA_PKGDIR}
+                mkdir -p ${JULIA_DEPOT_PATH} && \
+                chown ${NB_USER}:${NB_USER} ${JULIA_DEPOT_PATH}
                 """
             ),
         ]
