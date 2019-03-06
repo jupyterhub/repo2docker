@@ -34,6 +34,8 @@ that lets you install any kind of package,
 including Python, R, and C/C++ packages.
 ``repo2docker`` does not use ``environment.yml`` to create and activate a new conda environment.
 Rather, it updates a base conda environment with the packages listed in ``environment.yml``.
+This means that the environment will always have the same name and not follow what is
+specified in ``environment.yml``.
 
 .. note::
 
