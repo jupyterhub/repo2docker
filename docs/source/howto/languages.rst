@@ -74,6 +74,9 @@ Julia
 To build an environment with Julia, include a configuration file called
 ``Project.toml``. The format of this file is documented at
 `the Julia Pkg.jl documentation <https://julialang.github.io/Pkg.jl/stable/>`_.
+To specify a specific version of Julia to install, put a Julia version in the
+``Compat`` section of the ``Project.toml`` file, as described
+here: https://julialang.github.io/Pkg.jl/stable/compatibility.
 
 Languages not covered here
 ==========================
