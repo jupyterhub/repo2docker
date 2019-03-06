@@ -18,6 +18,8 @@ setup(
         'escapism',
         'jinja2',
         'ruamel.yaml>=0.15',
+        'toml',
+        'semver',
     ],
     python_requires='>=3.4',
     author='Project Jupyter Contributors',

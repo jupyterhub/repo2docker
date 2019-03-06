@@ -42,12 +42,9 @@ environment.
 Julia
 ~~~~~
 
-The following versions of Julia are supported (specified in the
-:ref:`REQUIRE <REQUIRE>` configuration file):
-
-- 1.0 (added in 0.7)
-- 0.7 (added in 0.7)
-- 0.6 (default)
+All Julia versions since Julia 0.7.0 are supported via a :ref:`Project.toml <Project.toml>`
+file, and this is the recommended way to install Julia environments.
+Julia versions 0.6.x and earlier are supported via a :ref:`REQUIRE <REQUIRE>` file.
 
 R
 ~

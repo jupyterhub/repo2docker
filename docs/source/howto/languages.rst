@@ -72,11 +72,11 @@ Julia
 =====
 
 To build an environment with Julia, include a configuration file called
-``REQUIRE``. Each line of this file should include a package that you wish
-to have installed with Julia. For example, the following contents of ``REQURE``
-would install the ``PyPlot`` package with your Julia environment.::
-
-  PyPlot
+``Project.toml``. The format of this file is documented at
+`the Julia Pkg.jl documentation <https://julialang.github.io/Pkg.jl/stable/>`_.
+To specify a specific version of Julia to install, put a Julia version in the
+``Compat`` section of the ``Project.toml`` file, as described
+here: https://julialang.github.io/Pkg.jl/stable/compatibility.
 
 Languages not covered here
 ==========================
