@@ -20,7 +20,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
 
     @property
     def julia_version(self):
-        default_julia_version = '1.1.0'
+        default_julia_version = all_julias[-1]
 
         if os.path.exists(self.binder_path('JuliaProject.toml')):
             project_toml = toml.load(self.binder_path('JuliaProject.toml'))
