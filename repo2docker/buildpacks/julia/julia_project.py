@@ -49,7 +49,6 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             a string of the environment setting:
             - `JULIA_PATH`: base path where all Julia Binaries and libraries
                 will be installed
-            - `JULIA_BINDIR`: path where all Julia Binaries will be installed
             - `JULIA_DEPOT_PATH`: path where Julia libraries are installed.
             - `JULIA_VERSION`: default version of julia to be installed
             - `JUPYTER`: environment variable required by IJulia to point to
@@ -60,7 +59,6 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         """
         return super().get_build_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
-            ('JULIA_BINDIR', '${JULIA_PATH}/bin'),
             ('JULIA_DEPOT_PATH', '${JULIA_PATH}/pkg'),
             ('JULIA_VERSION', self.julia_version),
             ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
@@ -80,7 +78,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
              executable is added to the list.
 
         """
-        return super().get_path() + ['${JULIA_BINDIR}']
+        return super().get_path() + ['${JULIA_PATH}/bin']
 
     def get_build_scripts(self):
         """
