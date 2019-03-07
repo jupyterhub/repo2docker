@@ -39,6 +39,8 @@ class SemverMatcher(AbstractMatcher):
             v = v+(0,)
         v_str = '.'.join(map(str, v))
         return semver.match(v_str, self.constraint_str)
+    def __eq__(self, rhs):
+        return self.constraint_str == rhs.constraint_str
     def __repr__(self):
         return self.constraint_str
 
@@ -60,6 +62,8 @@ class VersionRange(AbstractMatcher):
             return self.lower <= v < self.upper
         else:
             return self.lower <= v <= self.upper
+    def __eq__(self, rhs):
+        return self.lower == rhs.lower and self.upper == rhs.upper and self.upper_exclusivity == rhs.upper_exclusivity
     def __repr__(self):
         return ("["+".".join(map(str, self.lower)) +"-"+ ".".join(map(str, self.upper)) +
                     (")" if self.upper_exclusivity == Exclusivity.EXCLUSIVE else "]"))
