@@ -82,7 +82,7 @@ def create_semver_matcher(constraint_str):
         return VersionRange(
             constraint,
             constraint[:-1] + (constraint[-1] + 1,),
-            upper_exclusivity=False
+            exclusive=False
         )
 
     # Use semver package's comparisons for everything else:
@@ -112,6 +112,7 @@ class SemverMatcher:
         self.constraint_str = constraint_str
 
     def match(self, v):
+        """Check if `v` matches the constraint"""
         while len(v) < 3:
             v = v + (0,)
         v_str = ".".join(map(str, v))
@@ -125,18 +126,21 @@ class SemverMatcher:
 
 
 class VersionRange:
-    """Match a version tuple between lower and upper bounds
+    """Test if a version tuple is between a lower and upper bound
 
-    `upper_exclusivity` specifies if the upper bound is inclusive or exclusive.
+    A VersionRange represents a range of versions from `lower` to `upper`
+    and lets you test if a version falls in that range. The `upper` bound
+    can either be exclusive (exclusive=True) or inclusive (exclusive=False).
     """
 
-    def __init__(self, lower, upper, upper_exclusivity):
+    def __init__(self, lower, upper, exclusive):
         self.lower = lower
         self.upper = upper
-        self.upper_exclusivity = upper_exclusivity
+        self.exclusive = exclusive
 
     def match(self, v):
-        if self.upper_exclusivity:
+        """Check if `v` falls into the version range"""
+        if self.exclusive:
             return self.lower <= v < self.upper
         else:
             return self.lower <= v <= self.upper
@@ -145,7 +149,7 @@ class VersionRange:
         return (
             self.lower == rhs.lower
             and self.upper == rhs.upper
-            and self.upper_exclusivity == rhs.upper_exclusivity
+            and self.exclusive == rhs.exclusive
         )
 
     def __repr__(self):
@@ -154,5 +158,5 @@ class VersionRange:
             + ".".join(map(str, self.lower))
             + "-"
             + ".".join(map(str, self.upper))
-            + (")" if self.upper_exclusivity else "]")
+            + (")" if self.exclusive else "]")
         )
