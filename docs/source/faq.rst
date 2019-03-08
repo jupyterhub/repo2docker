@@ -53,6 +53,8 @@ Only R 3.4.4 is currently supported, which is installed via ``apt`` from the
 `ubuntu bionic repository <https://packages.ubuntu.com/bionic/r-base>`_.
 
 
+
+
 Why is my repository is failing to build with ``ResolvePackageNotFound`` ?
 --------------------------------------------------------------------------
 
@@ -138,6 +140,18 @@ will still be in the local repository.
 This allows for easy testing of the container while debugging some
 items, as well as using a fully customizable container to edit
 notebooks (among others).
+
+
+Why is my R shiny app not launching?
+----------------------------------------------------------------------------------
+
+If you are trying to run an R shiny app using the ``/shiny/folder_containing_shiny``
+url option, but the launch returns "The application exited during initialization.",
+there might be something wrong with the specification of the app. One way of debugging
+the app in the container is by running the ``rstudio`` url, open either the ui or 
+server file for the app, and run the app in the container rstudio. This way you can 
+see the rstudio logs as it tries to initialise the shiny app. If you a missing a 
+package or other dependency for the container, this will be obvious at this stage.
 
 .. note::
 
