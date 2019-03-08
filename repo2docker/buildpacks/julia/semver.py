@@ -4,20 +4,18 @@ Julia specific handling of SemVer strings
 It uses the python "semver" package to do most version string comparisons, but
 the places where julia's SemVer handling differs from the semver package have
 been implemented directly.
+
+We use tuples to represent a Version, and functors as "matchers". The
+matcher functors take a version string and return True if it passes its
+constraints.
 """
 
-# We use tuples to represent a Version, and functors as "matchers". The
-# matcher functors take a version string and return True if it passes its
-# constraints.
 
 import re
 
 import semver
 
 
-# Main algorithm:
-# Create an AbstractMatcher instance from the constraint string, and check it
-# against each version in the versions_list, returning the first success.
 def find_semver_match(constraint, versions_list):
     matcher = create_semver_matcher(constraint)
     for vstr in reversed(versions_list):
@@ -46,7 +44,7 @@ def patch(v):
 def create_semver_matcher(constraint_str):
     """Create a matcher that can be used to match version tuples
 
-    Version tuples are matched against the provided `constraint_str`.
+    Version tuples are matched against the provided regex `constraint_str`.
     """
     constraint_str = constraint_str.strip()
     first_digit = re.search(r"\d", constraint_str)
@@ -103,7 +101,10 @@ def create_semver_matcher(constraint_str):
 
 
 class SemverMatcher:
-    """Match a version tuple to a given `constraint_str`
+    """Provides a utility for using `semver` package to do version matching.
+
+    The `SemverMatcher` takes a `constraint_str` to represent a regex to
+    determine if a version tuple matches the constraint.
 
     The matching is handled via the `semver` package.
     """
@@ -126,11 +127,13 @@ class SemverMatcher:
 
 
 class VersionRange:
-    """Test if a version tuple is between a lower and upper bound
+    """Represents a range of release versions.
 
-    A VersionRange represents a range of versions from `lower` to `upper`
-    and lets you test if a version falls in that range. The `upper` bound
-    can either be exclusive (exclusive=True) or inclusive (exclusive=False).
+    A `VersionRange` contains versions from a `lower` to `upper` bound
+    which may be inclusive (default: `exclusive=False`) or exclusive (`exclusive=True`).
+
+    A release version (represented by a tuple) can be checked to see if it
+    falls within a `VersionRange`
     """
 
     def __init__(self, lower, upper, exclusive):
