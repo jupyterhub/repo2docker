@@ -141,7 +141,16 @@ This allows for easy testing of the container while debugging some
 items, as well as using a fully customizable container to edit
 notebooks (among others).
 
+.. note::
 
+    Editable mode is a convenience option that will bind the
+    repository to the container working directory (usually
+    ``$HOME``). If you need to mount to a different location in
+    the container, use the ``--volumes`` option instead. Similarly,
+    for a fully customized user Dockerfile, this option is not
+    guaranteed to work.
+    
+    
 Why is my R shiny app not launching?
 ----------------------------------------------------------------------------------
 
@@ -153,11 +162,4 @@ server file for the app, and run the app in the container rstudio. This way you 
 see the rstudio logs as it tries to initialise the shiny app. If you a missing a 
 package or other dependency for the container, this will be obvious at this stage.
 
-.. note::
 
-    Editable mode is a convenience option that will bind the
-    repository to the container working directory (usually
-    ``$HOME``). If you need to mount to a different location in
-    the container, use the ``--volumes`` option instead. Similarly,
-    for a fully customized user Dockerfile, this option is not
-    guaranteed to work.
