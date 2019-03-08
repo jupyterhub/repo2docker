@@ -2,7 +2,7 @@
 import os
 import toml
 from ..python import PythonBuildPack
-from .julia_semver import find_semver_match
+from .semver import find_semver_match
 
 class JuliaProjectTomlBuildPack(PythonBuildPack):
     """
