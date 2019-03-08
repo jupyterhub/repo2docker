@@ -136,7 +136,7 @@ class VersionRange:
     falls within a `VersionRange`
     """
 
-    def __init__(self, lower, upper, exclusive):
+    def __init__(self, lower, upper, exclusive=False):
         self.lower = lower
         self.upper = upper
         self.exclusive = exclusive
