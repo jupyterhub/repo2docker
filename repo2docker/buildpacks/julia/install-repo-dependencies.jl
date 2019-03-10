@@ -21,6 +21,8 @@ else
         version = try; reqline.versions.intervals[1].lower; catch; emptyversionlower; end
         if version != emptyversionlower
           Pkg.add(PackageSpec(name=pkg, version=version))
+        elseif startswith(pkg,"http://") || startswith(pkg,"https://")
+          Pkg.add(PackageSpec(url=pkg, rev="master"))
         else
           Pkg.add(pkg)
         end
