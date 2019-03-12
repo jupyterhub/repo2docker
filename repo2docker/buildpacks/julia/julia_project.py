@@ -63,7 +63,8 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             ('JULIA_BINDIR', '${JULIA_PATH}/bin'),
             ('JULIA_DEPOT_PATH', '${JULIA_PATH}/pkg'),
             ('JULIA_VERSION', self.julia_version),
-            ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
+            ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter'),
+            ('JUPYTER_DATA_DIR', '${APP_BASE}/conda/share/jupyter')
         ]
 
     def get_path(self):
