@@ -118,7 +118,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\", env=Dict(\"JUPYTER_DATA_DIR\"=>\"/srv/conda/share/jupyter\"));" && \
+                julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\", env=Dict(\"JUPYTER_DATA_DIR\"=>\"${APP_BASE}/conda/share/jupyter\"));" && \
                 julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
                 """
             )
