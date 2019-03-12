@@ -119,7 +119,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
                 # FIXME: Find way to get it to install under /srv and not $HOME?
                 r"""
                 julia -e 'if (VERSION > v"0.7-") using Pkg; else Pkg.init(); end; Pkg.add("IJulia"); using IJulia;' && \
-                mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  ${NB_PYTHON_PREFIX}/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
+                mv ${HOME}/.local/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}  /srv/conda/share/jupyter/kernels/julia-${JULIA_VERSION%[.-]*}
                 """
             )
         ]
