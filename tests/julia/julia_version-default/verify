@@ -17,4 +17,12 @@ catch
     exit(1)
 end
 
+# Verify that kernels are not installed in home directory (issue #620)
+try
+    using IJulia
+    @assert IJulia.kerneldir() == "/srv/conda/share/jupyter/kernels"
+catch
+    exit(1)
+end
+
 exit(0)
