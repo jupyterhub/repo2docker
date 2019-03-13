@@ -17,6 +17,8 @@ API changes
 
 Bug fixes
 ---------
+- Install IJulia kernel into ${APP_BASE}/conda/share/jupyter in :pr:`622` by
+  :user:`davidanthoff`.
 
 
 Version 0.8.0
