@@ -9,6 +9,8 @@ the configuration files found in the repository.
 See the [repo2docker documentation](http://repo2docker.readthedocs.io)
 for more information on using repo2docker.
 
+For support questions please search or post to https://discourse.jupyter.org/c/binder.
+
 See the [contributing guide](CONTRIBUTING.md) for information on contributing to
 repo2docker.
 
