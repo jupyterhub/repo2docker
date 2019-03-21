@@ -113,6 +113,10 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         """
         Return series of build-steps specific to "this" Julia repository
 
+        We make sure that the IJulia package gets installed into the default
+        environment, and not the project specific one, by running the
+        IJulia install command with JULIA_PROJECT="".
+
         Instantiate and then precompile all packages in the repos julia
         environment.
 
