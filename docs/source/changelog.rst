@@ -17,6 +17,8 @@ API changes
 
 Bug fixes
 ---------
+- Install IJulia kernel into ${NB_PYTHON_PREFIX}/share/jupyter in :pr:`622` by
+  :user:`davidanthoff`.
 
 
 Version 0.8.0

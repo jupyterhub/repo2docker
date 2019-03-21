@@ -2,7 +2,7 @@
 import os
 import toml
 from ..python import PythonBuildPack
-from .julia_semver import find_semver_match
+from .semver import find_semver_match
 
 class JuliaProjectTomlBuildPack(PythonBuildPack):
     """
@@ -61,7 +61,8 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             ('JULIA_PATH', '${APP_BASE}/julia'),
             ('JULIA_DEPOT_PATH', '${JULIA_PATH}/pkg'),
             ('JULIA_VERSION', self.julia_version),
-            ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
+            ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter'),
+            ('JUPYTER_DATA_DIR', '${NB_PYTHON_PREFIX}/share/jupyter'),
         ]
 
     def get_env(self):
@@ -122,7 +123,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", env=Dict(\"JUPYTER_DATA_DIR\"=>\"${NB_PYTHON_PREFIX}/share/jupyter\"));" && \
+                JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
                 julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
                 """
             )
