@@ -63,7 +63,8 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             ('JULIA_BINDIR', '${JULIA_PATH}/bin'),
             ('JULIA_DEPOT_PATH', '${JULIA_PATH}/pkg'),
             ('JULIA_VERSION', self.julia_version),
-            ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter')
+            ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter'),
+            ('JUPYTER_DATA_DIR', '${NB_PYTHON_PREFIX}/share/jupyter'),
         ]
 
     def get_path(self):
@@ -118,7 +119,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\", env=Dict(\"JUPYTER_DATA_DIR\"=>\"${NB_PYTHON_PREFIX}/share/jupyter\"));" && \
+                julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
                 julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
                 """
             )
