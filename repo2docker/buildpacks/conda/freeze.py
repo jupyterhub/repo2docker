@@ -58,6 +58,8 @@ def freeze(env_file, frozen_file):
         f.write(f"# AUTO GENERATED FROM {env_file}, DO NOT MANUALLY MODIFY\n")
         f.write(f"# Frozen on {datetime.utcnow():%Y-%m-%d %H:%M:%S UTC}\n")
 
+    env_file_in_container = env_file.relative_to(HERE)
+    frozen_file_in_container = frozen_file.relative_to(HERE)
     check_call([
         'docker',
         'run',
@@ -67,15 +69,15 @@ def freeze(env_file, frozen_file):
         f"continuumio/miniconda3:{MINICONDA_DOCKER_VERSION}",
         "sh", "-c",
         '; '.join([
-            'set -e',
+            'set -ex',
             f"conda install -yq conda={CONDA_VERSION}",
             'conda config --add channels conda-forge',
             'conda config --system --set auto_update_conda false',
-            f"conda env create -v -f /r2d/{env_file} -n r2d",
+            f"conda env create -v -f /r2d/{env_file_in_container} -n r2d",
             # add conda-forge broken channel as lowest priority in case
             # any of our frozen packages are marked as broken after freezing
             'conda config --append channels conda-forge/label/broken',
-            f"conda env export -n r2d >> /r2d/{frozen_file}",
+            f"conda env export -n r2d >> /r2d/{frozen_file_in_container}",
         ])
     ])
 
@@ -109,9 +111,9 @@ if __name__ == '__main__':
     # allow specifying which Pythons to update on argv
     pys = sys.argv[1:] or ('2.7', '3.5', '3.6', '3.7')
     for py in pys:
-        env_file = ENV_FILE_T.format(py=py)
+        env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
         set_python(env_file, py)
-        frozen_file = os.path.splitext(env_file)[0] + '.frozen.yml'
+        frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + '.frozen.yml')
         freeze(env_file, frozen_file)
 
     # use last version as default
