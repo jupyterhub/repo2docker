@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2019-02-11 20:20:33 UTC
+# Frozen on 2019-03-23 17:59:14 UTC
 name: r2d
 channels:
   - conda-forge
@@ -9,45 +9,45 @@ dependencies:
   - backports=1.0=py_2
   - backports.shutil_get_terminal_size=1.0.0=py_3
   - backports_abc=0.5=py_1
-  - ca-certificates=2018.11.29=ha4d7672_0
-  - certifi=2018.11.29=py27_1000
-  - decorator=4.3.2=py_0
+  - ca-certificates=2019.3.9=hecc5488_0
+  - certifi=2019.3.9=py27_0
+  - decorator=4.4.0=py_0
   - enum34=1.1.6=py27_1001
   - futures=3.2.0=py27_1000
   - ipykernel=4.8.2=py27_0
   - ipython=5.8.0=py27_0
   - ipython_genutils=0.2.0=py_1
-  - jupyter_client=5.2.4=py_1
+  - jupyter_client=5.2.4=py_3
   - jupyter_core=4.4.0=py_0
-  - libffi=3.2.1=hf484d3e_1005
-  - libgcc-ng=7.3.0=hdf63c60_0
+  - libffi=3.2.1=he1b5a44_1006
   - libsodium=1.0.16=h14c3975_1001
-  - libstdcxx-ng=7.3.0=hdf63c60_0
   - ncurses=6.1=hf484d3e_1002
-  - openssl=1.0.2p=h14c3975_1002
+  - openssl=1.1.1b=h14c3975_1
   - pathlib2=2.3.3=py27_1000
   - pexpect=4.6.0=py27_1000
   - pickleshare=0.7.5=py27_1000
-  - pip=19.0.2=py27_0
+  - pip=19.0.3=py27_0
   - prompt_toolkit=1.0.15=py_1
   - ptyprocess=0.6.0=py27_1000
   - pygments=2.3.1=py_0
-  - python=2.7.15=h938d71a_1006
+  - python=2.7.15=h721da81_1008
   - python-dateutil=2.8.0=py_0
-  - pyzmq=17.1.2=py27h6afc9c9_1001
+  - pyzmq=18.0.1=py27h0e1adb2_0
   - readline=7.0=hf8c457e_1001
-  - scandir=1.9.0=py27h14c3975_1000
+  - scandir=1.10.0=py27h14c3975_0
   - setuptools=40.8.0=py27_0
   - simplegeneric=0.8.1=py_1
   - singledispatch=3.4.0.3=py27_1000
   - six=1.12.0=py27_1000
-  - sqlite=3.26.0=h67949de_1000
+  - sqlite=3.26.0=h67949de_1001
   - tk=8.6.9=h84994c4_1000
   - tornado=5.1.1=py27h14c3975_1000
   - traitlets=4.3.2=py27_1000
   - wcwidth=0.1.7=py_1
-  - wheel=0.32.3=py27_0
+  - wheel=0.33.1=py27_0
   - zeromq=4.2.5=hf484d3e_1006
   - zlib=1.2.11=h14c3975_1004
+  - libgcc-ng=8.2.0=hdf63c60_1
+  - libstdcxx-ng=8.2.0=hdf63c60_1
 prefix: /opt/conda/envs/r2d
 
