@@ -3,10 +3,8 @@ import re
 import tempfile
 import time
 
-from repo2docker.app import Repo2Docker
 from repo2docker.__main__ import make_r2d
 
-from conftest import make_test_func
 
 DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dockerfile', 'editable')
 
@@ -39,19 +37,26 @@ def test_editable_by_host():
     app.initialize()
     app.build()
     container = app.start_container()
+
     # give the container a chance to start
-    time.sleep(1)
+    while container.status != 'running':
+        time.sleep(1)
+
     try:
         with tempfile.NamedTemporaryFile(dir=DIR, prefix='testfile', suffix='.txt'):
             status, output = container.exec_run(['sh', '-c', 'ls testfile????????.txt'])
             assert status == 0
             assert re.match(br'^testfile\w{8}\.txt\n$', output) is not None
-        # File should be removed in the container as well
+        # After exiting the with block the file should stop existing
+        # in the container as well as locally
         status, output = container.exec_run(['sh', '-c', 'ls testfile????????.txt'])
-        assert status != 1
+        assert status == 2
         assert re.match(br'^testfile\w{8}\.txt\n$', output) is None
 
     finally:
-        # stop the container
-        container.stop()
-        app.wait_for_container(container)
+        # stop the container, we don't care how it stops or
+        # what the exit code is.
+        container.stop(timeout=1)
+        container.reload()
+        assert container.status == 'exited', container.status
+        container.remove()
