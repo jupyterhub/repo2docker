@@ -36,7 +36,7 @@ either because the version of the package is too new and your chosen Python is t
 or vice versa.
 
 I Python 2.7 is specified, a separate environment for the kernel will be
-installed with Python 2. The notebook server will run in the default Python 3.6
+installed with Python 2. The notebook server will run in the default Python 3.7
 environment.
 
 Julia
