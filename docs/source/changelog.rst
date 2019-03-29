@@ -11,6 +11,8 @@ New features
 ------------
 - Support for julia `Project.toml`, `JuliaProject.toml` and `Manifest.toml` files in :pr:`595` by
   :user:`davidanthoff`
+- Set JULIA_PROJECT globally, so that every julia instance starts with the
+  julia environment activated in :pr:`612` by :user:`davidanthoff`.
 
 API changes
 -----------

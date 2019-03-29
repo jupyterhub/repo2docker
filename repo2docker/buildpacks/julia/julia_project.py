@@ -49,7 +49,6 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             a string of the environment setting:
             - `JULIA_PATH`: base path where all Julia Binaries and libraries
                 will be installed
-            - `JULIA_BINDIR`: path where all Julia Binaries will be installed
             - `JULIA_DEPOT_PATH`: path where Julia libraries are installed.
             - `JULIA_VERSION`: default version of julia to be installed
             - `JUPYTER`: environment variable required by IJulia to point to
@@ -60,12 +59,17 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         """
         return super().get_build_env() + [
             ('JULIA_PATH', '${APP_BASE}/julia'),
-            ('JULIA_BINDIR', '${JULIA_PATH}/bin'),
             ('JULIA_DEPOT_PATH', '${JULIA_PATH}/pkg'),
             ('JULIA_VERSION', self.julia_version),
             ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter'),
             ('JUPYTER_DATA_DIR', '${NB_PYTHON_PREFIX}/share/jupyter'),
         ]
+
+    def get_env(self):
+        return super().get_env() + [
+            ('JULIA_PROJECT', '${REPO_DIR}')
+        ]
+
 
     def get_path(self):
         """Adds path to Julia binaries to user's PATH.
@@ -75,7 +79,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
              executable is added to the list.
 
         """
-        return super().get_path() + ['${JULIA_BINDIR}']
+        return super().get_path() + ['${JULIA_PATH}/bin']
 
     def get_build_scripts(self):
         """
@@ -109,6 +113,10 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         """
         Return series of build-steps specific to "this" Julia repository
 
+        We make sure that the IJulia package gets installed into the default
+        environment, and not the project specific one, by running the
+        IJulia install command with JULIA_PROJECT="".
+
         Instantiate and then precompile all packages in the repos julia
         environment.
 
@@ -119,7 +127,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
+                JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
                 julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
                 """
             )

@@ -4,9 +4,6 @@ if VERSION != v"1.0.2"
     exit(1)
 end
 
-using Pkg
-pkg"activate ."
-
 try
     # Test that the package was installed.
     using IteratorInterfaceExtensions
