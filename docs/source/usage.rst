@@ -85,7 +85,7 @@ by ``repo2docker`` to see how to configure the build process.
 
 .. note::
 
-   ``repo2docker`` builds an environment with Python 3.6 by default. If you'd
+   ``repo2docker`` builds an environment with Python 3.7 by default. If you'd
    like a different version, you can specify this in your
    :ref:`configuration files <config-files>`.
 
