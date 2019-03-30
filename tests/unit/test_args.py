@@ -82,3 +82,13 @@ def test_invalid_image_name():
     """
     with pytest.raises(SystemExit):
         make_r2d(['--image-name', '_invalid', '.'])
+
+
+def test_no_default_build():
+    """
+    Test passing --no-default-build. Should not change run or push
+    """
+    r2d = make_r2d(['--no-default-build', '--push', '.'])
+    assert r2d.no_default_build
+    assert r2d.run
+    assert r2d.push

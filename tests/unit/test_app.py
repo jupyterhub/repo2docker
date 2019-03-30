@@ -102,3 +102,29 @@ def test_run_kwargs(repo_with_content):
     args, kwargs = containers.run.call_args
     assert 'somekey' in kwargs
     assert kwargs['somekey'] == "somevalue"
+
+
+def test_default_build(repo_with_content): 
+    upstream, sha1 = repo_with_content
+    argv = [upstream]
+    app = make_r2d(argv)
+    
+    # some build should be called when --no-default-built is given. 
+    with patch.object(docker.APIClient, 'build') as builds:
+        builds.return_value = []
+        image_built = app.build()
+    builds.assert_called_once()
+    assert image_built
+
+
+def test_no_default_build(repo_with_content):
+    upstream, sha1 = repo_with_content
+    argv = ['--no-default-build', upstream]
+    app = make_r2d(argv)
+
+    # no default build for the empty repo
+    with patch.object(docker.APIClient, 'build') as builds:
+        builds.return_value = []
+        image_built = app.build()
+    assert not builds.called
+    assert not image_built

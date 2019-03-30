@@ -354,6 +354,14 @@ class Repo2Docker(Application):
         config=True
     )
 
+    no_default_build = Bool(
+        False,
+        help="""
+        Don't run a docker build if no configuration files were detected
+        """,
+        config=True
+    )
+
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
 
@@ -620,7 +628,7 @@ class Repo2Docker(Application):
                 # no need to build, so skip to the end by `return`ing here
                 # this will still execute the finally clause and let's us
                 # avoid having to indent the build code by an extra level
-                return
+                return True
 
             if self.subdir:
                 checkout_path = os.path.join(checkout_path, self.subdir)
@@ -636,6 +644,8 @@ class Repo2Docker(Application):
                         picked_buildpack = bp
                         break
                 else:
+                    if self.no_default_build: # return here if asked not to use the default buildpack.
+                        return False
                     picked_buildpack = self.default_buildpack()
 
                 picked_buildpack.appendix = self.appendix
@@ -681,12 +691,14 @@ class Repo2Docker(Application):
             # Cleanup checkout if necessary
             if self.cleanup_checkout:
                 shutil.rmtree(checkout_path, ignore_errors=True)
+        
+        return True
 
     def start(self):
-        self.build()
+        image_built = self.build()
 
-        if self.push:
+        if self.push and image_built:
             self.push_image()
 
-        if self.run:
+        if self.run and image_built:
             self.run_image()

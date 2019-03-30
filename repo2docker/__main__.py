@@ -198,6 +198,13 @@ def get_argparser():
         default=[],
     )
 
+    argparser.add_argument(
+        '--no-default-build',
+        dest='no_default_build',
+        action='store_true',
+        help='Do not run a default build if no configuration files were detected.'
+    )
+
     return argparser
 
 argparser = get_argparser()
@@ -323,6 +330,8 @@ def make_r2d(argv=None):
 
     if args.target_repo_dir:
         r2d.target_repo_dir = args.target_repo_dir
+
+    r2d.no_default_build = args.no_default_build
 
     return r2d
 
