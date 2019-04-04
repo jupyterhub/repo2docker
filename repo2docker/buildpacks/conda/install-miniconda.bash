@@ -3,8 +3,8 @@
 set -ex
 
 cd $(dirname $0)
-MINICONDA_VERSION=4.5.11
-CONDA_VERSION=4.5.11
+MINICONDA_VERSION=4.5.12
+CONDA_VERSION=4.6.11
 URL="https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
 
