@@ -7,7 +7,7 @@ MINICONDA_VERSION=4.5.12
 CONDA_VERSION=4.6.11
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
-MD5SUM="4be03f925e992a8eda03758b72a77298"
+MD5SUM="866ae9dff53ad0874e1d1a60b1ad1ef8"
 
 URL="https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
