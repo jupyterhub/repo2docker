@@ -1,5 +1,6 @@
 import os
 import pytest
+import subprocess
 from tempfile import TemporaryDirectory
 from repo2docker.contentproviders import Git
 
@@ -16,6 +17,28 @@ def test_clone(repo_with_content):
         assert os.path.exists(os.path.join(clone_dir, 'test'))
 
         assert git_content.content_id == sha1[:7]
+
+
+def test_submodule_clone(repo_with_submodule):
+    """Test git clone containing a git submodule."""
+    upstream, expected_sha1_upstream, expected_sha1_submod = repo_with_submodule
+
+    with TemporaryDirectory() as clone_dir:
+        submod_dir = os.path.join(clone_dir, 'submod')  # set by fixture
+        spec = {'repo': upstream}
+        git_content = Git()
+        for _ in git_content.fetch(spec, clone_dir):
+            pass
+        assert os.path.exists(os.path.join(clone_dir, 'test'))
+        assert os.path.exists(os.path.join(submod_dir, 'test'))
+
+        # get current sha1 of submodule
+        cmd = ['git', 'rev-parse', 'HEAD']
+        sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=submod_dir)
+        submod_sha1 = sha1.stdout.read().decode().strip()
+
+        assert git_content.content_id == expected_sha1_upstream[:7]
+        assert submod_sha1[:7] == expected_sha1_submod[:7]
 
 
 def test_bad_ref(repo_with_content):
