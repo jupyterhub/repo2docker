@@ -21,6 +21,12 @@ Bug fixes
 ---------
 - Install IJulia kernel into ${NB_PYTHON_PREFIX}/share/jupyter in :pr:`622` by
   :user:`davidanthoff`.
+- Ensure git submodules are updated and initilized correctly in :pr:`639` by
+  :user:`djhoese`.
+- Use archive.debian.org as source for the debian jessie based legacy
+  buildpack in :pr:`633` by :user:`betatim`.
+- Update to version 5.7.6 of the `notebook` package used in all environments
+  in :pr:`628` by :user:`betatim`.
 
 
 Version 0.8.0
