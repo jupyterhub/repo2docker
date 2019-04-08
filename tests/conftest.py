@@ -136,8 +136,10 @@ def repo_with_submodule():
         # create "parent" repository
         subprocess.check_call(['git', 'init'], cwd=git_a_dir)
         _add_content_to_git(git_a_dir)
-        # create submodule repository
+        # create repository with 2 commits that will be the submodule
         subprocess.check_call(['git', 'init'], cwd=git_b_dir)
+        _add_content_to_git(git_b_dir)
+        submod_sha1_b = _get_sha1(git_b_dir)
         _add_content_to_git(git_b_dir)
 
         # create a new branch in the parent to add the submodule
@@ -145,14 +147,16 @@ def repo_with_submodule():
                               cwd=git_a_dir)
         subprocess.check_call(['git', 'submodule', 'add', git_b_dir, 'submod'],
                               cwd=git_a_dir)
+        # checkout the first commit for the submod, not the latest
+        subprocess.check_call(['git', 'checkout', submod_sha1_b],
+                              cwd=os.path.join(git_a_dir, 'submod'))
         subprocess.check_call(['git', 'add', git_a_dir, ".gitmodules"],
                               cwd=git_a_dir)
         subprocess.check_call(['git', 'commit', '-m', 'Add B repos submod'],
                               cwd=git_a_dir)
 
         sha1_a = _get_sha1(git_a_dir)
-        sha1_b = _get_sha1(git_b_dir)
-        yield git_a_dir, sha1_a, sha1_b
+        yield git_a_dir, sha1_a, submod_sha1_b
 
 
 class Repo2DockerTest(pytest.Function):

@@ -21,7 +21,7 @@ def test_clone(repo_with_content):
 
 def test_submodule_clone(repo_with_submodule):
     """Test git clone containing a git submodule."""
-    upstream, sha1_upstream, sha1_submod = repo_with_submodule
+    upstream, expected_sha1_upstream, expected_sha1_submod = repo_with_submodule
 
     with TemporaryDirectory() as clone_dir:
         submod_dir = os.path.join(clone_dir, 'submod')  # set by fixture
@@ -37,8 +37,8 @@ def test_submodule_clone(repo_with_submodule):
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=submod_dir)
         submod_sha1 = sha1.stdout.read().decode().strip()
 
-        assert git_content.content_id == sha1_upstream[:7]
-        assert submod_sha1[:7] == submod_sha1[:7]
+        assert git_content.content_id == expected_sha1_upstream[:7]
+        assert submod_sha1[:7] == expected_sha1_submod[:7]
 
 
 def test_bad_ref(repo_with_content):
