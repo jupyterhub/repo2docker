@@ -21,8 +21,6 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-# For conversion from markdown to html
-import recommonmark.parser
 
 # -- General configuration ------------------------------------------------
 
@@ -35,6 +33,7 @@ import recommonmark.parser
 # ones.
 extensions = ['sphinx.ext.extlinks',
               'sphinxcontrib.autoprogram',
+              'recommonmark',
               ]
 
 extlinks = {
@@ -46,10 +45,6 @@ extlinks = {
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-# source parser
-source_parsers = {
-    '.md': 'recommonmark.parser.CommonMarkParser',
-}
 
 from recommonmark.transform import AutoStructify
 
