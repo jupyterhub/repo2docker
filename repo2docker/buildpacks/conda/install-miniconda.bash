@@ -43,6 +43,14 @@ if [[ "${CONDA_VERSION}" != "${MINICONDA_VERSION}" ]]; then
     conda install -yq conda==${CONDA_VERSION}
 fi
 
+# Install Mamba and symlink it to conda
+conda install -c conda-forge -c conda-forge/label/mamba-alpha mamba
+mkdir -p ~/.local/bin
+export PATH=~/.local/bin:${PATH}
+ln -fs $(which mamba) ~/.local/bin/conda
+
+which conda
+
 echo "installing notebook env:"
 cat /tmp/environment.yml
 conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
