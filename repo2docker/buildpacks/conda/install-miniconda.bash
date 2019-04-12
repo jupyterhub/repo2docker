@@ -3,8 +3,8 @@
 set -ex
 
 cd $(dirname $0)
-MINICONDA_VERSION=4.5.11
-CONDA_VERSION=4.5.11
+MINICONDA_VERSION=4.5.12
+CONDA_VERSION=4.6.12
 URL="https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
 
@@ -33,9 +33,6 @@ conda config --system --add channels conda-forge
 # Do not attempt to auto update conda or dependencies
 conda config --system --set auto_update_conda false
 conda config --system --set show_channel_urls true
-
-# install conda itself
-conda install -yq conda==${CONDA_VERSION}
 
 # switch Python in its own step
 # since switching Python during an env update can
