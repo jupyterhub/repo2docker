@@ -163,3 +163,15 @@ see the rstudio logs as it tries to initialise the shiny app. If you a missing a
 package or other dependency for the container, this will be obvious at this stage.
 
 
+Why does repo2docker need to exist? Why not use tool like source2image?
+-----------------------------------------------------------------------
+
+The Jupyter community believes strongly in building on top of pre-existing tools whenever
+possible (this is why repo2docker buildpacks largely build off of patterns that already
+exist in the data analytics community). We try to perform due-diligence and search for
+other communities to leverage and help, but sometimes it makes the most sense to build
+our own new tool. In the case of repo2docker, we spent time integrating with a pre-existing
+tool called [source2image](https://github.com/openshift/source-to-image).
+This is an excellent open tool for containerization, but we
+ultimately decided that it did not fit the use-case we wanted to address. For more information,
+[here's a short blog post about the decision and the reasoning behind it](https://github.com/yuvipanda/words/blob/fd096dd49d87e624acd8bdf6d13c0cecb930bb3f/content/post/why-not-s2i.md).
