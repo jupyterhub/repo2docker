@@ -214,10 +214,11 @@ class RBuildPack(PythonBuildPack):
                 "${NB_USER}",
                 # Install nbrsessionproxy
                 r"""
-                pip install --no-cache-dir nbrsessionproxy==0.8.0 && \
-                jupyter serverextension enable nbrsessionproxy --sys-prefix && \
-                jupyter nbextension install --py nbrsessionproxy --sys-prefix && \
-                jupyter nbextension enable --py nbrsessionproxy --sys-prefix
+                pip install --no-cache-dir https://github.com/jupyterhub/jupyter-server-proxy/archive/7ac0125.zip && \
+                pip install --no-cache-dir jupyter-rsession-proxy==1.0b6 && \
+                jupyter serverextension enable jupyter_server_proxy --sys-prefix && \
+                jupyter nbextension install --py jupyter_server_proxy --sys-prefix && \
+                jupyter nbextension enable --py jupyter_server_proxy --sys-prefix
                 """
             ),
             (
