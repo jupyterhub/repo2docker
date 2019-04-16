@@ -63,7 +63,6 @@ class PythonBuildPack(CondaBuildPack):
         if os.path.exists(requirements_file):
             assemble_scripts.append((
                 '${NB_USER}',
-                'pip install "pip<19" && ' + \
                 '{} install --no-cache-dir -r "{}"'.format(pip, requirements_file)
             ))
 
