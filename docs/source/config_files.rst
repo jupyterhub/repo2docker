@@ -54,6 +54,22 @@ though ``repo2docker`` support is best with Python 3.7, 3.6, 3.5 and 2.7.
    If you include a Python version in a ``runtime.txt`` file in addition to your
    ``environment.yml``, your ``runtime.txt`` will be ignored.
 
+.. _Pipfile:
+
+``Pipfile`` and/or ``Pipfile.lock`` - Install a Python environment
+==================================================================
+
+``Pipfile`` and/or ``Pipfile.lock`` specifies a list of Python packages that
+should be installed in your environment. ``pipenv install --dev`` will be run to
+install the dependencies where the existence of a ``Pipfile.lock`` will make the
+``Pipfile`` be ignored.
+
+.. note::
+
+   `pipenv <https://github.com/pypa/pipenv/>`_ and `virtualenv
+   <https://github.com/pypa/virtualenv/>`_ and associated ``requirements.txt``
+   files are both managed by the Python Packaging Authority PyPA, where pipenv
+   and ``Pipfile`` and ``Pipfile.lock`` seem to be the modern solution.
 
 .. _requirements.txt:
 
