@@ -7,12 +7,12 @@ name = "pypi"
 numpy = "*"
 
 [dev-packages]
-sympy = "*"
+there = "*"
 
 # The Pipfile.lock was generated when the Pipfile looked like this
 # ----------------------------------------------------------------
 # [packages]
-# requests = "*"
-# 
+# pypi-pkg-test = "*"
+#
 # [dev-packages]
 # there = "*"
