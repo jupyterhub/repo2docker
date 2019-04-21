@@ -58,9 +58,13 @@ class PythonBuildPack(CondaBuildPack):
                     '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(nb_requirements_file)
                 ))
 
-        # install requirements.txt in the kernel env
+        # install Pipfile.lock, Pipfile, or requirements.txt in the kernel env
+        pipfile = self.binder_path('Pipfile')
+        pipfile_lock = self.binder_path('Pipfile.lock')
         requirements_file = self.binder_path('requirements.txt')
-        if os.path.exists(requirements_file):
+        if os.path.exists(pipfile) or os.path.exists(pipfile_lock):
+            pass
+        elif os.path.exists(requirements_file):
             assemble_scripts.append((
                 '${NB_USER}',
                 'pip install "pip<19" && ' + \
