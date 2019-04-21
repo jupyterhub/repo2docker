@@ -42,10 +42,7 @@ class PythonBuildPack(CondaBuildPack):
         # and requirements3.txt (if it exists)
         # will be installed in the python 3 notebook server env.
         assemble_scripts = super().get_assemble_scripts()
-        setup_py = 'setup.py'
-        # KERNEL_PYTHON_PREFIX is the env with the kernel,
-        # whether it's distinct from the notebook or the same.
-        pip = '${KERNEL_PYTHON_PREFIX}/bin/pip'
+
         if self.py2:
             # using python 2 kernel,
             # requirements3.txt allows installation in the notebook server env
@@ -59,24 +56,42 @@ class PythonBuildPack(CondaBuildPack):
                 ))
 
         # install Pipfile.lock, Pipfile, or requirements.txt in the kernel env
+        pipenv = '${KERNEL_PYTHON_PREFIX}/bin/pipenv'
         pipfile = self.binder_path('Pipfile')
         pipfile_lock = self.binder_path('Pipfile.lock')
-        requirements_file = self.binder_path('requirements.txt')
-        if os.path.exists(pipfile) or os.path.exists(pipfile_lock):
-            pass
-        elif os.path.exists(requirements_file):
+        if os.path.exists(pipfile_lock) or os.path.exists(pipfile):
             assemble_scripts.append((
                 '${NB_USER}',
-                'pip install "pip<19" && ' + \
-                '{} install --no-cache-dir -r "{}"'.format(pip, requirements_file)
+                'pip install pipenv'
             ))
+            if not os.path.exists(pipfile_lock):
+                assemble_scripts.append((
+                    '${NB_USER}',
+                    '{} lock --python {}'.format(pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
+                ))
+            assemble_scripts.append((
+                '${NB_USER}',
+                '{} install --ignore-pipfile --deploy --system --dev --python {}'.format(pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
+            ))
+        else:
+            # KERNEL_PYTHON_PREFIX is the env with the kernel,
+            # whether it's distinct from the notebook or the same.
+            pip = '${KERNEL_PYTHON_PREFIX}/bin/pip'
+            requirements_file = self.binder_path('requirements.txt')
+            setup_py = 'setup.py'
+            if os.path.exists(requirements_file):
+                assemble_scripts.append((
+                    '${NB_USER}',
+                    'pip install "pip<19" && ' + \
+                    '{} install --no-cache-dir -r "{}"'.format(pip, requirements_file)
+                ))
+            # setup.py exists *and* binder dir is not used
+            if not os.path.exists('binder') and os.path.exists(setup_py):
+                assemble_scripts.append((
+                    '${NB_USER}',
+                    '{} install --no-cache-dir .'.format(pip)
+                ))
 
-        # setup.py exists *and* binder dir is not used
-        if not os.path.exists('binder') and os.path.exists(setup_py):
-            assemble_scripts.append((
-                '${NB_USER}',
-                '{} install --no-cache-dir .'.format(pip)
-            ))
         return assemble_scripts
 
     def detect(self):
