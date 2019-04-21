@@ -4,7 +4,5 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
-
-[dev-packages]
 there = "*"
+dummy = {path=".", editable=true}
