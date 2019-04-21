@@ -8,5 +8,5 @@ setup(
     author_email='dummy@my-email.com',
     description='Dummy package for testing purposes only',
     packages=find_packages(),
-    install_requires=['numpy'],
+    install_requires=['pypi-pkg-test==0.0.4'],
 )
