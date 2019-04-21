@@ -78,6 +78,8 @@ class PythonBuildPack(CondaBuildPack):
     def detect(self):
         """Check if current repo should be built with the Python buildpack.
         """
+        pipfile = self.binder_path('Pipfile')
+        pipfile_lock = self.binder_path('Pipfile.lock')
         requirements_txt = self.binder_path('requirements.txt')
         runtime_txt = self.binder_path('runtime.txt')
         setup_py = 'setup.py'
@@ -91,4 +93,4 @@ class PythonBuildPack(CondaBuildPack):
                 return False
         if not os.path.exists('binder') and os.path.exists(setup_py):
             return True
-        return os.path.exists(requirements_txt)
+        return os.path.exists(pipfile) or os.path.exists(pipfile_lock) or os.path.exists(requirements_txt)
