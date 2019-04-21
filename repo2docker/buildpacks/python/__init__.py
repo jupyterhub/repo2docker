@@ -87,6 +87,7 @@ class PythonBuildPack(CondaBuildPack):
         pipfile = self.binder_path('Pipfile')
         pipfile_lock = self.binder_path('Pipfile.lock')
         if os.path.exists(pipfile_lock) or os.path.exists(pipfile):
+            working_directory = 'binder' if os.path.exists('binder') else '.'
             assemble_scripts.append((
                 '${NB_USER}',
                 'pip install pipenv'
@@ -94,11 +95,11 @@ class PythonBuildPack(CondaBuildPack):
             if not os.path.exists(pipfile_lock):
                 assemble_scripts.append((
                     '${NB_USER}',
-                    '{} lock --python {}'.format(pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
+                    '(cd {} && {} lock --python {})'.format(working_directory, pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
                 ))
             assemble_scripts.append((
                 '${NB_USER}',
-                '{} install --ignore-pipfile --deploy --system --dev --python {}'.format(pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
+                '(cd {} && {} install --ignore-pipfile --deploy --system --dev --python {})'.format(working_directory, pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
             ))
         else:
             # KERNEL_PYTHON_PREFIX is the env with the kernel,
