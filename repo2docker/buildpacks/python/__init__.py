@@ -1,38 +1,65 @@
 """Generates Dockerfiles based on an input matrix based on Python."""
 import os
+import re
 
 from ..conda import CondaBuildPack
-
 
 class PythonBuildPack(CondaBuildPack):
     """Setup Python for use with a repository."""
 
     @property
     def python_version(self):
+        """
+        Detect the Python version declared in a `Pipfile.lock`, `Pipfile`, or
+        `runtime.txt`. Will return 'x.y' if version is found (e.g '3.6'), or a
+        Falsy empty string '' if not found.
+        """
+
         if hasattr(self, '_python_version'):
             return self._python_version
 
-        try:
-            with open(self.binder_path('runtime.txt')) as f:
-                runtime = f.read().strip()
-        except FileNotFoundError:
-            runtime = ''
+        files_to_search_in_order = [
+            {
+                'path': self.binder_path('Pipfile.lock'),
+                'pattern': r'\s*\"python_(?:full_)?version\": \"?([0-9a-z\.]*)\"?', # '            "python_version": "3.6"'
+            },
+            {
+                'path': self.binder_path('Pipfile'),
+                'pattern': r'python_(?:full_)?version\s*=+\s*\"?([0-9a-z\.]*)\"?', # 'python_version = "3.6"'
+            },
+            {
+                'path': self.binder_path('runtime.txt'),
+                'pattern': r'\s*python-([0-9a-z\.]*)\s*', # 'python-3.6'
+            },
+        ]
 
-        if not runtime.startswith('python-'):
-            # not a Python runtime (e.g. R, which subclasses this)
+        py_version = None
+        for file in files_to_search_in_order:
+            try:
+                with open(file['path']) as f:
+                    for line in f:
+                        match = re.match(file['pattern'], line)
+                        if not match:
+                            continue
+                        py_version = match.group(1)
+                        break
+            except FileNotFoundError:
+                pass
+            if py_version:
+                break
+
+        # extract major.minor
+        if py_version:
+            if len(py_version) == 1:
+                self._python_version = self.major_pythons.get(py_version[0])
+            else:
+                # return major.minor
+                self._python_version = '.'.join(py_version.split('.')[:2])
+            return self._python_version
+        else:
             # use the default Python
             self._python_version = self.major_pythons['3']
             return self._python_version
-
-        py_version_info = runtime.split('-', 1)[1].split('.')
-        py_version = ''
-        if len(py_version_info) == 1:
-            py_version = self.major_pythons[py_version_info[0]]
-        else:
-            # get major.minor
-            py_version = '.'.join(py_version_info[:2])
-        self._python_version = py_version
-        return self._python_version
 
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository.
