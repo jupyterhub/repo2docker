@@ -1,5 +1,4 @@
-Python - Pipfile(.lock) + requirements.txt
-------------------------------------------
+Python - Pipfile + requirements.txt
+-----------------------------------
 
-We should make ``Pipfile``` or ``Pipfile.lock`` take precedence over
-``requirements.txt``.
+We should make ``Pipfile`` take precedence over ``requirements.txt``.
