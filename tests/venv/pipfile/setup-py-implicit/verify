@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+import there
+
+try:
+    import dummy
+except ImportError:
+    pass
+else:
+    raise Exception("'dummy' shouldn't have been installed from setup.py when a Pipfile was present")
