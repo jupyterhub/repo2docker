@@ -27,6 +27,9 @@ Bug fixes
   buildpack in :pr:`633` by :user:`betatim`.
 - Update to version 5.7.6 of the `notebook` package used in all environments
   in :pr:`628` by :user:`betatim`.
+- Switch to newer version of jupyter-server-proxy to fix websocket handling
+  in :pr:`646` by :user:`betatim`.
+- Update to pip v19.0.3 in :pr:`647` by :user:`betatim`.
 
 
 Version 0.8.0
