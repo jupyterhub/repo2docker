@@ -34,22 +34,21 @@ conda config --system --add channels conda-forge
 conda config --system --set auto_update_conda false
 conda config --system --set show_channel_urls true
 
-# install conda itself
-conda install -yq conda==${CONDA_VERSION}
-
-# switch Python in its own step
-# since switching Python during an env update can
-# prevent pip installation.
-# we wouldn't have this issue if we did `conda env create`
-# instead of `conda env update` in these cases
-conda install -y $(cat /tmp/environment.yml | grep -o '\spython=.*') conda==${CONDA_VERSION}
-
 # bug in conda 4.3.>15 prevents --set update_dependencies
 echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 
-echo "installing root env:"
+# install conda itself
+conda install -yq conda==${CONDA_VERSION}
+
+echo "installing notebook env:"
 cat /tmp/environment.yml
-conda env update -n root -f /tmp/environment.yml
+conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
+
+# empty conda history file,
+# which seems to result in some effective pinning of packages in the initial env,
+# which we don't intend.
+# this file must not be *removed*, however
+echo '' > ${NB_PYTHON_PREFIX}/conda-meta/history
 
 # enable nteract-on-jupyter, which was installed with pip
 jupyter serverextension enable nteract_on_jupyter --sys-prefix
@@ -59,15 +58,11 @@ if [[ -f /tmp/kernel-environment.yml ]]; then
     echo "installing kernel env:"
     cat /tmp/kernel-environment.yml
 
-    conda env create -n kernel -f /tmp/kernel-environment.yml
-    ${CONDA_DIR}/envs/kernel/bin/ipython kernel install --prefix "${CONDA_DIR}"
-    echo '' > ${CONDA_DIR}/envs/kernel/conda-meta/history
+    conda env create -p ${KERNEL_PYTHON_PREFIX} -f /tmp/kernel-environment.yml
+    ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${CONDA_DIR}"
+    echo '' > ${KERNEL_PYTHON_PREFIX}/envs/kernel/conda-meta/history
+    conda list -p ${KERNEL_PYTHON_PREFIX}
 fi
-# empty conda history file,
-# which seems to result in some effective pinning of packages in the initial env,
-# which we don't intend.
-# this file must not be *removed*, however
-echo '' > ${CONDA_DIR}/conda-meta/history
 
 # Clean things out!
 conda clean -tipsy
@@ -77,4 +72,5 @@ rm ${INSTALLER_PATH}
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
 
-conda list
+conda list -n root
+conda list -p ${NB_PYTHON_PREFIX}
