@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import sys
+from subprocess import check_output
 
 assert sys.version_info[:2] == (3, 5), sys.version
 
+out = check_output(['conda', '--version']).decode('utf8').strip()
+assert out == 'conda 4.5.11', out
+
 import numpy
-import conda
-assert conda.__version__ == '4.5.11', conda.__version__
