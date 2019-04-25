@@ -59,8 +59,8 @@ if [[ -f /tmp/kernel-environment.yml ]]; then
     cat /tmp/kernel-environment.yml
 
     conda env create -p ${KERNEL_PYTHON_PREFIX} -f /tmp/kernel-environment.yml
-    ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${CONDA_DIR}"
-    echo '' > ${KERNEL_PYTHON_PREFIX}/envs/kernel/conda-meta/history
+    ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${NB_PYTHON_PREFIX}"
+    echo '' > ${KERNEL_PYTHON_PREFIX}/conda-meta/history
     conda list -p ${KERNEL_PYTHON_PREFIX}
 fi
 
