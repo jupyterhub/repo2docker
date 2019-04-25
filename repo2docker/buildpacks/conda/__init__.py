@@ -183,7 +183,7 @@ class CondaBuildPack(BaseImage):
                 r"""
                 conda env update -p {0} -f "{1}" && \
                 conda clean -tipsy && \
-                conda list -n {0} && \
+                conda list -p {0} && \
                 rm -rf /srv/conda/pkgs
                 """.format(env_prefix, environment_yml)
             ))
