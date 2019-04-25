@@ -154,12 +154,12 @@ RUN ./{{ s }}
 
 # Add start script
 {% if start_script is not none -%}
-RUN chmod +x "{{ start_script }}"
-ENTRYPOINT ["{{ start_script }}"]
-{% else %}
+ENV R2D_ENTRYPOINT "{{ start_script }}"
+{% endif -%}
+
+# Add entrypoint
 COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
-{% endif -%}
 
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
