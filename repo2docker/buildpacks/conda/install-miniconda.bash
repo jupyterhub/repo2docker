@@ -3,11 +3,11 @@
 set -ex
 
 cd $(dirname $0)
-MINICONDA_VERSION=4.5.12
-CONDA_VERSION=4.6.9
+MINICONDA_VERSION=4.6.14
+CONDA_VERSION=4.6.14
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
-MD5SUM="866ae9dff53ad0874e1d1a60b1ad1ef8"
+MD5SUM="718259965f234088d785cad1fbd7de03"
 
 URL="https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
@@ -39,7 +39,9 @@ conda config --system --set show_channel_urls true
 echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 
 # install conda itself
-conda install -yq conda==${CONDA_VERSION}
+if [[ "${CONDA_VERSION}" != "${MINICONDA_VERSION}" ]]; then
+    conda install -yq conda==${CONDA_VERSION}
+fi
 
 echo "installing notebook env:"
 cat /tmp/environment.yml
