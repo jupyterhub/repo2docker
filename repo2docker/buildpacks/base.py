@@ -154,6 +154,7 @@ RUN ./{{ s }}
 
 # Add start script
 {% if start_script is not none -%}
+RUN chmod +x "{{ start_script }}"
 ENV R2D_ENTRYPOINT "{{ start_script }}"
 {% endif -%}
 
