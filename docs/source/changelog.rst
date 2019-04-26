@@ -13,6 +13,8 @@ New features
   :user:`davidanthoff`
 - Set JULIA_PROJECT globally, so that every julia instance starts with the
   julia environment activated in :pr:`612` by :user:`davidanthoff`.
+- Update Miniconda version to 4.5.12 and Conda version to 4.6.9  in :pr:`637` by
+  :user:`jhamman`
 
 API changes
 -----------

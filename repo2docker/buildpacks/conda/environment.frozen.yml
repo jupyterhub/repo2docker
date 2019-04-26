@@ -27,7 +27,9 @@ dependencies:
   - jupyterlab=0.35.4=py37_0
   - jupyterlab_server=0.2.0=py_0
   - libffi=3.2.1=he1b5a44_1006
+  - libgcc-ng=8.2.0=hdf63c60_1
   - libsodium=1.0.16=h14c3975_1001
+  - libstdcxx-ng=8.2.0=hdf63c60_1
   - markupsafe=1.1.1=py37h14c3975_0
   - mistune=0.8.4=py37h14c3975_1000
   - nbconvert=5.4.1=py_2
@@ -66,8 +68,6 @@ dependencies:
   - xz=5.2.4=h14c3975_1001
   - zeromq=4.3.1=hf484d3e_1000
   - zlib=1.2.11=h14c3975_1004
-  - libgcc-ng=8.2.0=hdf63c60_1
-  - libstdcxx-ng=8.2.0=hdf63c60_1
   - pip:
     - alembic==1.0.9
     - async-generator==1.10
