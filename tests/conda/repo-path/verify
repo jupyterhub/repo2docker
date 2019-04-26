@@ -2,8 +2,10 @@
 import sys
 import os
 
-# Python should still be in /srv/conda
-assert sys.executable == os.path.join(os.environ['NB_PYTHON_PREFIX'], 'bin', 'python')
+# conda should still be in /srv/conda
+# and Python should still be in $NB_PYTHON_PREFIX
+assert sys.executable == os.path.join(os.environ['NB_PYTHON_PREFIX'], 'bin', 'python'), sys.executable
+assert sys.executable.startswith("/srv/conda/"), sys.executable
 
 # Repo should be in /srv/repo
 assert os.path.exists('/srv/repo/verify')
