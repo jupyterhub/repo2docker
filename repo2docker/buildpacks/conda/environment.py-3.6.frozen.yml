@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2019-04-24 17:59:15 UTC
+# Frozen on 2019-04-26 14:10:28 UTC
 name: r2d
 channels:
   - conda-forge
@@ -15,7 +15,7 @@ dependencies:
   - defusedxml=0.5.0=py_1
   - entrypoints=0.3=py36_1000
   - ipykernel=5.1.0=py36h24bf2e0_1002
-  - ipython=7.4.0=py36h24bf2e0_0
+  - ipython=7.5.0=py36h24bf2e0_0
   - ipython_genutils=0.2.0=py_1
   - ipywidgets=7.4.2=py_0
   - jedi=0.13.3=py36_0
@@ -46,7 +46,7 @@ dependencies:
   - prompt_toolkit=2.0.9=py_0
   - ptyprocess=0.6.0=py_1001
   - pygments=2.3.1=py_0
-  - pyrsistent=0.14.11=py36h14c3975_0
+  - pyrsistent=0.15.1=py36h516909a_0
   - python=3.6.7=h381d211_1004
   - python-dateutil=2.8.0=py_0
   - pyzmq=18.0.1=py36hc4ba49a_1
