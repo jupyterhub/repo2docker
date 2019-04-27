@@ -67,7 +67,7 @@ class PythonBuildPack(CondaBuildPack):
             ))
 
         # setup.py exists *and* binder dir is not used
-        if not os.path.exists('binder') and os.path.exists(setup_py):
+        if not self.binder_dir and os.path.exists(setup_py):
             assemble_scripts.append((
                 '${NB_USER}',
                 '{} install --no-cache-dir .'.format(pip)
@@ -88,6 +88,6 @@ class PythonBuildPack(CondaBuildPack):
                 return True
             else:
                 return False
-        if not os.path.exists('binder') and os.path.exists(setup_py):
+        if not self.binder_dir and os.path.exists(setup_py):
             return True
         return os.path.exists(requirements_txt)

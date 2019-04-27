@@ -189,6 +189,7 @@ class BuildPack:
         self.log = logging.getLogger('repo2docker')
         self.appendix = ''
         self.labels = {}
+        self._binder_dir = None
         if sys.platform.startswith('win'):
             self.log.warning("Windows environment detected. Note that Windows "
                              "support is experimental in repo2docker.")
@@ -414,12 +415,18 @@ class BuildPack:
         """
         return None
 
+    @property
+    def binder_dir(self):
+        if self._binder_dir is None:
+            for dirname in ['binder', '.binder']:
+                if os.path.exists(dirname):
+                    self._binder_dir = dirname
+            self._binder_dir = ''
+        return self._binder_dir
+
     def binder_path(self, path):
         """Locate a file"""
-        if os.path.exists('binder'):
-            return os.path.join('binder', path)
-        else:
-            return path
+        return os.path.join(self.binder_dir, path)
 
     def detect(self):
         return True

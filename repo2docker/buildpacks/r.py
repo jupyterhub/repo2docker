@@ -84,7 +84,7 @@ class RBuildPack(PythonBuildPack):
             return True
 
         description_R = 'DESCRIPTION'
-        if ((not os.path.exists('binder') and os.path.exists(description_R))
+        if (not self.binder_dir and os.path.exists(description_R)
           or 'r' in self.stencila_contexts):
             if not self.checkpoint_date:
                 # no R snapshot date set through runtime.txt
@@ -300,7 +300,7 @@ class RBuildPack(PythonBuildPack):
             ]
 
         description_R = 'DESCRIPTION'
-        if not os.path.exists('binder') and os.path.exists(description_R):
+        if not self.binder_dir and os.path.exists(description_R):
             assemble_scripts += [
                 (
                     "${NB_USER}",

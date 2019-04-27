@@ -75,10 +75,11 @@ Where to put configuration files
 ``repo2docker`` will look for configuration files in either:
 
 * A folder named ``binder/`` in the root of the repository.
+* A folder named ``.binder/`` in the root of the repository.
 * The root directory of the repository.
 
-If the folder ``binder/`` is located at the top level of the repository,
-only configuration files in the ``binder/`` folder will be considered.
+If either the folder ``binder/`` or ``.binder/`` is located at the top level of
+the repository, only configuration files in that folder will be considered.
 
 Check the complete list of :ref:`configuration files <config-files>` supported
 by ``repo2docker`` to see how to configure the build process.
