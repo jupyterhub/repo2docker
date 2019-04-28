@@ -39,10 +39,16 @@ This outlines the process for getting changes to the repo2docker project merged.
     **Bug reports** ([examples](https://github.com/jupyter/repo2docker/issues?q=is%3Aissue+is%3Aopen+label%3Abug), [new issue](https://github.com/jupyter/repo2docker/issues/new?template=bug_report.md)) will ask you for a description of the problem, the expected behaviour, the actual behaviour, how to reproduce the problem, and your personal set up.
     Bugs can include problems with the documentation, or code not running as expected.
 
+    It is really important that you make it easy for the maintainers to reproduce the problem you're having.
+    This guide on creating a [minimal, complete and verifiable example](https://stackoverflow.com/help/mcve) is a great place to start.
+
     **Feature requests** ([examples](https://github.com/jupyter/repo2docker/labels/needs%3A%20discussion), [new issue](https://github.com/jupyter/repo2docker/issues/new?template=feature_request.md)) will ask you for the proposed change, any alternatives that you have considered, a description of who would use this feature, and a best-guess of how much work it will take and what skills are required to accomplish.
 
     Very easy feature requests might be updates to the documentation to clarify steps for new users.
     Harder feature requests may be to add new functionality to the project and will need more in depth discussion about who can complete and maintain the work.
+
+    Feature requests are a great opportunity for you to advocate for the use case you're suggesting.
+    They help others understand how much effort it would be to integrate the work,and - if you're successful at convincing them that this effort is worth it - make it more likely that they to choose to work on it with you.
 
 2. Open an issue.
   Getting consensus with the community is a great way to save time later.
@@ -75,8 +81,6 @@ These are not hard rules to be enforced by 🚓 but they are suggestions written
 * **Try to not rush changes** (the definition of rush depends on how big your changes are).
   Remember that everyone in the repo2docker team is a volunteer and we can not (nor would we want to) control their time or interests.
   Wait patiently for a reviewer to merge the PR.
-
-
 
 ## Setting up for Local Development
 
