@@ -20,7 +20,7 @@ Steps to reproduce the behaviour:
 **Expected behaviour**
 A clear and concise description of what you expected to happen.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Versions (please complete the following information):**
+ - OS: [e.g. linux, OSX]
+ - Docker version: `docker version`
+ - repo2docker version `repo2docker --version`
