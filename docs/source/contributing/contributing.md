@@ -1,5 +1,35 @@
 # Contributing to repo2docker development
 
+Thank you for thinking about contributing to repo2docker!
+This is an open source project that is developed and maintained entirely by volunteers.
+*Your contribution* is integral to the future of the project.
+THANK YOU!
+
+## Types of contribution
+
+There are many ways to contribute to repo2docker:
+
+* **Update the documentation.**
+  If you're reading a page or docstring and it doesn't make sense (or doesn't exist!), please let us know by opening a bug report.
+  It's even more amazing if you can give us a suggested change.
+* **Fix bugs or add requested features.**
+  Have a look through the [issue tracker](https://github.com/jupyter/repo2docker/issues) and see if there are any tagged as ["help wanted"](https://github.com/jupyter/repo2docker/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22).
+  As the label suggests, we'd love your help!
+* **Report a bug.**
+  If repo2docker isn't doing what you thought it would do then open a [bug report](https://github.com/jupyter/repo2docker/issues/new?template=bug_report.md).
+  That issue template will ask you a few questions described in more detail below.
+* **Suggest a new feature.**
+  We know that there are lots of ways to extend repo2docker!
+  If you're interested in adding a feature then please open a [feature request](https://github.com/jupyter/repo2docker/issues/new?template=feature_request.md).
+  That issue template will ask you a few questions described in detail below.
+* **Tell people about repo2docker.**
+  As we said above, repo2docker is built by and for its community.
+  If you know anyone who would like to use repo2docker, please tell them about the project!
+  You could give a talk about it, or run a demonstration.
+  The sky is the limit :rocket::star2:.
+
+If you're not sure where to get started, then please come and say hello in our [Gitter channel](https://gitter.im/jupyterhub/binder), or open an discussion thread at the [Jupyter discourse forum](https://discourse.jupyter.org/).
+
 ## Process for making a contribution
 
 This outlines the process for getting changes to the repo2docker project merged.
