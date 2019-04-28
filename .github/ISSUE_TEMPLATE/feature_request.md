@@ -6,15 +6,28 @@ labels: 'needs: discussion'
 assignees: ''
 
 ---
+<!-- Thank you for contributing. These HTML commments will not render in the issue, but you can delete them once you've read them if you prefer! -->
 
-Those who maintain this project do so as volunteers and we have no control over their schedule or priorities.
+### Proposed change
+<!-- Use this section to describe the feature you'd like to be added. -->
 
-This means if the feature you are proposing is something you'd like to see added the best way to achieve that is for you to organise the effort required to build it. This could be evangelising for the feature, paying someone, doing it yourself, etc.
 
-Even so it might never get merged because the trade off between additional happy users and maintenance burden is not favourable.
+### Alternative options
+<!-- Use this section to describe alternative options and why you've decided on the proposed feature above. -->
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+### Who would use this feature?
+<!-- Describe the audience for this feature. This information will affect how work is assigned across the maintenance and contributing team. -->
+
+
+### How much time will adding it take?
+<!-- Try to estimate how much work adding this feature will require. This information will affect how work is assigned across the maintenance and contributing team. -->
+
+
+### Who can do this work?
+<!-- What skills are needed? Who can be recruited to add this feature? This information will affect how work is assigned across the maintenance and contributing team. -->
+
+
+### Thank you maintainers!
+<!-- The people who maintain this project do so as volunteers in their "spare time". We can't control their schedule or priorities. Use this space to leave them a personal message to say thank you for their work, and offer any assistance that you can think of. -->
+
