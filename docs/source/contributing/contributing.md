@@ -34,41 +34,48 @@ If you're not sure where to get started, then please come and say hello in our [
 
 This outlines the process for getting changes to the repo2docker project merged.
 
-* If your change is a big change, **open an issue to discuss**
-  before spending a lot of time writing. Getting consensus with the
-  community is a great way to save time later.
-* Make edits in your fork of the repo2docker repository
-* All changes are made by submitting a pull request. Read the next section for
-  the guidelines for both reviewers and contributors on merging a PR.
-* Edit [the changelog](./../../changelog)
-  by appending your feature / bug fix to the development version.
-* Wait for a community member to merge your changes.
-* (optional) Deploy a new version of repo2docker to mybinder.org by [following these steps](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
+1. Identify the correct issue template: [bug report](https://github.com/jupyter/repo2docker/issues/new?template=bug_report.md) or [feature request](https://github.com/jupyter/repo2docker/issues/new?template=feature_request.md).
 
+    **Bug reports** ([examples](https://github.com/jupyter/repo2docker/issues?q=is%3Aissue+is%3Aopen+label%3Abug), [new issue](https://github.com/jupyter/repo2docker/issues/new?template=bug_report.md)) will ask you for a description of the problem, the expected behaviour, the actual behaviour, how to reproduce the problem, and your personal set up.
+    Bugs can include problems with the documentation, or code not running as expected.
+
+    **Feature requests** ([examples](https://github.com/jupyter/repo2docker/labels/needs%3A%20discussion), [new issue](https://github.com/jupyter/repo2docker/issues/new?template=feature_request.md)) will ask you for the proposed change, any alternatives that you have considered, a description of who would use this feature, and a best-guess of how much work it will take and what skills are required to accomplish.
+
+    Very easy feature requests might be updates to the documentation to clarify steps for new users.
+    Harder feature requests may be to add new functionality to the project and will need more in depth discussion about who can complete and maintain the work.
+
+2. Open an issue.
+  Getting consensus with the community is a great way to save time later.
+3. Make edits in [your fork](https://help.github.com/en/articles/fork-a-repo) of the [repo2docker repository](https://github.com/jupyter/repo2docker).
+4. Make a [pull request](https://help.github.com/en/articles/about-pull-requests).
+Read the [next section](#guidelines-to-getting-a-pull-request-merged) for guidelines for both reviewers and contributors on merging a PR.
+5. Edit [the changelog](./../../changelog) by appending your feature / bug fix to the development version.
+6. Wait for a community member to merge your changes.
+7. (optional) Deploy a new version of repo2docker to mybinder.org by [following these steps](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
 
 ## Guidelines to getting a Pull Request merged
 
-These are not hard rules to be enforced by 🚓 but instead guidelines
-to help you make a contribution.
+These are not hard rules to be enforced by 🚓 but they are suggestions written by the repo2docker maintainers to make getting your contribution completed a smooth process for you and for them.
 
-* prefix the title of your pull request with `[MRG]` if the contribution
-  is complete and should be subjected to a detailed review;
-* create a PR as early as possible, marking it with `[WIP]` while you work on
-  it (good to avoid duplicated work, get broad review of functionality or API,
-  or seek collaborators);
-* a PR solves one problem (do not mix problems together in one PR) with the
-  minimal set of changes;
-* describe why you are proposing the changes you are proposing;
-* try to not rush changes (the definition of rush depends on how big your
-  changes are);
-* Enter your changes into the [changelog](./../../changelog) in `docs/source/changelog.rst`;
-* someone else has to merge your PR;
-* new code needs to come with a test;
-* apply [PEP8](https://www.python.org/dev/peps/pep-0008/) as much
-  as possible, but not too much;
-* no merging if travis is red;
-* do use merge commits instead of merge-by-squashing/-rebasing. This makes it
-  easier to find all changes since the last deployment `git log --merges --pretty=format:"%h %<(10,trunc)%an %<(15)%ar %s" <deployed-revision>..`
+* **Create a PR as early as possible**, marking it with `[WIP]` while you work on it.
+  This avoids duplicated work, lets you get high level feedback on functionality or API changes, and/or helps find collaborators to work with you.
+* **Keep your PR focused.**
+  The best PRs solve one problem.
+  If you end up changing multiple things, please open separate PRs for the different conceptual changes.
+* **Add tests your code.**
+  PRs will not be merged if Travis is failing.
+* **Apply [PEP8](https://www.python.org/dev/peps/pep-0008/)** as much as possible, but not too much.
+  If in doubt, ask.
+* **Use merge commits** instead of merge-by-squashing/-rebasing.
+  This makes it easier to find all changes since the last deployment `git log --merges --pretty=format:"%h %<(10,trunc)%an %<(15)%ar %s" <deployed-revision>..` and your PR easier to review.
+* **Make it clear when your PR is ready for review.**
+  Prefix the title of your pull request (PR) with `[MRG]` if the contribution is complete and should be subjected to a detailed review.
+* **Enter your changes into the [changelog](./../../changelog)** in `docs/source/changelog.rst`.
+* **Use commit messages to describe _why_ you are proposing the changes you are proposing.**
+* **Try to not rush changes** (the definition of rush depends on how big your changes are).
+  Remember that everyone in the repo2docker team is a volunteer and we can not (nor would we want to) control their time or interests.
+  Wait patiently for a reviewer to merge the PR.
+
 
 
 ## Setting up for Local Development
