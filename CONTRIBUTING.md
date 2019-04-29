@@ -17,7 +17,7 @@ There are a few other pages to highlight:
 
 * [Our roadmap](https://repo2docker.readthedocs.io/en/latest/contributing/roadmap.html)
   * We use the roadmap to develop a shared understanding of the project's vision and direction amongst the community of users, contributors, and maintainers.
-    This is a great place to get a feel for what the maintainers are thinking about for the short, medium and long term future of the project.
+    This is a great place to get a feel for what the maintainers are thinking about for the short, medium, and long term future of the project.
 * [Design of repo2docker](https://repo2docker.readthedocs.io/en/latest/design.html)
   * This page explains some of the design principles behind repo2docker.
     Its a good place to understand _why_ the team have made the decisions that they have along the way!
