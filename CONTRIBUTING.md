@@ -20,7 +20,7 @@ There are a few other pages to highlight:
     This is a great place to get a feel for what the maintainers are thinking about for the short, medium and long term future of the project.
 * [Design of repo2docker](https://repo2docker.readthedocs.io/en/latest/design.html)
   * This page explains some of the design principles behind repo2docker.
-    Its a really good place to understand _why_ the team have made the decisions that they have along the way!
+    Its a good place to understand _why_ the team have made the decisions that they have along the way!
   * We absolutely encourage discussion around refactoring, updating or extending repo2docker, but please make sure that you've understood this page before opening an issue to discuss the change you'd like to propose.
 * [Common developer tasks and how-tos](https://repo2docker.readthedocs.io/en/latest/contributing/tasks.html)
   * Some notes on running tests, buildpack dependencies, creating a release, updating the changelog and keeping the pip files up to date.
