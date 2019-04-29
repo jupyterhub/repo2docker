@@ -9,9 +9,9 @@ _term() {
 trap _term SIGTERM
 
 # find binder sub-directory (if present)
-for dir in "./binder" "./.binder"; do
+for dir in "./.binder" "./binder"; do
   if [ -e $dir ]; then
-    binder_dir = $dir
+    binder_dir=$dir
   fi
 done
 
