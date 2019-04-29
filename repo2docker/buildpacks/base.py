@@ -419,8 +419,9 @@ class BuildPack:
     def binder_dir(self):
         if self._binder_dir is None:
             for dirname in ['binder', '.binder']:
-                if os.path.exists(dirname):
+                if os.path.isdir(dirname):
                     self._binder_dir = dirname
+                    break
             self._binder_dir = ''
         return self._binder_dir
 
