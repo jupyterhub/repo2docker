@@ -17,17 +17,13 @@ assignees: ''
 
 
 ### Who would use this feature?
-<!-- Describe the audience for this feature. This information will affect how work is assigned across the maintenance and contributing team. -->
+<!-- Describe the audience for this feature. This information will affect who chooses to work on the feature with you. -->
 
 
 ### How much effort will adding it take?
-<!-- Try to estimate how much work adding this feature will require. This information will affect how work is assigned across the maintenance and contributing team. -->
+<!-- Try to estimate how much work adding this feature will require. This information will affect who chooses to work on the feature with you. -->
 
 
 ### Who can do this work?
 <!-- What skills are needed? Who can be recruited to add this feature? This information will affect how work is assigned across the maintenance and contributing team. -->
-
-
-### Thank you maintainers!
-<!-- The people who maintain this project do so as volunteers in their "spare time". We can't control their schedule or priorities. Use this space to leave them a personal message to say thank you for their work, and offer any assistance that you can think of. -->
 
