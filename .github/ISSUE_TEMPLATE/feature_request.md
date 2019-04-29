@@ -20,7 +20,7 @@ assignees: ''
 <!-- Describe the audience for this feature. This information will affect how work is assigned across the maintenance and contributing team. -->
 
 
-### How much time will adding it take?
+### How much effort will adding it take?
 <!-- Try to estimate how much work adding this feature will require. This information will affect how work is assigned across the maintenance and contributing team. -->
 
 
