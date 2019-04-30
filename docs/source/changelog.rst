@@ -18,6 +18,8 @@ New features
 - Install notebook into `notebook` env instead of `root`.
   Activate conda environments and shell integration via ENTRYPOINT
   in :pr:`651` by :user:`minrk`
+- Support for `.binder` directory in addition to `binder` directory for location of
+  configuration files, in :pr:`653` by :user:`jhamman`.
 
 API changes
 -----------
