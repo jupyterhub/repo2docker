@@ -69,7 +69,7 @@ Read the [next section](#guidelines-to-getting-a-pull-request-merged) for guidel
 
 ## Guidelines to getting a Pull Request merged
 
-These are not hard rules to be enforced by 🚓 but they are suggestions written by the repo2docker maintainers to make getting your contribution completed a smooth process for you and for them.
+These are not hard rules to be enforced by 🚓 but they are suggestions written by the repo2docker maintainers to help complete your contribution as smoothly as possible for both you and for them.
 
 * **Create a PR as early as possible**, marking it with `[WIP]` while you work on it.
   This avoids duplicated work, lets you get high level feedback on functionality or API changes, and/or helps find collaborators to work with you.
