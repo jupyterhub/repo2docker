@@ -423,12 +423,26 @@ class BuildPack:
         """
         return None
 
+    @property
+    def binder_dir(self):
+        has_binder = os.path.isdir("binder")
+        has_dotbinder = os.path.isdir(".binder")
+
+        if has_binder and has_dotbinder:
+            raise RuntimeError(
+                "The repository contains both a 'binder' and a '.binder' "
+                "directory. However they are exclusive.")
+
+        if has_dotbinder:
+            return ".binder"
+        elif has_binder:
+            return "binder"
+        else:
+            return ""
+
     def binder_path(self, path):
         """Locate a file"""
-        if os.path.exists('binder'):
-            return os.path.join('binder', path)
-        else:
-            return path
+        return os.path.join(self.binder_dir, path)
 
     def detect(self):
         return True

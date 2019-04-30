@@ -7,7 +7,7 @@ The philosophy for the repo2docker buildpacks includes:
 - using common configuration files for familiar installation and packaging tools
 - allowing configuration files to be combined to compose more complex setups
 - specifying default locations for configuration files
-(the repository's root directory or .binder directory)
+(in the repository's root, `binder` or `.binder` directory)
 
 
 When designing `repo2docker` and adding to it in the future, the
