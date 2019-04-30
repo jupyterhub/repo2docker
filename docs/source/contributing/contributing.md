@@ -63,6 +63,8 @@ This outlines the process for getting changes to the repo2docker project merged.
 Read the [next section](#guidelines-to-getting-a-pull-request-merged) for guidelines for both reviewers and contributors on merging a PR.
 5. Edit [the changelog](./../../changelog) by appending your feature / bug fix to the development version.
 6. Wait for a community member to merge your changes.
+  Remember that **someone else must merge your pull request**.
+  That goes for new contributors and long term maintainers alike.
 7. (optional) Deploy a new version of repo2docker to mybinder.org by [following these steps](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
 
 ## Guidelines to getting a Pull Request merged
@@ -87,6 +89,7 @@ These are not hard rules to be enforced by 🚓 but they are suggestions written
 * **Try to not rush changes** (the definition of rush depends on how big your changes are).
   Remember that everyone in the repo2docker team is a volunteer and we can not (nor would we want to) control their time or interests.
   Wait patiently for a reviewer to merge the PR.
+  (Remember that **someone else** must merge your PR, even if you have the admin rights to do so.)
 
 ## Setting up for Local Development
 
