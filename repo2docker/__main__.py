@@ -300,7 +300,12 @@ def make_r2d(argv=None):
         r2d.user_name = args.user_name
 
     if args.build_memory_limit:
-        r2d.build_memory_limit = args.build_memory_limit
+        # if the string only contains numerals we assume it should be an int
+        # and specifies a size in bytes
+        if args.build_memory_limit.isnumeric():
+            r2d.build_memory_limit = int(args.build_memory_limit)
+        else:
+            r2d.build_memory_limit = args.build_memory_limit
 
     if args.environment and not r2d.run:
         print('To specify environment variables, you also need to run '

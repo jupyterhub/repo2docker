@@ -40,6 +40,17 @@ def test_dry_run():
     assert not r2d.run
     assert not r2d.push
 
+
+def test_mem_limit():
+    """
+    Test various ways of passing --build-memory-limit
+    """
+    r2d = make_r2d(['--build-memory-limit', '1024', '.'])
+    assert int(r2d.build_memory_limit) == 1024
+
+    r2d = make_r2d(['--build-memory-limit', '3K', '.'])
+    assert int(r2d.build_memory_limit) == 1024 * 3
+
 def test_run_required():
     """
     Test all the things that should fail if we pass in --no-run
