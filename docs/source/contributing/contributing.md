@@ -22,6 +22,12 @@ There are many ways to contribute to repo2docker:
   We know that there are lots of ways to extend repo2docker!
   If you're interested in adding a feature then please open a [feature request](https://github.com/jupyter/repo2docker/issues/new?template=feature_request.md).
   That issue template will ask you a few questions described in detail below.
+* **Review someone's Pull Request.**
+  Whenever somebody proposes changes to the repo2docker codebase, the community reviews
+  the changes, and provides feedback, edits, and suggestions. Check out the
+  [open pull requests](https://github.com/jupyter/repo2docker/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc)
+  and provide feedback that helps improve the PR and get it merged. Please keep your
+  feedback positive and constructive!
 * **Tell people about repo2docker.**
   As we said above, repo2docker is built by and for its community.
   If you know anyone who would like to use repo2docker, please tell them about the project!
