@@ -668,7 +668,12 @@ class BaseImage(BuildPack):
         return []
 
     def get_start_script(self):
-        start = self.binder_path('./start')
+        start = self.binder_path('start')
         if os.path.exists(start):
-            return start
+            # Return an absolute path to start
+            # This is important when built container images start with
+            # a working directory that is different from ${REPO_DIR}
+            # This isn't a problem with anything else, since start is
+            # the only path evaluated at container start time rather than build time
+            return os.path.join('${REPO_DIR}', start)
         return None
