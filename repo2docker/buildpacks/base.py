@@ -155,8 +155,12 @@ RUN ./{{ s }}
 # Add start script
 {% if start_script is not none -%}
 RUN chmod +x "{{ start_script }}"
-ENTRYPOINT ["{{ start_script }}"]
+ENV R2D_ENTRYPOINT "{{ start_script }}"
 {% endif -%}
+
+# Add entrypoint
+COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
+ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
@@ -166,6 +170,11 @@ CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
 {{ appendix }}
 {% endif %}
 """
+
+ENTRYPOINT_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "repo2docker-entrypoint",
+)
 
 
 class BuildPack:
@@ -492,6 +501,8 @@ class BuildPack:
             src_parts = src.split('/')
             src_path = os.path.join(os.path.dirname(__file__), *src_parts)
             tar.add(src_path, src, filter=_filter_tar)
+
+        tar.add(ENTRYPOINT_FILE, "repo2docker-entrypoint", filter=_filter_tar)
 
         tar.add('.', 'src/', filter=_filter_tar)
 
