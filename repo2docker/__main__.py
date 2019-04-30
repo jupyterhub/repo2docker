@@ -300,7 +300,7 @@ def make_r2d(argv=None):
 
     if args.build_memory_limit:
         # if the string only contains numerals we assume it should be an int
-        # and specifies a size inn bytes
+        # and specifies a size in bytes
         if args.build_memory_limit.isnumeric():
             r2d.build_memory_limit = int(args.build_memory_limit)
         else:
