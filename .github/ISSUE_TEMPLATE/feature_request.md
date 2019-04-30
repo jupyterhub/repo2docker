@@ -25,5 +25,5 @@ assignees: ''
 
 
 ### Who can do this work?
-<!-- What skills are needed? Who can be recruited to add this feature? This information will affect how work is assigned across the maintenance and contributing team. -->
+<!-- What skills are needed? Who can be recruited to add this feature? This information will affect who chooses to work on the feature with you. -->
 
