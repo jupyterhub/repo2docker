@@ -2,7 +2,7 @@
 Changelog
 =========
 
-Version 0.x.x
+Version 0.9.0
 =============
 
 Release date: TBD
@@ -20,6 +20,9 @@ New features
   in :pr:`651` by :user:`minrk`
 - Support for `.binder` directory in addition to `binder` directory for location of
   configuration files, in :pr:`653` by :user:`jhamman`.
+- Updated contributor guide and issue templates for bugs, feature requests,
+  and support questions in :pr:`654` and :pr:`655` by :user:`KirstieJane` and
+  :user:`betatim`.
 
 API changes
 -----------
@@ -34,9 +37,14 @@ Bug fixes
   buildpack in :pr:`633` by :user:`betatim`.
 - Update to version 5.7.6 of the `notebook` package used in all environments
   in :pr:`628` by :user:`betatim`.
+- Update to version 5.7.8 of the `notebook` package and version 2.0.12 of
+  `nteract-on-jupyter` in :pr:`650` by :user:`betatim`.
 - Switch to newer version of jupyter-server-proxy to fix websocket handling
   in :pr:`646` by :user:`betatim`.
-- Update to pip v19.0.3 in :pr:`647` by :user:`betatim`.
+- Update to pip version 19.0.3 in :pr:`647` by :user:`betatim`.
+- Ensure ENTRYPOINT is an absolute path in :pr:`657` by :user:`yuvipanda`.
+- Fix handling of `--build-memory-limit` values without a postfix in :pr:`652`
+  by :user:`betatim`.
 
 
 Version 0.8.0
