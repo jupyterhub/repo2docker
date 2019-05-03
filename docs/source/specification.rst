@@ -10,18 +10,20 @@ and the resulting actions that repo2docker takes is known
 as the **Reproducible Execution Environment Specification** (or REES).
 
 The goal of the REES is to automate and encourage existing community best practices
-for reproducible computational environments. This includes installing
-community-standard specification files such as ``requirements.txt`` or ``REQUIRE`` using
-standard tools such as ``pip`` or ``conda`` or ``apt``. While repo2docker automates the
+for reproducible computational environments. This includes installing pacakges using
+community-standard specification files and their corresponding tools,
+such as ``requirements.txt`` (with ``pip``), ``REQUIRE`` (with Julia), or
+``apt.txt`` (with ``apt``). While repo2docker automates the
 creation of the environment, a human should be able to look at a REES-compliant
 repository and reproduce the environment using common, clear steps without
 repo2docker software.
 
 Currently, the definition of the REE Specification is the following:
 
-    Any collection of files taken from the :ref:`config-files`
-    list, placed either in the root of a folder or in a sub-folder called
-    either ``binder/`` or ``.binder/``.
+    Any directory containing zero or more files from the :ref:`config-files` list is a
+    valid reproducible execution environment as defined by the REES. The
+    configuration files have to all be placed either in the root of the
+    directory, in a ``binder/`` sub-directory or a ``.binder/`` sub-directory.
 
 For example, the REES recognises ``requirements.txt`` as a valid config file.
 The file format is as defined by the ``requirements.txt`` standard of the Python
