@@ -313,6 +313,16 @@ class Repo2Docker(Application):
         config=True,
     )
 
+
+    # FIXME: update help msg
+    run_changes = Bool(
+        False,
+        help="""
+        accept new changes to repo, do not rebuild image.
+        """,
+        config=True
+    )
+
     # FIXME: Refactor classes to separate build & run steps
     run_cmd = List(
         [],
@@ -545,13 +555,20 @@ class Repo2Docker(Application):
         # store ports on self so they can be retrieved in tests
         self.ports = ports
 
+
         container_volumes = {}
-        if self.volumes:
+        repo_path = ""
+        if self.volumes or self.run_changes:
             api_client = docker.APIClient(
                 version="auto", **docker.utils.kwargs_from_env()
             )
             image = api_client.inspect_image(self.output_image_spec)
             image_workdir = image["ContainerConfig"]["WorkingDir"]
+
+            # add repo to volumes
+            if self.run_changes:
+                repo_path = os.path.abspath(self.git_workdir)
+                self.volumes[repo_path]=repo_path
 
             for k, v in self.volumes.items():
                 container_volumes[os.path.abspath(k)] = {
@@ -567,6 +584,10 @@ class Repo2Docker(Application):
             volumes=container_volumes,
             environment=self.environment,
         )
+
+        # set path to mounted repo
+        if self.run_changes:
+            run_kwargs["working_dir"] =repo_path
 
         run_kwargs.update(self.extra_run_kwargs)
 
@@ -623,6 +644,23 @@ class Repo2Docker(Application):
                         return True
         return False
 
+    def find_repo_image(self):
+
+        # TODO: Find latest image with substring match that has the newest
+        # create date
+
+        # check if we already have an image for this content
+        client = docker.APIClient(version='auto', **kwargs_from_env())
+        repo_image_name = self.output_image_spec[:-7]
+
+        for image in client.images():
+            if image['RepoTags'] is not None:
+                for tag in image['RepoTags']:
+                    if repo_image_name in tag:
+                        self.output_image_spec = tag
+                        return True
+        return False
+
     def build(self):
         """
         Build docker image
@@ -647,7 +685,14 @@ class Repo2Docker(Application):
             checkout_path = self.repo
         else:
             if self.git_workdir is None:
-                checkout_path = tempfile.mkdtemp(prefix="repo2docker")
+
+                # TODO: only works for Macos, add Linux support
+                # consider copying instead of mounting
+                # warning this path isn't cleaned up
+                checkout_path =  '/private' +  tempfile.mkdtemp(prefix='repo2docker')
+                self.git_workdir = checkout_path
+                if self.run_changes:
+                    self.cleanup_checkout = False   # because it's mounted
             else:
                 checkout_path = self.git_workdir
 
@@ -663,6 +708,13 @@ class Repo2Docker(Application):
                 # this will still execute the finally clause and let's us
                 # avoid having to indent the build code by an extra level
                 return
+
+            if self.run_changes:
+                if self.find_repo_image():
+                    self.log.info("Reusing existing image")
+                    # ask if we should exit out early if image not found
+                    return
+
 
             if self.subdir:
                 checkout_path = os.path.join(checkout_path, self.subdir)
@@ -737,6 +789,7 @@ class Repo2Docker(Application):
             # Cleanup checkout if necessary
             if self.cleanup_checkout:
                 shutil.rmtree(checkout_path, ignore_errors=True)
+        return
 
     def start(self):
         self.build()
