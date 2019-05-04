@@ -1,3 +1,4 @@
 #!/bin/bash
 set -euo pipefail
 jupyter nbextension list | grep 'jupyter-leaflet' | grep enabled
+which configurable-http-proxy 

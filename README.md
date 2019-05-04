@@ -1,4 +1,4 @@
-# repo2docker
+# <a href="https://github.com/jupyter/repo2docker"><img src="https://raw.githubusercontent.com/jupyter/repo2docker/3fa7444fca6ae2b51e590cbc9d83baf92738ca2a/docs/source/_static/images/repo2docker.png" height="48px" /> repo2docker</a>
 
 [![Build Status](https://travis-ci.org/jupyter/repo2docker.svg?branch=master)](https://travis-ci.org/jupyter/repo2docker)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
@@ -7,10 +7,15 @@
 the configuration files found in the repository.
 
 See the [repo2docker documentation](http://repo2docker.readthedocs.io)
-for more information.
+for more information on using repo2docker.
+
+For support questions please search or post to https://discourse.jupyter.org/c/binder.
 
 See the [contributing guide](CONTRIBUTING.md) for information on contributing to
 repo2docker.
+
+See [our roadmap](https://repo2docker.readthedocs.io/en/latest/contributing/roadmap.html)
+to learn about where the project is heading.
 
 ## Using repo2docker
 ### Prerequisites

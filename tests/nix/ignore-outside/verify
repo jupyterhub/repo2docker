@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+# check that numpy isn't installed
+test -z $(pip list | grep numpy | awk '{print $1}')

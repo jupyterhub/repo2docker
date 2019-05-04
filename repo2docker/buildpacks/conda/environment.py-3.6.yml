@@ -1,0 +1,11 @@
+# AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
+# Generated on 2019-04-26 14:10:28 UTC
+dependencies:
+- python=3.6.*
+- ipywidgets==7.4.2
+- jupyterlab==0.35.4
+- nbconvert==5.4.1
+- notebook==5.7.8
+- pip:
+  - nteract_on_jupyter==2.0.12
+  - jupyterhub==0.9.4

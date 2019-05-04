@@ -1,0 +1,46 @@
+#!/bin/bash
+
+_term() {
+  echo "Caught SIGTERM signal!"
+  # kill -TERM "$PID" 2>/dev/null
+  exit 0
+}
+
+trap _term SIGTERM
+
+# if there is a binder/ sub-directory it takes precedence
+# files outside it are ignored
+# find binder sub-directory (if present)
+binder_dir="./"
+for dir in "./binder" "./.binder" ; do
+  if [ -e $dir ]; then
+    binder_dir=$dir
+    break
+  fi
+done
+
+# raise error if both binder and .binder are found
+if [[ -d "./binder" && -d "./.binder" ]]; then
+  echo "Error: Found both binder and .binder directories."
+  exit 1
+fi
+
+echo "binder_dir is: $binder_dir"
+
+nixpath="$binder_dir/default.nix";
+if [ -f $binder_dir/start ]; then
+  chmod u+x $binder_dir/start
+  # Using `$@`` here which is what the internet recommends leads to
+  # errors when the command is something like `jupyter --ip=0.0.0.0 ...`
+  # as nix-shell picks that up as an argument to it instead of the command.
+  # There are several issues on the nix repos discussing this and adding support
+  # for -- to indicate "all arguments after this are for the command, not nix-shell"
+  # but it seems they have stalled/not yet produced an implementation.
+  # So let's use `$*` for now.
+  nix-shell $nixpath --command "$binder_dir/start $*" &
+else
+  nix-shell $nixpath --command "$*" &
+fi
+
+PID=$!
+wait "$PID"

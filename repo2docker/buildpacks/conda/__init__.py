@@ -28,7 +28,7 @@ class CondaBuildPack(BaseImage):
         """
         env = super().get_build_env() + [
             ('CONDA_DIR', '${APP_BASE}/conda'),
-            ('NB_PYTHON_PREFIX', '${CONDA_DIR}'),
+            ('NB_PYTHON_PREFIX', '${CONDA_DIR}/envs/notebook'),
         ]
         if self.py2:
             env.append(('KERNEL_PYTHON_PREFIX', '${CONDA_DIR}/envs/kernel'))
@@ -42,9 +42,10 @@ class CondaBuildPack(BaseImage):
 
         """
         path = super().get_path()
+        path.insert(0, '${CONDA_DIR}/bin')
         if self.py2:
             path.insert(0, '${KERNEL_PYTHON_PREFIX}/bin')
-        path.insert(0, '${CONDA_DIR}/bin')
+        path.insert(0, '${NB_PYTHON_PREFIX}/bin')
         return path
 
     def get_build_scripts(self):
@@ -77,7 +78,7 @@ class CondaBuildPack(BaseImage):
 
     major_pythons = {
         '2': '2.7',
-        '3': '3.6',
+        '3': '3.7',
     }
 
     def get_build_script_files(self):
@@ -97,6 +98,7 @@ class CondaBuildPack(BaseImage):
         """
         files = {
             'conda/install-miniconda.bash': '/tmp/install-miniconda.bash',
+            'conda/activate-conda.sh': '/etc/profile.d/activate-conda.sh',
         }
         py_version = self.python_version
         self.log.info("Building conda environment for python=%s" % py_version)
@@ -174,15 +176,16 @@ class CondaBuildPack(BaseImage):
         """
         assembly_scripts = []
         environment_yml = self.binder_path('environment.yml')
-        env_name = 'kernel' if self.py2 else 'root'
+        env_prefix = "${KERNEL_PYTHON_PREFIX}" if self.py2 else "${NB_PYTHON_PREFIX}"
         if os.path.exists(environment_yml):
             assembly_scripts.append((
                 '${NB_USER}',
                 r"""
-                conda env update -n {0} -f "{1}" && \
+                conda env update -p {0} -f "{1}" && \
                 conda clean -tipsy && \
-                conda list -n {0}
-                """.format(env_name, environment_yml)
+                conda list -p {0} && \
+                rm -rf /srv/conda/pkgs
+                """.format(env_prefix, environment_yml)
             ))
         return super().get_assemble_scripts() + assembly_scripts
 

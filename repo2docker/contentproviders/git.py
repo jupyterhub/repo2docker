@@ -38,9 +38,26 @@ class Git(ContentProvider):
             if hash is None:
                 self.log.error('Failed to check out ref %s', ref,
                                extra=dict(phase='failed'))
-                sys.exit(1)
+                raise ValueError('Failed to check out ref {}'.format(ref))
             # If the hash is resolved above, we should be able to reset to it
             for line in execute_cmd(['git', 'reset', '--hard', hash],
                                     cwd=output_dir,
                                     capture=yield_output):
                 yield line
+
+        # ensure that git submodules are initialised and updated
+        for line in execute_cmd(['git', 'submodule', 'update', '--init', '--recursive'],
+                                cwd=output_dir,
+                                capture=yield_output):
+            yield line
+
+        cmd = ['git', 'rev-parse', 'HEAD']
+        sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)
+        self._sha1 = sha1.stdout.read().decode().strip()
+
+    @property
+    def content_id(self):
+        """A unique ID to represent the version of the content.
+        Uses the first seven characters of the git commit ID of the repository.
+        """
+        return self._sha1[:7]

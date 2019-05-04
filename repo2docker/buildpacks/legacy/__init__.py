@@ -11,13 +11,19 @@ import shutil
 from textwrap import dedent
 from ..docker import DockerBuildPack
 
+
 class LegacyBinderDockerBuildPack(DockerBuildPack):
     """Legacy build pack for compatibility to first version of Binder."""
     dockerfile = '._binder.Dockerfile'
 
     legacy_prependix = dedent(r"""
+    USER root
+    # update the source list now that jessie is archived
+    COPY apt-sources.list /etc/apt/sources.list
+    USER main
     COPY python3.frozen.yml /tmp/python3.frozen.yml
     COPY root.frozen.yml /tmp/root.frozen.yml
+
     # update conda in two steps because the base image
     # has very old conda that can't upgrade past 4.3
     RUN conda install -yq conda>=4.3 && \
@@ -35,7 +41,8 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
     COPY . /home/main/notebooks
     RUN chown -R main:main /home/main/notebooks && \
         rm /home/main/notebooks/root.frozen.yml && \
-        rm /home/main/notebooks/python3.frozen.yml
+        rm /home/main/notebooks/python3.frozen.yml && \
+        rm /home/main/notebooks/apt-sources.list
     USER main
     WORKDIR /home/main/notebooks
     ENV PATH /home/main/anaconda2/envs/python3/bin:$PATH
@@ -76,14 +83,16 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
 
         This currently adds a frozen set of Python requirements to the dict
         of files.
-         
+
         """
         return {
             'legacy/root.frozen.yml': '/tmp/root.frozen.yml',
             'legacy/python3.frozen.yml': '/tmp/python3.frozen.yml',
+            'legacy/apt-sources.list': '/tmp/apt-sources.list',
         }
-            
-    def build(self, image_spec, memory_limit, build_args):
+
+    def build(self, client, image_spec, memory_limit, build_args, cache_from,
+              extra_build_kwargs):
         """Build a legacy Docker image."""
         with open(self.dockerfile, 'w') as f:
             f.write(self.render())
@@ -94,7 +103,12 @@ class LegacyBinderDockerBuildPack(DockerBuildPack):
                 env_file,
             )
             shutil.copy(src_path, env_file)
-        return super().build(image_spec, memory_limit, build_args)
+
+        src_path = os.path.join(os.path.dirname(__file__), 'apt-sources.list')
+        shutil.copy(src_path, 'apt-sources.list')
+
+        return super().build(client, image_spec, memory_limit, build_args,
+                             cache_from, extra_build_kwargs)
 
     def detect(self):
         """Check if current repo should be built with the Legacy BuildPack.

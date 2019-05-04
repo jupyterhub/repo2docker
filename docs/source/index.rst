@@ -5,11 +5,14 @@ jupyter-repo2docker
 images from source code repositories** that run via a Jupyter server.
 
 ``repo2docker`` fetches a repository
-(e.g., from GitHub or other locations) and builds a container image
+(from GitHub, GitLab or other locations) and builds a container image
 based on the configuration files found in the repository. It can be
 used to explore a repository locally by building and executing the
 constructed image of the repository, or as a means of building images that
 are pushed to a Docker registry.
+
+``repo2docker`` is the tool used by `BinderHub <https://binderhub.readthedocs.io>`_
+to build images on demand.
 
 Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
 `ask questions <https://gitter.im/jupyterhub/binder>`_ or
@@ -21,14 +24,18 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
 
    install
    usage
+   faq
 
 .. toctree::
-   :maxdepth: 1
-   :caption: How-to...
+   :maxdepth: 2
+   :caption: How-To guides
 
    howto/user_interface
    howto/languages
+   howto/export_environment
+   howto/lab_workspaces
    howto/jupyterhub_images
+   howto/deploy
 
 .. toctree::
    :maxdepth: 2
@@ -37,11 +44,18 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    config_files
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Advanced and developer information
+   :maxdepth: 2
+   :caption: Contribute to repo2docker
 
-   faq
-   deploy
-   design
+   contributing/contributing
+   contributing/roadmap
    architecture
-   dev_newbuildpack
+   design
+   contributing/tasks
+   contributing/buildpack
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Changelog
+
+   changelog

@@ -17,6 +17,20 @@ class ContentProvider:
     def __init__(self):
         self.log = logging.getLogger("repo2docker")
 
+    @property
+    def content_id(self):
+        """A unique ID to represent the version of the content.
+        This ID is used to name the built images. If the ID is the same between
+        two runs of repo2docker we will reuse an existing image (if it exists).
+        By providing an ID that summarizes the content we can reuse existing
+        images and speed up build times. A good ID is the revision of a Git
+        repository or a hash computed from all the content.
+        The type content ID can be any string.
+        To disable this behaviour set this property to `None` in which case
+        a fresh image will always be built.
+        """
+        return None
+
     def detect(self, repo, ref=None, extra_args=None):
         """Determine compatibility between source and this provider.
 
@@ -56,4 +70,4 @@ class Local(ContentProvider):
         msg = "Local content provider assumes {} == {}".format(spec['path'],
                                                                output_dir)
         assert output_dir == spec['path'], msg
-        yield
+        yield "Using local repo {}.\n".format(spec['path'])

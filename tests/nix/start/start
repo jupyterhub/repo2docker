@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export TEST_START_VAR="var is set"
+
+exec "$@"

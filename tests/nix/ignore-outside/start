@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# this script should not be executed
+echo "The start script in the top level directory should not be executed"
+exit 1

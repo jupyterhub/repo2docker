@@ -12,12 +12,16 @@ import os
 import pipes
 import shlex
 import requests
+import subprocess
 import time
+
+from tempfile import TemporaryDirectory
 
 import pytest
 import yaml
 
 from repo2docker.app import Repo2Docker
+from repo2docker.__main__ import make_r2d
 
 
 def pytest_collect_file(parent, path):
@@ -30,8 +34,8 @@ def pytest_collect_file(parent, path):
 def make_test_func(args):
     """Generate a test function that runs repo2docker"""
     def test():
-        app = Repo2Docker()
-        app.initialize(args)
+        app = make_r2d(args)
+        app.initialize()
         if app.run_cmd:
             # verify test, run it
             app.start()
@@ -76,6 +80,85 @@ def run_repo2docker():
     return run_test
 
 
+def _add_content_to_git(repo_dir):
+    """Add content to file 'test' in git repository and commit."""
+    # use append mode so this can be called multiple times
+    with open(os.path.join(repo_dir, 'test'), 'a') as f:
+        f.write("Hello")
+
+    subprocess.check_call(['git', 'add', 'test'], cwd=repo_dir)
+    subprocess.check_call(['git', 'commit', '-m', 'Test commit'],
+                          cwd=repo_dir)
+
+
+def _get_sha1(repo_dir):
+    """Get repository's current commit SHA1."""
+    sha1 = subprocess.Popen(['git', 'rev-parse', 'HEAD'],
+                            stdout=subprocess.PIPE, cwd=repo_dir)
+    return sha1.stdout.read().decode().strip()
+
+
+@pytest.fixture()
+def git_repo():
+    """
+    Make a dummy git repo in which user can perform git operations
+
+    Should be used as a contextmanager, it will delete directory when done
+    """
+    with TemporaryDirectory() as gitdir:
+        subprocess.check_call(['git', 'init'], cwd=gitdir)
+        yield gitdir
+
+
+@pytest.fixture()
+def repo_with_content(git_repo):
+    """Create a git repository with content"""
+    _add_content_to_git(git_repo)
+    sha1 = _get_sha1(git_repo)
+
+    yield git_repo, sha1
+
+
+@pytest.fixture()
+def repo_with_submodule():
+    """Create a git repository with a git submodule in a non-master branch.
+
+    Provides parent repository directory, current parent commit SHA1, and
+    the submodule's current commit. The submodule will be added under the
+    name "submod" in the parent repository.
+
+    Creating the submodule in a separate branch is useful to prove that
+    submodules are initialized properly when the master branch doesn't have
+    the submodule yet.
+
+    """
+    with TemporaryDirectory() as git_a_dir, TemporaryDirectory() as git_b_dir:
+        # create "parent" repository
+        subprocess.check_call(['git', 'init'], cwd=git_a_dir)
+        _add_content_to_git(git_a_dir)
+        # create repository with 2 commits that will be the submodule
+        subprocess.check_call(['git', 'init'], cwd=git_b_dir)
+        _add_content_to_git(git_b_dir)
+        submod_sha1_b = _get_sha1(git_b_dir)
+        _add_content_to_git(git_b_dir)
+
+        # create a new branch in the parent to add the submodule
+        subprocess.check_call(['git', 'checkout', '-b', 'branch-with-submod'],
+                              cwd=git_a_dir)
+        subprocess.check_call(['git', 'submodule', 'add', git_b_dir, 'submod'],
+                              cwd=git_a_dir)
+        # checkout the first commit for the submod, not the latest
+        subprocess.check_call(['git', 'checkout', submod_sha1_b],
+                              cwd=os.path.join(git_a_dir, 'submod'))
+        subprocess.check_call(['git', 'add', git_a_dir, ".gitmodules"],
+                              cwd=git_a_dir)
+        subprocess.check_call(['git', 'commit', '-m', 'Add B repos submod'],
+                              cwd=git_a_dir)
+
+        sha1_a = _get_sha1(git_a_dir)
+        yield git_a_dir, sha1_a, submod_sha1_b
+
+
 class Repo2DockerTest(pytest.Function):
     """A pytest.Item for running repo2docker"""
     def __init__(self, name, parent, args):
@@ -102,20 +185,26 @@ class Repo2DockerTest(pytest.Function):
 
 class LocalRepo(pytest.File):
     def collect(self):
+        args = [
+            '--appendix', 'RUN echo "appendix" > /tmp/appendix',
+        ]
+        # If there's an extra-args.yaml file in a test dir, assume it contains
+        # a yaml list with extra arguments to be passed to repo2docker
+        extra_args_path = os.path.join(self.fspath.dirname, 'extra-args.yaml')
+        if os.path.exists(extra_args_path):
+            with open(extra_args_path) as f:
+                extra_args = yaml.safe_load(f)
+            args += extra_args
+
+        args.append(self.fspath.dirname)
+
         yield Repo2DockerTest(
             'build', self,
-            args=[
-                '--appendix', 'RUN echo "appendix" > /tmp/appendix',
-                self.fspath.dirname,
-            ],
+            args=args
         )
         yield Repo2DockerTest(
             self.fspath.basename, self,
-            args=[
-                '--appendix', 'RUN echo "appendix" > /tmp/appendix',
-                self.fspath.dirname,
-                './verify',
-            ],
+            args=args + ['./verify']
         )
 
 
