@@ -73,6 +73,8 @@ rm -rf /srv/conda/pkgs
 
 # Remove the big installer so we don't increase docker image size too much
 rm ${INSTALLER_PATH}
+# Remove pip cache created as part of installing miniconda
+rm -rf /root/.cache
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
 
