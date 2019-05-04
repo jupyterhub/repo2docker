@@ -69,6 +69,7 @@ fi
 
 # Clean things out!
 conda clean -tipsy
+rm -rf /srv/conda/pkgs
 
 # Remove the big installer so we don't increase docker image size too much
 rm ${INSTALLER_PATH}
