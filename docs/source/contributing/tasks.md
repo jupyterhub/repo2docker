@@ -143,7 +143,7 @@ Once the new release has been pushed to PyPI, we need to create a new
 release on the [GitHub repository releases page](https://github.com/jupyter/repo2docker/releases). Once on that page, follow these steps:
 
 * Click "Draft a new release"
-* Choose a tag version following tag you just created above
+* Choose a tag version using the same tag you just created above
 * The release name is simply the tag version
 * The description is [a link to the Changelog](https://github.com/jupyter/repo2docker/blob/master/docs/source/changelog.rst),
   ideally with an anchor to the latest release.
