@@ -90,7 +90,7 @@ See the subsections below for more detailed instructions.
    change log (details below) and commit the change log, then update
    the pull request.
 
-   
+
 ### Make a Pull Request
 
 Once you've made the commit, please make a Pull Request to the `jupyterhub/repo2docker`
@@ -104,19 +104,54 @@ test to prevent the bug from coming back/the feature breaking in the future.
 
 We try to make a release of repo2docker every few months if possible.
 
-We follow semantic versioning.
+We follow [semantic versioning](https://semver.org/).
 
-Check that the Change log is ready and then tag a new release locally:
+A new release will automatically be created when a new git tag is created
+and pushed to the repository (using
+[Travis CI](https://github.com/jupyter/repo2docker/blob/master/.travis.yml#L52)).
+
+To create a new release, follow these steps:
+
+### Confirm that the changelog is ready
+
+[The changelog](https://github.com/jupyter/repo2docker/blob/master/docs/source/changelog.rst)
+should reflect all significant enhancements and fixes to repo2docker and
+its documentation. In addition, ensure that the correct version is displayed
+at the top, and create a new `dev` section if needed.
+
+### Create a new tag and push it
+
+First, tag a new release locally:
 
 ```bash
-V=0.7.0 git tag -am "release $V" $V
+V=0.7.0; git tag -am "release $V" $V
+```
+
+Then push this change up to the master repository
+
+```
 git push origin --tags
 ```
 
-When the travis run completes check that the new release is available on PyPI.
+Travis should automatically run the tests and, if they pass, create a
+new release on the [repo2docker PyPI](https://pypi.org/project/jupyter-repo2docker/).
+Once this has completed, make sure that the new version has been updated.
 
+### Create a new release on the GitHub repository
 
-### Update the change log
+Once the new release has been pushed to PyPI, we need to create a new
+release on the [GitHub repository releases page](https://github.com/jupyter/repo2docker/releases). Once on that page, follow these steps:
+
+* Click "Draft a new release"
+* Choose a tag version using the same tag you just created above
+* The release name is simply the tag version
+* The description is [a link to the Changelog](https://github.com/jupyter/repo2docker/blob/master/docs/source/changelog.rst),
+  ideally with an anchor to the latest release.
+* Finally, click "Publish release"
+
+That's it!
+
+## Update the change log
 
 To add your change to the change log, find the relevant Feature/Bug
 fix/API change section for the next release near the top of the file;
@@ -156,12 +191,12 @@ should be superseded by either a next release candidate, or the final
 release for that version (bugfix version 0).
 
 
-### Keeping the Pipfile and requirements files up to date
+## Keeping the Pipfile and requirements files up to date
 
-We now have both a `dev-requirements.txt` and a `Pifile` for repo2docker, as 
-such it is important to keep these in sync/up-to-date. 
+We now have both a `dev-requirements.txt` and a `Pifile` for repo2docker, as
+such it is important to keep these in sync/up-to-date.
 
-Both files use `pip identifiers` so if you are updating for example the Sphinx version 
+Both files use `pip identifiers` so if you are updating for example the Sphinx version
 in the `doc-requirements.txt` (currently `Sphinx = ">=1.4,!=1.5.4"`) you can use the
 same syntax to update the Pipfile and viceversa.
 
