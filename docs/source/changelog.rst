@@ -2,10 +2,26 @@
 Changelog
 =========
 
-Version 0.9.0
+
+Version x.x.x
 =============
 
 Release date: TBD
+
+New features
+------------
+
+API changes
+-----------
+
+Bug fixes
+---------
+
+
+Version 0.9.0
+=============
+
+Release date: 2019-05-05
 
 New features
 ------------
