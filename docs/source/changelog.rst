@@ -23,6 +23,9 @@ New features
 - Updated contributor guide and issue templates for bugs, feature requests,
   and support questions in :pr:`654` and :pr:`655` by :user:`KirstieJane` and
   :user:`betatim`.
+- Create a page naming and describing the "Reproducible Execution
+  Environment Specification" (the specification used by repo2docker)
+  in :pr:`662` by :user:`choldgraf`.
 
 API changes
 -----------
