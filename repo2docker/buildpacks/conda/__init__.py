@@ -182,9 +182,8 @@ class CondaBuildPack(BaseImage):
                 '${NB_USER}',
                 r"""
                 conda env update -p {0} -f "{1}" && \
-                conda clean -tipsy && \
-                conda list -p {0} && \
-                rm -rf /srv/conda/pkgs
+                conda clean --all -f -y && \
+                conda list -p {0}
                 """.format(env_prefix, environment_yml)
             ))
         return super().get_assemble_scripts() + assembly_scripts
