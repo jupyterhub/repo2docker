@@ -45,15 +45,10 @@ fi
 
 # Install Mamba and symlink it to conda
 conda install -c conda-forge -c conda-forge/label/mamba-alpha mamba
-mkdir -p ~/.local/bin
-export PATH=~/.local/bin:${PATH}
-ln -fs $(which mamba) ~/.local/bin/conda
-
-which conda
 
 echo "installing notebook env:"
 cat /tmp/environment.yml
-conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
+mamba env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
 
 # empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
@@ -69,14 +64,14 @@ if [[ -f /tmp/kernel-environment.yml ]]; then
     echo "installing kernel env:"
     cat /tmp/kernel-environment.yml
 
-    conda env create -p ${KERNEL_PYTHON_PREFIX} -f /tmp/kernel-environment.yml
+    mamba env create -p ${KERNEL_PYTHON_PREFIX} -f /tmp/kernel-environment.yml
     ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${NB_PYTHON_PREFIX}"
     echo '' > ${KERNEL_PYTHON_PREFIX}/conda-meta/history
-    conda list -p ${KERNEL_PYTHON_PREFIX}
+    mamba list -p ${KERNEL_PYTHON_PREFIX}
 fi
 
 # Clean things out!
-conda clean --all -f -y
+mamba clean --all -f -y
 
 # Remove the big installer so we don't increase docker image size too much
 rm ${INSTALLER_PATH}
@@ -86,5 +81,6 @@ rm -rf /root/.cache
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
 
-conda list -n root
-conda list -p ${NB_PYTHON_PREFIX}
+mamba -V
+mamba list -n root
+mamba list -p ${NB_PYTHON_PREFIX}
