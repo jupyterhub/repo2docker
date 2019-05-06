@@ -68,10 +68,13 @@ if [[ -f /tmp/kernel-environment.yml ]]; then
 fi
 
 # Clean things out!
-conda clean -tipsy
+conda clean --all -f -y
 
 # Remove the big installer so we don't increase docker image size too much
 rm ${INSTALLER_PATH}
+
+# Remove the pip cache created as part of installing miniconda
+rm -rf /root/.cache
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
 
