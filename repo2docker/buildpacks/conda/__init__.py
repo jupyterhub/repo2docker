@@ -181,6 +181,7 @@ class CondaBuildPack(BaseImage):
             assembly_scripts.append((
                 '${NB_USER}',
                 r"""
+                conda -V && \
                 conda env update -p {0} -f "{1}" && \
                 conda clean --all -f -y && \
                 conda list -p {0}
