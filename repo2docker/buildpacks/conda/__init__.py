@@ -180,11 +180,12 @@ class CondaBuildPack(BaseImage):
         if os.path.exists(environment_yml):
             assembly_scripts.append((
                 '${NB_USER}',
+                # HACK: Directly use mamba, rather than trying to symlink
                 r"""
-                conda -V && \
-                conda env update -p {0} -f "{1}" && \
-                conda clean --all -f -y && \
-                conda list -p {0}
+                mamba -V && \
+                mamba env update -p {0} -f "{1}" && \
+                mamba clean --all -f -y && \
+                mamba list -p {0}
                 """.format(env_prefix, environment_yml)
             ))
         return super().get_assemble_scripts() + assembly_scripts
