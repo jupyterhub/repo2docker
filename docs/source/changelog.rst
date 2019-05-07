@@ -16,6 +16,8 @@ API changes
 
 Bug fixes
 ---------
+- Prevent building the image as root if --user-id and --user-name are not specified
+  in :pr:`676` by :user:`Xarthisius`.
 
 
 Version 0.9.0
