@@ -10,7 +10,6 @@ from repo2docker.buildpacks import BaseImage, DockerBuildPack, LegacyBinderDocke
 
 
 def test_cache_from_base(tmpdir):
-    FakeDockerClient = MagicMock()
     cache_from = [
         'image-1:latest'
     ]
@@ -21,16 +20,14 @@ def test_cache_from_base(tmpdir):
 
     # Test base image build pack
     tmpdir.chdir()
-    for line in BaseImage().build(fake_client, 'image-2', '1Gi', {}, cache_from, extra_build_kwargs):
+    for line in BaseImage().build(fake_client, 'image-2', 100, {}, cache_from, extra_build_kwargs):
         assert line == fake_log_value
     called_args, called_kwargs = fake_client.build.call_args
     assert 'cache_from' in called_kwargs
     assert called_kwargs['cache_from'] == cache_from
 
 
-
 def test_cache_from_docker(tmpdir):
-    FakeDockerClient = MagicMock()
     cache_from = [
         'image-1:latest'
     ]
@@ -44,7 +41,7 @@ def test_cache_from_docker(tmpdir):
     with tmpdir.join("Dockerfile").open('w') as f:
         f.write('FROM scratch\n')
 
-    for line in DockerBuildPack().build(fake_client, 'image-2', '1Gi', {}, cache_from, extra_build_kwargs):
+    for line in DockerBuildPack().build(fake_client, 'image-2', 100, {}, cache_from, extra_build_kwargs):
         assert line == fake_log_value
     called_args, called_kwargs = fake_client.build.call_args
     assert 'cache_from' in called_kwargs
@@ -52,7 +49,6 @@ def test_cache_from_docker(tmpdir):
 
 
 def test_cache_from_legacy(tmpdir):
-    FakeDockerClient = MagicMock()
     cache_from = [
         'image-1:latest'
     ]
@@ -65,9 +61,8 @@ def test_cache_from_legacy(tmpdir):
     with tmpdir.join("Dockerfile").open('w') as f:
         f.write('FROM andrewosh/binder-base\n')
 
-    for line in LegacyBinderDockerBuildPack().build(fake_client, 'image-2', '1Gi', {}, cache_from, extra_build_kwargs):
+    for line in LegacyBinderDockerBuildPack().build(fake_client, 'image-2', 100, {}, cache_from, extra_build_kwargs):
         assert line == fake_log_value
     called_args, called_kwargs = fake_client.build.call_args
     assert 'cache_from' in called_kwargs
     assert called_kwargs['cache_from'] == cache_from
-
