@@ -523,13 +523,17 @@ class BuildPack:
         tar.close()
         tarf.seek(0)
 
-        limits = {
-            # Always disable memory swap for building, since mostly
-            # nothing good can come of that.
-            'memswap': -1
-        }
+        # If you work on this bit of code check the corresponding code in
+        # buildpacks/docker.py where it is duplicated
+        limits = {}
         if memory_limit:
-            limits['memory'] = memory_limit
+            # We'd like to always disable swap but all we can do is set the
+            # total amount. This means we only limit it when the caller set
+            # a memory limit
+            limits = {
+                'memory': memory_limit,
+                'memswap': memory_limit + 1
+            }
 
         build_kwargs = dict(
             fileobj=tarf,

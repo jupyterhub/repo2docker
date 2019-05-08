@@ -21,13 +21,17 @@ class DockerBuildPack(BuildPack):
 
     def build(self, client, image_spec, memory_limit, build_args, cache_from, extra_build_kwargs):
         """Build a Docker image based on the Dockerfile in the source repo."""
-        limits = {
-            # Always disable memory swap for building, since mostly
-            # nothing good can come of that.
-            'memswap': -1
-        }
+        # If you work on this bit of code check the corresponding code in
+        # buildpacks/base.py where it is duplicated
+        limits = {}
         if memory_limit:
-            limits['memory'] = memory_limit
+            # We'd like to always disable swap but all we can do is set the
+            # total amount. This means we onnly limit it when the caller set
+            # a memory limit
+            limits = {
+                'memory': memory_limit,
+                'memswap': memory_limit + 1
+            }
 
         build_kwargs = dict(
             path=os.getcwd(),
