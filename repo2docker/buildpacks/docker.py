@@ -33,7 +33,7 @@ class DockerBuildPack(BuildPack):
             # a memory limit
             limits = {
                 'memory': memory_limit,
-                'memswap': memory_limit + 1
+                'memswap': memory_limit,
             }
 
         build_kwargs = dict(
