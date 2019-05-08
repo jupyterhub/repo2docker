@@ -10,9 +10,14 @@ import os
 import shutil
 import time
 
+from unittest.mock import MagicMock
+
+import docker
+
 import pytest
 
 from repo2docker.app import Repo2Docker
+from repo2docker.buildpacks import BaseImage, DockerBuildPack
 
 
 basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -82,3 +87,17 @@ def test_memlimit_same_postbuild():
             file_contents.append(f.read())
     # Make sure they're all the same
     assert len(set(file_contents)) == 1
+
+
+@pytest.mark.parametrize('BuildPack', [BaseImage, DockerBuildPack])
+def test_memlimit_argument_type(BuildPack):
+    # check that an exception is raised when the memory limit isn't an int
+    fake_log_value = {'stream': 'fake'}
+    fake_client = MagicMock(spec=docker.APIClient)
+    fake_client.build.return_value = iter([fake_log_value])
+
+    with pytest.raises(ValueError) as exc_info:
+        for line in BuildPack().build(fake_client, 'image-2', "10Gi", {}, [], {}):
+            pass
+
+        assert "The memory limit has to be specified as an" in str(exc_info.value)
