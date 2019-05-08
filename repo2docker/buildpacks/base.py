@@ -530,9 +530,10 @@ class BuildPack:
                              "integer but is '{}'".format(type(memory_limit)))
         limits = {}
         if memory_limit:
-            # We'd like to always disable swap but all we can do is set the
-            # total amount. This means we only limit it when the caller set
-            # a memory limit
+            # We want to always disable swap. Docker expects `memswap` to
+            # be total allowable memory, *including* swap - while `memory`
+            # points to non-swap memory. We set both values to the same so
+            # we use no swap.
             limits = {
                 'memory': memory_limit,
                 'memswap': memory_limit
