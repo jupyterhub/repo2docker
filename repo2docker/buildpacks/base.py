@@ -525,6 +525,9 @@ class BuildPack:
 
         # If you work on this bit of code check the corresponding code in
         # buildpacks/docker.py where it is duplicated
+        if not isinstance(memory_limit, int):
+            raise ValueError("The memory limit has to be specified as an"
+                             "integer but is '{}'".format(type(memory_limit)))
         limits = {}
         if memory_limit:
             # We'd like to always disable swap but all we can do is set the
