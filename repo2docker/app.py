@@ -8,6 +8,7 @@ Usage:
     python -m repo2docker https://github.com/you/your-repo
 """
 import argparse
+import errno
 import json
 import sys
 import logging
@@ -650,6 +651,19 @@ class Repo2Docker(Application):
                                extra=dict(phase='building'))
 
                 if not self.dry_run:
+                    if self.user_id == 0:
+                        self.log.error(
+                            'Root as the primary user in the image is not permitted.\n'
+                        )
+                        self.log.info(
+                            "The uid and the username of the user invoking repo2docker "
+                            "is used to create a mirror account in the image by default. "
+                            "To override that behavior pass --user-id <numeric_id> and "
+                            " --user-name <string> to repo2docker.\n"
+                            "Please see repo2docker --help for more details.\n"
+                        )
+                        sys.exit(errno.EPERM)
+
                     build_args = {
                         'NB_USER': self.user_name,
                         'NB_UID': str(self.user_id),
