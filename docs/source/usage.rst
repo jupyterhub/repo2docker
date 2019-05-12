@@ -10,7 +10,8 @@ Using ``repo2docker``
    order to run ``repo2docker``. For more information on installing
    ``repo2docker``, see :ref:`install`.
 
-``repo2docker`` is called with a URL/path to a git repository. It then
+``repo2docker`` can build a reproducible computational environment for any repository that
+follows :ref:`specification`. repo2docker is called with a URL/path to a repository. It then
 performs these steps:
 
 1. Inspects the repository for :ref:`configuration files <config-files>`. These will be used to build
@@ -72,13 +73,14 @@ specify the ``branch-name`` or ``commit-hash``. For example::
 Where to put configuration files
 ================================
 
-``repo2docker`` will look for configuration files in either:
+``repo2docker`` will look for configuration files in:
 
 * A folder named ``binder/`` in the root of the repository.
+* A folder named ``.binder/`` in the root of the repository.
 * The root directory of the repository.
 
-If the folder ``binder/`` is located at the top level of the repository,
-only configuration files in the ``binder/`` folder will be considered.
+`repo2docker` searches for these folders in order (``binder/``, ``.binder/``,
+root). Only configuration files in the first identified folder are considered.
 
 Check the complete list of :ref:`configuration files <config-files>` supported
 by ``repo2docker`` to see how to configure the build process.

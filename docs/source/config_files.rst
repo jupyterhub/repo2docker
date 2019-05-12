@@ -195,7 +195,7 @@ A script that can contain simple commands to be run at runtime (as an
 `ENTRYPOINT <https://docs.docker.com/engine/reference/builder/#entrypoint>`_
 to the docker container). If you want this to be a shell script, make sure the
 first line is ``#!/bin/bash``. The last line must be ``exec "$@"``
-equivalent.
+or equivalent.
 
 Use this to set environment variables that software installed in your container
 expects to be set. This script is executed each time your binder is started and

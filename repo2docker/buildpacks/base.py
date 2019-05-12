@@ -155,8 +155,12 @@ RUN ./{{ s }}
 # Add start script
 {% if start_script is not none -%}
 RUN chmod +x "{{ start_script }}"
-ENTRYPOINT ["{{ start_script }}"]
+ENV R2D_ENTRYPOINT "{{ start_script }}"
 {% endif -%}
+
+# Add entrypoint
+COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
+ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
 # Specify the default command to run
 CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
@@ -166,6 +170,11 @@ CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
 {{ appendix }}
 {% endif %}
 """
+
+ENTRYPOINT_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "repo2docker-entrypoint",
+)
 
 
 class BuildPack:
@@ -414,12 +423,26 @@ class BuildPack:
         """
         return None
 
+    @property
+    def binder_dir(self):
+        has_binder = os.path.isdir("binder")
+        has_dotbinder = os.path.isdir(".binder")
+
+        if has_binder and has_dotbinder:
+            raise RuntimeError(
+                "The repository contains both a 'binder' and a '.binder' "
+                "directory. However they are exclusive.")
+
+        if has_dotbinder:
+            return ".binder"
+        elif has_binder:
+            return "binder"
+        else:
+            return ""
+
     def binder_path(self, path):
         """Locate a file"""
-        if os.path.exists('binder'):
-            return os.path.join('binder', path)
-        else:
-            return path
+        return os.path.join(self.binder_dir, path)
 
     def detect(self):
         return True
@@ -493,18 +516,28 @@ class BuildPack:
             src_path = os.path.join(os.path.dirname(__file__), *src_parts)
             tar.add(src_path, src, filter=_filter_tar)
 
+        tar.add(ENTRYPOINT_FILE, "repo2docker-entrypoint", filter=_filter_tar)
+
         tar.add('.', 'src/', filter=_filter_tar)
 
         tar.close()
         tarf.seek(0)
 
-        limits = {
-            # Always disable memory swap for building, since mostly
-            # nothing good can come of that.
-            'memswap': -1
-        }
+        # If you work on this bit of code check the corresponding code in
+        # buildpacks/docker.py where it is duplicated
+        if not isinstance(memory_limit, int):
+            raise ValueError("The memory limit has to be specified as an"
+                             "integer but is '{}'".format(type(memory_limit)))
+        limits = {}
         if memory_limit:
-            limits['memory'] = memory_limit
+            # We want to always disable swap. Docker expects `memswap` to
+            # be total allowable memory, *including* swap - while `memory`
+            # points to non-swap memory. We set both values to the same so
+            # we use no swap.
+            limits = {
+                'memory': memory_limit,
+                'memswap': memory_limit
+            }
 
         build_kwargs = dict(
             fileobj=tarf,
@@ -643,7 +676,12 @@ class BaseImage(BuildPack):
         return []
 
     def get_start_script(self):
-        start = self.binder_path('./start')
+        start = self.binder_path('start')
         if os.path.exists(start):
-            return start
+            # Return an absolute path to start
+            # This is important when built container images start with
+            # a working directory that is different from ${REPO_DIR}
+            # This isn't a problem with anything else, since start is
+            # the only path evaluated at container start time rather than build time
+            return os.path.join('${REPO_DIR}', start)
         return None

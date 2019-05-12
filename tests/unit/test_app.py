@@ -1,3 +1,5 @@
+import errno
+import pytest
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
@@ -102,3 +104,25 @@ def test_run_kwargs(repo_with_content):
     args, kwargs = containers.run.call_args
     assert 'somekey' in kwargs
     assert kwargs['somekey'] == "somevalue"
+
+
+def test_root_not_allowed():
+    with TemporaryDirectory() as src, patch('os.geteuid') as geteuid:
+        geteuid.return_value = 0
+        argv = [src]
+        app = make_r2d(argv)
+        with pytest.raises(SystemExit) as exc:
+            app.build()
+            assert exc.code == errno.EPERM
+
+        app = Repo2Docker(
+            repo=src,
+            user_id=1000,
+            user_name='jovyan',
+            run=False,
+        )
+        app.initialize()
+        with patch.object(docker.APIClient, 'build') as builds:
+            builds.return_value = []
+            app.build()
+        builds.assert_called_once()
