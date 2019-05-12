@@ -30,8 +30,15 @@ from traitlets.config import Application
 
 from . import __version__
 from .buildpacks import (
-    PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, JuliaProjectTomlBuildPack, JuliaRequireBuildPack, RBuildPack, NixBuildPack
+    CondaBuildPack,
+    DockerBuildPack,
+    JuliaProjectTomlBuildPack,
+    JuliaRequireBuildPack,
+    LegacyBinderDockerBuildPack,
+    NixBuildPack,
+    PipfileBuildPack,
+    PythonBuildPack,
+    RBuildPack,
 )
 from . import contentproviders
 from .utils import ByteSpecification, chdir
@@ -91,6 +98,7 @@ class Repo2Docker(Application):
             NixBuildPack,
             RBuildPack,
             CondaBuildPack,
+            PipfileBuildPack,
             PythonBuildPack,
         ],
         config=True,

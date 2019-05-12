@@ -1,5 +1,6 @@
 from .base import BuildPack, BaseImage
 from .python import PythonBuildPack
+from .pipfile import PipfileBuildPack
 from .conda import CondaBuildPack
 from .julia import JuliaProjectTomlBuildPack
 from .julia import JuliaRequireBuildPack
