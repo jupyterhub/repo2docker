@@ -25,13 +25,19 @@ from docker.errors import DockerException
 import escapism
 from pythonjsonlogger import jsonlogger
 
-from traitlets import Any, Dict, Int,  List, Unicode, Bool, default
+from traitlets import Any, Dict, Int, List, Unicode, Bool, default
 from traitlets.config import Application
 
 from . import __version__
 from .buildpacks import (
-    PythonBuildPack, DockerBuildPack, LegacyBinderDockerBuildPack,
-    CondaBuildPack, JuliaProjectTomlBuildPack, JuliaRequireBuildPack, RBuildPack, NixBuildPack
+    PythonBuildPack,
+    DockerBuildPack,
+    LegacyBinderDockerBuildPack,
+    CondaBuildPack,
+    JuliaProjectTomlBuildPack,
+    JuliaRequireBuildPack,
+    RBuildPack,
+    NixBuildPack,
 )
 from . import contentproviders
 from .utils import ByteSpecification, chdir
@@ -39,11 +45,12 @@ from .utils import ByteSpecification, chdir
 
 class Repo2Docker(Application):
     """An application for converting git repositories to docker images"""
-    name = 'jupyter-repo2docker'
+
+    name = "jupyter-repo2docker"
     version = __version__
     description = __doc__
 
-    @default('log_level')
+    @default("log_level")
     def _default_log_level(self):
         """The application's default log level"""
         return logging.INFO
@@ -57,17 +64,17 @@ class Repo2Docker(Application):
 
         The default is to use the system's temporary directory. Should be
         somewhere ephemeral, such as /tmp.
-        """
+        """,
     )
 
     subdir = Unicode(
-        '',
+        "",
         config=True,
         help="""
         Subdirectory of the git repository to examine.
 
         Defaults to ''.
-        """
+        """,
     )
 
     cache_from = List(
@@ -79,7 +86,7 @@ class Repo2Docker(Application):
         Docker only tries to re-use image layers from images built locally,
         not pulled from a registry. We can ask it to explicitly re-use layers
         from non-locally built images by through the 'cache_from' parameter.
-        """
+        """,
     )
 
     buildpacks = List(
@@ -96,7 +103,7 @@ class Repo2Docker(Application):
         config=True,
         help="""
         Ordered list of BuildPacks to try when building a git repository.
-        """
+        """,
     )
 
     extra_build_kwargs = Dict(
@@ -107,7 +114,7 @@ class Repo2Docker(Application):
         to configure the amount of access to CPU resources your container has.
         Reference https://docs.docker.com/config/containers/resource_constraints/#cpu
         """,
-        config=True
+        config=True,
     )
 
     extra_run_kwargs = Dict(
@@ -118,7 +125,7 @@ class Repo2Docker(Application):
         to configure the amount of access to CPU resources your container has.
         Reference https://docs.docker.com/config/containers/resource_constraints/#cpu
         """,
-        config=True
+        config=True,
     )
 
     default_buildpack = Any(
@@ -126,7 +133,7 @@ class Repo2Docker(Application):
         config=True,
         help="""
         The default build pack to use when no other buildpacks are found.
-        """
+        """,
     )
 
     # Git is our content provider of last resort. This is to maintain the
@@ -135,15 +142,12 @@ class Repo2Docker(Application):
     # detecting if something will successfully `git clone` is very hard if all
     # you can do is look at the path/URL to it.
     content_providers = List(
-        [
-            contentproviders.Local,
-            contentproviders.Git,
-        ],
+        [contentproviders.Local, contentproviders.Git],
         config=True,
         help="""
         Ordered list by priority of ContentProviders to try in turn to fetch
         the contents specified by the user.
-        """
+        """,
     )
 
     build_memory_limit = ByteSpecification(
@@ -153,7 +157,7 @@ class Repo2Docker(Application):
 
         Set to 0 for no limits.
         """,
-        config=True
+        config=True,
     )
 
     volumes = Dict(
@@ -171,7 +175,7 @@ class Repo2Docker(Application):
         destination is resolved relative to the working directory of the
         image - ($HOME by default)
         """,
-        config=True
+        config=True,
     )
 
     user_id = Int(
@@ -184,10 +188,10 @@ class Repo2Docker(Application):
 
         Might not affect Dockerfile builds.
         """,
-        config=True
+        config=True,
     )
 
-    @default('user_id')
+    @default("user_id")
     def _user_id_default(self):
         """
         Default user_id to current running user.
@@ -195,7 +199,7 @@ class Repo2Docker(Application):
         return os.geteuid()
 
     user_name = Unicode(
-        'jovyan',
+        "jovyan",
         help="""
         Username of the user to create inside the built image.
 
@@ -205,10 +209,10 @@ class Repo2Docker(Application):
         Defaults to username of currently running user, since that is the most
         common case when running repo2docker manually.
         """,
-        config=True
+        config=True,
     )
 
-    @default('user_name')
+    @default("user_name")
     def _user_name_default(self):
         """
         Default user_name to current running user.
@@ -222,7 +226,7 @@ class Repo2Docker(Application):
 
         Can be used to customize the resulting image after all
         standard build steps finish.
-        """
+        """,
     )
 
     json_logs = Bool(
@@ -232,7 +236,7 @@ class Repo2Docker(Application):
 
         Useful when stdout is consumed by other tools
         """,
-        config=True
+        config=True,
     )
 
     repo = Unicode(
@@ -242,7 +246,7 @@ class Repo2Docker(Application):
 
         Could be local path or git URL.
         """,
-        config=True
+        config=True,
     )
 
     ref = Unicode(
@@ -254,7 +258,7 @@ class Repo2Docker(Application):
         in a local clone before repository is built.
         """,
         config=True,
-        allow_none=True
+        allow_none=True,
     )
 
     cleanup_checkout = Bool(
@@ -264,7 +268,7 @@ class Repo2Docker(Application):
 
         Useful when repo2docker is doing the git cloning
         """,
-        config=True
+        config=True,
     )
 
     output_image_spec = Unicode(
@@ -274,7 +278,7 @@ class Repo2Docker(Application):
 
         Required parameter.
         """,
-        config=True
+        config=True,
     )
 
     push = Bool(
@@ -282,7 +286,7 @@ class Repo2Docker(Application):
         help="""
         Set to true to push docker image after building
         """,
-        config=True
+        config=True,
     )
 
     run = Bool(
@@ -290,7 +294,7 @@ class Repo2Docker(Application):
         help="""
         Run docker image after building
         """,
-        config=True
+        config=True,
     )
 
     # FIXME: Refactor class to be able to do --no-build without needing
@@ -300,7 +304,7 @@ class Repo2Docker(Application):
         help="""
         Do not actually build the docker image, just simulate it.
         """,
-        config=True
+        config=True,
     )
 
     # FIXME: Refactor classes to separate build & run steps
@@ -311,7 +315,7 @@ class Repo2Docker(Application):
 
         When left empty, a jupyter notebook is run.
         """,
-        config=True
+        config=True,
     )
 
     all_ports = Bool(
@@ -321,7 +325,7 @@ class Repo2Docker(Application):
 
         Equivalent to -P option to docker run
         """,
-        config=True
+        config=True,
     )
 
     ports = Dict(
@@ -333,7 +337,7 @@ class Repo2Docker(Application):
         {key} refers to port inside container, and {value}
         refers to port / host:port in the host
         """,
-        config=True
+        config=True,
     )
 
     environment = List(
@@ -343,17 +347,17 @@ class Repo2Docker(Application):
 
         Each item must be a string formatted as KEY=VALUE
         """,
-        config=True
+        config=True,
     )
 
     target_repo_dir = Unicode(
-        '',
+        "",
         help="""
         Path inside the image where contents of the repositories are copied to.
 
         Defaults to ${HOME} if not set
         """,
-        config=True
+        config=True,
     )
 
     def fetch(self, url, ref, checkout_path):
@@ -371,29 +375,33 @@ class Repo2Docker(Application):
             spec = cp.detect(url, ref=ref)
             if spec is not None:
                 picked_content_provider = cp
-                self.log.info("Picked {cp} content "
-                              "provider.\n".format(cp=cp.__class__.__name__))
+                self.log.info(
+                    "Picked {cp} content "
+                    "provider.\n".format(cp=cp.__class__.__name__)
+                )
                 break
 
         if picked_content_provider is None:
-            self.log.error("No matching content provider found for "
-                           "{url}.".format(url=url))
+            self.log.error(
+                "No matching content provider found for " "{url}.".format(url=url)
+            )
 
         for log_line in picked_content_provider.fetch(
-                spec, checkout_path, yield_output=self.json_logs):
-            self.log.info(log_line, extra=dict(phase='fetching'))
+            spec, checkout_path, yield_output=self.json_logs
+        ):
+            self.log.info(log_line, extra=dict(phase="fetching"))
 
         if not self.output_image_spec:
             self.output_image_spec = (
-                'r2d' + escapism.escape(self.repo, escape_char='-').lower()
-                )
+                "r2d" + escapism.escape(self.repo, escape_char="-").lower()
+            )
             # if we are building from a subdirectory include that in the
             # image name so we can tell builds from different sub-directories
             # apart.
             if self.subdir:
-                self.output_image_spec += (
-                    escapism.escape(self.subdir, escape_char='-').lower()
-                )
+                self.output_image_spec += escapism.escape(
+                    self.subdir, escape_char="-"
+                ).lower()
             if picked_content_provider.content_id is not None:
                 self.output_image_spec += picked_content_provider.content_id
             else:
@@ -404,9 +412,12 @@ class Repo2Docker(Application):
 
         Avoids non-JSON output on errors when using --json-logs
         """
-        self.log.error("Error during build: %s", evalue,
-                       exc_info=(etype, evalue, traceback),
-                       extra=dict(phase='failed'))
+        self.log.error(
+            "Error during build: %s",
+            evalue,
+            exc_info=(etype, evalue, traceback),
+            extra=dict(phase="failed"),
+        )
 
     def initialize(self):
         """Init repo2docker configuration before start"""
@@ -426,11 +437,9 @@ class Repo2Docker(Application):
             # due to json logger stuff above,
             # our log messages include carriage returns, newlines, etc.
             # remove the additional newline from the stream handler
-            self.log.handlers[0].terminator = ''
+            self.log.handlers[0].terminator = ""
             # We don't want a [Repo2Docker] on all messages
-            self.log.handlers[0].formatter = logging.Formatter(
-                fmt='%(message)s'
-            )
+            self.log.handlers[0].formatter = logging.Formatter(fmt="%(message)s")
 
         if self.dry_run and (self.run or self.push):
             raise ValueError("Cannot push or run image if we are not building it")
@@ -440,28 +449,31 @@ class Repo2Docker(Application):
 
     def push_image(self):
         """Push docker image to registry"""
-        client = docker.APIClient(version='auto', **kwargs_from_env())
+        client = docker.APIClient(version="auto", **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
         layers = {}
         last_emit_time = time.time()
         for line in client.push(self.output_image_spec, stream=True):
-            progress = json.loads(line.decode('utf-8'))
-            if 'error' in progress:
-                self.log.error(progress['error'], extra=dict(phase='failed'))
-                raise docker.errors.ImageLoadError(progress['error'])
-            if 'id' not in progress:
+            progress = json.loads(line.decode("utf-8"))
+            if "error" in progress:
+                self.log.error(progress["error"], extra=dict(phase="failed"))
+                raise docker.errors.ImageLoadError(progress["error"])
+            if "id" not in progress:
                 continue
-            if 'progressDetail' in progress and progress['progressDetail']:
-                layers[progress['id']] = progress['progressDetail']
+            if "progressDetail" in progress and progress["progressDetail"]:
+                layers[progress["id"]] = progress["progressDetail"]
             else:
-                layers[progress['id']] = progress['status']
+                layers[progress["id"]] = progress["status"]
             if time.time() - last_emit_time > 1.5:
-                self.log.info('Pushing image\n',
-                              extra=dict(progress=layers, phase='pushing'))
+                self.log.info(
+                    "Pushing image\n", extra=dict(progress=layers, phase="pushing")
+                )
                 last_emit_time = time.time()
-        self.log.info('Successfully pushed {}'.format(self.output_image_spec),
-                      extra=dict(phase='pushing'))
+        self.log.info(
+            "Successfully pushed {}".format(self.output_image_spec),
+            extra=dict(phase="pushing"),
+        )
 
     def run_image(self):
         """Run docker container from built image
@@ -476,13 +488,13 @@ class Repo2Docker(Application):
 
         Returns running container
         """
-        client = docker.from_env(version='auto')
+        client = docker.from_env(version="auto")
 
-        docker_host = os.environ.get('DOCKER_HOST')
+        docker_host = os.environ.get("DOCKER_HOST")
         if docker_host:
             host_name = urlparse(docker_host).hostname
         else:
-            host_name = '127.0.0.1'
+            host_name = "127.0.0.1"
         self.hostname = host_name
 
         if not self.run_cmd:
@@ -492,12 +504,15 @@ class Repo2Docker(Application):
             # make sure the base-notebook image is updated:
             # docker pull jupyter/base-notebook
             run_cmd = [
-                'jupyter', 'notebook',
-                '--ip', '0.0.0.0',
-                '--port', port,
+                "jupyter",
+                "notebook",
+                "--ip",
+                "0.0.0.0",
+                "--port",
+                port,
                 "--NotebookApp.custom_display_url=http://{}:{}".format(host_name, port),
             ]
-            ports = {'%s/tcp' % port: port}
+            ports = {"%s/tcp" % port: port}
         else:
             # run_cmd given by user, if port is also given then pass it on
             run_cmd = self.run_cmd
@@ -511,16 +526,15 @@ class Repo2Docker(Application):
         container_volumes = {}
         if self.volumes:
             api_client = docker.APIClient(
-                version='auto',
-                **docker.utils.kwargs_from_env()
+                version="auto", **docker.utils.kwargs_from_env()
             )
             image = api_client.inspect_image(self.output_image_spec)
-            image_workdir = image['ContainerConfig']['WorkingDir']
+            image_workdir = image["ContainerConfig"]["WorkingDir"]
 
             for k, v in self.volumes.items():
                 container_volumes[os.path.abspath(k)] = {
-                    'bind': v if v.startswith('/') else os.path.join(image_workdir, v),
-                    'mode': 'rw'
+                    "bind": v if v.startswith("/") else os.path.join(image_workdir, v),
+                    "mode": "rw",
                 }
 
         run_kwargs = dict(
@@ -529,14 +543,14 @@ class Repo2Docker(Application):
             detach=True,
             command=run_cmd,
             volumes=container_volumes,
-            environment=self.environment
+            environment=self.environment,
         )
 
         run_kwargs.update(self.extra_run_kwargs)
 
         container = client.containers.run(self.output_image_spec, **run_kwargs)
 
-        while container.status == 'created':
+        while container.status == "created":
             time.sleep(0.5)
             container.reload()
 
@@ -550,15 +564,13 @@ class Repo2Docker(Application):
 
         try:
             for line in container.logs(stream=True):
-                self.log.info(line.decode('utf-8'),
-                              extra=dict(phase='running'))
+                self.log.info(line.decode("utf-8"), extra=dict(phase="running"))
         finally:
             container.reload()
-            if container.status == 'running':
-                self.log.info('Stopping container...\n',
-                              extra=dict(phase='running'))
+            if container.status == "running":
+                self.log.info("Stopping container...\n", extra=dict(phase="running"))
                 container.kill()
-            exit_code = container.attrs['State']['ExitCode']
+            exit_code = container.attrs["State"]["ExitCode"]
             container.remove()
             if exit_code:
                 sys.exit(exit_code)
@@ -568,6 +580,7 @@ class Repo2Docker(Application):
         Hacky method to get a free random port on local host
         """
         import socket
+
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind(("", 0))
         port = s.getsockname()[1]
@@ -580,10 +593,10 @@ class Repo2Docker(Application):
         if self.dry_run:
             return False
         # check if we already have an image for this content
-        client = docker.APIClient(version='auto', **kwargs_from_env())
+        client = docker.APIClient(version="auto", **kwargs_from_env())
         for image in client.images():
-            if image['RepoTags'] is not None:
-                for tag in image['RepoTags']:
+            if image["RepoTags"] is not None:
+                for tag in image["RepoTags"]:
                     if tag == self.output_image_spec + ":latest":
                         return True
         return False
@@ -595,8 +608,7 @@ class Repo2Docker(Application):
         # Check if r2d can connect to docker daemon
         if not self.dry_run:
             try:
-                docker_client = docker.APIClient(version='auto',
-                                                 **kwargs_from_env())
+                docker_client = docker.APIClient(version="auto", **kwargs_from_env())
             except DockerException as e:
                 self.log.exception(e)
                 raise
@@ -609,7 +621,7 @@ class Repo2Docker(Application):
             checkout_path = self.repo
         else:
             if self.git_workdir is None:
-                checkout_path = tempfile.mkdtemp(prefix='repo2docker')
+                checkout_path = tempfile.mkdtemp(prefix="repo2docker")
             else:
                 checkout_path = self.git_workdir
 
@@ -617,8 +629,10 @@ class Repo2Docker(Application):
             self.fetch(self.repo, self.ref, checkout_path)
 
             if self.find_image():
-                self.log.info("Reusing existing image ({}), not "
-                              "building.".format(self.output_image_spec))
+                self.log.info(
+                    "Reusing existing image ({}), not "
+                    "building.".format(self.output_image_spec)
+                )
                 # no need to build, so skip to the end by `return`ing here
                 # this will still execute the finally clause and let's us
                 # avoid having to indent the build code by an extra level
@@ -627,9 +641,12 @@ class Repo2Docker(Application):
             if self.subdir:
                 checkout_path = os.path.join(checkout_path, self.subdir)
                 if not os.path.isdir(checkout_path):
-                    self.log.error('Subdirectory %s does not exist',
-                                   self.subdir, extra=dict(phase='failure'))
-                    raise FileNotFoundError('Could not find {}'.format(checkout_path))
+                    self.log.error(
+                        "Subdirectory %s does not exist",
+                        self.subdir,
+                        extra=dict(phase="failure"),
+                    )
+                    raise FileNotFoundError("Could not find {}".format(checkout_path))
 
             with chdir(checkout_path):
                 for BP in self.buildpacks:
@@ -642,18 +659,17 @@ class Repo2Docker(Application):
 
                 picked_buildpack.appendix = self.appendix
                 # Add metadata labels
-                picked_buildpack.labels['repo2docker.version'] = self.version
-                repo_label = 'local' if os.path.isdir(self.repo) else self.repo
-                picked_buildpack.labels['repo2docker.repo'] = repo_label
-                picked_buildpack.labels['repo2docker.ref'] = self.ref
+                picked_buildpack.labels["repo2docker.version"] = self.version
+                repo_label = "local" if os.path.isdir(self.repo) else self.repo
+                picked_buildpack.labels["repo2docker.repo"] = repo_label
+                picked_buildpack.labels["repo2docker.ref"] = self.ref
 
-                self.log.debug(picked_buildpack.render(),
-                               extra=dict(phase='building'))
+                self.log.debug(picked_buildpack.render(), extra=dict(phase="building"))
 
                 if not self.dry_run:
                     if self.user_id == 0:
                         self.log.error(
-                            'Root as the primary user in the image is not permitted.\n'
+                            "Root as the primary user in the image is not permitted.\n"
                         )
                         self.log.info(
                             "The uid and the username of the user invoking repo2docker "
@@ -665,32 +681,36 @@ class Repo2Docker(Application):
                         sys.exit(errno.EPERM)
 
                     build_args = {
-                        'NB_USER': self.user_name,
-                        'NB_UID': str(self.user_id),
+                        "NB_USER": self.user_name,
+                        "NB_UID": str(self.user_id),
                     }
                     if self.target_repo_dir:
-                        build_args['REPO_DIR'] = self.target_repo_dir
-                    self.log.info('Using %s builder\n', bp.__class__.__name__,
-                                  extra=dict(phase='building'))
+                        build_args["REPO_DIR"] = self.target_repo_dir
+                    self.log.info(
+                        "Using %s builder\n",
+                        bp.__class__.__name__,
+                        extra=dict(phase="building"),
+                    )
 
-                    for l in picked_buildpack.build(docker_client,
-                                                    self.output_image_spec,
-                                                    self.build_memory_limit,
-                                                    build_args,
-                                                    self.cache_from,
-                                                    self.extra_build_kwargs):
-                        if 'stream' in l:
-                            self.log.info(l['stream'],
-                                          extra=dict(phase='building'))
-                        elif 'error' in l:
-                            self.log.info(l['error'], extra=dict(phase='failure'))
-                            raise docker.errors.BuildError(l['error'], build_log='')
-                        elif 'status' in l:
-                            self.log.info('Fetching base image...\r',
-                                              extra=dict(phase='building'))
+                    for l in picked_buildpack.build(
+                        docker_client,
+                        self.output_image_spec,
+                        self.build_memory_limit,
+                        build_args,
+                        self.cache_from,
+                        self.extra_build_kwargs,
+                    ):
+                        if "stream" in l:
+                            self.log.info(l["stream"], extra=dict(phase="building"))
+                        elif "error" in l:
+                            self.log.info(l["error"], extra=dict(phase="failure"))
+                            raise docker.errors.BuildError(l["error"], build_log="")
+                        elif "status" in l:
+                            self.log.info(
+                                "Fetching base image...\r", extra=dict(phase="building")
+                            )
                         else:
-                            self.log.info(json.dumps(l),
-                                          extra=dict(phase='building'))
+                            self.log.info(json.dumps(l), extra=dict(phase="building"))
 
         finally:
             # Cleanup checkout if necessary
