@@ -84,25 +84,25 @@ class PipfileBuildPack(CondaBuildPack):
 
         # install Pipfile.lock or fallback to installing Pipfile
         pipenv = '${KERNEL_PYTHON_PREFIX}/bin/pipenv'
+        python = '${KERNEL_PYTHON_PREFIX}/bin/python'
         pipfile = self.binder_path('Pipfile')
         pipfile_lock = self.binder_path('Pipfile.lock')
-        working_directory = 'binder' if os.path.exists('binder') else '.'
+        working_directory = self.binder_dir or '.'
         assemble_scripts.append((
             '${NB_USER}',
             'pip install pipenv'
         ))
-        if os.path.exists(pipfile_lock):
+        # if Pipfile.lock isn't found, Pipfile is used to create one
+        if not os.path.exists(pipfile_lock):
             assemble_scripts.append((
                 '${NB_USER}',
-                '(cd {} && {} install --ignore-pipfile --deploy --system --dev --python {})'.format(working_directory, pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
+                '(cd {} && {} lock --python {})'.format(working_directory, pipenv, python)
             ))
-        elif os.path.exists(pipfile):
-            assemble_scripts.append((
-                '${NB_USER}',
-                '(cd {} && {} lock --python {})'.format(working_directory, pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
-            ))
-        else:
-            raise Exception("Neither Pipfile.lock or Pipfile was found but assumed to be available.")
+        # install Pipfile.lock
+        assemble_scripts.append((
+            '${NB_USER}',
+            '(cd {} && {} install --ignore-pipfile --deploy --system --dev --python {})'.format(working_directory, pipenv, python)
+        ))
 
         return assemble_scripts
 
