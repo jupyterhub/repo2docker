@@ -4,8 +4,8 @@ import re
 
 from ..conda import CondaBuildPack
 
-class PythonBuildPack(CondaBuildPack):
-    """Setup Python for use with a repository."""
+class PipfileBuildPack(CondaBuildPack):
+    """Setup Python with pipfile for use with a repository."""
 
     @property
     def python_version(self):
@@ -82,62 +82,42 @@ class PythonBuildPack(CondaBuildPack):
                     '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(nb_requirements_file)
                 ))
 
-        # install Pipfile.lock, Pipfile, or requirements.txt in the kernel env
+        # install Pipfile.lock or fallback to installing Pipfile
         pipenv = '${KERNEL_PYTHON_PREFIX}/bin/pipenv'
         pipfile = self.binder_path('Pipfile')
         pipfile_lock = self.binder_path('Pipfile.lock')
-        if os.path.exists(pipfile_lock) or os.path.exists(pipfile):
-            working_directory = 'binder' if os.path.exists('binder') else '.'
-            assemble_scripts.append((
-                '${NB_USER}',
-                'pip install pipenv'
-            ))
-            if not os.path.exists(pipfile_lock):
-                assemble_scripts.append((
-                    '${NB_USER}',
-                    '(cd {} && {} lock --python {})'.format(working_directory, pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
-                ))
+        working_directory = 'binder' if os.path.exists('binder') else '.'
+        assemble_scripts.append((
+            '${NB_USER}',
+            'pip install pipenv'
+        ))
+        if os.path.exists(pipfile_lock):
             assemble_scripts.append((
                 '${NB_USER}',
                 '(cd {} && {} install --ignore-pipfile --deploy --system --dev --python {})'.format(working_directory, pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
             ))
+        elif os.path.exists(pipfile):
+            assemble_scripts.append((
+                '${NB_USER}',
+                '(cd {} && {} lock --python {})'.format(working_directory, pipenv, '${KERNEL_PYTHON_PREFIX}/bin/python')
+            ))
         else:
-            # KERNEL_PYTHON_PREFIX is the env with the kernel,
-            # whether it's distinct from the notebook or the same.
-            pip = '${KERNEL_PYTHON_PREFIX}/bin/pip'
-            requirements_file = self.binder_path('requirements.txt')
-            setup_py = 'setup.py'
-            if os.path.exists(requirements_file):
-                assemble_scripts.append((
-                    '${NB_USER}',
-                    'pip install "pip<19" && ' + \
-                    '{} install --no-cache-dir -r "{}"'.format(pip, requirements_file)
-                ))
-            # setup.py exists *and* binder dir is not used
-            if not os.path.exists('binder') and os.path.exists(setup_py):
-                assemble_scripts.append((
-                    '${NB_USER}',
-                    '{} install --no-cache-dir .'.format(pip)
-                ))
+            raise Exception("Neither Pipfile.lock or Pipfile was found but assumed to be available.")
 
         return assemble_scripts
 
     def detect(self):
         """Check if current repo should be built with the Python buildpack.
         """
-        pipfile = self.binder_path('Pipfile')
-        pipfile_lock = self.binder_path('Pipfile.lock')
-        requirements_txt = self.binder_path('requirements.txt')
+        # first make sure python is not explicitly unwanted
         runtime_txt = self.binder_path('runtime.txt')
-        setup_py = 'setup.py'
-
         if os.path.exists(runtime_txt):
             with open(runtime_txt) as f:
                 runtime = f.read().strip()
-            if runtime.startswith("python-"):
-                return True
-            else:
+            if not runtime.startswith("python-"):
                 return False
-        if not os.path.exists('binder') and os.path.exists(setup_py):
-            return True
-        return os.path.exists(pipfile) or os.path.exists(pipfile_lock) or os.path.exists(requirements_txt)
+
+        pipfile = self.binder_path('Pipfile')
+        pipfile_lock = self.binder_path('Pipfile.lock')
+
+        return os.path.exists(pipfile) or os.path.exists(pipfile_lock)
