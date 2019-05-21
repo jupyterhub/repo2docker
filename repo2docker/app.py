@@ -7,13 +7,12 @@ Usage:
 
     python -m repo2docker https://github.com/you/your-repo
 """
-import argparse
 import errno
 import json
 import sys
 import logging
 import os
-import pwd
+import getpass
 import shutil
 import tempfile
 import time
@@ -213,7 +212,7 @@ class Repo2Docker(Application):
         """
         Default user_name to current running user.
         """
-        return pwd.getpwuid(os.getuid()).pw_name
+        return getpass.getuser()
 
     appendix = Unicode(
         config=True,
