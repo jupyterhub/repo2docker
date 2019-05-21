@@ -10,6 +10,8 @@ Release date: TBD
 
 New features
 ------------
+- Increased minimum Python version supported for running  `repo2docker` itself
+  to Python 3.5 in :pr:`684` by :user:`betatim`.
 
 API changes
 -----------

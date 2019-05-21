@@ -21,11 +21,11 @@ setup(
         'toml',
         'semver',
     ],
-    python_requires='>=3.4',
+    python_requires='>=3.5',
     author='Project Jupyter Contributors',
     author_email='jupyter@googlegroups.com',
     url='https://repo2docker.readthedocs.io/en/latest/',
-    project_urls = {
+    project_urls={
         'Documentation': 'https://repo2docker.readthedocs.io',
         'Funding': 'https://jupyter.org/about',
         'Source': 'https://github.com/jupyter/repo2docker/',
@@ -33,11 +33,11 @@ setup(
     },
     # this should be a whitespace separated string of keywords, not a list
     keywords="reproducible science environments docker",
-    description = "Repo2docker: Turn code repositories into Jupyter enabled Docker Images",
-    long_description = readme,
-    long_description_content_type = 'text/markdown',
+    description="Repo2docker: Turn code repositories into Jupyter enabled Docker Images",
+    long_description=readme,
+    long_description_content_type='text/markdown',
     license='BSD',
-    classifiers = [
+    classifiers=[
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
