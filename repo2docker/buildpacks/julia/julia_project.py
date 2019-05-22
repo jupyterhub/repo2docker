@@ -169,7 +169,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                     echo 'this bit is for the PackageCompiler without flags' && \
                     JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
                     julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"' && \ 
-                    julia --project=${REPO_DIR} -e 'using Pkg; pkg"add PackageCompiler"; using PackageCompiler; compile_incremental(%s, force = true)'
+                    julia --project=${REPO_DIR} -e 'using Pkg; pkg"add PackageCompiler"; using PackageCompiler; compile_incremental(%s..., force = true)'
                     """ % packages
                 )
             ]
