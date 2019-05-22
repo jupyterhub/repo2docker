@@ -20,13 +20,13 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
 
     @property
     def julia_version(self):
+        
         default_julia_version = self.all_julias[-1]
-
         if os.path.exists(self.binder_path('JuliaProject.toml')):
             project_toml = toml.load(self.binder_path('JuliaProject.toml'))
         else:
             project_toml = toml.load(self.binder_path('Project.toml'))
-
+        
         if 'compat' in project_toml:
             if 'julia' in project_toml['compat']:
                 julia_version_str = project_toml['compat']['julia']
@@ -38,6 +38,26 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                     return _julia_version
 
         return default_julia_version
+
+    def baked_goods(self):
+        
+        # grab Project.toml, like before  
+        if os.path.exists(self.binder_path('JuliaProject.toml')):
+            project_toml = toml.load(self.binder_path('JuliaProject.toml'))
+        else:
+            project_toml = toml.load(self.binder_path('Project.toml'))
+
+        # packagecompiler stuff 
+        if 'packagecompiler' in project_toml: 
+            if 'compilerflags' in project_toml['packagecompiler']:
+                compilerflags = project_toml['compilerflags']
+            else:
+                compilerflags = None
+
+            packagelist = project_toml['packagecompiler']['packages'] 
+            return packagelist, compilerflags  
+        else: 
+            return None
 
     def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
@@ -109,29 +129,63 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             ),
         ]
 
+
+    """
+    Return series of build-steps specific to "this" Julia repository
+
+    We make sure that the IJulia package gets installed into the default
+    environment, and not the project specific one, by running the
+    IJulia install command with JULIA_PROJECT="".
+
+    Instantiate and then precompile all packages in the repos julia
+    environment.
+
+    The parent, CondaBuildPack, will add the build steps for
+    any needed Python packages found in environment.yml.
+    """
     def get_assemble_scripts(self):
-        """
-        Return series of build-steps specific to "this" Julia repository
 
-        We make sure that the IJulia package gets installed into the default
-        environment, and not the project specific one, by running the
-        IJulia install command with JULIA_PROJECT="".
+        # PackageCompiler 
+        packagecompilerobjects = self.baked_goods()
+        if packagecompilerobjects == None: 
+            # vanilla thing 
+            return super().get_assemble_scripts() + [
+                (
+                    "${NB_USER}",
+                    r"""
+                    JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
+                    julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
+                    """
+                )
+            ]
+        elif packagecompilerobjects[1] == None: # no compiler flags 
+            # standard packagecompiler setup, no compiler flags
 
-        Instantiate and then precompile all packages in the repos julia
-        environment.
-
-        The parent, CondaBuildPack, will add the build steps for
-        any needed Python packages found in environment.yml.
-        """
-        return super().get_assemble_scripts() + [
-            (
-                "${NB_USER}",
-                r"""
-                JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
-                julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
-                """
-            )
-        ]
+            packages = packagecompilerobjects[0]
+            return super().get_assemble_scripts() + [
+                (
+                    "${NB_USER}",
+                    r"""
+                    echo 'this bit is for the PackageCompiler without flags' && \
+                    JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
+                    julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"' && \ 
+                    julia --project=${REPO_DIR} -e 'using Pkg; pkg"add PackageCompiler"; using PackageCompiler; compile_incremental(%s, force = true)'
+                    """ % packages
+                )
+            ]
+        else: 
+            # setup with compiler flags. 
+            # for now, just echo them.
+            return super().get_assemble_scripts() + [
+                (
+                    "${NB_USER}",
+                    r"""
+                    echo 'this bit is for the PackageCompiler + flags' && \ 
+                    JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
+                    julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
+                    """
+                )
+            ]
 
     def detect(self):
         """
