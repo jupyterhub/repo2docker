@@ -5,6 +5,20 @@ import os
 import subprocess
 import tempfile
 import time
+from unittest import mock
+
+from repo2docker import Repo2Docker
+
+
+def test_automatic_username_deduction():
+    # check we pickup the right username
+    with mock.patch('os.environ') as mock_env:
+        expected = 'someusername'
+        mock_env.get.return_value = expected
+
+        r2d = Repo2Docker()
+        assert r2d.user_name == expected
+
 
 def test_user():
     """
