@@ -36,6 +36,13 @@ class CondaBuildPack(BaseImage):
             env.append(('KERNEL_PYTHON_PREFIX', '${NB_PYTHON_PREFIX}'))
         return env
 
+    def get_env(self):
+        """Make kernel env the default for `conda install`"""
+        env = super().get_env() + [
+            ('CONDA_DEFAULT_ENV', '${KERNEL_PYTHON_PREFIX}'),
+        ]
+        return env
+
     def get_path(self):
         """Return paths (including conda environment path) to be added to
         the PATH environment variable.
