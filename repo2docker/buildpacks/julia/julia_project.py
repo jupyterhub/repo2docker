@@ -1,6 +1,7 @@
 """Generates a Dockerfile based on an input matrix for Julia"""
 import os
 import toml
+import re
 from ..python import PythonBuildPack
 from .semver import find_semver_match
 
@@ -39,8 +40,8 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
 
         return default_julia_version
 
-    def baked_goods(self):
-        
+    def packagecompiler(self):
+    
         # grab Project.toml, like before  
         if os.path.exists(self.binder_path('JuliaProject.toml')):
             project_toml = toml.load(self.binder_path('JuliaProject.toml'))
@@ -146,8 +147,8 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     def get_assemble_scripts(self):
 
         # PackageCompiler 
-        packagecompilerobjects = self.baked_goods()
-        if packagecompilerobjects == None: 
+        pkgcompiler_objects = self.packagecompiler()
+        if pkgcompiler_objects == None: 
             # vanilla thing 
             return super().get_assemble_scripts() + [
                 (
@@ -158,34 +159,20 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                     """
                 )
             ]
-        elif packagecompilerobjects[1] == None: # no compiler flags 
-            # standard packagecompiler setup, no compiler flags
-
-            packages = packagecompilerobjects[0]
+        else:
+            packages = str(pkgcompiler_objects[0]).strip("[]").replace("'", "")
+            packages = re.sub(r"(\b[A-Z])", r":\1", packages)
             return super().get_assemble_scripts() + [
                 (
                     "${NB_USER}",
                     r"""
-                    echo 'this bit is for the PackageCompiler without flags' && \
                     JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
-                    julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"' && \ 
-                    julia --project=${REPO_DIR} -e 'using Pkg; pkg"add PackageCompiler"; using PackageCompiler; compile_incremental(%s..., force = true)'
+                    julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"; x = collect(keys(Pkg.installed())); pkg"activate"; Pkg.add(x)' && \ 
+                    julia -e 'using Pkg; pkg"dev PackageCompiler"; using PackageCompiler; compile_incremental(%s, force = true)'
                     """ % packages
                 )
             ]
-        else: 
-            # setup with compiler flags. 
-            # for now, just echo them.
-            return super().get_assemble_scripts() + [
-                (
-                    "${NB_USER}",
-                    r"""
-                    echo 'this bit is for the PackageCompiler + flags' && \ 
-                    JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
-                    julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
-                    """
-                )
-            ]
+
 
     def detect(self):
         """

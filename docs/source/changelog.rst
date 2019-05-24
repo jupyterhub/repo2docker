@@ -10,6 +10,7 @@ Release date: TBD
 
 New features
 ------------
+- Add PackageCompiler support for Julia. 
 
 API changes
 -----------
