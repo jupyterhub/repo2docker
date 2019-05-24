@@ -166,9 +166,9 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 (
                     "${NB_USER}",
                     r"""
-                    JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
-                    julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"; x = collect(keys(Pkg.installed())); pkg"activate"; Pkg.add(x)' && \ 
-                    julia -e 'using Pkg; pkg"dev PackageCompiler"; using PackageCompiler; compile_incremental(%s, force = true)'
+                    cd ${REPO_DIR} && julia -e 'using Pkg; pkg"activate ."; pkg"instantiate"; x = Pkg.installed(); pkg"activate"; Pkg.add(collect(keys(x)))' && \ 
+                    julia -e 'using Pkg; pkg"add PackageCompiler#sd-notomls"; using PackageCompiler; sysnew, sysold = compile_incremental(%s, install = true); cp(sysnew, sysold, force = true); @assert read(sysnew) == read(sysold)'  && \ 
+                    JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\");"
                     """ % packages
                 )
             ]
