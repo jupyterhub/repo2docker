@@ -1,3 +1,4 @@
+import os
 import json
 import shutil
 
@@ -31,39 +32,48 @@ class Zenodo(ContentProvider):
         record = json.loads(resp.read().decode("utf-8"))
 
         def _fetch(file_ref, unzip=False):
+            # the assumption is that `unzip=True` means that this is the only
+            # file related to the zenodo record
             with urlopen(file_ref["links"]["download"]) as src:
                 fname = file_ref["filename"]
-                sub_dir = path.join(output_dir, path.dirname(fname))
-                if not path.exists(sub_dir):
-                    print("Creating", sub_dir)
-                    makedirs(sub_dir, exist_ok=True)
+                if path.dirname(fname):
+                    sub_dir = path.join(output_dir, path.dirname(fname))
+                    if not path.exists(sub_dir):
+                        yield 'Creating {}\n'.format(sub_dir)
+                        makedirs(sub_dir, exist_ok=True)
 
                 dst_fname = path.join(output_dir, fname)
                 with open(dst_fname, "wb") as dst:
                     yield "Fetching {}\n".format(fname)
                     shutil.copyfileobj(src, dst)
-
                 # first close the newly written file, then continue
                 # processing it
                 if unzip and is_zipfile(dst_fname):
+                    yield "Extracting {}\n".format(fname)
                     zfile = ZipFile(dst_fname)
                     zfile.extractall(path=output_dir)
                     zfile.close()
-                    import os
-                    d = os.listdir(output_dir)[0]
-                    print(output_dir)
-                    print(os.listdir(output_dir))
-                    copytree(path.join(output_dir, d), output_dir)
-                    shutil.rmtree(sub_dir)
-                    shutil.rmtree(path.join(output_dir, d))
+
+                    # delete downloaded file ...
+                    os.remove(dst_fname)
+                    # ... and any directories we might have created,
+                    # in which case sub_dir will be defined
+                    if path.dirname(fname):
+                        shutil.rmtree(sub_dir)
+
+                    new_subdirs = os.listdir(output_dir)
+                    # if there is only one new subdirectory move its contents
+                    # to the top level directory
+                    if len(new_subdirs) == 1:
+                        d = new_subdirs[0]
+                        copytree(path.join(output_dir, d), output_dir)
+                        shutil.rmtree(path.join(output_dir, d))
 
         is_software = record["metadata"]["upload_type"] == "software"
         only_one_file = len(record["files"]) == 1
         for file_ref in record['files']:
             for line in _fetch(file_ref, unzip=is_software and only_one_file):
                 yield line
-
-        import pdb; pdb.set_trace()
 
     @property
     def content_id(self):
