@@ -15,6 +15,7 @@ class Zenodo(ContentProvider):
     """Provide contents of a Zenodo deposit."""
 
     def detect(self, doi, ref=None, extra_args=None):
+        """Trigger this provider for things that resolve to a Zenodo record"""
         doi = doi.lower()
         # 10.5281 is the Zenodo DOI prefix
         if doi.startswith("10.5281/"):
@@ -36,6 +37,7 @@ class Zenodo(ContentProvider):
             return {"record": self.record_id}
 
     def fetch(self, spec, output_dir, yield_output=False):
+        """Fetch and unpack a Zenodo record"""
         record_id = spec["record"]
 
         yield "Fetching Zenodo record {}.\n".format(record_id)
@@ -93,7 +95,5 @@ class Zenodo(ContentProvider):
 
     @property
     def content_id(self):
-        """A unique ID to represent the version of the content.
-        Uses the first seven characters of the git commit ID of the repository.
-        """
+        """The Zenodo record ID as the content of a record is immutable"""
         return self.record_id
