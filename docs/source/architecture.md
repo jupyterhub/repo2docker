@@ -119,7 +119,7 @@ a path to a repository. This might be a local path or a URL. Upon being called,
 commands:
 
 * Run the `detect()` method on the repository path given to `repo2docker`. This
-  should return `True` if the path matches what the ContentProvider is looking
+  should return any value other than `None` if the path matches what the ContentProvider is looking
   for.
 
   > For example, the [`Local` ContentProvider](https://github.com/jupyter/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L64)
