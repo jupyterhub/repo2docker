@@ -118,7 +118,7 @@ a path to a repository. This might be a local path or a URL. Upon being called,
 `repo2docker` will loop through all ContentProviders and perform the following
 commands:
 
-* Run the `detect(` method on the repository path given to `repo2docker`. This
+* Run the `detect()` method on the repository path given to `repo2docker`. This
   should return `True` if the path matches what the ContentProvider is looking
   for.
 
