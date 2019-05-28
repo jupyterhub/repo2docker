@@ -15,18 +15,34 @@ class Zenodo(ContentProvider):
     """Provide contents of a Zenodo deposit."""
 
     def detect(self, doi, ref=None, extra_args=None):
+        doi = doi.lower()
         # 10.5281 is the Zenodo DOI prefix
-        if doi.startswith('10.5281'):
+        if doi.startswith("10.5281/"):
             resp = urlopen("https://doi.org/{}".format(doi))
             self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
-            return {'record': self.record_id}
+            return {"record": self.record_id}
+
+        elif doi.startswith("https://doi.org/10.5281/") or doi.startswith(
+            "http://doi.org/10.5281/"
+        ):
+            resp = urlopen(doi)
+            self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
+            return {"record": self.record_id}
+
+        elif doi.startswith("https://zenodo.org/record/") or doi.startswith(
+            "http://zenodo.org/record/"
+        ):
+            self.record_id = doi.rsplit("/", maxsplit=1)[1]
+            return {"record": self.record_id}
 
     def fetch(self, spec, output_dir, yield_output=False):
-        record_id = spec['record']
+        record_id = spec["record"]
 
         yield "Fetching Zenodo record {}.\n".format(record_id)
-        req = Request("https://zenodo.org/api/records/{}".format(record_id),
-                      headers={"accept": "application/json"})
+        req = Request(
+            "https://zenodo.org/api/records/{}".format(record_id),
+            headers={"accept": "application/json"},
+        )
         resp = urlopen(req)
 
         record = json.loads(resp.read().decode("utf-8"))
@@ -39,7 +55,7 @@ class Zenodo(ContentProvider):
                 if path.dirname(fname):
                     sub_dir = path.join(output_dir, path.dirname(fname))
                     if not path.exists(sub_dir):
-                        yield 'Creating {}\n'.format(sub_dir)
+                        yield "Creating {}\n".format(sub_dir)
                         makedirs(sub_dir, exist_ok=True)
 
                 dst_fname = path.join(output_dir, fname)
@@ -71,7 +87,7 @@ class Zenodo(ContentProvider):
 
         is_software = record["metadata"]["upload_type"] == "software"
         only_one_file = len(record["files"]) == 1
-        for file_ref in record['files']:
+        for file_ref in record["files"]:
             for line in _fetch(file_ref, unzip=is_software and only_one_file):
                 yield line
 
