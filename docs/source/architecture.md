@@ -125,7 +125,8 @@ commands:
   > For example, the [`Local` ContentProvider](https://github.com/jupyter/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L64)
   > checks whether the argument is a valid local path. If so, then `detect(`
   > returns true.
-* If `detect(` returns `True`, run `fetch(` with the input path. This should
+* If `detect()` returns something other than `None`, run `fetch()` with the
+  returned value as its argument. This should
   result in the contents of the repository being placed locally to a folder.
 
 For more information on ContentProviders, take a look at
