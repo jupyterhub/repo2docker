@@ -192,6 +192,18 @@ def get_argparser():
         "--cache-from", action="append", default=[], help=Repo2Docker.cache_from.help
     )
 
+    argparser.add_argument(
+        '--template',
+        type=str,
+        help='Either a file to the Dockerfile template, or the template itself.',
+    )
+
+    argparser.add_argument(
+        '--entrypoint-file',
+        type=str,
+        #help=self.traits()['entrypoint_file'].help,
+    )
+
     return argparser
 
 
@@ -219,8 +231,22 @@ def make_r2d(argv=None):
     if args.appendix:
         r2d.appendix = args.appendix
 
+    if args.entrypoint_file:
+        r2d.entrypoint_file = args.entrypoint_file
+
     r2d.repo = args.repo
     r2d.ref = args.ref
+
+    if args.template:
+        if os.path.isfile(args.template):
+            with open(args.template) as fp:
+                r2d.template = fp.read()
+        elif os.path.isfile(os.path.join(args.repo, args.template)):
+            with open(os.path.join(args.repo, args.template)) as fp:
+                r2d.template = fp.read()
+        else:
+           r2d.template = args.template
+
 
     # user wants to mount a local directory into the container for
     # editing
