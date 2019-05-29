@@ -16,6 +16,10 @@ class Zenodo(ContentProvider):
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Zenodo record"""
+        # To support Zenodo instances not hosted at zenodo.org we need to
+        # start maintaining a list of known DOI prefixes and their hostname.
+        # We should also change to returning a complete `record_url` that
+        # fetch() can use instead of constructing a URL there
         doi = doi.lower()
         # 10.5281 is the Zenodo DOI prefix
         if doi.startswith("10.5281/"):
