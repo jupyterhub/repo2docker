@@ -19,16 +19,26 @@ def test_content_id():
 
 
 def test_detect():
-    # valid Zenodo DOIs trigger this content provider
-    assert Zenodo().detect("10.5281/zenodo.3232985") == {"record": "3232985"}
-    assert Zenodo().detect("https://doi.org/10.5281/zenodo.3232985") == {"record": "3232985"}
-    assert Zenodo().detect("https://zenodo.org/record/3232985") == {"record": "3232985"}
+    with patch("repo2docker.contentproviders.zenodo.urlopen") as fake_urlopen:
+        fake_urlopen.return_value.url = "https://zenodo.org/record/3232985"
+        # valid Zenodo DOIs trigger this content provider
+        assert Zenodo().detect("10.5281/zenodo.3232985") == {"record": "3232985"}
+        assert Zenodo().detect("https://doi.org/10.5281/zenodo.3232985") == {"record": "3232985"}
+        assert Zenodo().detect("https://zenodo.org/record/3232985") == {"record": "3232985"}
 
-    # Don't trigger the Zenodo content provider
-    assert Zenodo().detect("/some/path/here") is None
-    assert Zenodo().detect("https://example.com/path/here") is None
-    # donn't handle DOIs that aren't from Zenodo
-    assert Zenodo().detect("https://doi.org/10.21105/joss.01277") is None
+        # only two of the three calls above have to resolve a DOI
+        assert fake_urlopen.call_count == 2
+
+    with patch("repo2docker.contentproviders.zenodo.urlopen") as fake_urlopen:
+        # Don't trigger the Zenodo content provider
+        assert Zenodo().detect("/some/path/here") is None
+        assert Zenodo().detect("https://example.com/path/here") is None
+        # donn't handle DOIs that aren't from Zenodo
+        assert Zenodo().detect("https://doi.org/10.21105/joss.01277") is None
+
+        # none of the examples are Zenodo like, so we should not attempt to
+        # resolve a DOI either
+        assert not fake_urlopen.called
 
 
 @contextmanager
@@ -73,8 +83,8 @@ def test_fetch_software_from_github_archive():
                 for l in zen.fetch({"record": "1234"}, d):
                     output.append(l)
 
-                unpacked_files = os.listdir(d)
-                expected = ["some-other-file.txt", "some-file.txt"]
+                unpacked_files = set(os.listdir(d))
+                expected = set(["some-other-file.txt", "some-file.txt"])
                 assert expected == unpacked_files
 
 
@@ -112,8 +122,8 @@ def test_fetch_software():
                 for l in zen.fetch({"record": "1234"}, d):
                     output.append(l)
 
-                unpacked_files = os.listdir(d)
-                expected = ["some-other-file.txt", "some-file.txt"]
+                unpacked_files = set(os.listdir(d))
+                expected = set(["some-other-file.txt", "some-file.txt"])
                 assert expected == unpacked_files
 
 
@@ -153,7 +163,7 @@ def test_fetch_data():
                     for l in zen.fetch({"record": "1234"}, d):
                         output.append(l)
 
-                    unpacked_files = os.listdir(d)
+                    unpacked_files = set(os.listdir(d))
                     # ZIP files shouldn't have been unpacked
-                    expected = ['bfake.zip', 'afake.zip']
+                    expected = {'bfake.zip', 'afake.zip'}
                     assert expected == unpacked_files
