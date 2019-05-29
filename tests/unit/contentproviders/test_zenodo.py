@@ -12,14 +12,16 @@ from repo2docker.contentproviders import Zenodo
 
 
 def test_content_id():
-    zen = Zenodo()
+    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+        fake_urlopen.return_value.url = "https://zenodo.org/record/3232985"
+        zen = Zenodo()
 
-    zen.detect("10.5281/zenodo.3232985")
-    assert zen.content_id == "3232985"
+        zen.detect("10.5281/zenodo.3232985")
+        assert zen.content_id == "3232985"
 
 
 def test_detect():
-    with patch("repo2docker.contentproviders.zenodo.urlopen") as fake_urlopen:
+    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
         fake_urlopen.return_value.url = "https://zenodo.org/record/3232985"
         # valid Zenodo DOIs trigger this content provider
         assert Zenodo().detect("10.5281/zenodo.3232985") == {"record": "3232985"}
@@ -29,7 +31,7 @@ def test_detect():
         # only two of the three calls above have to resolve a DOI
         assert fake_urlopen.call_count == 2
 
-    with patch("repo2docker.contentproviders.zenodo.urlopen") as fake_urlopen:
+    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
         # Don't trigger the Zenodo content provider
         assert Zenodo().detect("/some/path/here") is None
         assert Zenodo().detect("https://example.com/path/here") is None
@@ -69,16 +71,16 @@ def test_fetch_software_from_github_archive():
             ).encode("utf-8")
         )
 
-        def mock_urlopen(req_or_path):
-            if isinstance(req_or_path, Request):
+        def mock_urlopen(self, req):
+            if isinstance(req, Request):
                 return mock_response
             else:
-                return urlopen(req_or_path)
+                return urlopen(req)
 
-        with patch("repo2docker.contentproviders.zenodo.urlopen", new=mock_urlopen):
+        with patch.object(Zenodo, '_urlopen', new=mock_urlopen):
+            zen = Zenodo()
+
             with TemporaryDirectory() as d:
-                zen = Zenodo()
-
                 output = []
                 for l in zen.fetch({"record": "1234"}, d):
                     output.append(l)
@@ -108,13 +110,13 @@ def test_fetch_software():
             ).encode("utf-8")
         )
 
-        def mock_urlopen(req_or_path):
-            if isinstance(req_or_path, Request):
+        def mock_urlopen(self, req):
+            if isinstance(req, Request):
                 return mock_response
             else:
-                return urlopen(req_or_path)
+                return urlopen(req)
 
-        with patch("repo2docker.contentproviders.zenodo.urlopen", new=mock_urlopen):
+        with patch.object(Zenodo, '_urlopen', new=mock_urlopen):
             with TemporaryDirectory() as d:
                 zen = Zenodo()
 
@@ -149,13 +151,13 @@ def test_fetch_data():
                 ).encode("utf-8")
             )
 
-            def mock_urlopen(req_or_path):
-                if isinstance(req_or_path, Request):
+            def mock_urlopen(self, req):
+                if isinstance(req, Request):
                     return mock_response
                 else:
-                    return urlopen(req_or_path)
+                    return urlopen(req)
 
-            with patch("repo2docker.contentproviders.zenodo.urlopen", new=mock_urlopen):
+            with patch.object(Zenodo, '_urlopen', new=mock_urlopen):
                 with TemporaryDirectory() as d:
                     zen = Zenodo()
 

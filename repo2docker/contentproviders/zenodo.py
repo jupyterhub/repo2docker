@@ -4,15 +4,29 @@ import shutil
 
 from os import makedirs
 from os import path
-from urllib.request import urlopen, Request
+from urllib.request import build_opener, urlopen, Request
 from zipfile import ZipFile, is_zipfile
 
 from .base import ContentProvider
 from ..utils import copytree
+from .. import __version__
 
 
 class Zenodo(ContentProvider):
     """Provide contents of a Zenodo deposit."""
+
+    def _urlopen(self, req, headers=None):
+        """A urlopen() helper"""
+        # someone passed a string, not a request
+        if not isinstance(req, Request):
+            req = Request(req)
+
+        req.add_header("User-Agent", "repo2docker {}".format(__version__))
+        if headers is not None:
+            for key, value in headers.items():
+                req.add_header(key, value)
+
+        return urlopen(req)
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Zenodo record"""
@@ -23,14 +37,14 @@ class Zenodo(ContentProvider):
         doi = doi.lower()
         # 10.5281 is the Zenodo DOI prefix
         if doi.startswith("10.5281/"):
-            resp = urlopen("https://doi.org/{}".format(doi))
+            resp = self._urlopen("https://doi.org/{}".format(doi))
             self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
             return {"record": self.record_id}
 
         elif doi.startswith("https://doi.org/10.5281/") or doi.startswith(
             "http://doi.org/10.5281/"
         ):
-            resp = urlopen(doi)
+            resp = self._urlopen(doi)
             self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
             return {"record": self.record_id}
 
@@ -49,14 +63,14 @@ class Zenodo(ContentProvider):
             "https://zenodo.org/api/records/{}".format(record_id),
             headers={"accept": "application/json"},
         )
-        resp = urlopen(req)
+        resp = self._urlopen(req)
 
         record = json.loads(resp.read().decode("utf-8"))
 
         def _fetch(file_ref, unzip=False):
             # the assumption is that `unzip=True` means that this is the only
             # file related to the zenodo record
-            with urlopen(file_ref["links"]["download"]) as src:
+            with self._urlopen(file_ref["links"]["download"]) as src:
                 fname = file_ref["filename"]
                 if path.dirname(fname):
                     sub_dir = path.join(output_dir, path.dirname(fname))
