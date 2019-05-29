@@ -213,11 +213,13 @@ class RemoteRepoList(pytest.File):
         with self.fspath.open() as f:
             repos = yaml.safe_load(f)
         for repo in repos:
+            args = []
+            if "ref" in repo:
+                args += ['--ref', repo['ref']]
+            args += [repo['url'],
+                     '--',
+                     ] + shlex.split(repo['verify'])
             yield Repo2DockerTest(
                 repo['name'], self,
-                args=[
-                    '--ref', repo['ref'],
-                    repo['url'],
-                    '--',
-                ] + shlex.split(repo['verify']),
+                args=args,
             )

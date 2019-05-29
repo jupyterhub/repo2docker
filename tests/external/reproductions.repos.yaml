@@ -30,3 +30,7 @@
   url: https://github.com/QuantStack/xeus-cling
   ref: 0.4.5
   verify: jupyter kernelspec list
+# Zenodo record of https://github.com/mbcxqcw2/EEModel/tree/v1.03
+- name: 10.5281/zenodo.1211089
+  url: 10.5281/zenodo.1211089
+  verify: python2 -c 'import matplotlib'
