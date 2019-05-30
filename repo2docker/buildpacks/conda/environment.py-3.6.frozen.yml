@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2019-04-26 14:10:28 UTC
+# Frozen on 2019-05-29 18:58:24 UTC
 name: r2d
 channels:
   - conda-forge
@@ -14,7 +14,7 @@ dependencies:
   - decorator=4.4.0=py_0
   - defusedxml=0.5.0=py_1
   - entrypoints=0.3=py36_1000
-  - ipykernel=5.1.0=py36h24bf2e0_1002
+  - ipykernel=5.1.1=py36h24bf2e0_0
   - ipython=7.5.0=py36h24bf2e0_0
   - ipython_genutils=0.2.0=py_1
   - ipywidgets=7.4.2=py_0
@@ -34,7 +34,7 @@ dependencies:
   - nbconvert=5.4.1=py_2
   - nbformat=4.4.0=py_1
   - ncurses=6.1=hf484d3e_1002
-  - notebook=5.7.8=py36_0
+  - notebook=5.7.8=py36_1
   - openssl=1.1.1b=h14c3975_1
   - pandoc=2.7.2=0
   - pandocfilters=1.4.2=py_1
@@ -45,8 +45,8 @@ dependencies:
   - prometheus_client=0.6.0=py_0
   - prompt_toolkit=2.0.9=py_0
   - ptyprocess=0.6.0=py_1001
-  - pygments=2.3.1=py_0
-  - pyrsistent=0.15.1=py36h516909a_0
+  - pygments=2.4.2=py_0
+  - pyrsistent=0.15.2=py36h516909a_0
   - python=3.6.7=h381d211_1004
   - python-dateutil=2.8.0=py_0
   - pyzmq=18.0.1=py36hc4ba49a_1
@@ -54,7 +54,7 @@ dependencies:
   - send2trash=1.5.0=py_0
   - setuptools=41.0.1=py36_0
   - six=1.12.0=py36_1000
-  - sqlite=3.26.0=h67949de_1001
+  - sqlite=3.28.0=h8b20d00_0
   - terminado=0.8.2=py36_0
   - testpath=0.4.2=py_1001
   - tk=8.6.9=h84994c4_1001
@@ -62,24 +62,30 @@ dependencies:
   - traitlets=4.3.2=py36_1000
   - wcwidth=0.1.7=py_1
   - webencodings=0.5.1=py_1
-  - wheel=0.33.1=py36_0
+  - wheel=0.33.4=py36_0
   - widgetsnbextension=3.4.2=py36_1000
   - xz=5.2.4=h14c3975_1001
   - zeromq=4.3.1=hf484d3e_1000
   - zlib=1.2.11=h14c3975_1004
   - pip:
-    - alembic==1.0.9
+    - alembic==1.0.10
+    - asn1crypto==0.24.0
     - async-generator==1.10
+    - certipy==0.1.3
+    - cffi==1.12.3
     - chardet==3.0.4
+    - cryptography==2.6.1
     - idna==2.8
-    - jupyterhub==0.9.4
-    - mako==1.0.9
+    - jupyterhub==1.0.0
+    - mako==1.0.10
     - nteract-on-jupyter==2.0.12
+    - oauthlib==3.0.1
     - pamela==1.0.0
+    - pycparser==2.19
+    - pyopenssl==19.0.0
     - python-editor==1.0.4
-    - python-oauth2==1.1.0
-    - requests==2.21.0
-    - sqlalchemy==1.3.3
-    - urllib3==1.24.2
+    - requests==2.22.0
+    - sqlalchemy==1.3.4
+    - urllib3==1.25.3
 prefix: /opt/conda/envs/r2d
 
