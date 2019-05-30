@@ -136,6 +136,7 @@ class Repo2Docker(Application):
     content_providers = List(
         [
             contentproviders.Local,
+            contentproviders.Zenodo,
             contentproviders.Git,
         ],
         config=True,
