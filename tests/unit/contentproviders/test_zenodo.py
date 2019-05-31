@@ -25,8 +25,12 @@ def test_detect():
         fake_urlopen.return_value.url = "https://zenodo.org/record/3232985"
         # valid Zenodo DOIs trigger this content provider
         assert Zenodo().detect("10.5281/zenodo.3232985") == {"record": "3232985"}
-        assert Zenodo().detect("https://doi.org/10.5281/zenodo.3232985") == {"record": "3232985"}
-        assert Zenodo().detect("https://zenodo.org/record/3232985") == {"record": "3232985"}
+        assert Zenodo().detect("https://doi.org/10.5281/zenodo.3232985") == {
+            "record": "3232985"
+        }
+        assert Zenodo().detect("https://zenodo.org/record/3232985") == {
+            "record": "3232985"
+        }
 
         # only two of the three calls above have to resolve a DOI
         assert fake_urlopen.call_count == 2
@@ -77,7 +81,7 @@ def test_fetch_software_from_github_archive():
             else:
                 return urlopen(req)
 
-        with patch.object(Zenodo, '_urlopen', new=mock_urlopen):
+        with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
             zen = Zenodo()
 
             with TemporaryDirectory() as d:
@@ -116,7 +120,7 @@ def test_fetch_software():
             else:
                 return urlopen(req)
 
-        with patch.object(Zenodo, '_urlopen', new=mock_urlopen):
+        with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
             with TemporaryDirectory() as d:
                 zen = Zenodo()
 
@@ -144,7 +148,7 @@ def test_fetch_data():
                             {
                                 "filename": "bfake.zip",
                                 "links": {"download": "file://{}".format(b_zen_path)},
-                            }
+                            },
                         ],
                         "metadata": {"upload_type": "data"},
                     }
@@ -157,7 +161,7 @@ def test_fetch_data():
                 else:
                     return urlopen(req)
 
-            with patch.object(Zenodo, '_urlopen', new=mock_urlopen):
+            with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
                 with TemporaryDirectory() as d:
                     zen = Zenodo()
 
@@ -167,5 +171,5 @@ def test_fetch_data():
 
                     unpacked_files = set(os.listdir(d))
                     # ZIP files shouldn't have been unpacked
-                    expected = {'bfake.zip', 'afake.zip'}
+                    expected = {"bfake.zip", "afake.zip"}
                     assert expected == unpacked_files

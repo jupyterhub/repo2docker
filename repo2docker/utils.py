@@ -16,8 +16,8 @@ def execute_cmd(cmd, capture=False, **kwargs):
     Must be yielded from.
     """
     if capture:
-        kwargs['stdout'] = subprocess.PIPE
-        kwargs['stderr'] = subprocess.STDOUT
+        kwargs["stdout"] = subprocess.PIPE
+        kwargs["stderr"] = subprocess.STDOUT
 
     proc = subprocess.Popen(cmd, **kwargs)
 
@@ -36,17 +36,17 @@ def execute_cmd(cmd, capture=False, **kwargs):
 
     def flush():
         """Flush next line of the buffer"""
-        line = b''.join(buf).decode('utf8', 'replace')
+        line = b"".join(buf).decode("utf8", "replace")
         buf[:] = []
         return line
 
-    c_last = ''
+    c_last = ""
     try:
-        for c in iter(partial(proc.stdout.read, 1), b''):
-            if c_last == b'\r' and buf and c != b'\n':
+        for c in iter(partial(proc.stdout.read, 1), b""):
+            if c_last == b"\r" and buf and c != b"\n":
                 yield flush()
             buf.append(c)
-            if c == b'\n':
+            if c == b"\n":
                 yield flush()
             c_last = c
     finally:
@@ -91,38 +91,44 @@ def validate_and_generate_port_mapping(port_mappings):
         single container_port to multiple host_ports
         (docker-py supports this but repo2docker does not)
     """
+
     def check_port(port):
         try:
             p = int(port)
         except ValueError as e:
-            raise ValueError('Port specification "{}" has '
-                             'an invalid port.'.format(mapping))
+            raise ValueError(
+                'Port specification "{}" has ' "an invalid port.".format(mapping)
+            )
         if p > 65535:
-            raise ValueError('Port specification "{}" specifies '
-                             'a port above 65535.'.format(mapping))
+            raise ValueError(
+                'Port specification "{}" specifies '
+                "a port above 65535.".format(mapping)
+            )
         return port
 
     def check_port_string(p):
-        parts = p.split('/')
+        parts = p.split("/")
         if len(parts) == 2:  # 134/tcp
             port, protocol = parts
-            if protocol not in ('tcp', 'udp'):
-                raise ValueError('Port specification "{}" has '
-                                 'an invalid protocol.'.format(mapping))
+            if protocol not in ("tcp", "udp"):
+                raise ValueError(
+                    'Port specification "{}" has '
+                    "an invalid protocol.".format(mapping)
+                )
         elif len(parts) == 1:
             port = parts[0]
-            protocol = 'tcp'
+            protocol = "tcp"
 
         check_port(port)
 
-        return '/'.join((port, protocol))
+        return "/".join((port, protocol))
 
     ports = {}
     if port_mappings is None:
         return ports
 
     for mapping in port_mappings:
-        parts = mapping.split(':')
+        parts = mapping.split(":")
 
         *host, container_port = parts
         # just a port
@@ -164,7 +170,8 @@ def is_valid_docker_image_name(image_name):
         This pattern will not allow cases like `TEST.com/name:latest` though
         docker considers it a valid tag.
     """
-    reference_regex = re.compile(r"""
+    reference_regex = re.compile(
+        r"""
         ^  # Anchored at start and end of string
 
         (  # Start capturing name
@@ -213,7 +220,9 @@ def is_valid_docker_image_name(image_name):
         # optionally capture <digest-pattern>='@<digest>'
         (?:@[A-Za-z][A-Za-z0-9]*(?:[-_+.][A-Za-z][A-Za-z0-9]*)*[:][A-Fa-f0-9]{32,})?
         $
-        """, re.VERBOSE)
+        """,
+        re.VERBOSE,
+    )
 
     return reference_regex.match(image_name) is not None
 
@@ -232,10 +241,10 @@ class ByteSpecification(Integer):
     """
 
     UNIT_SUFFIXES = {
-        'K': 1024,
-        'M': 1024 * 1024,
-        'G': 1024 * 1024 * 1024,
-        'T': 1024 * 1024 * 1024 * 1024,
+        "K": 1024,
+        "M": 1024 * 1024,
+        "G": 1024 * 1024 * 1024,
+        "T": 1024 * 1024 * 1024 * 1024,
     }
 
     # Default to allowing None as a value
@@ -256,16 +265,14 @@ class ByteSpecification(Integer):
             num = float(value[:-1])
         except ValueError:
             raise TraitError(
-                '{val} is not a valid memory specification. '
-                'Must be an int or a string with suffix K, M, G, T'
-                .format(val=value)
+                "{val} is not a valid memory specification. "
+                "Must be an int or a string with suffix K, M, G, T".format(val=value)
             )
         suffix = value[-1]
         if suffix not in self.UNIT_SUFFIXES:
             raise TraitError(
-                '{val} is not a valid memory specification. '
-                'Must be an int or a string with suffix K, M, G, T'
-                .format(val=value)
+                "{val} is not a valid memory specification. "
+                "Must be an int or a string with suffix K, M, G, T".format(val=value)
             )
         else:
             return int(float(num) * self.UNIT_SUFFIXES[suffix])
@@ -274,9 +281,11 @@ class ByteSpecification(Integer):
 def check_ref(ref, cwd=None):
     """Prepare a ref and ensure it works with git reset --hard."""
     # Try original ref, then trying a remote ref, then removing remote
-    refs = [ref,                        # Original ref
-            '/'.join(["origin", ref]),  # In case its a remote branch
-            ref.split('/')[-1]]         # In case partial commit w/ remote
+    refs = [
+        ref,  # Original ref
+        "/".join(["origin", ref]),  # In case its a remote branch
+        ref.split("/")[-1],
+    ]  # In case partial commit w/ remote
 
     hash = None
     for i_ref in refs:
@@ -297,8 +306,14 @@ class Error(OSError):
 
 # a copy of shutil.copytree() that is ok with the target directory
 # already existing
-def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
-             ignore_dangling_symlinks=False):
+def copytree(
+    src,
+    dst,
+    symlinks=False,
+    ignore=None,
+    copy_function=copy2,
+    ignore_dangling_symlinks=False,
+):
     """Recursively copy a directory tree.
     The destination directory must not already exist.
     If exception(s) occur, an Error is raised with a list of reasons.
@@ -353,8 +368,7 @@ def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
                         continue
                     # otherwise let the copy occurs. copy2 will raise an error
                     if os.path.isdir(srcname):
-                        copytree(srcname, dstname, symlinks, ignore,
-                                 copy_function)
+                        copytree(srcname, dstname, symlinks, ignore, copy_function)
                     else:
                         copy_function(srcname, dstname)
             elif os.path.isdir(srcname):
@@ -372,7 +386,7 @@ def copytree(src, dst, symlinks=False, ignore=None, copy_function=copy2,
         copystat(src, dst)
     except OSError as why:
         # Copying file access times may fail on Windows
-        if getattr(why, 'winerror', None) is None:
+        if getattr(why, "winerror", None) is None:
             errors.append((src, dst, str(why)))
     if errors:
         raise Error(errors)

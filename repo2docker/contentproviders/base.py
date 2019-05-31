@@ -10,6 +10,7 @@ import os
 
 class ContentProviderException(Exception):
     """Exception raised when a ContentProvider can not provide content."""
+
     pass
 
 
@@ -63,11 +64,10 @@ class ContentProvider:
 class Local(ContentProvider):
     def detect(self, source, ref=None, extra_args=None):
         if os.path.isdir(source):
-            return {'path': source}
+            return {"path": source}
 
     def fetch(self, spec, output_dir, yield_output=False):
         # nothing to be done if your content is already in the output directory
-        msg = "Local content provider assumes {} == {}".format(spec['path'],
-                                                               output_dir)
-        assert output_dir == spec['path'], msg
-        yield "Using local repo {}.\n".format(spec['path'])
+        msg = "Local content provider assumes {} == {}".format(spec["path"], output_dir)
+        assert output_dir == spec["path"], msg
+        yield "Using local repo {}.\n".format(spec["path"])

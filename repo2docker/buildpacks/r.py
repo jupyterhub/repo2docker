@@ -39,18 +39,19 @@ class RBuildPack(PythonBuildPack):
     The `r-base` package from Ubuntu apt repositories is used to install
     R itself, rather than any of the methods from https://cran.r-project.org/.
     """
+
     @property
     def runtime(self):
         """
         Return contents of runtime.txt if it exists, '' otherwise
         """
-        if not hasattr(self, '_runtime'):
-            runtime_path = self.binder_path('runtime.txt')
+        if not hasattr(self, "_runtime"):
+            runtime_path = self.binder_path("runtime.txt")
             try:
                 with open(runtime_path) as f:
                     self._runtime = f.read().strip()
             except FileNotFoundError:
-                self._runtime = ''
+                self._runtime = ""
 
         return self._runtime
 
@@ -61,8 +62,8 @@ class RBuildPack(PythonBuildPack):
 
         Returns '' if no date is specified
         """
-        if not hasattr(self, '_checkpoint_date'):
-            match = re.match(r'r-(\d\d\d\d)-(\d\d)-(\d\d)', self.runtime)
+        if not hasattr(self, "_checkpoint_date"):
+            match = re.match(r"r-(\d\d\d\d)-(\d\d)-(\d\d)", self.runtime)
             if not match:
                 self._checkpoint_date = False
             else:
@@ -83,14 +84,17 @@ class RBuildPack(PythonBuildPack):
         if self.checkpoint_date:
             return True
 
-        description_R = 'DESCRIPTION'
-        if ((not self.binder_dir and os.path.exists(description_R))
-          or 'r' in self.stencila_contexts):
+        description_R = "DESCRIPTION"
+        if (
+            not self.binder_dir and os.path.exists(description_R)
+        ) or "r" in self.stencila_contexts:
             if not self.checkpoint_date:
                 # no R snapshot date set through runtime.txt
                 # set the R runtime to the latest date that is guaranteed to
                 # be on MRAN across timezones
-                self._checkpoint_date = datetime.date.today() - datetime.timedelta(days=2)
+                self._checkpoint_date = datetime.date.today() - datetime.timedelta(
+                    days=2
+                )
                 self._runtime = "r-{}".format(str(self._checkpoint_date))
             return True
 
@@ -101,9 +105,7 @@ class RBuildPack(PythonBuildPack):
         The RStudio package installs its binaries in a non-standard path,
         so we explicitly add that path to PATH.
         """
-        return super().get_path() + [
-            '/usr/lib/rstudio-server/bin/'
-        ]
+        return super().get_path() + ["/usr/lib/rstudio-server/bin/"]
 
     def get_build_env(self):
         """
@@ -115,7 +117,7 @@ class RBuildPack(PythonBuildPack):
         """
         return super().get_build_env() + [
             # This is the path where user libraries are installed
-            ('R_LIBS_USER', '${APP_BASE}/rlibs')
+            ("R_LIBS_USER", "${APP_BASE}/rlibs")
         ]
 
     def get_packages(self):
@@ -125,14 +127,20 @@ class RBuildPack(PythonBuildPack):
         We install a base version of R, and packages required for RStudio to
         be installed.
         """
-        return super().get_packages().union([
-            'r-base',
-            # For rstudio
-            'psmisc',
-            'libapparmor1',
-            'sudo',
-            'lsb-release'
-        ])
+        return (
+            super()
+            .get_packages()
+            .union(
+                [
+                    "r-base",
+                    # For rstudio
+                    "psmisc",
+                    "libapparmor1",
+                    "sudo",
+                    "lsb-release",
+                ]
+            )
+        )
 
     def get_build_scripts(self):
         """
@@ -151,19 +159,19 @@ class RBuildPack(PythonBuildPack):
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
         - stencila R package (if Stencila document with R code chunks detected)
         """
-        rstudio_url = 'https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb'
+        rstudio_url = "https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb"
         # This is MD5, because that is what RStudio download page provides!
-        rstudio_checksum = '24cd11f0405d8372b4168fc9956e0386'
+        rstudio_checksum = "24cd11f0405d8372b4168fc9956e0386"
 
         # Via https://www.rstudio.com/products/shiny/download-server/
-        shiny_url = 'https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.7.907-amd64.deb'
-        shiny_checksum = '78371a8361ba0e7fec44edd2b8e425ac'
+        shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.7.907-amd64.deb"
+        shiny_checksum = "78371a8361ba0e7fec44edd2b8e425ac"
 
         # Version of MRAN to pull devtools from.
-        devtools_version = '2018-02-01'
+        devtools_version = "2018-02-01"
 
         # IRKernel version - specified as a tag in the IRKernel repository
-        irkernel_version = '0.8.11'
+        irkernel_version = "0.8.11"
 
         scripts = [
             (
@@ -171,7 +179,7 @@ class RBuildPack(PythonBuildPack):
                 r"""
                 mkdir -p ${R_LIBS_USER} && \
                 chown -R ${NB_USER}:${NB_USER} ${R_LIBS_USER}
-                """
+                """,
             ),
             (
                 "root",
@@ -182,9 +190,8 @@ class RBuildPack(PythonBuildPack):
                 dpkg -i /tmp/rstudio.deb && \
                 rm /tmp/rstudio.deb
                 """.format(
-                    rstudio_url=rstudio_url,
-                    rstudio_checksum=rstudio_checksum
-                )
+                    rstudio_url=rstudio_url, rstudio_checksum=rstudio_checksum
+                ),
             ),
             (
                 "root",
@@ -195,10 +202,8 @@ class RBuildPack(PythonBuildPack):
                 dpkg -i {deb} && \
                 rm {deb}
                 """.format(
-                    url=shiny_url,
-                    checksum=shiny_checksum,
-                    deb='/tmp/shiny.deb'
-                )
+                    url=shiny_url, checksum=shiny_checksum, deb="/tmp/shiny.deb"
+                ),
             ),
             (
                 "root",
@@ -208,7 +213,7 @@ class RBuildPack(PythonBuildPack):
                 r"""
                 sed -i -e '/^R_LIBS_USER=/s/^/#/' /etc/R/Renviron && \
                 echo "R_LIBS_USER=${R_LIBS_USER}" >> /etc/R/Renviron
-                """
+                """,
             ),
             (
                 "${NB_USER}",
@@ -219,7 +224,7 @@ class RBuildPack(PythonBuildPack):
                 jupyter serverextension enable jupyter_server_proxy --sys-prefix && \
                 jupyter nbextension install --py jupyter_server_proxy --sys-prefix && \
                 jupyter nbextension enable --py jupyter_server_proxy --sys-prefix
-                """
+                """,
             ),
             (
                 "${NB_USER}",
@@ -229,9 +234,8 @@ class RBuildPack(PythonBuildPack):
                 R --quiet -e "devtools::install_github('IRkernel/IRkernel', ref='{irkernel_version}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """.format(
-                    devtools_version=devtools_version,
-                    irkernel_version=irkernel_version
-                )
+                    devtools_version=devtools_version, irkernel_version=irkernel_version
+                ),
             ),
             (
                 "${NB_USER}",
@@ -240,22 +244,22 @@ class RBuildPack(PythonBuildPack):
                 R --quiet -e "install.packages('shiny', repos='https://mran.microsoft.com/snapshot/{}', method='libcurl')"
                 """.format(
                     self.checkpoint_date.isoformat()
-                )
+                ),
             ),
         ]
 
         if "r" in self.stencila_contexts:
             scripts += [
-            (
-                "${NB_USER}",
-                # Install and register stencila library
-                r"""
+                (
+                    "${NB_USER}",
+                    # Install and register stencila library
+                    r"""
                 R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
                 R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
                 R --quiet -e "stencila::register()"
-                """
-            ),
-        ]
+                """,
+                )
+            ]
 
         return super().get_build_scripts() + scripts
 
@@ -266,7 +270,7 @@ class RBuildPack(PythonBuildPack):
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt, and run the `install.R` script if it exists.
         """
-        mran_url = 'https://mran.microsoft.com/snapshot/{}'.format(
+        mran_url = "https://mran.microsoft.com/snapshot/{}".format(
             self.checkpoint_date.isoformat()
         )
         assemble_scripts = super().get_assemble_scripts() + [
@@ -276,7 +280,9 @@ class RBuildPack(PythonBuildPack):
                 # We set download method to be curl so we get HTTPS support
                 r"""
                 echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
-                """.format(mran_url=mran_url)
+                """.format(
+                    mran_url=mran_url
+                ),
             ),
             (
                 # Not all of these locations are configurable; log_dir is
@@ -286,26 +292,18 @@ class RBuildPack(PythonBuildPack):
                 install -o ${NB_USER} -g ${NB_USER} -d /var/lib/shiny-server && \
                 install -o ${NB_USER} -g ${NB_USER} /dev/null /var/log/shiny-server.log && \
                 install -o ${NB_USER} -g ${NB_USER} /dev/null /var/run/shiny-server.pid
-                """
+                """,
             ),
         ]
 
-        installR_path = self.binder_path('install.R')
+        installR_path = self.binder_path("install.R")
         if os.path.exists(installR_path):
-            assemble_scripts += [
-                (
-                    "${NB_USER}",
-                    "Rscript %s" % installR_path
-                )
-            ]
+            assemble_scripts += [("${NB_USER}", "Rscript %s" % installR_path)]
 
-        description_R = 'DESCRIPTION'
+        description_R = "DESCRIPTION"
         if not self.binder_dir and os.path.exists(description_R):
             assemble_scripts += [
-                (
-                    "${NB_USER}",
-                    'R --quiet -e "devtools::install_local(getwd())"'
-                )
+                ("${NB_USER}", 'R --quiet -e "devtools::install_local(getwd())"')
             ]
 
         return assemble_scripts
