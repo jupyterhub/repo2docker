@@ -40,7 +40,6 @@ from .buildpacks import (
 )
 from . import contentproviders
 from .utils import ByteSpecification, chdir
-from .buildpacks.base import TEMPLATE, ENTRYPOINT_FILE
 
 
 class Repo2Docker(Application):
@@ -368,19 +367,19 @@ class Repo2Docker(Application):
     )
 
     template = Unicode(
-        TEMPLATE,
+        "",
         help="""
         Jinja template used to render the Dockerfile.
         """,
-        config=True
+        config=True,
     )
 
     entrypoint_file = Unicode(
-        ENTRYPOINT_FILE,
+        "",
         help="""
         Path to a file that will be used as an entry point in the Docker image.
         """,
-        config=True
+        config=True,
     )
 
     def fetch(self, url, ref, checkout_path):
@@ -700,8 +699,10 @@ class Repo2Docker(Application):
                     picked_buildpack = self.default_buildpack()
 
                 picked_buildpack.appendix = self.appendix
-                picked_buildpack.template = self.template
-                picked_buildpack.entrypoint_file = self.entrypoint_file
+                if self.template:
+                    picked_buildpack.template = self.template
+                if self.entrypoint_file:
+                    picked_buildpack.entrypoint_file = self.entrypoint_file
                 # Add metadata labels
                 picked_buildpack.labels["repo2docker.version"] = self.version
                 repo_label = "local" if os.path.isdir(self.repo) else self.repo

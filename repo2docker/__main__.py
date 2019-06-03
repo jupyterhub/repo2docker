@@ -193,15 +193,15 @@ def get_argparser():
     )
 
     argparser.add_argument(
-        '--template',
+        "--template",
         type=str,
-        help='Either a file to the Dockerfile template, or the template itself.',
+        help="Either a file to the Dockerfile template, or the template itself.",
     )
 
     argparser.add_argument(
-        '--entrypoint-file',
+        "--entrypoint-file",
         type=str,
-        #help=self.traits()['entrypoint_file'].help,
+        # help=self.traits()['entrypoint_file'].help,
     )
 
     return argparser
@@ -245,8 +245,7 @@ def make_r2d(argv=None):
             with open(os.path.join(args.repo, args.template)) as fp:
                 r2d.template = fp.read()
         else:
-           r2d.template = args.template
-
+            r2d.template = args.template
 
     # user wants to mount a local directory into the container for
     # editing
