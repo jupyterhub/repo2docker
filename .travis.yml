@@ -15,21 +15,44 @@ install:
 - pip install dist/*.whl
 - pip freeze
 script:
-# cd into tests so CWD being repo2docker does not hide
-# possible issues with MANIFEST.in
-- pushd tests;
-  if [ ${REPO_TYPE} == "r" ] || [ ${REPO_TYPE} == "stencila-r" ] || [ ${REPO_TYPE} == "stencila-py" ]; then
-    travis_wait 30 pytest --durations 10 --cov repo2docker -v ${REPO_TYPE} || exit 1;
-  else
-    travis_retry pytest --durations 10 --cov repo2docker -v ${REPO_TYPE} || exit 1;
-  fi;
-  popd;
+- |
+  # run autoformat
+  if [[ "$REPO_TYPE" == "lint" ]]; then
+    pre-commit run --all-files
+  fi
+- |
+  # run any of the other tests
+  if [[ "$REPO_TYPE" != "lint" ]]; then
+    # cd into tests so CWD being repo2docker does not hide
+    # possible issues with MANIFEST.in
+    pushd tests;
+    if [ ${REPO_TYPE} == "r" ] || [ ${REPO_TYPE} == "stencila-r" ] || [ ${REPO_TYPE} == "stencila-py" ]; then
+      travis_wait 30 pytest --durations 10 --cov repo2docker -v ${REPO_TYPE} || exit 1;
+    else
+      travis_retry pytest --durations 10 --cov repo2docker -v ${REPO_TYPE} || exit 1;
+    fi;
+    popd;
+  fi
 after_success:
 - pip install codecov
 - pushd tests && codecov && popd
 
+after_failure:
+- |
+  # point to auto-lint-fix
+  if [[ "$REPO_TYPE" == "lint" ]]; then
+    echo "You can install pre-commit hooks to automatically run formatting"
+    echo "on each commit with:"
+    echo "    pre-commit install"
+    echo "or you can run by hand on staged files with"
+    echo "    pre-commit run"
+    echo "or after-the-fact on already committed files with"
+    echo "    pre-commit run --all-files"
+  fi
+
 env:
   matrix:
+  - REPO_TYPE=lint
   - REPO_TYPE=unit
   - REPO_TYPE=base
   - REPO_TYPE=conda

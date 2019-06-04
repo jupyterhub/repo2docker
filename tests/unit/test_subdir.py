@@ -17,7 +17,7 @@ def test_subdir(run_repo2docker):
     # root of the test repo are invalid
     cwd = os.getcwd()
 
-    argv = ['--subdir', 'a directory', TEST_REPO]
+    argv = ["--subdir", "a directory", TEST_REPO]
     run_repo2docker(argv)
 
     # check that we restored the current working directory
@@ -25,23 +25,17 @@ def test_subdir(run_repo2docker):
 
 
 def test_subdir_in_image_name():
-    app = Repo2Docker(
-        repo=TEST_REPO,
-        subdir='a directory',
-    )
+    app = Repo2Docker(repo=TEST_REPO, subdir="a directory")
     app.initialize()
     app.build()
 
-    escaped_dirname = escapism.escape('a directory', escape_char='-').lower()
+    escaped_dirname = escapism.escape("a directory", escape_char="-").lower()
     assert escaped_dirname in app.output_image_spec
 
 
 def test_subdir_invalid(caplog):
     # test an error is raised when requesting a non existent subdir
-    app = Repo2Docker(
-        repo=TEST_REPO,
-        subdir='invalid-sub-dir',
-    )
+    app = Repo2Docker(repo=TEST_REPO, subdir="invalid-sub-dir")
     app.initialize()
     with pytest.raises(FileNotFoundError):
         app.build()  # Just build the image and do not run it.

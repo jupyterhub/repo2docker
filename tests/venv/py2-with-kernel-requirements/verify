@@ -12,7 +12,9 @@ try:
 except ImportError:
     pass
 else:
-    raise Exception("'nbgitpuller' shouldn't have been installed from requirements3.txt")
+    raise Exception(
+        "'nbgitpuller' shouldn't have been installed from requirements3.txt"
+    )
 
 # Python 3 is the executable used for the notebook server, this should
 # have nbgitpuller installed
