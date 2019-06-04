@@ -3,7 +3,7 @@
 This is a living document talking about the architecture of repo2docker
 from various perspectives.
 
-## Buildpack
+## Buildpacks
 
 The **buildpack** concept comes from [Heroku](https://devcenter.heroku.com/articles/buildpacks)
 and Ruby on Rails' [Convention over Configuration](http://rubyonrails.org/doctrine/#convention-over-configuration)
@@ -47,7 +47,7 @@ It takes the following steps to determine this:
 3. If no `BuildPack` returns true, then repo2docker will use the default `BuildPack` (defined in
    `Repo2Docker.default_buildpack` traitlet).
 
-## Build base environment
+### Build base environment
 
 Once a buildpack is chosen, it builds a **base environment** that is mostly the same for various
 repositories built with the same buildpack.
@@ -76,13 +76,13 @@ the image to be run as pat of `get_build_scripts`. Code in either has following 
    BuildPack authors should still try to minimize the variants created in this fashion, to
    optimize the build cache.
 
-## Copy repository contents
+### Copy repository contents
 
 The contents of the repository are copied unconditionally into the Docker image, and made
 available for all further commands. This is common to most `BuildPack`s, and the code is in
 the `build` method of the `BuildPack` base class.
 
-## Assemble repository environment
+### Assemble repository environment
 
 The **assemble** stage builds the specific environment that is requested by the repository.
 This usually means installing required libraries specified in a format native to the language
@@ -95,16 +95,43 @@ so less restrictions apply to this than to `get_build_scripts`.
 
 At the end of the assemble step, the docker image is ready to be used in various ways!
 
-## Push
+### Push
 
 Optionally, repo2docker can **push** a built image to a [docker registry](https://docs.docker.com/registry/).
 This is done as a convenience only (since you can do the same with a `docker push` after using repo2docker
 only to build), and implemented in `Repo2Docker.push` method. It is only activated if using the
 `--push` commandline flag.
 
-## Run
+### Run
 
 Optionally, repo2docker can **run** the built image and allow the user to access the Jupyter Notebook
 running inside by default. This is also done as a convenience only (since you can do the same with `docker run`
 after using repo2docker only to build), and implemented in `Repo2Docker.run`. It is activated by default
 unless the `--no-run` commandline flag is passed.
+
+## ContentProviders
+
+ContentProviders provide a way for `repo2docker` to know how to find and
+retrieve a repository. They follow a similar pattern as the BuildPacks
+described above. When `repo2docker` is called, its main argument will be
+a path to a repository. This might be a local path or a URL. Upon being called,
+`repo2docker` will loop through all ContentProviders and perform the following
+commands:
+
+* Run the `detect()` method on the repository path given to `repo2docker`. This
+  should return any value other than `None` if the path matches what the ContentProvider is looking
+  for.
+
+  > For example, the [`Local` ContentProvider](https://github.com/jupyter/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L64)
+  > checks whether the argument is a valid local path. If so, then `detect(`
+  > returns a dictionary: `{'path': source}` which defines the path to the repository.
+  > This path is used by `fetch()` to check that it matches the output directory.
+* If `detect()` returns something other than `None`, run `fetch()` with the
+  returned value as its argument. This should
+  result in the contents of the repository being placed locally to a folder.
+
+For more information on ContentProviders, take a look at
+[the ContentProvider base class](https://github.com/jupyter/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L16-L60)
+which has more explanation.
+
+

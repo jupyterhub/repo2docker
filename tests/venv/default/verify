@@ -5,5 +5,5 @@ import sys
 assert sys.version_info[:2] == (3, 7), sys.version
 import jupyter
 
-with open('/tmp/appendix') as f:
-    assert f.read().strip() == 'appendix'
+with open("/tmp/appendix") as f:
+    assert f.read().strip() == "appendix"
