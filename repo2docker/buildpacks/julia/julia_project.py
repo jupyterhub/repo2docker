@@ -18,7 +18,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
 
     @property
     def julia_version(self):
-        
+
         default_julia_version = self.all_julias[-1]
         if os.path.exists(self.binder_path("JuliaProject.toml")):
             project_toml = toml.load(self.binder_path("JuliaProject.toml"))
@@ -37,23 +37,23 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         return default_julia_version
 
     def packagecompiler(self):
-    
-        # grab Project.toml, like before  
-        if os.path.exists(self.binder_path('JuliaProject.toml')):
-            project_toml = toml.load(self.binder_path('JuliaProject.toml'))
-        else:
-            project_toml = toml.load(self.binder_path('Project.toml'))
 
-        # packagecompiler stuff 
-        if 'packagecompiler' in project_toml: 
-            if 'compilerflags' in project_toml['packagecompiler']:
-                compilerflags = project_toml['compilerflags']
+        # grab Project.toml, like before
+        if os.path.exists(self.binder_path("JuliaProject.toml")):
+            project_toml = toml.load(self.binder_path("JuliaProject.toml"))
+        else:
+            project_toml = toml.load(self.binder_path("Project.toml"))
+
+        # packagecompiler stuff
+        if "packagecompiler" in project_toml:
+            if "compilerflags" in project_toml["packagecompiler"]:
+                compilerflags = project_toml["compilerflags"]
             else:
                 compilerflags = None
 
-            packagelist = project_toml['packagecompiler']['packages'] 
-            return packagelist, compilerflags  
-        else: 
+            packagelist = project_toml["packagecompiler"]["packages"]
+            return packagelist, compilerflags
+        else:
             return None
 
     def get_build_env(self):
@@ -123,7 +123,6 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             ),
         ]
 
-
     """
     Return series of build-steps specific to "this" Julia repository
 
@@ -137,19 +136,20 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     The parent, CondaBuildPack, will add the build steps for
     any needed Python packages found in environment.yml.
     """
+
     def get_assemble_scripts(self):
 
-        # PackageCompiler 
+        # PackageCompiler
         pkgcompiler_objects = self.packagecompiler()
-        if pkgcompiler_objects == None: 
-            # vanilla thing 
+        if pkgcompiler_objects == None:
+            # vanilla thing
             return super().get_assemble_scripts() + [
                 (
                     "${NB_USER}",
                     r"""
                     JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
                     julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
-                    """
+                    """,
                 )
             ]
         else:
@@ -162,7 +162,8 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                     cd ${REPO_DIR} && julia -e 'using Pkg; pkg"activate ."; pkg"instantiate"; x = Pkg.installed(); pkg"activate"; Pkg.add(collect(keys(x)))' && \ 
                     julia -e 'using Pkg; pkg"add PackageCompiler#sd-notomls"; using PackageCompiler; sysnew, sysold = compile_incremental(%s, install = true); cp(sysnew, sysold, force = true); @assert read(sysnew) == read(sysold)'  && \ 
                     JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\");"
-                    """ % packages
+                    """
+                    % packages,
                 )
             ]
 
