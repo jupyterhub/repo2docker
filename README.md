@@ -22,7 +22,7 @@ to learn about where the project is heading.
 
 1. Docker to build & run the repositories. The [community edition](https://store.docker.com/search?type=edition&offering=community)
    is recommended.
-2. Python 3.4+.
+2. Python 3.5+.
 
 Supported on Linux and macOS. [See documentation note about Windows support.](http://repo2docker.readthedocs.io/en/latest/install.html#note-about-windows-support)
 

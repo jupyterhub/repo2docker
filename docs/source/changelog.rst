@@ -11,6 +11,8 @@ Release date: TBD
 New features
 ------------
 - Add PackageCompiler support for Julia. 
+- Increased minimum Python version supported for running  `repo2docker` itself
+  to Python 3.5 in :pr:`684` by :user:`betatim`.
 
 API changes
 -----------

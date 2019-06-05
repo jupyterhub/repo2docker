@@ -13,7 +13,7 @@ def test_git_credential_env():
     out = (
         check_output(
             os.path.join(repo_root, "docker", "git-credential-env"),
-            env={'GIT_CREDENTIAL_ENV': credential_env},
+            env={"GIT_CREDENTIAL_ENV": credential_env},
         )
         .decode()
         .strip()
