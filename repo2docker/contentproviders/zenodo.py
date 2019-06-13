@@ -33,20 +33,10 @@ class Zenodo(ContentProvider):
         # Transform a DOI to a URL
         # If not a doi, assume we have a URL and return
         if is_doi(doi):
-            # Zenodo instances will most likely use DataCite DOIs
-            # Could also resolve the DOI to get the url
-            # Get url from DataCite
             doi = normalize_doi(doi)
 
-            req = Request(
-                "https://api.datacite.org/dois/{}".format(doi),
-                headers={"accept": "application/json"},
-            )
-            resp = self._urlopen(req)
-
-            record = json.loads(resp.read().decode("utf-8"))
-            url = record["data"]["attributes"]["url"]
-            return url
+            resp = self._urlopen("https://doi.org/{}".format(doi))
+            return resp.url
         else:
             return doi
 
@@ -78,11 +68,10 @@ class Zenodo(ContentProvider):
         ]
 
         url = self._process_doi(doi)
-        resp = self._urlopen(url)
-        self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
 
         for host in hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
+                self.record_id = url.rsplit("/", maxsplit=1)[1]
                 return {"record": self.record_id, "host": host}
 
     def fetch(self, spec, output_dir, yield_output=False):
