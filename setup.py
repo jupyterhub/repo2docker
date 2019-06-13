@@ -20,6 +20,7 @@ setup(
         "ruamel.yaml>=0.15",
         "toml",
         "semver",
+        "idutils"
     ],
     python_requires=">=3.5",
     author="Project Jupyter Contributors",

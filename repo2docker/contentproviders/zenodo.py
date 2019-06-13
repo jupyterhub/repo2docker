@@ -6,6 +6,7 @@ from os import makedirs
 from os import path
 from urllib.request import build_opener, urlopen, Request
 from zipfile import ZipFile, is_zipfile
+from idutils import normalize_doi, is_doi
 
 from .base import ContentProvider
 from ..utils import copytree
@@ -28,39 +29,58 @@ class Zenodo(ContentProvider):
 
         return urlopen(req)
 
+    def _process_doi(self, doi):
+        #Transform a DOI to a URL
+        #If not a doi, assume we have a URL and return
+        if is_doi(doi):
+            #Zenodo instances will most likely use DataCite DOIs
+            #Could also resolve the DOI to get the url
+            #Get url from DataCite
+            doi = normalize_doi(doi)
+
+            req = Request(
+            "https://api.datacite.org/dois/{}".format(doi),
+            headers={"accept": "application/json"},
+            )
+            resp = self._urlopen(req)
+
+            record = json.loads(resp.read().decode("utf-8"))
+            url = record['data']['attributes']['url']
+            return url
+        else:
+            return doi
+
     def detect(self, doi, ref=None, extra_args=None):
-        """Trigger this provider for things that resolve to a Zenodo record"""
-        # To support Zenodo instances not hosted at zenodo.org we need to
-        # start maintaining a list of known DOI prefixes and their hostname.
-        # We should also change to returning a complete `record_url` that
-        # fetch() can use instead of constructing a URL there
-        doi = doi.lower()
-        # 10.5281 is the Zenodo DOI prefix
-        if doi.startswith("10.5281/"):
-            resp = self._urlopen("https://doi.org/{}".format(doi))
-            self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
-            return {"record": self.record_id}
+        """Trigger this provider for things that resolve to a Zenodo/Invenio record"""
+        # We need the hostname (url where records are), api url (for metadata),
+        # filepath (path to files in metadata), filename (path to filename in
+        # metadata), type (path to type in metadata)
+        
+        hosts = [{'hostname':["https://zenodo.org/record/","http://zenodo.org/record/"],
+            'api':'https://zenodo.org/api/records/','filepath':"files",
+            'filename':"files.key",'download':"links.download",
+            'type':"metadata.upload_type"},
+            {'hostname':["https://data.caltech.edu/records/","http://data.caltech.edu/records/"],
+            'api':"https://data.caltech.edu/api/record/",'filepath':"files",
+            'filename':"electronic_location_and_access.electronic_name.0",
+            'type':"metadata.resourceType.resourceTypeGeneral"}]
 
-        elif doi.startswith("https://doi.org/10.5281/") or doi.startswith(
-            "http://doi.org/10.5281/"
-        ):
-            resp = self._urlopen(doi)
-            self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
-            return {"record": self.record_id}
+        url = self._process_doi(doi)
+        resp = self._urlopen(url)
+        self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
 
-        elif doi.startswith("https://zenodo.org/record/") or doi.startswith(
-            "http://zenodo.org/record/"
-        ):
-            self.record_id = doi.rsplit("/", maxsplit=1)[1]
-            return {"record": self.record_id}
-
+        for host in hosts:
+            if any([url.startswith(s) for s in host['hostname']]):
+                return {"record": self.record_id, "host": host}
+            
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Zenodo record"""
         record_id = spec["record"]
+        host = spec["host"]
 
         yield "Fetching Zenodo record {}.\n".format(record_id)
         req = Request(
-            "https://zenodo.org/api/records/{}".format(record_id),
+            "{}{}".format(host['api'],record_id),
             headers={"accept": "application/json"},
         )
         resp = self._urlopen(req)
