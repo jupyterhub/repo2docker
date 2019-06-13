@@ -30,22 +30,22 @@ class Zenodo(ContentProvider):
         return urlopen(req)
 
     def _process_doi(self, doi):
-        #Transform a DOI to a URL
-        #If not a doi, assume we have a URL and return
+        # Transform a DOI to a URL
+        # If not a doi, assume we have a URL and return
         if is_doi(doi):
-            #Zenodo instances will most likely use DataCite DOIs
-            #Could also resolve the DOI to get the url
-            #Get url from DataCite
+            # Zenodo instances will most likely use DataCite DOIs
+            # Could also resolve the DOI to get the url
+            # Get url from DataCite
             doi = normalize_doi(doi)
 
             req = Request(
-            "https://api.datacite.org/dois/{}".format(doi),
-            headers={"accept": "application/json"},
+                "https://api.datacite.org/dois/{}".format(doi),
+                headers={"accept": "application/json"},
             )
             resp = self._urlopen(req)
 
             record = json.loads(resp.read().decode("utf-8"))
-            url = record['data']['attributes']['url']
+            url = record["data"]["attributes"]["url"]
             return url
         else:
             return doi
@@ -55,24 +55,36 @@ class Zenodo(ContentProvider):
         # We need the hostname (url where records are), api url (for metadata),
         # filepath (path to files in metadata), filename (path to filename in
         # metadata), type (path to type in metadata)
-        
-        hosts = [{'hostname':["https://zenodo.org/record/","http://zenodo.org/record/"],
-            'api':'https://zenodo.org/api/records/','filepath':"files",
-            'filename':"files.key",'download':"links.download",
-            'type':"metadata.upload_type"},
-            {'hostname':["https://data.caltech.edu/records/","http://data.caltech.edu/records/"],
-            'api':"https://data.caltech.edu/api/record/",'filepath':"files",
-            'filename':"electronic_location_and_access.electronic_name.0",
-            'type':"metadata.resourceType.resourceTypeGeneral"}]
+
+        hosts = [
+            {
+                "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
+                "api": "https://zenodo.org/api/records/",
+                "filepath": "files",
+                "filename": "files.key",
+                "download": "links.download",
+                "type": "metadata.upload_type",
+            },
+            {
+                "hostname": [
+                    "https://data.caltech.edu/records/",
+                    "http://data.caltech.edu/records/",
+                ],
+                "api": "https://data.caltech.edu/api/record/",
+                "filepath": "files",
+                "filename": "electronic_location_and_access.electronic_name.0",
+                "type": "metadata.resourceType.resourceTypeGeneral",
+            },
+        ]
 
         url = self._process_doi(doi)
         resp = self._urlopen(url)
         self.record_id = resp.url.rsplit("/", maxsplit=1)[1]
 
         for host in hosts:
-            if any([url.startswith(s) for s in host['hostname']]):
+            if any([url.startswith(s) for s in host["hostname"]]):
                 return {"record": self.record_id, "host": host}
-            
+
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Zenodo record"""
         record_id = spec["record"]
@@ -80,7 +92,7 @@ class Zenodo(ContentProvider):
 
         yield "Fetching Zenodo record {}.\n".format(record_id)
         req = Request(
-            "{}{}".format(host['api'],record_id),
+            "{}{}".format(host["api"], record_id),
             headers={"accept": "application/json"},
         )
         resp = self._urlopen(req)
