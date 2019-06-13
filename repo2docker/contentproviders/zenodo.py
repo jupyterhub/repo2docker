@@ -29,7 +29,7 @@ class Zenodo(ContentProvider):
 
         return urlopen(req)
 
-    def _process_doi(self, doi):
+    def _doi2url(self, doi):
         # Transform a DOI to a URL
         # If not a doi, assume we have a URL and return
         if is_doi(doi):
@@ -67,7 +67,7 @@ class Zenodo(ContentProvider):
             },
         ]
 
-        url = self._process_doi(doi)
+        url = self._doi2url(doi)
 
         for host in hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
