@@ -12,8 +12,11 @@ RUN mkdir /tmp/wheelhouse \
 FROM python:${PYTHON_VERSION}-slim
 
 # we do need git, though
-RUN apt-get update \
- && apt-get -y install --no-install-recommends git \
+# git-lfs is in backports
+ARG DEB_RELEASE=stretch
+RUN echo "deb http://deb.debian.org/debian ${DEB_RELEASE}-backports main" > /etc/apt/sources.list.d/backports.list \
+ && apt-get update \
+ && apt-get -t ${DEB_RELEASE}-backports -y install --no-install-recommends git git-lfs \
  && rm -rf /var/lib/apt/lists/*
 
 # install repo2docker
