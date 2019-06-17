@@ -8,4 +8,6 @@ except ImportError:
     # We want an ImportError to be thrown for this test to pass
     pass
 else:
-    raise Exception("'numpy' shouldn't have been installed! It was listed in requirements.txt but not in the Pipfile that has precedence.")
+    raise Exception(
+        "'numpy' shouldn't have been installed! It was listed in requirements.txt but not in the Pipfile that has precedence."
+    )
