@@ -39,7 +39,7 @@ from .buildpacks import (
     RBuildPack,
 )
 from . import contentproviders
-from .utils import ByteSpecification, chdir
+from .utils import ByteSpecification, chdir, archive_repo
 
 
 class Repo2Docker(Application):
@@ -315,10 +315,10 @@ class Repo2Docker(Application):
 
 
     # FIXME: update help msg
-    run_changes = Bool(
+    reuse_image = Bool(
         False,
         help="""
-        accept new changes to repo, do not rebuild image.
+        Copies new contents to existing image.
         """,
         config=True
     )
@@ -557,18 +557,12 @@ class Repo2Docker(Application):
 
 
         container_volumes = {}
-        repo_path = ""
-        if self.volumes or self.run_changes:
+        if self.volumes:
             api_client = docker.APIClient(
                 version="auto", **docker.utils.kwargs_from_env()
             )
             image = api_client.inspect_image(self.output_image_spec)
             image_workdir = image["ContainerConfig"]["WorkingDir"]
-
-            # add repo to volumes
-            if self.run_changes:
-                repo_path = os.path.abspath(self.git_workdir)
-                self.volumes[repo_path]=repo_path
 
             for k, v in self.volumes.items():
                 container_volumes[os.path.abspath(k)] = {
@@ -582,18 +576,32 @@ class Repo2Docker(Application):
             detach=True,
             command=run_cmd,
             volumes=container_volumes,
-            environment=self.environment,
+            environment=self.environment
         )
-
-        # set path to mounted repo
-        if self.run_changes:
-            run_kwargs["working_dir"] =repo_path
 
         run_kwargs.update(self.extra_run_kwargs)
 
         container = client.containers.run(self.output_image_spec, **run_kwargs)
 
-        while container.status == "created":
+        # copies the new contents of the image into container
+        if self.reuse_image:
+            image_workdir = container.image.attrs["Config"]["WorkingDir"]
+
+            # local path to repo clone
+            repo_path = os.path.abspath(self.git_workdir) + "/"
+            repo_archive = archive_repo(repo_path)
+
+            # delete old container contents
+            cmd = "sh -c 'rm -rf {}/*'".format(image_workdir)
+            container.exec_run(cmd, stderr=True, stdout=True)
+
+            copied = container.put_archive(image_workdir, repo_archive)
+            if not copied:
+                self.log.error("Failed to copy repo contents into containe")
+                return container
+
+
+        while container.status == 'created':
             time.sleep(0.5)
             container.reload()
 
@@ -630,34 +638,25 @@ class Repo2Docker(Application):
         s.close()
         return port
 
-    def find_image(self):
+    def find_image(self, allow_revision=False):
         # if this is a dry run it is Ok for dockerd to be unreachable so we
         # always return False for dry runs.
         if self.dry_run:
             return False
         # check if we already have an image for this content
-        client = docker.APIClient(version="auto", **kwargs_from_env())
-        for image in client.images():
-            if image["RepoTags"] is not None:
-                for tag in image["RepoTags"]:
-                    if tag == self.output_image_spec + ":latest":
-                        return True
-        return False
-
-    def find_repo_image(self):
-
-        # TODO: Find latest image with substring match that has the newest
-        # create date
-
-        # check if we already have an image for this content
         client = docker.APIClient(version='auto', **kwargs_from_env())
+        # looking for partial match without commit tag
         repo_image_name = self.output_image_spec[:-7]
 
         for image in client.images():
             if image['RepoTags'] is not None:
                 for tag in image['RepoTags']:
-                    if repo_image_name in tag:
+
+                    if allow_revision and repo_image_name in tag:
                         self.output_image_spec = tag
+                        return True
+
+                    elif tag == self.output_image_spec + ":latest":
                         return True
         return False
 
@@ -683,38 +682,26 @@ class Repo2Docker(Application):
         # expensive to copy.
         if os.path.isdir(self.repo):
             checkout_path = self.repo
+            self.git_workdir = self.repo
         else:
             if self.git_workdir is None:
 
-                # TODO: only works for Macos, add Linux support
-                # consider copying instead of mounting
-                # warning this path isn't cleaned up
-                checkout_path =  '/private' +  tempfile.mkdtemp(prefix='repo2docker')
+                checkout_path = tempfile.mkdtemp(prefix='repo2docker')
                 self.git_workdir = checkout_path
-                if self.run_changes:
-                    self.cleanup_checkout = False   # because it's mounted
             else:
                 checkout_path = self.git_workdir
 
         try:
             self.fetch(self.repo, self.ref, checkout_path)
 
-            if self.find_image():
-                self.log.info(
-                    "Reusing existing image ({}), not "
-                    "building.".format(self.output_image_spec)
-                )
+            revision = self.reuse_image
+            if self.find_image(revision):
+                self.log.info("Reusing existing image ({}), not "
+                              "building.".format(self.output_image_spec))
                 # no need to build, so skip to the end by `return`ing here
                 # this will still execute the finally clause and let's us
                 # avoid having to indent the build code by an extra level
                 return
-
-            if self.run_changes:
-                if self.find_repo_image():
-                    self.log.info("Reusing existing image")
-                    # ask if we should exit out early if image not found
-                    return
-
 
             if self.subdir:
                 checkout_path = os.path.join(checkout_path, self.subdir)

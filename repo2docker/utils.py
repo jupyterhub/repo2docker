@@ -4,6 +4,8 @@ import os
 import re
 import subprocess
 import chardet
+import tempfile
+import tarfile
 
 from shutil import copystat, copy2
 
@@ -479,3 +481,17 @@ def is_local_pip_requirement(line):
         # references a local file
         return True
     return False
+
+
+# copied from:
+# https://github.com/docker/docker-py/blob/master/tests/helpers.py#L29-L38
+def archive_repo(path):
+    f = tempfile.NamedTemporaryFile()
+    t = tarfile.open(mode="w", fileobj=f)
+
+    abs_path = os.path.abspath(path)
+    t.add(abs_path, arcname=os.path.basename(path), recursive=True)
+
+    t.close()
+    f.seek(0)
+    return f
