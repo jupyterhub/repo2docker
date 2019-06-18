@@ -50,7 +50,7 @@ def test_detect():
         fake_urlopen.return_value.url = "https://data.caltech.edu/records/1235"
         # valid CaltechDATA DOIs trigger this content provider
         assert Zenodo().detect("10.22002/d1.1235") == {
-            "hots": {
+            "host": {
                 "hostname": [
                     "https://data.caltech.edu/records/",
                     "http://data.caltech.edu/records/",
