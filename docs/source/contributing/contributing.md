@@ -149,17 +149,29 @@ This should install both the dev and docs requirements at once!
 ### Code formatting
 
 We use [`black`](https://black.readthedocs.io/en/stable/) as code formatter to
-get a consistent layout for all the code in this project. This makes reading
-the code easier.
+get a consistent layout for all the code in this project. This makes reading the
+code easier.
 
-To format your code run `black .` in the top-level directory of this repository.
-Many editors have plugins that will automatically apply black as you edit files.
+While you can format your code with `black .` in the top-level directory of this
+repository, we suggest the use of a pre-commit git hook as it avoids a [known
+limitation](https://github.com/python/black/issues/491) for Python files without
+`.py` extension.
 
-We also have a pre-commit hook setup that will check that code is formatted
-according to black's style guide. You can activate it with `pre-commit install`.
+To install a pre-commit git hook for black into your `.git/hooks` folder, we
+rely on the [pre-commit](https://github.com/pre-commit/pre-commit) python
+package to help us together with our `.pre-commit-config.yaml` file.
 
-As part of our continuous integration tests we will check that code is
-formatted properly and the tests will fail if this is not the case.
+```bash
+pre-commit install
+```
+
+With the pre-commit git hook installed, `black`'s autoformatting will be
+executed before any commit completes. If additional changes are made by `black`
+your commit will fail. Then you need to stage the autoformat changes with `git
+add .` and try again.
+
+Our continuous integration will check that code is formatted properly and report
+failure if this is not the case.
 
 
 ### Verify that docker is installed and running
