@@ -130,7 +130,6 @@ source bin/activate
 pip3 install -e .
 pip3 install -r dev-requirements.txt
 pip3 install -r docs/doc-requirements.txt
-pip3 install black
 ```
 
 This should install all the libraries required for testing & running repo2docker!
