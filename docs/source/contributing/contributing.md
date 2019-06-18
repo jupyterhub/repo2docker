@@ -149,39 +149,37 @@ This should install both the dev and docs requirements at once!
 ### Code formatting
 
 We use [`black`](https://black.readthedocs.io/en/stable/) as code formatter to
-get a consistent layout for all the code in this project. This makes reading the
-code easier.
+get a consistent layout for all the code in this project. Our Continuous
+Integration (CI) will check that code is formatted accordingly and report
+failure if isn't.
 
-While you can install `black` and format code with `black .` from the top-level
-directory of this repository, we recommend the use of a pre-commit git hook as
-it avoids a [known limitation](https://github.com/python/black/issues/491) for
-Python files without `.py` extension.
-
-To install a pre-commit git hook to run `black` into your `.git/hooks` folder,
-we rely on the [pre-commit](https://github.com/pre-commit/pre-commit) python
-package to help us together with our `.pre-commit-config.yaml` file.
+To perform autoformatting while also avoiding a [known
+limitation](https://github.com/python/black/issues/491) of using `black`
+directly, we use the already installed Python package called
+[`pre-commit`](https://github.com/pre-commit/pre-commit). `pre-commit` will
+utilize a config file in this repo (`.pre-commit-config.yaml`) to understand it
+should use `black`.
 
 ```bash
+# run black on all files
+pre-commit run --all-files
+
+# run black only on the staged files to be committed
+pre-commit run
+```
+
+`pre-commit` the Python package, can also help us autoformat our code before
+each commit by installing a *git hook*:
+
+```bash
+# installs a git hook for this repository (a script within .git/hooks)
 pre-commit install
 ```
 
 With the pre-commit git hook installed, `black`'s autoformatting will be
 executed before any commit completes. If the pre-commit git hook causes
-additional changes by `black` your commit will fail. You then need to stage the
-autoformat changes with `git add .` and try again.
-
-You can run the installed pre-commit git hook manually as well:
-
-```bash
-# for the stages files to be committed
-pre-commit run
-
-# for all files
-pre-commit run --all-files
-```
-
-Our continuous integration will check that code is formatted properly and report
-failure if this is not the case.
+additional changes by `black` your commit will fail. If that happens, you need
+to stage the autoformatting changes with `git add .` and try to commit again.
 
 
 ### Verify that docker is installed and running
