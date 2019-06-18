@@ -314,7 +314,6 @@ class Repo2Docker(Application):
     )
 
 
-    # FIXME: update help msg
     reuse_image = Bool(
         False,
         help="""
@@ -596,6 +595,8 @@ class Repo2Docker(Application):
             container.exec_run(cmd, stderr=True, stdout=True)
 
             copied = container.put_archive(image_workdir, repo_archive)
+            print("AM I GONE?!! {}".format(self.git_workdir))
+            shutil.rmtree(self.git_workdir, ignore_errors=True)
             if not copied:
                 self.log.error("Failed to copy repo contents into containe")
                 return container
@@ -695,6 +696,10 @@ class Repo2Docker(Application):
             self.fetch(self.repo, self.ref, checkout_path)
 
             revision = self.reuse_image
+            if revision:
+                # repo contents will be cleaned up in run phase
+                self.cleanup_checkout = False
+
             if self.find_image(revision):
                 self.log.info("Reusing existing image ({}), not "
                               "building.".format(self.output_image_spec))
@@ -776,7 +781,7 @@ class Repo2Docker(Application):
             # Cleanup checkout if necessary
             if self.cleanup_checkout:
                 shutil.rmtree(checkout_path, ignore_errors=True)
-        return
+
 
     def start(self):
         self.build()
