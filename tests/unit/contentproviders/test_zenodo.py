@@ -24,13 +24,47 @@ def test_detect():
     with patch.object(Zenodo, "_urlopen") as fake_urlopen:
         fake_urlopen.return_value.url = "https://zenodo.org/record/3232985"
         # valid Zenodo DOIs trigger this content provider
-        assert Zenodo().detect("10.5281/zenodo.3232985") == {"record": "3232985"}
-        assert Zenodo().detect("https://doi.org/10.5281/zenodo.3232985") == {
-            "record": "3232985"
+        assert Zenodo().detect("10.5281/zenodo.3232985") == {
+            "host": {
+                "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
+                "api": "https://zenodo.org/api/records/",
+                "filepath": "files",
+                "filename": "filename",
+                "download": "links.download",
+                "type": "metadata.upload_type",
+            },
+            "record": "3232985",
         }
-        assert Zenodo().detect("https://zenodo.org/record/3232985") == {
-            "record": "3232985"
+        assert (
+            Zenodo().detect("https://doi.org/10.5281/zenodo.3232985")["record"]
+            == "3232985"
+        )
+        assert (
+            Zenodo().detect("https://zenodo.org/record/3232985")["record"] == "3232985"
+        )
+
+        # only two of the three calls above have to resolve a DOI
+        assert fake_urlopen.call_count == 2
+
+    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+        fake_urlopen.return_value.url = "https://data.caltech.edu/records/1235"
+        # valid CaltechDATA DOIs trigger this content provider
+        assert Zenodo().detect("10.22002/d1.1235") == {
+            "hots": {
+                "hostname": [
+                    "https://data.caltech.edu/records/",
+                    "http://data.caltech.edu/records/",
+                ],
+                "api": "https://data.caltech.edu/api/record/",
+                "filepath": "metadata.electronic_location_and_access",
+                "filename": "electronic_name.0",
+                "download": "uniform_resource_identifier",
+                "type": "metadata.resourceType.resourceTypeGeneral",
+            },
+            "record": "1235",
         }
+        assert Zenodo().detect("https://doi.org/10.22002/d1.1235")["record"] == "1235"
+        assert Zenodo().detect("https://zenodo.org/record/3232985")["record"] == "1235"
 
         # only two of the three calls above have to resolve a DOI
         assert fake_urlopen.call_count == 2
@@ -83,10 +117,24 @@ def test_fetch_software_from_github_archive():
 
         with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
             zen = Zenodo()
+            spec = {
+                "host": {
+                    "hostname": [
+                        "https://zenodo.org/record/",
+                        "http://zenodo.org/record/",
+                    ],
+                    "api": "https://zenodo.org/api/records/",
+                    "filepath": "files",
+                    "filename": "filename",
+                    "download": "links.download",
+                    "type": "metadata.upload_type",
+                },
+                "record": "1234",
+            }
 
             with TemporaryDirectory() as d:
                 output = []
-                for l in zen.fetch({"record": "1234"}, d):
+                for l in zen.fetch(spec, d):
                     output.append(l)
 
                 unpacked_files = set(os.listdir(d))
@@ -123,9 +171,22 @@ def test_fetch_software():
         with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
             with TemporaryDirectory() as d:
                 zen = Zenodo()
-
+                spec = spec = {
+                    "host": {
+                        "hostname": [
+                            "https://zenodo.org/record/",
+                            "http://zenodo.org/record/",
+                        ],
+                        "api": "https://zenodo.org/api/records/",
+                        "filepath": "files",
+                        "filename": "filename",
+                        "download": "links.download",
+                        "type": "metadata.upload_type",
+                    },
+                    "record": "1234",
+                }
                 output = []
-                for l in zen.fetch({"record": "1234"}, d):
+                for l in zen.fetch(spec, d):
                     output.append(l)
 
                 unpacked_files = set(os.listdir(d))
@@ -164,9 +225,22 @@ def test_fetch_data():
             with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
                 with TemporaryDirectory() as d:
                     zen = Zenodo()
-
+                    spec = {
+                        "host": {
+                            "hostname": [
+                                "https://zenodo.org/record/",
+                                "http://zenodo.org/record/",
+                            ],
+                            "api": "https://zenodo.org/api/records/",
+                            "filepath": "files",
+                            "filename": "filename",
+                            "download": "links.download",
+                            "type": "metadata.upload_type",
+                        },
+                        "record": "1234",
+                    }
                     output = []
-                    for l in zen.fetch({"record": "1234"}, d):
+                    for l in zen.fetch(spec, d):
                         output.append(l)
 
                     unpacked_files = set(os.listdir(d))

@@ -391,3 +391,24 @@ def copytree(
     if errors:
         raise Error(errors)
     return dst
+
+
+# Code segments below from idutils (https://github.com/inveniosoftware/idutils)
+# Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2018 Alan Rubin.
+# Licensed under BSD-3-Clause license
+doi_regexp = re.compile(
+    "(doi:\s*|(?:https?://)?(?:dx\.)?doi\.org/)?(10\.\d+(.\d+)*/.+)$", flags=re.I
+)
+"""See http://en.wikipedia.org/wiki/Digital_object_identifier."""
+
+
+def is_doi(val):
+    """Test if argument is a DOI."""
+    return doi_regexp.match(val)
+
+
+def normalize_doi(val):
+    """Normalize a DOI."""
+    m = doi_regexp.match(val)
+    return m.group(2)
