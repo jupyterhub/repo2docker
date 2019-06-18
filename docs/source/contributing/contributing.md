@@ -152,13 +152,13 @@ We use [`black`](https://black.readthedocs.io/en/stable/) as code formatter to
 get a consistent layout for all the code in this project. This makes reading the
 code easier.
 
-While you can format your code with `black .` in the top-level directory of this
-repository, we suggest the use of a pre-commit git hook as it avoids a [known
-limitation](https://github.com/python/black/issues/491) for Python files without
-`.py` extension.
+While you can install `black` and format code with `black .` from the top-level
+directory of this repository, we recommend the use of a pre-commit git hook as
+it avoids a [known limitation](https://github.com/python/black/issues/491) for
+Python files without `.py` extension.
 
-To install a pre-commit git hook for black into your `.git/hooks` folder, we
-rely on the [pre-commit](https://github.com/pre-commit/pre-commit) python
+To install a pre-commit git hook to run `black` into your `.git/hooks` folder,
+we rely on the [pre-commit](https://github.com/pre-commit/pre-commit) python
 package to help us together with our `.pre-commit-config.yaml` file.
 
 ```bash
@@ -166,9 +166,19 @@ pre-commit install
 ```
 
 With the pre-commit git hook installed, `black`'s autoformatting will be
-executed before any commit completes. If additional changes are made by `black`
-your commit will fail. Then you need to stage the autoformat changes with `git
-add .` and try again.
+executed before any commit completes. If the pre-commit git hook causes
+additional changes by `black` your commit will fail. You then need to stage the
+autoformat changes with `git add .` and try again.
+
+You can run the installed pre-commit git hook manually as well:
+
+```bash
+# for the stages files to be committed
+pre-commit run
+
+# for all files
+pre-commit run --all-files
+```
 
 Our continuous integration will check that code is formatted properly and report
 failure if this is not the case.
