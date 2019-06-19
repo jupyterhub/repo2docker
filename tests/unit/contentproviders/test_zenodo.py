@@ -64,7 +64,7 @@ def test_detect():
             "record": "1235",
         }
         assert Zenodo().detect("https://doi.org/10.22002/d1.1235")["record"] == "1235"
-        assert Zenodo().detect("https://zenodo.org/record/3232985")["record"] == "1235"
+        assert Zenodo().detect("https://data.caltech.edu/records/1235")["record"] == "1235"
 
         # only two of the three calls above have to resolve a DOI
         assert fake_urlopen.call_count == 2
