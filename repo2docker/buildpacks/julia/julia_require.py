@@ -8,8 +8,8 @@ class JuliaRequireBuildPack(PythonBuildPack):
     Julia build pack which uses conda and REQUIRE.
     """
 
-    minor_julias = {"0.6": "0.6.4", "0.7": "0.7.0", "1.0": "1.0.3", "1.1": "1.1.0"}
-    major_julias = {"1": "1.1.0"}
+    minor_julias = {"0.6": "0.6.4", "0.7": "0.7.0", "1.0": "1.0.4", "1.1": "1.1.1"}
+    major_julias = {"1": "1.1.1"}
 
     @property
     def julia_version(self):

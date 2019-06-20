@@ -13,7 +13,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     # ALL EXISTING JULIA VERSIONS
     # Note that these must remain ordered, in order for the find_semver_match()
     # function to behave correctly.
-    all_julias = ["0.7.0", "1.0.0", "1.0.1", "1.0.2", "1.0.3", "1.1.0"]
+    all_julias = ["0.7.0", "1.0.0", "1.0.1", "1.0.2", "1.0.3", "1.0.4", "1.1.0", "1.1.1"]
 
     @property
     def julia_version(self):
