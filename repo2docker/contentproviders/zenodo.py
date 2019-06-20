@@ -1,15 +1,15 @@
 import os
 import json
 import shutil
-import copy
 
 from os import makedirs
 from os import path
 from urllib.request import build_opener, urlopen, Request
+from urllib.error import HTTPError
 from zipfile import ZipFile, is_zipfile
 
 from .base import ContentProvider
-from ..utils import copytree
+from ..utils import copytree, deep_get
 from ..utils import normalize_doi, is_doi
 from .. import __version__
 
@@ -36,35 +36,21 @@ class Zenodo(ContentProvider):
         if is_doi(doi):
             doi = normalize_doi(doi)
 
-            resp = self._urlopen("https://doi.org/{}".format(doi))
+            try:
+                resp = self._urlopen("https://doi.org/{}".format(doi))
+            # If the DOI doesn't resolve, just return URL
+            except HTTPError:
+                return doi
             return resp.url
         else:
+            # Just return what is actulally just a URL
             return doi
-
-    def _getfromdict(self, datadict, dotpath):
-        # Use a dotpath (string separated by periods)
-        # to access vaules in a dictionary
-        # data.files.0 returns value at dataDict[data][files][0]
-        split = dotpath.split(".")
-        # We check if we have any digits and convert these to
-        # ints for list access
-        mapList = []
-        for s in split:
-            if s.isdigit():
-                mapList.append(int(s))
-            else:
-                mapList.append(s)
-        values = copy.deepcopy(datadict)
-        for k in mapList:
-            values = values[k]
-        return values
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Zenodo/Invenio record"""
         # We need the hostname (url where records are), api url (for metadata),
         # filepath (path to files in metadata), filename (path to filename in
-        # metadata), type (path to type in metadata)
-
+        # metadata), download (path to file download URL), and type (path to item type in metadata)
         hosts = [
             {
                 "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
@@ -111,8 +97,8 @@ class Zenodo(ContentProvider):
         def _fetch(file_ref, unzip=False):
             # the assumption is that `unzip=True` means that this is the only
             # file related to the zenodo record
-            with self._urlopen(self._getfromdict(file_ref, host["download"])) as src:
-                fname = self._getfromdict(file_ref, host["filename"])
+            with self._urlopen(deep_get(file_ref, host["download"])) as src:
+                fname = deep_get(file_ref, host["filename"])
                 if path.dirname(fname):
                     sub_dir = path.join(output_dir, path.dirname(fname))
                     if not path.exists(sub_dir):
@@ -146,11 +132,8 @@ class Zenodo(ContentProvider):
                         copytree(path.join(output_dir, d), output_dir)
                         shutil.rmtree(path.join(output_dir, d))
 
-        is_software = self._getfromdict(record, host["type"]).lower() == "software"
-        files = self._getfromdict(record, host["filepath"])
-
-        #
-
+        is_software = deep_get(record, host["type"]).lower() == "software"
+        files = deep_get(record, host["filepath"])
         only_one_file = len(files) == 1
         for file_ref in files:
             for line in _fetch(file_ref, unzip=is_software and only_one_file):

@@ -82,3 +82,31 @@ def test_invalid_port_mapping(port_spec):
         utils.validate_and_generate_port_mapping([port_spec])
 
     assert 'Port specification "{}"'.format(port_spec) in str(e.value)
+
+
+def test_deep_get():
+    data = {"data": {"files": [1, 2, 3]}}
+    assert utils.deep_get(data, "data.files.0") == 1
+    assert utils.deep_get(data, "data.files.1") == 2
+    assert utils.deep_get(data, "data.files") == [1, 2, 3]
+    assert utils.deep_get(data, "data") == {"files": [1, 2, 3]}
+
+
+def test_is_doi():
+    assert utils.is_doi("10.1234/jshd123") != None
+    assert utils.is_doi("10.1234/JSHD.8192") != None
+    assert utils.is_doi("doi.org/10.1234/jshd123") != None
+    assert utils.is_doi("http://doi.org/10.1234/jshd123") != None
+    assert utils.is_doi("https://doi.org/10.1234/jshd123") != None
+    assert utils.is_doi("http://dx.doi.org/10.1234/jshd123") != None
+    assert utils.is_doi("101234/jshd123") == None
+    assert utils.is_doi("https://mybinder.org") == None
+
+
+def test_normalize_doi():
+    assert utils.normalize_doi("10.1234/jshd123") == "10.1234/jshd123"
+    assert utils.normalize_doi("10.1234/JSHD.8192") == "10.1234/JSHD.8192"
+    assert utils.normalize_doi("doi.org/10.1234/jshd123") == "10.1234/jshd123"
+    assert utils.normalize_doi("http://doi.org/10.1234/jshd123") == "10.1234/jshd123"
+    assert utils.normalize_doi("https://doi.org/10.1234/jshd123") == "10.1234/jshd123"
+    assert utils.normalize_doi("http://dx.doi.org/10.1234/jshd123") == "10.1234/jshd123"

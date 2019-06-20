@@ -1,5 +1,6 @@
 import json
 import os
+import pytest
 
 from contextlib import contextmanager
 from io import BytesIO
@@ -20,11 +21,14 @@ def test_content_id():
         assert zen.content_id == "3232985"
 
 
-def test_detect():
-    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = "https://zenodo.org/record/3232985"
-        # valid Zenodo DOIs trigger this content provider
-        assert Zenodo().detect("10.5281/zenodo.3232985") == {
+test_hosts = [
+    (
+        [
+            "https://zenodo.org/record/3232985",
+            "10.5281/zenodo.3232985",
+            "https://doi.org/10.5281/zenodo.3232985",
+        ],
+        {
             "host": {
                 "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
                 "api": "https://zenodo.org/api/records/",
@@ -34,22 +38,15 @@ def test_detect():
                 "type": "metadata.upload_type",
             },
             "record": "3232985",
-        }
-        assert (
-            Zenodo().detect("https://doi.org/10.5281/zenodo.3232985")["record"]
-            == "3232985"
-        )
-        assert (
-            Zenodo().detect("https://zenodo.org/record/3232985")["record"] == "3232985"
-        )
-
-        # only two of the three calls above have to resolve a DOI
-        assert fake_urlopen.call_count == 2
-
-    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = "https://data.caltech.edu/records/1235"
-        # valid CaltechDATA DOIs trigger this content provider
-        assert Zenodo().detect("10.22002/d1.1235") == {
+        },
+    ),
+    (
+        [
+            "https://data.caltech.edu/records/1235",
+            "10.22002/d1.1235",
+            "https://doi.org/10.22002/d1.1235",
+        ],
+        {
             "host": {
                 "hostname": [
                     "https://data.caltech.edu/records/",
@@ -62,10 +59,19 @@ def test_detect():
                 "type": "metadata.resourceType.resourceTypeGeneral",
             },
             "record": "1235",
-        }
-        assert Zenodo().detect("https://doi.org/10.22002/d1.1235")["record"] == "1235"
-        assert Zenodo().detect("https://data.caltech.edu/records/1235")["record"] == "1235"
+        },
+    ),
+]
 
+
+@pytest.mark.parametrize("test_input,expected", test_hosts)
+def test_detect_zenodo(test_input, expected):
+    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+        fake_urlopen.return_value.url = test_input[0]
+        # valid Zenodo DOIs trigger this content provider
+        assert Zenodo().detect(test_input[0]) == expected
+        assert Zenodo().detect(test_input[1]) == expected
+        assert Zenodo().detect(test_input[2]) == expected
         # only two of the three calls above have to resolve a DOI
         assert fake_urlopen.call_count == 2
 
@@ -73,12 +79,11 @@ def test_detect():
         # Don't trigger the Zenodo content provider
         assert Zenodo().detect("/some/path/here") is None
         assert Zenodo().detect("https://example.com/path/here") is None
-        # donn't handle DOIs that aren't from Zenodo
+        # don't handle DOIs that aren't from Zenodo
+        fake_urlopen.return_value.url = (
+            "http://joss.theoj.org/papers/10.21105/joss.01277"
+        )
         assert Zenodo().detect("https://doi.org/10.21105/joss.01277") is None
-
-        # none of the examples are Zenodo like, so we should not attempt to
-        # resolve a DOI either
-        assert not fake_urlopen.called
 
 
 @contextmanager

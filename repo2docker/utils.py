@@ -393,22 +393,43 @@ def copytree(
     return dst
 
 
-# Code segments below from idutils (https://github.com/inveniosoftware/idutils)
+def deep_get(dikt, path):
+    """Get a value located in `path` from a nested dictionary.
+
+    Use a string separated by periods as the path to access
+    values in a nested dictionary:
+
+    deep_get(data, "data.files.0") == data["data"]["files"][0]
+    """
+    value = dikt
+    for component in path.split("."):
+        if component.isdigit():
+            value = value[int(component)]
+        else:
+            value = value[component]
+    return value
+
+
+# doi_regexp, is_doi, and normalize_doi are from idutils (https://github.com/inveniosoftware/idutils)
 # Copyright (C) 2015-2018 CERN.
 # Copyright (C) 2018 Alan Rubin.
 # Licensed under BSD-3-Clause license
 doi_regexp = re.compile(
     "(doi:\s*|(?:https?://)?(?:dx\.)?doi\.org/)?(10\.\d+(.\d+)*/.+)$", flags=re.I
 )
-"""See http://en.wikipedia.org/wiki/Digital_object_identifier."""
 
 
 def is_doi(val):
-    """Test if argument is a DOI."""
+    """Returns None if val doesn't match pattern of a DOI.
+    http://en.wikipedia.org/wiki/Digital_object_identifier."""
+    print(type(val))
+    print(val)
     return doi_regexp.match(val)
 
 
 def normalize_doi(val):
-    """Normalize a DOI."""
+    """Return just the DOI (e.g. 10.1234/jshd123)
+    from a val that could include a url or doi 
+    (e.g. https://doi.org/10.1234/jshd123)"""
     m = doi_regexp.match(val)
     return m.group(2)
