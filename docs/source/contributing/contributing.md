@@ -168,8 +168,8 @@ pre-commit run --all-files
 pre-commit run
 ```
 
-`pre-commit` the Python package, can also help us autoformat our code before
-each commit by installing a *git hook*:
+`pre-commit`, the Python package, can also help us to run black before each
+commit by installing a *git hook*:
 
 ```bash
 # installs a git hook for this repository (a script within .git/hooks)
@@ -178,8 +178,9 @@ pre-commit install
 
 With the pre-commit git hook installed, `black`'s autoformatting will be
 executed before any commit completes. If the pre-commit git hook causes
-additional changes by `black` your commit will fail. If that happens, you need
-to stage the autoformatting changes with `git add .` and try to commit again.
+additional changes by `black` your commit will be aborted. If that happens, you
+need to stage the autoformatting changes with `git add .` and try to commit
+again.
 
 
 ### Verify that docker is installed and running
