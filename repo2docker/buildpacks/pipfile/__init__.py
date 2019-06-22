@@ -96,6 +96,9 @@ class PipfileBuildPack(CondaBuildPack):
         python = "${KERNEL_PYTHON_PREFIX}/bin/python"
         pipfile = self.binder_path("Pipfile")
         pipfile_lock = self.binder_path("Pipfile.lock")
+        # let pipenv work relative to the dir that has the Pipfile that can
+        # contain relative references such as:
+        #     my_package = {path=".", editable=true}
         working_directory = self.binder_dir or "."
         assemble_scripts.append(("${NB_USER}", "pip install pipenv"))
         # if Pipfile.lock isn't found, Pipfile is used to create one
