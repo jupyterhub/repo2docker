@@ -1,4 +1,7 @@
-"""Generates Dockerfiles based on an input matrix based on Python."""
+"""Buildpack for git repos with Pipfile.lock or Pipfile within them. `pipenv`
+will be used to install the dependencies but we will manually install declared
+Python versions instead of using PyEnv."""
+
 import os
 import re
 
@@ -96,8 +99,8 @@ class PipfileBuildPack(CondaBuildPack):
         python = "${KERNEL_PYTHON_PREFIX}/bin/python"
         pipfile = self.binder_path("Pipfile")
         pipfile_lock = self.binder_path("Pipfile.lock")
-        # let pipenv work relative to the dir that has the Pipfile that can
-        # contain relative references such as:
+        # let pipenv work relative to the dir that has the Pipfile, it is
+        # important as they can contain relative references such as:
         #     my_package = {path=".", editable=true}
         working_directory = self.binder_dir or "."
         assemble_scripts.append(("${NB_USER}", "pip install pipenv"))
