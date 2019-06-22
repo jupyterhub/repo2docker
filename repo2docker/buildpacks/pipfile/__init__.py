@@ -65,10 +65,14 @@ class PipfileBuildPack(CondaBuildPack):
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository.
         """
-        # If we have a runtime.txt & that's set to python-2.7,
-        # requirements.txt will be installed in the *kernel* env
-        # and requirements3.txt (if it exists)
-        # will be installed in the python 3 notebook server env.
+        # If we have either Pipfile.lock, Pipfile, or runtime.txt declare the
+        # use of Python 2, Python 2.7 will be made available in the *kernel*
+        # environment. The notebook servers environment on the other hand
+        # requires Python 3 but may require something additional installed in it
+        # still such as `nbgitpuller`. For this purpose, a "requirements3.txt"
+        # file will be used to install dependencies for the notebook servers
+        # environment, if Python 2 had been specified for the kernel
+        # environment.
         assemble_scripts = super().get_assemble_scripts()
 
         if self.py2:
