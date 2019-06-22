@@ -120,7 +120,10 @@ After cloning the repository, you should set up an
 isolated environment to install libraries required for running / developing
 repo2docker.
 
-There are many ways to do this but here we present you with two approaches: `virtual environment` or `pipenv`.
+There are many ways to do this but here we present you with two approaches:
+`virtual environment` or `pipenv`. In both approaches, you will end up
+installing all dependencies required for development within a virtual
+environment that is created and activated.
 
 - Using `virtual environment`
 
@@ -132,8 +135,6 @@ pip3 install -r dev-requirements.txt
 pip3 install -r docs/doc-requirements.txt
 ```
 
-This should install all the libraries required for testing & running repo2docker!
-
 - Using `pipenv`
 
 Note that you will need to install pipenv first using `pip3 install pipenv`.
@@ -141,9 +142,10 @@ Then from the root directory of this project you can use the following commands:
 
 ```bash
 pipenv install --dev
+pipenv shell
 ```
 
-This should install both the dev and docs requirements at once!
+This should install all requirements at once within an virtual environment that and enter the virtual environment!
 
 
 ### Code formatting
