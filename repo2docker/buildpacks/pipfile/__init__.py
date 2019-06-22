@@ -25,11 +25,11 @@ class PipfileBuildPack(CondaBuildPack):
         files_to_search_in_order = [
             {
                 "path": self.binder_path("Pipfile.lock"),
-                "pattern": r"\s*\"python_(?:full_)?version\": \"?([0-9a-z\.]*)\"?",  # '            "python_version": "3.6"'
+                "pattern": r"\s*[\",\']python_(?:full_)?version[\",\']: [\",\']?([0-9a-z\.]*)[\",\']?",  # '            "python_version": "3.6"'
             },
             {
                 "path": self.binder_path("Pipfile"),
-                "pattern": r"python_(?:full_)?version\s*=+\s*\"?([0-9a-z\.]*)\"?",  # 'python_version = "3.6"'
+                "pattern": r"python_(?:full_)?version\s*=+\s*[\",\']?([0-9a-z\.]*)[\",\']?",  # 'python_version = "3.6"'
             },
             {
                 "path": self.binder_path("runtime.txt"),
