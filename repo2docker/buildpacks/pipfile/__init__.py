@@ -117,7 +117,7 @@ class PipfileBuildPack(CondaBuildPack):
         return assemble_scripts
 
     def detect(self):
-        """Check if current repo should be built with the Python buildpack.
+        """Check if current repo should be built with the Pipfile buildpack.
         """
         # first make sure python is not explicitly unwanted
         runtime_txt = self.binder_path("runtime.txt")
