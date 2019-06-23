@@ -78,10 +78,9 @@ class PipfileBuildPack(CondaBuildPack):
         # environment.
         assemble_scripts = super().get_assemble_scripts()
 
-
         if self.py2:
             # using Python 2 as a kernel, but Python 3 for the notebook server
-            
+
             # requirements3.txt allows for packages to be installed to the
             # notebook servers Python environment
             nb_requirements_file = self.binder_path("requirements3.txt")
@@ -94,7 +93,6 @@ class PipfileBuildPack(CondaBuildPack):
                         ),
                     )
                 )
-
 
         pipfile = self.binder_path("Pipfile")
         pipfile_lock = self.binder_path("Pipfile.lock")
@@ -133,7 +131,9 @@ class PipfileBuildPack(CondaBuildPack):
                         pipenv install {install_option} --system --dev \\
                 )""".format(
                     working_directory=working_directory,
-                    install_option="--skip-lock" if not os.path.exists(pipfile_lock) else "--ignore-pipfile",
+                    install_option="--skip-lock"
+                    if not os.path.exists(pipfile_lock)
+                    else "--ignore-pipfile",
                 ),
             )
         )
