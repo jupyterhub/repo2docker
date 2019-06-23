@@ -78,48 +78,62 @@ class PipfileBuildPack(CondaBuildPack):
         # environment.
         assemble_scripts = super().get_assemble_scripts()
 
+
         if self.py2:
-            # using python 2 kernel,
-            # requirements3.txt allows installation in the notebook server env
+            # using Python 2 as a kernel, but Python 3 for the notebook server
+            
+            # requirements3.txt allows for packages to be installed to the
+            # notebook servers Python environment
             nb_requirements_file = self.binder_path("requirements3.txt")
             if os.path.exists(nb_requirements_file):
                 assemble_scripts.append(
                     (
                         "${NB_USER}",
-                        # want the $NB_PYHTON_PREFIX environment variable, not for
-                        # Python's string formatting to try and replace this
-                        '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
+                        'pip install --no-cache-dir -r "{}"'.format(
                             nb_requirements_file
                         ),
                     )
                 )
 
-        # install Pipfile.lock or fallback to installing Pipfile
-        pipenv = "${KERNEL_PYTHON_PREFIX}/bin/pipenv"
-        python = "${KERNEL_PYTHON_PREFIX}/bin/python"
+
         pipfile = self.binder_path("Pipfile")
         pipfile_lock = self.binder_path("Pipfile.lock")
-        # let pipenv work relative to the dir that has the Pipfile, it is
-        # important as they can contain relative references such as:
-        #     my_package = {path=".", editable=true}
+
+        # A Pipfile(.lock) can contain relative references, so we need to be
+        # mindful about where we invoke pipenv as that will dictate where .`
+        # referes to.
+        #     [packages]
+        #     my_package_example = {path=".", editable=true}
         working_directory = self.binder_dir or "."
+
+        # install pipenv to install dependencies within Pipfile.lock or Pipfile
         assemble_scripts.append(("${NB_USER}", "pip install pipenv"))
-        # if Pipfile.lock isn't found, Pipfile is used to create one
-        if not os.path.exists(pipfile_lock):
-            assemble_scripts.append(
-                (
-                    "${NB_USER}",
-                    "(cd {} && {} lock --python {})".format(
-                        working_directory, pipenv, python
-                    ),
-                )
-            )
-        # install Pipfile.lock
+
+        # NOTES:
+        # - Without prioritizing the PATH to KERNEL_PYTHON_PREFIX over
+        #   NB_SERVER_PYTHON_PREFIX, 'pipenv' draws the wrong conclusion about
+        #   what Python environment is the '--system' environment.
+        # - The --system flag allows us to avoid wrapping ourself in yet
+        #   another virtual environment that we also then need to enter.
+        #   This flag is only available within the `install` subcommand of
+        #   `pipenv`.
+        # - The `--skip-lock` will not run the `lock` subcommand again as
+        #   part of the `install` command. This allows a preexisting .lock
+        #   file to remain intact and be used directly. This allows us to
+        #   prioritize usage of .lock files that makes sense for
+        #   reproducibility.
+        # - The `--ignore-pipfile` requires a .lock file to be around as if
+        #   there isn't, no other option remain.
         assemble_scripts.append(
             (
                 "${NB_USER}",
-                "(cd {} && {} install --ignore-pipfile --deploy --system --dev --python {})".format(
-                    working_directory, pipenv, python
+                """(\\
+                    cd {working_directory} && \\
+                    PATH="${{KERNEL_PYTHON_PREFIX}}/bin:$PATH" \\
+                        pipenv install {install_option} --system --dev \\
+                )""".format(
+                    working_directory=working_directory,
+                    install_option="--skip-lock" if not os.path.exists(pipfile_lock) else "--ignore-pipfile",
                 ),
             )
         )
