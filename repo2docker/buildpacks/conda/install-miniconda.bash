@@ -70,11 +70,6 @@ fi
 # Clean things out!
 conda clean --all -f -y
 
-# Remove static libaries, compiled Python byte code, JS map files
-find -L ${CONDA_DIR} -type f -name '*.a' -delete
-find -L ${CONDA_DIR} -type f -name '*.pyc' -delete
-find -L ${CONDA_DIR} -type f -name '*.js.map' -delete
-
 # Remove the big installer so we don't increase docker image size too much
 rm ${INSTALLER_PATH}
 
