@@ -191,9 +191,6 @@ class CondaBuildPack(BaseImage):
                     r"""
                 conda env update -p {0} -f "{1}" && \
                 conda clean --all -f -y && \
-                find -L ${{CONDA_DIR}} -type f -name '*.a' -delete && \
-                find -L ${{CONDA_DIR}} -type f -name '*.pyc' -delete && \
-                find -L ${{CONDA_DIR}} -type f -name '*.js.map' -delete && \
                 conda list -p {0}
                 """.format(
                         env_prefix, environment_yml
