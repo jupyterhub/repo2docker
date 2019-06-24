@@ -59,17 +59,16 @@ though ``repo2docker`` support is best with Python 3.7, 3.6, 3.5 and 2.7.
 ``Pipfile`` and/or ``Pipfile.lock`` - Install a Python environment
 ==================================================================
 
-``Pipfile`` and/or ``Pipfile.lock`` specifies a list of Python packages that
-should be installed in your environment. ``pipenv install --dev`` will be run to
-install the dependencies where the existence of a ``Pipfile.lock`` will make the
-``Pipfile`` be ignored.
+`pipenv <https://github.com/pypa/pipenv/>`_ allows you to manage a virtual
+environment Python dependencies. When using ``pipenv``, you end up with
+``Pipfile`` and ``Pipfile.lock`` files. The lock file contains explicit details
+about the packages that has been installed that met the criteria within the
+``Pipfile``.
 
-.. note::
-
-   `pipenv <https://github.com/pypa/pipenv/>`_ and `virtualenv
-   <https://github.com/pypa/virtualenv/>`_ and associated ``requirements.txt``
-   files are both managed by the Python Packaging Authority PyPA, where pipenv
-   and ``Pipfile`` and ``Pipfile.lock`` seem to be the modern solution.
+If both ``Pipfile`` and ``Pipfile.lock`` are found by repo2docker, the former
+will be ignored in favor of the lock file. Also note that these files
+distinguish packages and development packages and that repo2docker will install
+both kinds.
 
 .. _requirements.txt:
 
