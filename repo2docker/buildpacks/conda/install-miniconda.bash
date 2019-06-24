@@ -30,6 +30,7 @@ export PATH="${CONDA_DIR}/bin:$PATH"
 
 # Allow easy direct installs from conda forge
 conda config --system --add channels conda-forge
+conda config --set channel_priority strict
 
 # Do not attempt to auto update conda or dependencies
 conda config --system --set auto_update_conda false
