@@ -124,6 +124,10 @@ class PipfileBuildPack(CondaBuildPack):
         #   reproducibility.
         # - The `--ignore-pipfile` requires a .lock file to be around as if
         #   there isn't, no other option remain.
+        # - The '\\' will is within a Python """ """ string render to a '\'. A
+        #   Dockerfile where this later is read within, will thanks to the '\'
+        #   let the RUN command continue on the next line. So it is only added
+        #   to avoid forcing us to write it all on a single line.
         assemble_scripts.append(
             (
                 "${NB_USER}",
