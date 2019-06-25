@@ -106,7 +106,7 @@ class PipfileBuildPack(CondaBuildPack):
 
         # install pipenv to install dependencies within Pipfile.lock or Pipfile
         assemble_scripts.append(
-            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/pip install pipenv=2018.11.26")
+            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/pip install pipenv==2018.11.26")
         )
 
         # NOTES:
