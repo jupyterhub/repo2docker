@@ -19,6 +19,8 @@ import time
 
 import docker
 from urllib.parse import urlparse
+
+from docker.constants import DEFAULT_TIMEOUT_SECONDS
 from docker.utils import kwargs_from_env
 from docker.errors import DockerException
 import escapism
@@ -448,9 +450,23 @@ class Repo2Docker(Application):
         if self.volumes and not self.run:
             raise ValueError("Cannot mount volumes if container is not run")
 
+    def _get_timeout(self):
+        """Find the timeout parameter to use for the docker registry calls"""
+        timeout_env_var = os.environ.get("REPO2DOCKER_DOCKER_TIMEOUT")
+        if timeout_env_var:
+            try:
+                return int(timeout_env_var)
+            except ValueError:
+                raise ValueError("REPO2DOCKER_DOCKER_TIMEOUT should be an integer...")
+        else:
+            return DEFAULT_TIMEOUT_SECONDS
+
     def push_image(self):
         """Push docker image to registry"""
-        client = docker.APIClient(version="auto", **kwargs_from_env())
+        timeout_seconds = self._get_timeout()
+        client = docker.APIClient(
+            version="auto", timeout=timeout_seconds, **kwargs_from_env()
+        )
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
         layers = {}

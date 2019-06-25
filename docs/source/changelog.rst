@@ -14,6 +14,8 @@ New features
   to Python 3.5 in :pr:`684` by :user:`betatim`.
 - Support for `Pipfile` and `Pipfile.lock` implemented in :pr:`649` by
   :user:`consideratio`.
+- Add an environment variable `REPO2DOCKER_DOCKER_TIMEOUT` to configure the timeout (in seconds)
+  on the docker push timeout in :pr:`717` by :user:`mael-le-gal`
 
 API changes
 -----------
