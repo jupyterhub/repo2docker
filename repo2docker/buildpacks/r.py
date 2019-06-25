@@ -158,6 +158,9 @@ class RBuildPack(PythonBuildPack):
         - IRKernel
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
         - stencila R package (if Stencila document with R code chunks detected)
+
+        We set the snapshot date used to install R libraries from based on the
+        contents of runtime.txt.
         """
         rstudio_url = "https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb"
         # This is MD5, because that is what RStudio download page provides!
@@ -172,6 +175,10 @@ class RBuildPack(PythonBuildPack):
 
         # IRKernel version - specified as a tag in the IRKernel repository
         irkernel_version = "0.8.11"
+
+        mran_url = "https://mran.microsoft.com/snapshot/{}".format(
+            self.checkpoint_date.isoformat()
+        )
 
         scripts = [
             (
@@ -241,10 +248,31 @@ class RBuildPack(PythonBuildPack):
                 "${NB_USER}",
                 # Install shiny library
                 r"""
-                R --quiet -e "install.packages('shiny', repos='https://mran.microsoft.com/snapshot/{}', method='libcurl')"
+                R --quiet -e "install.packages('shiny', repos='{}', method='libcurl')"
                 """.format(
-                    self.checkpoint_date.isoformat()
+                    mran_url
                 ),
+            ),
+            (
+                "root",
+                # We set the default CRAN repo to the MRAN one at given date
+                # We set download method to be curl so we get HTTPS support
+                r"""
+                echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
+                """.format(
+                    mran_url=mran_url
+                ),
+            ),
+            (
+                # Not all of these locations are configurable; so we make sure
+                # they exist and have the correct permissions
+                "root",
+                r"""
+                install -o ${NB_USER} -g ${NB_USER} -d /var/log/shiny-server && \
+                install -o ${NB_USER} -g ${NB_USER} -d /var/lib/shiny-server && \
+                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/log/shiny-server.log && \
+                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/run/shiny-server.pid
+                """,
             ),
         ]
 
@@ -265,36 +293,9 @@ class RBuildPack(PythonBuildPack):
 
     def get_assemble_scripts(self):
         """
-        Return series of build-steps specific to this repository
-
-        We set the snapshot date used to install R libraries from based on the
-        contents of runtime.txt, and run the `install.R` script if it exists.
+        Return series of build-steps specific to this repository.
         """
-        mran_url = "https://mran.microsoft.com/snapshot/{}".format(
-            self.checkpoint_date.isoformat()
-        )
-        assemble_scripts = super().get_assemble_scripts() + [
-            (
-                "root",
-                # We set the default CRAN repo to the MRAN one at given date
-                # We set download method to be curl so we get HTTPS support
-                r"""
-                echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
-                """.format(
-                    mran_url=mran_url
-                ),
-            ),
-            (
-                # Not all of these locations are configurable; log_dir is
-                "root",
-                r"""
-                install -o ${NB_USER} -g ${NB_USER} -d /var/log/shiny-server && \
-                install -o ${NB_USER} -g ${NB_USER} -d /var/lib/shiny-server && \
-                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/log/shiny-server.log && \
-                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/run/shiny-server.pid
-                """,
-            ),
-        ]
+        assemble_scripts = super().get_assemble_scripts()
 
         installR_path = self.binder_path("install.R")
         if os.path.exists(installR_path):
