@@ -105,7 +105,7 @@ class PipfileBuildPack(CondaBuildPack):
         working_directory = self.binder_dir or "."
 
         # install pipenv to install dependencies within Pipfile.lock or Pipfile
-        assemble_scripts.append(("${NB_USER}", "pip install pipenv"))
+        assemble_scripts.append(("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/pip install pipenv"))
 
         # NOTES:
         # - Without prioritizing the PATH to KERNEL_PYTHON_PREFIX over
