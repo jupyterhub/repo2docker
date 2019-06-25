@@ -11,7 +11,7 @@ Prerequisite: Docker
 
 Install `Docker <https://www.docker.com>`_ as it is required
 to build Docker images. The
-`Community Edition <https://www.docker.com/community-edition>`_,
+`Community Edition <https://docs.docker.com/install/>`_,
 is available for free.
 
 Recent versions of Docker are recommended.
