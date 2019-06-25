@@ -88,7 +88,7 @@ class PipfileBuildPack(CondaBuildPack):
                 assemble_scripts.append(
                     (
                         "${NB_USER}",
-                        '${{NB_PYTHON_PREFIX}}/pip install --no-cache-dir -r "{}"'.format(
+                        '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
                             nb_requirements_file
                         ),
                     )
@@ -106,7 +106,7 @@ class PipfileBuildPack(CondaBuildPack):
 
         # install pipenv to install dependencies within Pipfile.lock or Pipfile
         assemble_scripts.append(
-            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/pip install pipenv==2018.11.26")
+            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv==2018.11.26")
         )
 
         # NOTES:
