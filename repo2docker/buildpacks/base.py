@@ -114,12 +114,6 @@ WORKDIR ${REPO_DIR}
 # installs. See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 ENV PATH ${HOME}/.local/bin:${REPO_DIR}/.local/bin:${PATH}
 
-# Copy and chown stuff. This doubles the size of the repo, because
-# you can't actually copy as USER, only as root! Thanks, Docker!
-USER root
-COPY src/ ${REPO_DIR}
-RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
-
 {% if env -%}
 # The rest of the environment
 {% for item in env -%}
@@ -127,9 +121,22 @@ ENV {{item[0]}} {{item[1]}}
 {% endfor -%}
 {% endif -%}
 
+# Run pre-assemble scripts! These are instructions that depend on the content
+# of the repository but don't access any files in the repository. By executing
+# them before copying the repository itself we can cache these steps. For
+# example installing APT packages.
+{% for sd in pre_assemble_script_directives -%}
+{{ sd }}
+{% endfor %}
 
-# Run assemble scripts! These will actually build the specification
-# in the repository into the image.
+# Copy and chown stuff. This doubles the size of the repo, because
+# you can't actually copy as USER, only as root! Thanks, Docker!
+USER root
+COPY src/ ${REPO_DIR}
+RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
+
+# Run assemble scripts! These will actually turn the specification
+# in the repository into an image.
 {% for sd in assemble_script_directives -%}
 {{ sd }}
 {% endfor %}
@@ -372,6 +379,22 @@ class BuildPack:
 
         return []
 
+    def get_preassemble_scripts(self):
+        """
+        Ordered list of shell snippets to build an image for this repository.
+
+        A list of tuples, where the first item is a username & the
+        second is a single logical line of a bash script that should
+        be RUN as that user.
+
+        These are run before the source of the repository is copied into
+        the container image. These should be the scripts that depend on the
+        repository but do not need access to the contents.
+
+        For example the list of APT packages to install.
+        """
+        return []
+
     def get_assemble_scripts(self):
         """
         Ordered list of shell script snippets to build the repo into the image.
@@ -476,6 +499,16 @@ class BuildPack:
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
             )
 
+        pre_assemble_script_directives = []
+        last_user = "root"
+        for user, script in self.get_preassemble_scripts():
+            if last_user != user:
+                pre_assemble_script_directives.append("USER {}".format(user))
+                last_user = user
+            pre_assemble_script_directives.append(
+                "RUN {}".format(textwrap.dedent(script.strip("\n")))
+            )
+
         return t.render(
             packages=sorted(self.get_packages()),
             path=self.get_path(),
@@ -483,6 +516,7 @@ class BuildPack:
             env=self.get_env(),
             labels=self.get_labels(),
             build_script_directives=build_script_directives,
+            pre_assemble_script_directives=pre_assemble_script_directives,
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.get_build_script_files(),
             base_packages=sorted(self.get_base_packages()),
@@ -618,8 +652,8 @@ class BaseImage(BuildPack):
     def detect(self):
         return True
 
-    def get_assemble_scripts(self):
-        assemble_scripts = []
+    def get_preassemble_scripts(self):
+        scripts = []
         try:
             with open(self.binder_path("apt.txt")) as f:
                 extra_apt_packages = []
@@ -637,7 +671,7 @@ class BaseImage(BuildPack):
                         )
                     extra_apt_packages.append(package)
 
-            assemble_scripts.append(
+            scripts.append(
                 (
                     "root",
                     # This apt-get install is *not* quiet, since users explicitly asked for this
@@ -648,12 +682,18 @@ class BaseImage(BuildPack):
                 apt-get -qq clean && \
                 rm -rf /var/lib/apt/lists/*
                 """.format(
-                        " ".join(extra_apt_packages)
+                        " ".join(sorted(extra_apt_packages))
                     ),
                 )
             )
+
         except FileNotFoundError:
             pass
+
+        return scripts
+
+    def get_assemble_scripts(self):
+        assemble_scripts = []
         if "py" in self.stencila_contexts:
             assemble_scripts.extend(
                 [
