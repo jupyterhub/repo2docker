@@ -291,15 +291,38 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_build_scripts() + scripts
 
-    def get_assemble_scripts(self):
-        """
-        Return series of build-steps specific to this repository.
-        """
-        assemble_scripts = super().get_assemble_scripts()
+    def get_preassemble_scripts(self):
+        """Install contents of install.R"""
+        scripts = []
 
         installR_path = self.binder_path("install.R")
         if os.path.exists(installR_path):
-            assemble_scripts += [("${NB_USER}", "Rscript %s" % installR_path)]
+            packages = []
+            with open(installR_path) as f:
+                for line in f:
+                    line = line.strip()
+                    # skip commented out lines
+                    if line.startswith("#"):
+                        continue
+                    else:
+                        # XXX This needs a better solution for detecting which
+                        # XXX kind of string quoting the user used/how to
+                        # XXX escape quotes...
+                        # using " as quote
+                        if '"' in line:
+                            packages.append("-e '{}'".format(line))
+                        # using ' as quote or no quotes
+                        else:
+                            packages.append('-e "{}"'.format(line))
+
+            package_expressions = " \\ \n".join(sorted(packages))
+            scripts += [("${NB_USER}", "R --quiet %s" % package_expressions)]
+
+        return super().get_preassemble_scripts() + scripts
+
+    def get_assemble_scripts(self):
+        """Install the repository itself as a R package"""
+        assemble_scripts = super().get_assemble_scripts()
 
         description_R = "DESCRIPTION"
         if not self.binder_dir and os.path.exists(description_R):
