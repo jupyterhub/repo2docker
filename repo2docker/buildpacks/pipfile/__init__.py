@@ -125,8 +125,7 @@ class PipfileBuildPack(CondaBuildPack):
         assemble_scripts.append(
             (
                 "${NB_USER}",
-                """(\\
-                    cd {working_directory} && \\
+                """(cd {working_directory} && \\
                     PATH="${{KERNEL_PYTHON_PREFIX}}/bin:$PATH" \\
                         pipenv install {install_option} --system --dev \\
                 )""".format(
