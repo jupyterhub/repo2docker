@@ -4,7 +4,7 @@ set -ex
 
 cd $(dirname $0)
 MINICONDA_VERSION=4.6.14
-CONDA_VERSION=4.6.14
+CONDA_VERSION=4.7.5
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
 MD5SUM="718259965f234088d785cad1fbd7de03"
