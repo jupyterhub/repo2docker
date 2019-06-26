@@ -38,7 +38,7 @@ conda config --system --set show_channel_urls true
 # conda 4.7 the free channel was removed from defaults; this adds it back while 
 # maintaining correct channel priority (required for the Xeus-Cling test in 
 # test/external/reproductions.repos.yaml to pass) 
-conda config --set restore_free_channel true
+conda config --system --set restore_free_channel true
 
 # bug in conda 4.3.>15 prevents --set update_dependencies
 echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
