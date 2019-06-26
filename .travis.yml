@@ -56,6 +56,7 @@ env:
   - REPO_TYPE=unit
   - REPO_TYPE=base
   - REPO_TYPE=conda
+  - REPO_TYPE=pipfile
   - REPO_TYPE=venv
   - REPO_TYPE=stencila-r
   - REPO_TYPE=stencila-py

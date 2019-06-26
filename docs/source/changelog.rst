@@ -12,6 +12,8 @@ New features
 ------------
 - Increased minimum Python version supported for running  `repo2docker` itself
   to Python 3.5 in :pr:`684` by :user:`betatim`.
+- Support for `Pipfile` and `Pipfile.lock` implemented in :pr:`649` by
+  :user:`consideratio`.
 
 API changes
 -----------

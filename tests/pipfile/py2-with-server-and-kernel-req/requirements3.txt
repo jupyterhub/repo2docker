@@ -1,0 +1,3 @@
+# install this in the environment in which the notebook server
+# is running nbgitpuller does not work with Python 2
+nbgitpuller==0.6.1
