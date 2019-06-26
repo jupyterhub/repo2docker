@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import docker
 import escapism
+import os
 
 from repo2docker.app import Repo2Docker
 from repo2docker.__main__ import make_r2d
@@ -121,3 +122,17 @@ def test_root_not_allowed():
             builds.return_value = []
             app.build()
         builds.assert_called_once()
+
+
+def test_get_timeout():
+    app = Repo2Docker()
+    timeout = app._get_timeout()
+    assert 60 == timeout
+
+    os.environ["REPO2DOCKER_DOCKER_TIMEOUT"] = "100"
+    timeout = app._get_timeout()
+    assert 100 == timeout
+
+    os.environ["REPO2DOCKER_DOCKER_TIMEOUT"] = "toto"
+    with pytest.raises(ValueError):
+        app._get_timeout()
