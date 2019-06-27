@@ -26,7 +26,7 @@
   verify: python -c 'import matplotlib'
 # Test that custom channels and downgrades don't
 # get blocked by pinning
-- name: Xeus-Cling
+- name: Xeus-Cling BUMP
   url: https://github.com/QuantStack/xeus-cling
   ref: 0.4.5
   verify: jupyter kernelspec list
