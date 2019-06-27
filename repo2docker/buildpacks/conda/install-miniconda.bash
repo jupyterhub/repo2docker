@@ -35,11 +35,6 @@ conda config --system --add channels conda-forge
 conda config --system --set auto_update_conda false
 conda config --system --set show_channel_urls true
 
-# conda 4.7 the free channel was removed from defaults; this adds it back while 
-# maintaining correct channel priority (required for the Xeus-Cling test in 
-# test/external/reproductions.repos.yaml to pass) 
-conda config --system --set restore_free_channel true
-
 # bug in conda 4.3.>15 prevents --set update_dependencies
 echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 
@@ -47,6 +42,11 @@ echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 if [[ "${CONDA_VERSION}" != "${MINICONDA_VERSION}" ]]; then
     conda install -yq conda==${CONDA_VERSION}
 fi
+
+# conda 4.7 the free channel was removed from defaults; this adds it back while 
+# maintaining correct channel priority (required for the Xeus-Cling test in 
+# test/external/reproductions.repos.yaml to pass) 
+conda config --system --set restore_free_channel true
 
 echo "installing notebook env:"
 cat /tmp/environment.yml
