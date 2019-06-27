@@ -43,11 +43,6 @@ if [[ "${CONDA_VERSION}" != "${MINICONDA_VERSION}" ]]; then
     conda install -yq conda==${CONDA_VERSION}
 fi
 
-# conda 4.7 the free channel was removed from defaults; this adds it back while 
-# maintaining correct channel priority (required for the Xeus-Cling test in 
-# test/external/reproductions.repos.yaml to pass) 
-conda config --system --set restore_free_channel true
-
 echo "installing notebook env:"
 cat /tmp/environment.yml
 conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
