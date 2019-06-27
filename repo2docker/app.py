@@ -354,7 +354,8 @@ class Repo2Docker(Application):
     target_repo_dir = Unicode(
         "",
         help="""
-        Path inside the image where contents of the repositories are copied to.
+        Path inside the image where contents of the repositories are copied to,
+        and where all the build operations (such as postBuild) happen.
 
         Defaults to ${HOME} if not set
         """,
