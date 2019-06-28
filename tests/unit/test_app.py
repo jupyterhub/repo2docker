@@ -110,10 +110,13 @@ def test_root_not_allowed():
     with TemporaryDirectory() as src, patch("os.geteuid") as geteuid:
         geteuid.return_value = 0
         argv = [src]
-        app = make_r2d(argv)
         with pytest.raises(SystemExit) as exc:
+            app = make_r2d(argv)
+            assert exc.code == 1
+
+        with pytest.raises(ValueError):
+            app = Repo2Docker(repo=src, run=False)
             app.build()
-            assert exc.code == errno.EPERM
 
         app = Repo2Docker(repo=src, user_id=1000, user_name="jovyan", run=False)
         app.initialize()
