@@ -303,6 +303,16 @@ def make_r2d(argv=None):
         r2d.user_id = args.user_id
     if args.user_name:
         r2d.user_name = args.user_name
+    if r2d.user_id == 0 and not r2d.dry_run:
+        print("Root as the primary user in the image is not permitted.")
+        print(
+            "The uid and the username of the user invoking repo2docker "
+            "is used to create a mirror account in the image by default. "
+            "To override that behavior pass --user-id <numeric_id> and "
+            " --user-name <string> to repo2docker.\n"
+            "Please see repo2docker --help for more details.\n"
+        )
+        sys.exit(1)
 
     if args.build_memory_limit:
         # if the string only contains numerals we assume it should be an int
