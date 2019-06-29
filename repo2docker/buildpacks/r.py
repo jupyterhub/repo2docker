@@ -291,38 +291,52 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_build_scripts() + scripts
 
+    def get_preassemble_script_files(self):
+        files = {}
+        installR_path = self.binder_path("install.R")
+        if os.path.exists(installR_path):
+            files[installR_path] = installR_path
+
+        return files
+
     def get_preassemble_scripts(self):
-        """Install contents of install.R"""
+        """Install contents of install.R
+
+        Attempt to execute `install.R` before copying the contents of the
+        repository. We speculate that most of the time we do not need access.
+        In case this fails we re-run it after copying the repository contents.
+
+        The advantage of executing it before copying is that minor edits to the
+        repository content will not trigger a re-install making things faster.
+        """
         scripts = []
 
         installR_path = self.binder_path("install.R")
         if os.path.exists(installR_path):
-            packages = []
-            with open(installR_path) as f:
-                for line in f:
-                    line = line.strip()
-                    # skip commented out lines
-                    if line.startswith("#"):
-                        continue
-                    else:
-                        # XXX This needs a better solution for detecting which
-                        # XXX kind of string quoting the user used/how to
-                        # XXX escape quotes...
-                        # using " as quote
-                        if '"' in line:
-                            packages.append("-e '{}'".format(line))
-                        # using ' as quote or no quotes
-                        else:
-                            packages.append('-e "{}"'.format(line))
-
-            package_expressions = " \\ \n".join(sorted(packages))
-            scripts += [("${NB_USER}", "R --quiet %s" % package_expressions)]
+            scripts += [
+                (
+                    "${NB_USER}",
+                    "Rscript %s && touch /tmp/.preassembled || true" % installR_path,
+                )
+            ]
 
         return super().get_preassemble_scripts() + scripts
 
     def get_assemble_scripts(self):
-        """Install the repository itself as a R package"""
+        """Install the dependencies of or the repository itself"""
         assemble_scripts = super().get_assemble_scripts()
+
+        installR_path = self.binder_path("install.R")
+        if os.path.exists(installR_path):
+            assemble_scripts += [
+                (
+                    "${NB_USER}",
+                    # only run install.R if the pre-assembly failed
+                    "if [ ! -f /tmp/.preassembled ]; then Rscript {}; fi".format(
+                        installR_path
+                    ),
+                )
+            ]
 
         description_R = "DESCRIPTION"
         if not self.binder_dir and os.path.exists(description_R):
