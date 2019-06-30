@@ -28,9 +28,6 @@ fi
 bash ${INSTALLER_PATH} -b -p ${CONDA_DIR}
 export PATH="${CONDA_DIR}/bin:$PATH"
 
-# Allow easy direct installs from conda forge
-conda config --system --add channels conda-forge
-
 # Do not attempt to auto update conda or dependencies
 conda config --system --set auto_update_conda false
 conda config --system --set show_channel_urls true
