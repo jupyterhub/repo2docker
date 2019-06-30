@@ -40,7 +40,8 @@ if [[ "${CONDA_VERSION}" != "${MINICONDA_VERSION}" ]]; then
     conda install -yq conda==${CONDA_VERSION}
 fi
 
-conda config --system --set channel_priority "strict"
+# avoid future changes to default channel_priority behavior
+conda config --system --set channel_priority "flexible"
 
 echo "installing notebook env:"
 cat /tmp/environment.yml
