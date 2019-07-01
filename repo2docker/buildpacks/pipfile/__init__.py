@@ -128,11 +128,16 @@ class PipfileBuildPack(CondaBuildPack):
         #   Dockerfile where this later is read within, will thanks to the '\'
         #   let the RUN command continue on the next line. So it is only added
         #   to avoid forcing us to write it all on a single line.
+        # - PIP_IGNORE_INSTALLED was added to influence the underlying use of
+        #   pip in a way that allows us to overcome issues with preinstaleld
+        #   parts in the environment that could not be uninstalled. For more
+        #   details, see https://github.com/jupyter/repo2docker/issues/725.
         assemble_scripts.append(
             (
                 "${NB_USER}",
                 """(cd {working_directory} && \\
                     PATH="${{KERNEL_PYTHON_PREFIX}}/bin:$PATH" \\
+                    PIP_IGNORE_INSTALLED=1 \\
                         pipenv install {install_option} --system --dev \\
                 )""".format(
                     working_directory=working_directory,
