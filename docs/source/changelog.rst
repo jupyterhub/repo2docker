@@ -22,6 +22,8 @@ Bug fixes
 ---------
 - Prevent building the image as root if --user-id and --user-name are not specified
   in :pr:`676` by :user:`Xarthisius`.
+- Make Pipfile.lock installs more reliable with pip's --ignore-installed in :pr:`649` by
+  :user:`consideratio`.
 
 
 Version 0.9.0
