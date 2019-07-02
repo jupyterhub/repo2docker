@@ -453,24 +453,38 @@ class Repo2Docker(Application):
         client = docker.APIClient(version="auto", **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
+        progress_layers = {}
         layers = {}
         last_emit_time = time.time()
-        for line in client.push(self.output_image_spec, stream=True):
-            progress = json.loads(line.decode("utf-8"))
-            if "error" in progress:
-                self.log.error(progress["error"], extra=dict(phase="failed"))
-                raise docker.errors.ImageLoadError(progress["error"])
-            if "id" not in progress:
-                continue
-            if "progressDetail" in progress and progress["progressDetail"]:
-                layers[progress["id"]] = progress["progressDetail"]
-            else:
-                layers[progress["id"]] = progress["status"]
-            if time.time() - last_emit_time > 1.5:
-                self.log.info(
-                    "Pushing image\n", extra=dict(progress=layers, phase="pushing")
-                )
-                last_emit_time = time.time()
+        for chunk in client.push(self.output_image_spec, stream=True):
+            for line in chunk.splitlines():
+                line = line.decode("utf-8", errors="replace")
+                try:
+                    progress = json.loads(line)
+                except Exception as e:
+                    self.log.warning("Not a JSON progress line: %r", line)
+                    continue
+                if "error" in progress:
+                    self.log.error(progress["error"], extra=dict(phase="failed"))
+                    raise docker.errors.ImageLoadError(progress["error"])
+                if "id" not in progress:
+                    continue
+                # deprecated truncated-progress data
+                if "progressDetail" in progress and progress["progressDetail"]:
+                    progress_layers[progress["id"]] = progress["progressDetail"]
+                else:
+                    progress_layers[progress["id"]] = progress["status"]
+                # include full progress data for each layer in 'layers' data
+                layers[progress["id"]] = progress
+                if time.time() - last_emit_time > 1.5:
+                    self.log.info(
+                        "Pushing image\n", extra=dict(
+                            progress=progress_layers,
+                            layers=layers,
+                            phase="pushing",
+                        )
+                    )
+                    last_emit_time = time.time()
         self.log.info(
             "Successfully pushed {}".format(self.output_image_spec),
             extra=dict(phase="pushing"),
