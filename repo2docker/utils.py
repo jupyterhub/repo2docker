@@ -422,14 +422,12 @@ doi_regexp = re.compile(
 def is_doi(val):
     """Returns None if val doesn't match pattern of a DOI.
     http://en.wikipedia.org/wiki/Digital_object_identifier."""
-    print(type(val))
-    print(val)
     return doi_regexp.match(val)
 
 
 def normalize_doi(val):
     """Return just the DOI (e.g. 10.1234/jshd123)
-    from a val that could include a url or doi 
+    from a val that could include a url or doi
     (e.g. https://doi.org/10.1234/jshd123)"""
     m = doi_regexp.match(val)
     return m.group(2)
