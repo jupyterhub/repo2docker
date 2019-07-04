@@ -4,7 +4,7 @@ import shutil
 
 from os import makedirs
 from os import path
-from urllib.request import build_opener, urlopen, Request
+from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 from zipfile import ZipFile, is_zipfile
 
