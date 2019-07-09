@@ -90,7 +90,7 @@ ENV PATH {{ ':'.join(path) }}:${PATH}
 
 {% if build_script_files -%}
 # If scripts required during build are present, copy them
-{% for src, dst in build_script_files.items() %}
+{% for src, dst in build_script_files|dictsort %}
 COPY {{ src }} {{ dst }}
 {% endfor -%}
 {% endif -%}
@@ -127,7 +127,7 @@ ENV {{item[0]}} {{item[1]}}
 # example installing APT packages.
 {% if preassemble_script_files -%}
 # If scripts required during build are present, copy them
-{% for src, dst in preassemble_script_files.items() %}
+{% for src, dst in preassemble_script_files|dictsort %}
 COPY src/{{ src }} ${REPO_DIR}/{{ dst }}
 {% endfor -%}
 {% endif -%}
@@ -151,7 +151,7 @@ RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 # Container image Labels!
 # Put these at the end, since we don't want to rebuild everything
 # when these change! Did I mention I hate Dockerfile cache semantics?
-{% for k, v in labels.items() %}
+{% for k, v in labels|dictsort %}
 LABEL {{k}}="{{v}}"
 {%- endfor %}
 
