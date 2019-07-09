@@ -457,6 +457,8 @@ class Repo2Docker(Application):
         layers = {}
         last_emit_time = time.time()
         for chunk in client.push(self.output_image_spec, stream=True):
+            # each chunk can be one or more lines of json events
+            # split lines here in case multiple are delivered at once
             for line in chunk.splitlines():
                 line = line.decode("utf-8", errors="replace")
                 try:
@@ -478,11 +480,10 @@ class Repo2Docker(Application):
                 layers[progress["id"]] = progress
                 if time.time() - last_emit_time > 1.5:
                     self.log.info(
-                        "Pushing image\n", extra=dict(
-                            progress=progress_layers,
-                            layers=layers,
-                            phase="pushing",
-                        )
+                        "Pushing image\n",
+                        extra=dict(
+                            progress=progress_layers, layers=layers, phase="pushing"
+                        ),
                     )
                     last_emit_time = time.time()
         self.log.info(
