@@ -12,8 +12,8 @@ RUN mkdir /tmp/wheelhouse \
 
 FROM alpine:${ALPINE_VERSION}
 
-# install python, git
-RUN apk add --no-cache git git-lfs python3
+# install python, git, bash
+RUN apk add --no-cache git git-lfs python3 bash
 
 # install repo2docker
 COPY --from=0 /tmp/wheelhouse /tmp/wheelhouse
