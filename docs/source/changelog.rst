@@ -22,6 +22,8 @@ Bug fixes
 ---------
 - Prevent building the image as root if --user-id and --user-name are not specified
   in :pr:`676` by :user:`Xarthisius`.
+- Add bash to Dockerfile to fix usage of private repos with git-crendential-env in
+  :pr:`738` by :user:`eexwhyzee`.
 
 
 Version 0.9.0
