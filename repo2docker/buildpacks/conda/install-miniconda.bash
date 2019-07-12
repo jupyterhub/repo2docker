@@ -4,7 +4,7 @@ set -ex
 
 cd $(dirname $0)
 MINICONDA_VERSION=4.6.14
-CONDA_VERSION=4.6.14
+CONDA_VERSION=4.7.5
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
 MD5SUM="718259965f234088d785cad1fbd7de03"
@@ -42,6 +42,9 @@ echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 if [[ "${CONDA_VERSION}" != "${MINICONDA_VERSION}" ]]; then
     conda install -yq conda==${CONDA_VERSION}
 fi
+
+# avoid future changes to default channel_priority behavior
+conda config --system --set channel_priority "flexible"
 
 echo "installing notebook env:"
 cat /tmp/environment.yml
