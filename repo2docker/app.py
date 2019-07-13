@@ -313,13 +313,12 @@ class Repo2Docker(Application):
         config=True,
     )
 
-
     reuse_image = Bool(
         False,
         help="""
         Copies new contents to existing image.
         """,
-        config=True
+        config=True,
     )
 
     # FIXME: Refactor classes to separate build & run steps
@@ -554,7 +553,6 @@ class Repo2Docker(Application):
         # store ports on self so they can be retrieved in tests
         self.ports = ports
 
-
         container_volumes = {}
         if self.volumes:
             api_client = docker.APIClient(
@@ -575,7 +573,7 @@ class Repo2Docker(Application):
             detach=True,
             command=run_cmd,
             volumes=container_volumes,
-            environment=self.environment
+            environment=self.environment,
         )
 
         run_kwargs.update(self.extra_run_kwargs)
@@ -600,8 +598,7 @@ class Repo2Docker(Application):
                 self.log.error("Failed to copy repo contents into containe")
                 return container
 
-
-        while container.status == 'created':
+        while container.status == "created":
             time.sleep(0.5)
             container.reload()
 
@@ -644,13 +641,13 @@ class Repo2Docker(Application):
         if self.dry_run:
             return False
         # check if we already have an image for this content
-        client = docker.APIClient(version='auto', **kwargs_from_env())
+        client = docker.APIClient(version="auto", **kwargs_from_env())
         # looking for partial match without commit tag
         repo_image_name = self.output_image_spec[:-7]
 
         for image in client.images():
-            if image['RepoTags'] is not None:
-                for tag in image['RepoTags']:
+            if image["RepoTags"] is not None:
+                for tag in image["RepoTags"]:
 
                     if allow_revision and repo_image_name in tag:
                         self.output_image_spec = tag
@@ -686,7 +683,7 @@ class Repo2Docker(Application):
         else:
             if self.git_workdir is None:
 
-                checkout_path = tempfile.mkdtemp(prefix='repo2docker')
+                checkout_path = tempfile.mkdtemp(prefix="repo2docker")
                 self.git_workdir = checkout_path
             else:
                 checkout_path = self.git_workdir
@@ -700,8 +697,10 @@ class Repo2Docker(Application):
                 self.cleanup_checkout = False
 
             if self.find_image(revision):
-                self.log.info("Reusing existing image ({}), not "
-                              "building.".format(self.output_image_spec))
+                self.log.info(
+                    "Reusing existing image ({}), not "
+                    "building.".format(self.output_image_spec)
+                )
                 # no need to build, so skip to the end by `return`ing here
                 # this will still execute the finally clause and let's us
                 # avoid having to indent the build code by an extra level
@@ -780,7 +779,6 @@ class Repo2Docker(Application):
             # Cleanup checkout if necessary
             if self.cleanup_checkout:
                 shutil.rmtree(checkout_path, ignore_errors=True)
-
 
     def start(self):
         self.build()

@@ -91,16 +91,18 @@ def get_argparser():
     )
 
     argparser.add_argument(
-        '--reuse-image',
-        dest='reuse_image',
-        action='store_true',
-        help=('Runs a container with refreshed repo contents without '
-                'building a new image if one exists.')
+        "--reuse-image",
+        dest="reuse_image",
+        action="store_true",
+        help=(
+            "Runs a container with refreshed repo contents without "
+            "building a new image if one exists."
+        ),
     )
 
     argparser.add_argument(
-        '--build-memory-limit',
-        help='Total Memory that can be used by the docker build process'
+        "--build-memory-limit",
+        help="Total Memory that can be used by the docker build process",
     )
 
     argparser.add_argument(
