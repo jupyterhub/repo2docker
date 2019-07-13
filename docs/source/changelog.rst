@@ -10,12 +10,20 @@ Release date: TBD
 
 New features
 ------------
+- Increased minimum Python version supported for running  `repo2docker` itself
+  to Python 3.5 in :pr:`684` by :user:`betatim`.
+- Support for `Pipfile` and `Pipfile.lock` implemented in :pr:`649` by
+  :user:`consideratio`.
 
 API changes
 -----------
 
 Bug fixes
 ---------
+- Prevent building the image as root if --user-id and --user-name are not specified
+  in :pr:`676` by :user:`Xarthisius`.
+- Add bash to Dockerfile to fix usage of private repos with git-crendential-env in
+  :pr:`738` by :user:`eexwhyzee`.
 
 
 Version 0.9.0

@@ -7,27 +7,43 @@ from .base import BuildPack
 
 class DockerBuildPack(BuildPack):
     """Docker BuildPack"""
+
     dockerfile = "Dockerfile"
 
     def detect(self):
         """Check if current repo should be built with the Docker BuildPack"""
-        return os.path.exists(self.binder_path('Dockerfile'))
+        return os.path.exists(self.binder_path("Dockerfile"))
 
     def render(self):
         """Render the Dockerfile using by reading it from the source repo"""
-        Dockerfile = self.binder_path('Dockerfile')
+        Dockerfile = self.binder_path("Dockerfile")
         with open(Dockerfile) as f:
             return f.read()
 
-    def build(self, client, image_spec, memory_limit, build_args, cache_from, extra_build_kwargs):
+    def build(
+        self,
+        client,
+        image_spec,
+        memory_limit,
+        build_args,
+        cache_from,
+        extra_build_kwargs,
+    ):
         """Build a Docker image based on the Dockerfile in the source repo."""
-        limits = {
-            # Always disable memory swap for building, since mostly
-            # nothing good can come of that.
-            'memswap': -1
-        }
+        # If you work on this bit of code check the corresponding code in
+        # buildpacks/base.py where it is duplicated
+        if not isinstance(memory_limit, int):
+            raise ValueError(
+                "The memory limit has to be specified as an"
+                "integer but is '{}'".format(type(memory_limit))
+            )
+        limits = {}
         if memory_limit:
-            limits['memory'] = memory_limit
+            # We want to always disable swap. Docker expects `memswap` to
+            # be total allowable memory, *including* swap - while `memory`
+            # points to non-swap memory. We set both values to the same so
+            # we use no swap.
+            limits = {"memory": memory_limit, "memswap": memory_limit}
 
         build_kwargs = dict(
             path=os.getcwd(),
@@ -38,7 +54,7 @@ class DockerBuildPack(BuildPack):
             forcerm=True,
             rm=True,
             container_limits=limits,
-            cache_from=cache_from
+            cache_from=cache_from,
         )
 
         build_kwargs.update(extra_build_kwargs)

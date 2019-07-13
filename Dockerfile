@@ -1,20 +1,19 @@
-ARG PYTHON_VERSION=3.7
-FROM python:${PYTHON_VERSION}
+ARG ALPINE_VERSION=3.9.4
+FROM alpine:${ALPINE_VERSION}
+
+RUN apk add --no-cache git python3 python3-dev
 
 # build wheels in first image
 ADD . /tmp/src
 RUN mkdir /tmp/wheelhouse \
  && cd /tmp/wheelhouse \
+ && pip3 install wheel \
  && pip3 wheel --no-cache-dir /tmp/src
 
-# run with slim variant instead of full
-# since we won't need compilers and friends
-FROM python:${PYTHON_VERSION}-slim
+FROM alpine:${ALPINE_VERSION}
 
-# we do need git, though
-RUN apt-get update \
- && apt-get -y install --no-install-recommends git \
- && rm -rf /var/lib/apt/lists/*
+# install python, git, bash
+RUN apk add --no-cache git git-lfs python3 bash
 
 # install repo2docker
 COPY --from=0 /tmp/wheelhouse /tmp/wheelhouse

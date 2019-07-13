@@ -3,7 +3,7 @@
 Installing ``repo2docker``
 ==========================
 
-repo2docker requires Python 3.4 and above on Linux and macOS. See
+repo2docker requires Python 3.5 and above on Linux and macOS. See
 :ref:`below <windows>` for more information about Windows support.
 
 Prerequisite: Docker
@@ -11,7 +11,7 @@ Prerequisite: Docker
 
 Install `Docker <https://www.docker.com>`_ as it is required
 to build Docker images. The
-`Community Edition <https://www.docker.com/community-edition>`_,
+`Community Edition <https://docs.docker.com/install/>`_,
 is available for free.
 
 Recent versions of Docker are recommended.

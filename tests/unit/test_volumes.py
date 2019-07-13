@@ -6,6 +6,7 @@ import subprocess
 import tempfile
 import time
 
+
 def test_volume_abspath():
     """
     Validate that you can bind mount a volume onto an absolute dir & write to it
@@ -15,18 +16,24 @@ def test_volume_abspath():
         tmpdir = os.path.realpath(tmpdir)
 
         username = os.getlogin()
-        subprocess.check_call([
-            'repo2docker',
-            '-v', '{}:/home/{}'.format(tmpdir, username),
-            '--user-id', str(os.geteuid()),
-            '--user-name', username,
-            tmpdir,
-            '--',
-            '/bin/bash',
-            '-c', 'echo -n {} > ts'.format(ts)
-        ])
+        subprocess.check_call(
+            [
+                "repo2docker",
+                "-v",
+                "{}:/home/{}".format(tmpdir, username),
+                "--user-id",
+                str(os.geteuid()),
+                "--user-name",
+                username,
+                tmpdir,
+                "--",
+                "/bin/bash",
+                "-c",
+                "echo -n {} > ts".format(ts),
+            ]
+        )
 
-        with open(os.path.join(tmpdir, 'ts')) as f:
+        with open(os.path.join(tmpdir, "ts")) as f:
             assert f.read() == ts
 
 
@@ -39,18 +46,24 @@ def test_volume_relpath():
         ts = str(time.time())
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
-            subprocess.check_call([
-                'repo2docker',
-                '-v', '.:.',
-                '--user-id', str(os.geteuid()),
-                '--user-name', os.getlogin(),
-                tmpdir,
-                '--',
-                '/bin/bash',
-                '-c', 'echo -n {} > ts'.format(ts)
-            ])
+            subprocess.check_call(
+                [
+                    "repo2docker",
+                    "-v",
+                    ".:.",
+                    "--user-id",
+                    str(os.geteuid()),
+                    "--user-name",
+                    os.getlogin(),
+                    tmpdir,
+                    "--",
+                    "/bin/bash",
+                    "-c",
+                    "echo -n {} > ts".format(ts),
+                ]
+            )
 
-            with open(os.path.join(tmpdir, 'ts')) as f:
+            with open(os.path.join(tmpdir, "ts")) as f:
                 assert f.read() == ts
     finally:
         os.chdir(curdir)

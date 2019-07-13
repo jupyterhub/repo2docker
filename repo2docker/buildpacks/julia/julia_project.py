@@ -4,6 +4,7 @@ import toml
 from ..python import PythonBuildPack
 from .semver import find_semver_match
 
+
 class JuliaProjectTomlBuildPack(PythonBuildPack):
     """
     Julia build pack which uses conda.
@@ -14,22 +15,27 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     # function to behave correctly.
     all_julias = [
         "0.7.0",
-        "1.0.0", "1.0.1", "1.0.2", "1.0.3",
+        "1.0.0",
+        "1.0.1",
+        "1.0.2",
+        "1.0.3",
+        "1.0.4",
         "1.1.0",
+        "1.1.1",
     ]
 
     @property
     def julia_version(self):
         default_julia_version = self.all_julias[-1]
 
-        if os.path.exists(self.binder_path('JuliaProject.toml')):
-            project_toml = toml.load(self.binder_path('JuliaProject.toml'))
+        if os.path.exists(self.binder_path("JuliaProject.toml")):
+            project_toml = toml.load(self.binder_path("JuliaProject.toml"))
         else:
-            project_toml = toml.load(self.binder_path('Project.toml'))
+            project_toml = toml.load(self.binder_path("Project.toml"))
 
-        if 'compat' in project_toml:
-            if 'julia' in project_toml['compat']:
-                julia_version_str = project_toml['compat']['julia']
+        if "compat" in project_toml:
+            if "julia" in project_toml["compat"]:
+                julia_version_str = project_toml["compat"]["julia"]
 
                 # For Project.toml files, install the latest julia version that
                 # satisfies the given semver.
@@ -58,18 +64,15 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
 
         """
         return super().get_build_env() + [
-            ('JULIA_PATH', '${APP_BASE}/julia'),
-            ('JULIA_DEPOT_PATH', '${JULIA_PATH}/pkg'),
-            ('JULIA_VERSION', self.julia_version),
-            ('JUPYTER', '${NB_PYTHON_PREFIX}/bin/jupyter'),
-            ('JUPYTER_DATA_DIR', '${NB_PYTHON_PREFIX}/share/jupyter'),
+            ("JULIA_PATH", "${APP_BASE}/julia"),
+            ("JULIA_DEPOT_PATH", "${JULIA_PATH}/pkg"),
+            ("JULIA_VERSION", self.julia_version),
+            ("JUPYTER", "${NB_PYTHON_PREFIX}/bin/jupyter"),
+            ("JUPYTER_DATA_DIR", "${NB_PYTHON_PREFIX}/share/jupyter"),
         ]
 
     def get_env(self):
-        return super().get_env() + [
-            ('JULIA_PROJECT', '${REPO_DIR}')
-        ]
-
+        return super().get_env() + [("JULIA_PROJECT", "${REPO_DIR}")]
 
     def get_path(self):
         """Adds path to Julia binaries to user's PATH.
@@ -79,7 +82,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
              executable is added to the list.
 
         """
-        return super().get_path() + ['${JULIA_PATH}/bin']
+        return super().get_path() + ["${JULIA_PATH}/bin"]
 
     def get_build_scripts(self):
         """
@@ -98,14 +101,14 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 r"""
                 mkdir -p ${JULIA_PATH} && \
                 curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
-                """
+                """,
             ),
             (
                 "root",
                 r"""
                 mkdir -p ${JULIA_DEPOT_PATH} && \
                 chown ${NB_USER}:${NB_USER} ${JULIA_DEPOT_PATH}
-                """
+                """,
             ),
         ]
 
@@ -129,7 +132,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 r"""
                 JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
                 julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); pkg"precompile"'
-                """
+                """,
             )
         ]
 
@@ -145,4 +148,6 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         `JuliaProject.toml` exists.
 
         """
-        return os.path.exists(self.binder_path('Project.toml')) or os.path.exists(self.binder_path('JuliaProject.toml'))
+        return os.path.exists(self.binder_path("Project.toml")) or os.path.exists(
+            self.binder_path("JuliaProject.toml")
+        )

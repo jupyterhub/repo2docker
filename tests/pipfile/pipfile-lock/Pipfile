@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+
+[dev-packages]
+there = "*"
+
+# The Pipfile.lock was generated when the Pipfile looked like this
+# ----------------------------------------------------------------
+# [packages]
+# pypi-pkg-test = "*"
+#
+# [dev-packages]
+# there = "*"

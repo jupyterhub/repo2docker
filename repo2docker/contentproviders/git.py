@@ -13,17 +13,17 @@ class Git(ContentProvider):
         # old behaviour when git and local directories were the only supported
         # content providers. This means that this content provider will always
         # match. The downside is that the call to `fetch()` later on might fail
-        return {'repo': source, 'ref': ref}
+        return {"repo": source, "ref": ref}
 
     def fetch(self, spec, output_dir, yield_output=False):
-        repo = spec['repo']
-        ref = spec.get('ref', None)
+        repo = spec["repo"]
+        ref = spec.get("ref", None)
 
         # make a, possibly shallow, clone of the remote repository
         try:
-            cmd = ['git', 'clone', '--recursive']
+            cmd = ["git", "clone", "--recursive"]
             if ref is None:
-                cmd.extend(['--depth', '1'])
+                cmd.extend(["--depth", "1"])
             cmd.extend([repo, output_dir])
             for line in execute_cmd(cmd, capture=yield_output):
                 yield line
@@ -36,22 +36,25 @@ class Git(ContentProvider):
         if ref is not None:
             hash = check_ref(ref, output_dir)
             if hash is None:
-                self.log.error('Failed to check out ref %s', ref,
-                               extra=dict(phase='failed'))
-                raise ValueError('Failed to check out ref {}'.format(ref))
+                self.log.error(
+                    "Failed to check out ref %s", ref, extra=dict(phase="failed")
+                )
+                raise ValueError("Failed to check out ref {}".format(ref))
             # If the hash is resolved above, we should be able to reset to it
-            for line in execute_cmd(['git', 'reset', '--hard', hash],
-                                    cwd=output_dir,
-                                    capture=yield_output):
+            for line in execute_cmd(
+                ["git", "reset", "--hard", hash], cwd=output_dir, capture=yield_output
+            ):
                 yield line
 
         # ensure that git submodules are initialised and updated
-        for line in execute_cmd(['git', 'submodule', 'update', '--init', '--recursive'],
-                                cwd=output_dir,
-                                capture=yield_output):
+        for line in execute_cmd(
+            ["git", "submodule", "update", "--init", "--recursive"],
+            cwd=output_dir,
+            capture=yield_output,
+        ):
             yield line
 
-        cmd = ['git', 'rev-parse', 'HEAD']
+        cmd = ["git", "rev-parse", "HEAD"]
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)
         self._sha1 = sha1.stdout.read().decode().strip()
 

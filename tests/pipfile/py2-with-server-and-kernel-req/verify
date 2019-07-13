@@ -1,0 +1,47 @@
+#!/usr/bin/env python2
+import os
+import sys
+
+
+# Verify - kernel's Python: use Python 2
+print(sys.version_info)
+assert sys.version_info[:2] == (2, 7)
+
+
+# Verify - notebook server's Python: 'numpy' isn't installed
+status_code = os.system("python3 -c 'import numpy'")
+if status_code == 0:
+    raise Exception("notebook server's Python: 'numpy' IS installed")
+
+# Verify - notebook server's Python: 'parse' isn't installed
+status_code = os.system("python3 -c 'import parse'")
+if status_code == 0:
+    raise Exception("notebook server's Python: 'parse' IS installed")
+
+# Verify - notebook server's Python: 'nbgitpuller' is installed
+status_code = os.system("python3 -c 'import nbgitpuller'")
+if not status_code == 0:
+    raise Exception("notebook server's Python: 'nbgitpuller' ISN'T installed")
+
+
+# Verify - kernel's Python: 'nbgitpuller' isn't installed
+try:
+    import nbgitpuller
+except ImportError:
+    pass
+else:
+    raise Exception("kernel's Python: 'nbgitpuller' IS installed")
+
+# Verify - kernel's Python: 'numpy' is installed
+try:
+    import numpy
+except ImportError:
+    raise Exception(
+        "kernel's Python: 'numpy' ISN'T installed --- We probably setup a virtual env through pipenv but failed to enter it."
+    )
+
+# Verify - kernel's Python: 'parse' is installed
+try:
+    import parse
+except ImportError:
+    raise Exception("kernel's Python: 'parse' ISN'T installed")

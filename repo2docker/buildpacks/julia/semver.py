@@ -71,16 +71,12 @@ def create_semver_matcher(constraint_str):
                     break
             return VersionRange(constraint, upper, True)
         else:
-            return VersionRange(
-                constraint, (major(constraint) + 1,), True
-            )
+            return VersionRange(constraint, (major(constraint) + 1,), True)
 
     # '~' matching (only allowed to bump the last present number by one)
     if comparison_symbol == "~":
         return VersionRange(
-            constraint,
-            constraint[:-1] + (constraint[-1] + 1,),
-            exclusive=False
+            constraint, constraint[:-1] + (constraint[-1] + 1,), exclusive=False
         )
 
     # Use semver package's comparisons for everything else:
