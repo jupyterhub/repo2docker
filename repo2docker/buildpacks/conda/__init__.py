@@ -178,19 +178,19 @@ class CondaBuildPack(BaseImage):
         """Am I building a Python 2 kernel environment?"""
         return self.python_version and self.python_version.split(".")[0] == "2"
 
-    def get_assemble_files(self):
-        """Specify that assembly only requires environment.yml
+    def get_preassemble_script_files(self):
+        """preassembly only requires environment.yml
 
         enables caching assembly result even when
         repo contents change
         """
-        assemble_files = super().get_assemble_files()
-        environment_yml = self.binder_path('environment.yml')
+        assemble_files = super().get_preassemble_script_files()
+        environment_yml = self.binder_path("environment.yml")
         if os.path.exists(environment_yml):
-            assemble_files.append(environment_yml)
+            assemble_files[environment_yml] = environment_yml
         return assemble_files
 
-    def get_assemble_scripts(self):
+    def get_preassemble_scripts(self):
         """Return series of build-steps specific to this source repository.
         """
         assembly_scripts = []
@@ -209,7 +209,7 @@ class CondaBuildPack(BaseImage):
                     ),
                 )
             )
-        return super().get_assemble_scripts() + assembly_scripts
+        return super().get_preassemble_scripts() + assembly_scripts
 
     def detect(self):
         """Check if current repo should be built with the Conda BuildPack.
