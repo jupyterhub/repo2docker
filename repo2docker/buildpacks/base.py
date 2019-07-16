@@ -90,7 +90,7 @@ ENV PATH {{ ':'.join(path) }}:${PATH}
 
 {% if build_script_files -%}
 # If scripts required during build are present, copy them
-{% for src, dst in build_script_files.items() %}
+{% for src, dst in build_script_files|dictsort %}
 COPY {{ src }} {{ dst }}
 {% endfor -%}
 {% endif -%}
@@ -125,7 +125,14 @@ ENV {{item[0]}} {{item[1]}}
 # of the repository but don't access any files in the repository. By executing
 # them before copying the repository itself we can cache these steps. For
 # example installing APT packages.
-{% for sd in pre_assemble_script_directives -%}
+{% if preassemble_script_files -%}
+# If scripts required during build are present, copy them
+{% for src, dst in preassemble_script_files|dictsort %}
+COPY src/{{ src }} ${REPO_DIR}/{{ dst }}
+{% endfor -%}
+{% endif -%}
+
+{% for sd in preassemble_script_directives -%}
 {{ sd }}
 {% endfor %}
 
@@ -144,7 +151,7 @@ RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 # Container image Labels!
 # Put these at the end, since we don't want to rebuild everything
 # when these change! Did I mention I hate Dockerfile cache semantics?
-{% for k, v in labels.items() %}
+{% for k, v in labels|dictsort %}
 LABEL {{k}}="{{v}}"
 {%- endfor %}
 
@@ -379,6 +386,19 @@ class BuildPack:
 
         return []
 
+    def get_preassemble_script_files(self):
+        """
+        Dict of files to be copied to the container image for use in preassembly.
+
+        This is copied before the `build_scripts`, `preassemble_scripts` and
+        `assemble_scripts` are run, so can be executed from either of them.
+
+        It's a dictionary where the key is the source file path in the
+        repository and the value is the destination file path inside the
+        repository in the container.
+        """
+        return {}
+
     def get_preassemble_scripts(self):
         """
         Ordered list of shell snippets to build an image for this repository.
@@ -499,13 +519,13 @@ class BuildPack:
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
             )
 
-        pre_assemble_script_directives = []
+        preassemble_script_directives = []
         last_user = "root"
         for user, script in self.get_preassemble_scripts():
             if last_user != user:
-                pre_assemble_script_directives.append("USER {}".format(user))
+                preassemble_script_directives.append("USER {}".format(user))
                 last_user = user
-            pre_assemble_script_directives.append(
+            preassemble_script_directives.append(
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
             )
 
@@ -516,7 +536,8 @@ class BuildPack:
             env=self.get_env(),
             labels=self.get_labels(),
             build_script_directives=build_script_directives,
-            pre_assemble_script_directives=pre_assemble_script_directives,
+            preassemble_script_files=self.get_preassemble_script_files(),
+            preassemble_script_directives=preassemble_script_directives,
             assemble_script_directives=assemble_script_directives,
             build_script_files=self.get_build_script_files(),
             base_packages=sorted(self.get_base_packages()),

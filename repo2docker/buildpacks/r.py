@@ -291,15 +291,52 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_build_scripts() + scripts
 
+    def get_preassemble_script_files(self):
+        files = {}
+        installR_path = self.binder_path("install.R")
+        if os.path.exists(installR_path):
+            files[installR_path] = installR_path
+
+        return files
+
+    def get_preassemble_scripts(self):
+        """Install contents of install.R
+
+        Attempt to execute `install.R` before copying the contents of the
+        repository. We speculate that most of the time we do not need access.
+        In case this fails we re-run it after copying the repository contents.
+
+        The advantage of executing it before copying is that minor edits to the
+        repository content will not trigger a re-install making things faster.
+        """
+        scripts = []
+
+        installR_path = self.binder_path("install.R")
+        if os.path.exists(installR_path):
+            scripts += [
+                (
+                    "${NB_USER}",
+                    "Rscript %s && touch /tmp/.preassembled || true" % installR_path,
+                )
+            ]
+
+        return super().get_preassemble_scripts() + scripts
+
     def get_assemble_scripts(self):
-        """
-        Return series of build-steps specific to this repository.
-        """
+        """Install the dependencies of or the repository itself"""
         assemble_scripts = super().get_assemble_scripts()
 
         installR_path = self.binder_path("install.R")
         if os.path.exists(installR_path):
-            assemble_scripts += [("${NB_USER}", "Rscript %s" % installR_path)]
+            assemble_scripts += [
+                (
+                    "${NB_USER}",
+                    # only run install.R if the pre-assembly failed
+                    "if [ ! -f /tmp/.preassembled ]; then Rscript {}; fi".format(
+                        installR_path
+                    ),
+                )
+            ]
 
         description_R = "DESCRIPTION"
         if not self.binder_dir and os.path.exists(description_R):
