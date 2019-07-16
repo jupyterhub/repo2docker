@@ -65,7 +65,16 @@ class PipfileBuildPack(CondaBuildPack):
             self._python_version = self.major_pythons["3"]
             return self._python_version
 
-    def get_assemble_scripts(self):
+    def get_preassemble_script_files(self):
+        """Return files needed for preassembly"""
+        files = super().get_preassemble_script_files()
+        for name in ("requirements3.txt", "Pipfile", "Pipfile.lock"):
+            path = self.binder_path(name)
+            if os.path.exists(path):
+                files[path] = path
+        return files
+
+    def get_preassemble_scripts(self):
         """Return series of build-steps specific to this repository.
         """
         # If we have either Pipfile.lock, Pipfile, or runtime.txt declare the
