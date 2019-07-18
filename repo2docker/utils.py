@@ -415,7 +415,7 @@ def deep_get(dikt, path):
 # Copyright (C) 2018 Alan Rubin.
 # Licensed under BSD-3-Clause license
 doi_regexp = re.compile(
-    "(doi:\s*|(?:https?://)?(?:dx\.)?doi\.org/)?(10\.\d+(.\d+)*/.+)$", flags=re.I
+    r"(doi:\s*|(?:https?://)?(?:dx\.)?doi\.org/)?(10\.\d+(.\d+)*/.+)$", flags=re.I
 )
 
 
