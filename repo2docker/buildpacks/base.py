@@ -132,6 +132,10 @@ COPY src/{{ src }} ${REPO_DIR}/{{ dst }}
 {% endfor -%}
 {% endif -%}
 
+{% if preassemble_script_directives -%}
+RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
+{% endif -%}
+
 {% for sd in preassemble_script_directives -%}
 {{ sd }}
 {% endfor %}
