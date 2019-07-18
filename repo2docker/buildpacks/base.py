@@ -133,6 +133,7 @@ COPY src/{{ src }} ${REPO_DIR}/{{ dst }}
 {% endif -%}
 
 {% if preassemble_script_directives -%}
+USER root
 RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 {% endif -%}
 
