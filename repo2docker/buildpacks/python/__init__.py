@@ -2,6 +2,7 @@
 import os
 
 from ..conda import CondaBuildPack
+from ...utils import is_local_pip_requirement
 
 
 class PythonBuildPack(CondaBuildPack):
@@ -33,31 +34,6 @@ class PythonBuildPack(CondaBuildPack):
             py_version = ".".join(py_version_info[:2])
         self._python_version = py_version
         return self._python_version
-
-    def _is_local_requirement(self, line):
-        """Return whether a line in a requirements.txt file references a local file"""
-        # trim comments and skip empty lines
-        line = line.split("#", 1)[0].strip()
-        if not line:
-            return False
-        if line.startswith(("-r", "-c")):
-            # local -r or -c references break isolation
-            return True
-        # strip off `-e, etc.`
-        if line.startswith("-"):
-            line = line.split(None, 1)[1]
-        if "file://" in line:
-            # file references break isolation
-            return True
-        if "://" in line:
-            # handle git://../local/file
-            path = line.split("://", 1)[1]
-        else:
-            path = line
-        if path.startswith("."):
-            # references a local file
-            return True
-        return False
 
     def _get_pip_scripts(self):
         """Get pip install scripts
@@ -112,7 +88,7 @@ class PythonBuildPack(CondaBuildPack):
                 continue
             with open(requirements_txt) as f:
                 for line in f:
-                    if self._is_local_requirement(line):
+                    if is_local_pip_requirement(line):
                         return False
 
         # didn't find any local references,
