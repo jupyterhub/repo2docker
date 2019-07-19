@@ -145,7 +145,7 @@ class CondaBuildPack(BaseImage):
             # check if the env file is empty, if so instantiate an empty dictionary.
             if env is None:
                 env = {}
-            # check if the env file provided a dick-like thing not a list or other data structure.
+            # check if the env file provided a dict-like thing not a list or other data structure.
             if not isinstance(env, Mapping):
                 raise TypeError(
                     "environment.yml should contain a dictionary. Got %r" % type(env)
