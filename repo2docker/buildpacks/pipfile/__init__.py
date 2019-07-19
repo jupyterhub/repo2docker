@@ -74,6 +74,24 @@ class PipfileBuildPack(CondaBuildPack):
             self._python_version = self.major_pythons["3"]
             return self._python_version
 
+    def get_preassemble_script_files(self):
+        """Return files needed for preassembly"""
+        files = super().get_preassemble_script_files()
+        for name in ("requirements3.txt", "Pipfile", "Pipfile.lock"):
+            path = self.binder_path(name)
+            if os.path.exists(path):
+                files[path] = path
+        return files
+
+    def get_preassemble_scripts(self):
+        """scripts to run prior to staging the repo contents"""
+        scripts = super().get_preassemble_scripts()
+        # install pipenv to install dependencies within Pipfile.lock or Pipfile
+        scripts.append(
+            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv==2018.11.26")
+        )
+        return scripts
+
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository.
         """
@@ -112,11 +130,6 @@ class PipfileBuildPack(CondaBuildPack):
         #     [packages]
         #     my_package_example = {path=".", editable=true}
         working_directory = self.binder_dir or "."
-
-        # install pipenv to install dependencies within Pipfile.lock or Pipfile
-        assemble_scripts.append(
-            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv==2018.11.26")
-        )
 
         # NOTES:
         # - Without prioritizing the PATH to KERNEL_PYTHON_PREFIX over

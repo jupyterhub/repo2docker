@@ -6,6 +6,7 @@ from collections import Mapping
 from ruamel.yaml import YAML
 
 from ..base import BaseImage
+from ...utils import is_local_pip_requirement
 
 # pattern for parsing conda dependency line
 PYTHON_REGEX = re.compile(r"python\s*=+\s*([\d\.]*)")
@@ -127,6 +128,50 @@ class CondaBuildPack(BaseImage):
         files.update(super().get_build_script_files())
         return files
 
+    _environment_yaml = None
+
+    @property
+    def environment_yaml(self):
+        if self._environment_yaml is not None:
+            return self._environment_yaml
+
+        environment_yml = self.binder_path("environment.yml")
+        if not os.path.exists(environment_yml):
+            self._environment_yaml = {}
+            return self._environment_yaml
+
+        with open(environment_yml) as f:
+            env = YAML().load(f)
+            # check if the env file is empty, if so instantiate an empty dictionary.
+            if env is None:
+                env = {}
+            # check if the env file provided a dict-like thing not a list or other data structure.
+            if not isinstance(env, Mapping):
+                raise TypeError(
+                    "environment.yml should contain a dictionary. Got %r" % type(env)
+                )
+            self._environment_yaml = env
+
+        return self._environment_yaml
+
+    @property
+    def _should_preassemble_env(self):
+        """Check for local pip requirements in environment.yaml
+
+        If there are any local references, e.g. `-e .`,
+        stage the whole repo prior to installation.
+        """
+        dependencies = self.environment_yaml.get("dependencies", [])
+        pip_requirements = None
+        for dep in dependencies:
+            if isinstance(dep, dict) and dep.get("pip"):
+                pip_requirements = dep["pip"]
+        if isinstance(pip_requirements, list):
+            for line in pip_requirements:
+                if is_local_pip_requirement(line):
+                    return False
+        return True
+
     @property
     def python_version(self):
         """Detect the Python version for a given `environment.yml`
@@ -135,31 +180,17 @@ class CondaBuildPack(BaseImage):
         or a Falsy empty string '' if not found.
 
         """
-        environment_yml = self.binder_path("environment.yml")
-        if not os.path.exists(environment_yml):
-            return ""
-
         if not hasattr(self, "_python_version"):
             py_version = None
-            with open(environment_yml) as f:
-                env = YAML().load(f)
-                # check if the env file is empty, if so instantiate an empty dictionary.
-                if env is None:
-                    env = {}
-                # check if the env file provided a dick-like thing not a list or other data structure.
-                if not isinstance(env, Mapping):
-                    raise TypeError(
-                        "environment.yml should contain a dictionary. Got %r"
-                        % type(env)
-                    )
-                for dep in env.get("dependencies", []):
-                    if not isinstance(dep, str):
-                        continue
-                    match = PYTHON_REGEX.match(dep)
-                    if not match:
-                        continue
-                    py_version = match.group(1)
-                    break
+            env = self.environment_yaml
+            for dep in env.get("dependencies", []):
+                if not isinstance(dep, str):
+                    continue
+                match = PYTHON_REGEX.match(dep)
+                if not match:
+                    continue
+                py_version = match.group(1)
+                break
 
             # extract major.minor
             if py_version:
@@ -178,14 +209,27 @@ class CondaBuildPack(BaseImage):
         """Am I building a Python 2 kernel environment?"""
         return self.python_version and self.python_version.split(".")[0] == "2"
 
-    def get_assemble_scripts(self):
+    def get_preassemble_script_files(self):
+        """preassembly only requires environment.yml
+
+        enables caching assembly result even when
+        repo contents change
+        """
+        assemble_files = super().get_preassemble_script_files()
+        if self._should_preassemble_env:
+            environment_yml = self.binder_path("environment.yml")
+            if os.path.exists(environment_yml):
+                assemble_files[environment_yml] = environment_yml
+        return assemble_files
+
+    def get_env_scripts(self):
         """Return series of build-steps specific to this source repository.
         """
-        assembly_scripts = []
+        scripts = []
         environment_yml = self.binder_path("environment.yml")
         env_prefix = "${KERNEL_PYTHON_PREFIX}" if self.py2 else "${NB_PYTHON_PREFIX}"
         if os.path.exists(environment_yml):
-            assembly_scripts.append(
+            scripts.append(
                 (
                     "${NB_USER}",
                     r"""
@@ -197,7 +241,19 @@ class CondaBuildPack(BaseImage):
                     ),
                 )
             )
-        return super().get_assemble_scripts() + assembly_scripts
+        return scripts
+
+    def get_preassemble_scripts(self):
+        scripts = super().get_preassemble_scripts()
+        if self._should_preassemble_env:
+            scripts.extend(self.get_env_scripts())
+        return scripts
+
+    def get_assemble_scripts(self):
+        scripts = super().get_assemble_scripts()
+        if not self._should_preassemble_env:
+            scripts.extend(self.get_env_scripts())
+        return scripts
 
     def detect(self):
         """Check if current repo should be built with the Conda BuildPack.

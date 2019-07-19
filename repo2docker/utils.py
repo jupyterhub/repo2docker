@@ -431,3 +431,29 @@ def normalize_doi(val):
     (e.g. https://doi.org/10.1234/jshd123)"""
     m = doi_regexp.match(val)
     return m.group(2)
+
+
+def is_local_pip_requirement(line):
+    """Return whether a pip requirement (e.g. in requirements.txt file) references a local file"""
+    # trim comments and skip empty lines
+    line = line.split("#", 1)[0].strip()
+    if not line:
+        return False
+    if line.startswith(("-r", "-c")):
+        # local -r or -c references break isolation
+        return True
+    # strip off `-e, etc.`
+    if line.startswith("-"):
+        line = line.split(None, 1)[1]
+    if "file://" in line:
+        # file references break isolation
+        return True
+    if "://" in line:
+        # handle git://../local/file
+        path = line.split("://", 1)[1]
+    else:
+        path = line
+    if path.startswith("."):
+        # references a local file
+        return True
+    return False

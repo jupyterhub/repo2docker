@@ -132,6 +132,11 @@ COPY src/{{ src }} ${REPO_DIR}/{{ dst }}
 {% endfor -%}
 {% endif -%}
 
+{% if preassemble_script_directives -%}
+USER root
+RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
+{% endif -%}
+
 {% for sd in preassemble_script_directives -%}
 {{ sd }}
 {% endfor %}
@@ -711,12 +716,8 @@ class BaseImage(BuildPack):
         except FileNotFoundError:
             pass
 
-        return scripts
-
-    def get_assemble_scripts(self):
-        assemble_scripts = []
         if "py" in self.stencila_contexts:
-            assemble_scripts.extend(
+            scripts.extend(
                 [
                     (
                         "${NB_USER}",
@@ -728,7 +729,7 @@ class BaseImage(BuildPack):
                 ]
             )
         if self.stencila_manifest_dir:
-            assemble_scripts.extend(
+            scripts.extend(
                 [
                     (
                         "${NB_USER}",
@@ -741,7 +742,11 @@ class BaseImage(BuildPack):
                     )
                 ]
             )
-        return assemble_scripts
+        return scripts
+
+    def get_assemble_scripts(self):
+        """Return directives to run after the entire repository has been added to the image"""
+        return []
 
     def get_post_build_scripts(self):
         post_build = self.binder_path("postBuild")
