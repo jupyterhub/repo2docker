@@ -292,7 +292,7 @@ class RBuildPack(PythonBuildPack):
         return super().get_build_scripts() + scripts
 
     def get_preassemble_script_files(self):
-        files = {}
+        files = super().get_preassemble_script_files()
         installR_path = self.binder_path("install.R")
         if os.path.exists(installR_path):
             files[installR_path] = installR_path
