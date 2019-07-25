@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2019-07-16 13:15:56 UTC
+# Generated on 2019-07-25 23:39:48 UTC
 dependencies:
 - python=3.6.*
 - ipywidgets==7.4.2

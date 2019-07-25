@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2019-07-16 13:15:56 UTC
+# Frozen on 2019-07-25 23:39:48 UTC
 name: r2d
 channels:
   - conda-forge
@@ -42,7 +42,7 @@ dependencies:
   - parso=0.5.1=py_0
   - pexpect=4.7.0=py36_0
   - pickleshare=0.7.5=py36_1000
-  - pip=19.1.1=py36_0
+  - pip=19.2.1=py36_0
   - prometheus_client=0.7.1=py_0
   - prompt_toolkit=2.0.9=py_0
   - ptyprocess=0.6.0=py_1001
@@ -50,7 +50,7 @@ dependencies:
   - pyrsistent=0.15.3=py36h516909a_0
   - python=3.6.7=h357f687_1005
   - python-dateutil=2.8.0=py_0
-  - pyzmq=18.0.2=py36hc4ba49a_1
+  - pyzmq=18.0.2=py36h1768529_2
   - readline=8.0=hf8c457e_0
   - send2trash=1.5.0=py_0
   - setuptools=41.0.1=py36_0
@@ -78,7 +78,7 @@ dependencies:
     - cryptography==2.7
     - idna==2.8
     - jupyterhub==1.0.0
-    - mako==1.0.13
+    - mako==1.0.14
     - nteract-on-jupyter==2.0.12
     - oauthlib==3.0.2
     - pamela==1.0.0
@@ -86,7 +86,7 @@ dependencies:
     - pyopenssl==19.0.0
     - python-editor==1.0.4
     - requests==2.22.0
-    - sqlalchemy==1.3.5
+    - sqlalchemy==1.3.6
     - urllib3==1.25.3
 prefix: /opt/conda/envs/r2d
 
