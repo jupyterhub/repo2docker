@@ -1,9 +1,10 @@
 # AUTO GENERATED FROM python3.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-03-20 11:41:06 UTC
+# Frozen on 2019-07-25 23:49:31 UTC
 name: python3
 channels:
   - defaults
 dependencies:
+  - _libgcc_mutex=0.1=main
   - _license=1.1=py35_1
   - _nb_ext_conf=0.3.0=py35_0
   - alabaster=0.7.9=py35_0
@@ -18,6 +19,7 @@ dependencies:
   - bokeh=0.12.2=py35_0
   - boto=2.42.0=py35_0
   - bottleneck=1.1.0=np111py35_0
+  - ca-certificates=2019.5.15=0
   - cairo=1.12.18=6
   - cffi=1.7.0=py35_0
   - chest=0.2.3=py35_0
@@ -61,7 +63,7 @@ dependencies:
   - icu=54.1=0
   - idna=2.1=py35_0
   - imagesize=0.7.1=py35_0
-  - ipykernel=4.5.0=py35_0
+  - ipykernel=4.8.2=py35_0
   - ipython=5.1.0=py35_0
   - ipython_genutils=0.1.0=py35_0
   - ipywidgets=5.2.2=py35_0
@@ -73,13 +75,14 @@ dependencies:
   - jpeg=8d=2
   - jsonschema=2.5.1=py35_0
   - jupyter=1.0.0=py35_3
-  - jupyter_client=4.4.0=py35_0
+  - jupyter_client=5.3.1=py_0
   - jupyter_console=5.0.0=py35_0
-  - jupyter_core=4.2.0=py35_0
+  - jupyter_core=4.5.0=py_0
   - lazy-object-proxy=1.2.1=py35_0
   - libdynd=0.7.2=0
   - libffi=3.2.1=0
   - libgcc=4.8.5=2
+  - libgcc-ng=9.1.0=hdf63c60_0
   - libgfortran=3.0.0=1
   - libpng=1.6.22=0
   - libsodium=1.0.10=0
@@ -103,13 +106,13 @@ dependencies:
   - networkx=1.11=py35_0
   - nltk=3.2.1=py35_0
   - nose=1.3.7=py35_1
-  - notebook=4.2.3=py35_0
+  - notebook=5.4.1=py35_0
   - numba=0.28.1=np111py35_0
   - numexpr=2.6.1=np111py35_0
   - numpy=1.11.1=py35_0
   - odo=0.5.0=py35_1
   - openpyxl=2.3.2=py35_0
-  - openssl=1.0.2j=0
+  - openssl=1.0.2s=h7b6447c_0
   - pandas=0.18.1=np111py35_0
   - partd=0.3.6=py35_0
   - patchelf=0.9=0
@@ -158,6 +161,7 @@ dependencies:
   - scikit-image=0.12.3=np111py35_1
   - scikit-learn=0.17.1=np111py35_2
   - scipy=0.18.1=np111py35_0
+  - send2trash=1.5.0=py35_0
   - setuptools=27.2.0=py35_0
   - simplegeneric=0.8.1=py35_1
   - singledispatch=3.4.0.3=py35_0
@@ -171,10 +175,10 @@ dependencies:
   - sqlite=3.13.0=0
   - statsmodels=0.6.1=np111py35_1
   - sympy=1.0=py35_0
-  - terminado=0.6=py35_0
+  - terminado=0.8.1=py35_1
   - tk=8.5.18=0
   - toolz=0.8.0=py35_0
-  - tornado=4.4.1=py35_0
+  - tornado=4.5.3=py35_0
   - traitlets=4.3.0=py35_0
   - unicodecsv=0.14.1=py35_0
   - wcwidth=0.1.7=py35_0
