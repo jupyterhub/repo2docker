@@ -1,9 +1,10 @@
+import pytest
 from repo2docker.buildpacks.julia import semver
 
 
-def test_str_to_version():
-    assert semver.str_to_version("1.5.2") == (1, 5, 2)
-    assert semver.str_to_version("1") == (1,)
+@pytest.mark.parametrize("test_input, expected", [("1.5.2", (1, 5, 2)), ("1", (1,))])
+def test_str_to_version(test_input, expected):
+    assert semver.str_to_version(test_input) == expected
 
 
 def test_major_minor_patch():
@@ -14,84 +15,86 @@ def test_major_minor_patch():
     assert semver.patch((1,)) == 0
 
 
-def test_simple_matches():
-    assert repr(semver.create_semver_matcher("1.2.5")) == "[1.2.5-2)"
-    assert repr(semver.create_semver_matcher("1.2.5")) == "[1.2.5-2)"
-    assert repr(semver.create_semver_matcher("^1.2.3")) == "[1.2.3-2)"
-    assert repr(semver.create_semver_matcher("^1.2")) == "[1.2-2)"
-    assert repr(semver.create_semver_matcher("^1")) == "[1-2)"
-    assert repr(semver.create_semver_matcher("^0.2.3")) == "[0.2.3-0.3)"
-    assert repr(semver.create_semver_matcher("^0.0.3")) == "[0.0.3-0.0.4)"
-    assert repr(semver.create_semver_matcher("^0.0")) == "[0.0-0.1)"
-    assert repr(semver.create_semver_matcher("^0")) == "[0-1)"
-    # This one seems wrong: `~1.2.3 = [1.2.3, 1.2.4)` but ~ is special in Julia
-    # from https://docs.julialang.org/en/latest/stdlib/Pkg/#Tilde-specifiers-1
-    assert repr(semver.create_semver_matcher("~1.2.3")) == "[1.2.3-1.2.4]"
-    assert repr(semver.create_semver_matcher("~1.3.5")) == "[1.3.5-1.3.6]"
-    assert repr(semver.create_semver_matcher("~1.2")) == "[1.2-1.3]"
-    assert repr(semver.create_semver_matcher("~1")) == "[1-2]"
+@pytest.mark.parametrize(
+    "test_input, expected",
+    [
+        ("1.2.5", "[1.2.5-2)"),
+        ("1.2.5", "[1.2.5-2)"),
+        ("^1.2.3", "[1.2.3-2)"),
+        ("^1.2", "[1.2-2)"),
+        ("^1", "[1-2)"),
+        ("^0.2.3", "[0.2.3-0.3)"),
+        ("^0.0.3", "[0.0.3-0.0.4)"),
+        ("^0.0", "[0.0-0.1)"),
+        ("^0", "[0-1)"),
+        # This one seems wrong: `~1.2.3 = [1.2.3, 1.2.4)`
+        # but ~ is special in Julia from
+        # https://docs.julialang.org/en/latest/stdlib/Pkg/#Tilde-specifiers-1
+        ("~1.2.3", "[1.2.3-1.2.4]"),
+        ("~1.3.5", "[1.3.5-1.3.6]"),
+        ("~1.2", "[1.2-1.3]"),
+        ("~1", "[1-2]"),
+    ],
+)
+def test_simple_matches(test_input, expected):
+    assert repr(semver.create_semver_matcher(test_input)) == expected
 
 
-def test_range_matches():
-    assert semver.create_semver_matcher("1.2.3") == semver.create_semver_matcher(
-        "^1.2.3"
+@pytest.mark.parametrize(
+    "test_input, expected",
+    [
+        ("1.2.3", "^1.2.3"),
+        ("1.2", "^1.2"),
+        ("1", "^1"),
+        ("0.0.3", "^0.0.3"),
+        ("0", "^0"),
+    ],
+)
+def test_range_matches(test_input, expected):
+    assert semver.create_semver_matcher(test_input) == semver.create_semver_matcher(
+        expected
     )
-    assert semver.create_semver_matcher("1.2.3") == semver.create_semver_matcher(
-        "^1.2.3"
-    )
-    assert semver.create_semver_matcher("1.2") == semver.create_semver_matcher("^1.2")
-    assert semver.create_semver_matcher("1") == semver.create_semver_matcher("^1")
-    assert semver.create_semver_matcher("0.0.3") == semver.create_semver_matcher(
-        "^0.0.3"
-    )
-    assert semver.create_semver_matcher("0") == semver.create_semver_matcher("^0")
 
 
-def test_match_particular_version():
-    assert semver.create_semver_matcher("1.2.3").match(semver.str_to_version("1.5.2"))
-    assert semver.create_semver_matcher("1.2.3").match(semver.str_to_version("1.2.3"))
-    assert (
-        semver.create_semver_matcher("1.2.3").match(semver.str_to_version("2.0.0"))
-        == False
+@pytest.mark.parametrize(
+    "test_input, expected",
+    [
+        ("1.2.3", "1.5.2"),
+        ("1.2.3", "1.2.3"),
+        ("~1.2.3", "1.2.4"),
+        ("~1.2.3", "1.2.3"),
+        ("1.2", "1.2.0"),
+        ("1.2", "1.9.9"),
+        ("0.2.3", "0.2.3"),
+        ("0", "0.0.0"),
+        ("0", "0.99.0"),
+        ("0.0", "0.0.0"),
+        ("0.0", "0.0.99"),
+    ],
+)
+def test_match_particular_version_expected_true(test_input, expected):
+    assert semver.create_semver_matcher(test_input).match(
+        semver.str_to_version(expected)
     )
+
+
+@pytest.mark.parametrize(
+    "test_input, expected",
+    [
+        ("1.2.3", "2.0.0"),
+        ("1.2.3", "1.2.2"),
+        ("~1.2.3", "1.3"),
+        ("1.2", "2.0.0"),
+        ("1.2", "1.1.9"),
+        ("0.2.3", "0.3.0"),
+        ("0.2.3", "0.2.2"),
+        ("0", "1.0.0"),
+        ("0.0", "0.1.0"),
+    ],
+)
+def test_match_particular_version_expected_false(test_input, expected):
     assert (
-        semver.create_semver_matcher("1.2.3").match(semver.str_to_version("1.2.2"))
-        == False
-    )
-    assert semver.create_semver_matcher("~1.2.3").match(semver.str_to_version("1.2.4"))
-    assert semver.create_semver_matcher("~1.2.3").match(semver.str_to_version("1.2.3"))
-    assert (
-        semver.create_semver_matcher("~1.2.3").match(semver.str_to_version("1.3"))
-        == False
-    )
-    assert semver.create_semver_matcher("1.2").match(semver.str_to_version("1.2.0"))
-    assert semver.create_semver_matcher("1.2").match(semver.str_to_version("1.9.9"))
-    assert (
-        semver.create_semver_matcher("1.2").match(semver.str_to_version("2.0.0"))
-        == False
-    )
-    assert (
-        semver.create_semver_matcher("1.2").match(semver.str_to_version("1.1.9"))
-        == False
-    )
-    assert semver.create_semver_matcher("0.2.3").match(semver.str_to_version("0.2.3"))
-    assert (
-        semver.create_semver_matcher("0.2.3").match(semver.str_to_version("0.3.0"))
-        == False
-    )
-    assert (
-        semver.create_semver_matcher("0.2.3").match(semver.str_to_version("0.2.2"))
-        == False
-    )
-    assert semver.create_semver_matcher("0").match(semver.str_to_version("0.0.0"))
-    assert semver.create_semver_matcher("0").match(semver.str_to_version("0.99.0"))
-    assert (
-        semver.create_semver_matcher("0").match(semver.str_to_version("1.0.0")) == False
-    )
-    assert semver.create_semver_matcher("0.0").match(semver.str_to_version("0.0.0"))
-    assert semver.create_semver_matcher("0.0").match(semver.str_to_version("0.0.99"))
-    assert (
-        semver.create_semver_matcher("0.0").match(semver.str_to_version("0.1.0"))
+        semver.create_semver_matcher(test_input).match(semver.str_to_version(expected))
         == False
     )
 
@@ -110,6 +113,13 @@ def test_less_than_prefix():
     )
 
 
+@pytest.mark.parametrize("test_input, expected", [("≥1.3.0", ">=1.3.0")])
+def test_fancy_unicode(test_input, expected):
+    assert semver.create_semver_matcher(test_input) == semver.create_semver_matcher(
+        expected
+    )
+
+
 def test_equal_prefix():
     assert repr(semver.create_semver_matcher("=1.2.3")) == "==1.2.3"
     assert repr(semver.create_semver_matcher("=1.2")) == "==1.2.0"
@@ -122,12 +132,6 @@ def test_equal_prefix():
     assert (
         semver.create_semver_matcher("=1.2.3").match(semver.str_to_version("1.2.2"))
         == False
-    )
-
-
-def test_fancy_unicode():
-    assert semver.create_semver_matcher("≥1.3.0") == semver.create_semver_matcher(
-        ">=1.3.0"
     )
 
 
