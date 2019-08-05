@@ -4,7 +4,7 @@ set -ex
 
 cd $(dirname $0)
 MINICONDA_VERSION=4.6.14
-CONDA_VERSION=4.7.5
+CONDA_VERSION=4.7.10
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
 MD5SUM="718259965f234088d785cad1fbd7de03"
@@ -55,9 +55,6 @@ conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
 # which we don't intend.
 # this file must not be *removed*, however
 echo '' > ${NB_PYTHON_PREFIX}/conda-meta/history
-
-# enable nteract-on-jupyter, which was installed with pip
-jupyter serverextension enable nteract_on_jupyter --sys-prefix
 
 if [[ -f /tmp/kernel-environment.yml ]]; then
     # install kernel env and register kernelspec

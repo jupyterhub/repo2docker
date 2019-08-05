@@ -32,10 +32,10 @@ Below is a list of supported configuration files (roughly in the order of build 
 ``environment.yml`` is the standard configuration file used by `conda <https://conda.io>`_
 that lets you install any kind of package,
 including Python, R, and C/C++ packages.
-``repo2docker`` does not use ``environment.yml`` to create and activate a new conda environment.
-Rather, it updates a base conda environment with the packages listed in ``environment.yml``.
+``repo2docker`` does not use your ``environment.yml`` to create and activate a new conda environment.
+Rather, it updates a base conda environment `defined here <https://github.com/jupyter/repo2docker/blob/master/repo2docker/buildpacks/conda/environment.yml>`_ with the packages listed in your ``environment.yml``.
 This means that the environment will always have the same default name, not the name
-specified in ``environment.yml``.
+specified in your ``environment.yml``.
 
 .. note::
 
