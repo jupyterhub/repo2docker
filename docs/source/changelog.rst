@@ -10,10 +10,37 @@ Release date: TBD
 
 New features
 ------------
+
+
+API changes
+-----------
+
+
+Bug fixes
+---------
+
+
+
+Version 0.10.0
+==============
+
+Release date: 2019-08-07
+
+New features
+------------
 - Increased minimum Python version supported for running  `repo2docker` itself
   to Python 3.5 in :pr:`684` by :user:`betatim`.
 - Support for `Pipfile` and `Pipfile.lock` implemented in :pr:`649` by
   :user:`consideratio`.
+- Use only conda packages for our base environments in :pr:`728` by
+  :user:`scottyhq`.
+- Fast rebuilds when repo dependencies haven't changed by :user:`minrk` and
+  :user:`betatim` in :pr:`743`, :pr:`752`, :pr:`718` and :pr:`716`.
+- Add support for Zenodo in :pr:`693` by :user:`betatim`.
+- Add support for general Invenio repositories in :pr:`704` by :user:`tmorrell`.
+- Add support for julia 1.0.4 and 1.1.1 in :pr:`710` by :user:`davidanthoff`.
+- Bump Conda from 4.6.14 to 4.7.5 in :pr:`719` by :user:`davidrpugh`.
+
 
 API changes
 -----------
@@ -24,6 +51,7 @@ Bug fixes
   in :pr:`676` by :user:`Xarthisius`.
 - Add bash to Dockerfile to fix usage of private repos with git-crendential-env in
   :pr:`738` by :user:`eexwhyzee`.
+- Fix memory limit enforcement in :pr:`677` by :user:`betatim`.
 
 
 Version 0.9.0
