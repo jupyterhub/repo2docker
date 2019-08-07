@@ -6,7 +6,7 @@ images from source code repositories**.
 
 ``repo2docker`` fetches a repository
 (from GitHub, GitLab, Zenodo, a Git repository or a local directory)
-and builds a container image inn which the code can be executed.
+and builds a container image in which the code can be executed.
 The image build process is based on the configuration files found in the repository.
 
 ``repo2docker`` can be
