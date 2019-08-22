@@ -1,7 +1,6 @@
-import urllib
 import zipfile
 
-from urllib.request import urlopen, Request
+from urllib.request import urlopen, Request, urlretrieve
 from urllib.error import HTTPError
 
 from .base import ContentProvider
@@ -67,7 +66,7 @@ class Hydroshare(ContentProvider):
         yield "Fetching HydroShare Resource {}.\n".format(resource_id)
 
         bag_url = "{}{}".format(host["django_irods"], resource_id)
-        filehandle, _ = urllib.urlretrieve(bag_url)
+        filehandle, _ = urlretrieve(bag_url)
         zip_file_object = zipfile.ZipFile(filehandle, 'r')
         zip_file_object.extractall(output_dir)
 
