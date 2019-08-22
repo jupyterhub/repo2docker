@@ -57,7 +57,7 @@ class Hydroshare(ContentProvider):
 
         for host in hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
-                self.resource_id = url.rsplit("/", maxsplit=2)[1]
+                self.resource_id = url.strip("/").rsplit("/", maxsplit=1)[1]
                 return {"resource": self.resource_id, "host": host}
 
     def fetch(self, spec, output_dir, yield_output=False):
