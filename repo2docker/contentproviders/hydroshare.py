@@ -1,19 +1,11 @@
-import os
-import json
-import shutil
 import urllib
 import zipfile
 
-from os import makedirs
-from os import path
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
-from zipfile import ZipFile, is_zipfile
 
 from .base import ContentProvider
-from ..utils import copytree, deep_get
 from ..utils import normalize_doi, is_doi
-from .. import __version__
 
 
 class Hydroshare(ContentProvider):
