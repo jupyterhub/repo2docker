@@ -72,9 +72,10 @@ class Hydroshare(ContentProvider):
         zip_file_object = zipfile.ZipFile(filehandle, 'r')
 
         zip_file_object.extractall("temp")
-        files = os.listdir(os.path.join("temp", self.resource_id, "data", "contents"))
+        contents_dir = os.path.join("temp", self.resource_id, "data", "contents")
+        files = os.listdir(contents_dir)
         for f in files:
-            shutil.move("temp" + f, output_dir)
+            shutil.move(os.path.join(contents_dir, f), output_dir)
         shutil.rmtree("temp")
 
     @property
