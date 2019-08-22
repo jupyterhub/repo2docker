@@ -1,4 +1,6 @@
 import zipfile
+import os
+import shutil
 
 from urllib.request import urlopen, Request, urlretrieve
 from urllib.error import HTTPError
@@ -55,7 +57,7 @@ class Hydroshare(ContentProvider):
 
         for host in hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
-                self.resource_id = url.rsplit("/", maxsplit=1)[1]
+                self.resource_id = url.rsplit("/", maxsplit=2)[1]
                 return {"resource": self.resource_id, "host": host}
 
     def fetch(self, spec, output_dir, yield_output=False):
@@ -68,7 +70,12 @@ class Hydroshare(ContentProvider):
         bag_url = "{}{}".format(host["django_irods"], resource_id)
         filehandle, _ = urlretrieve(bag_url)
         zip_file_object = zipfile.ZipFile(filehandle, 'r')
-        zip_file_object.extractall(output_dir)
+
+        zip_file_object.extractall("temp")
+        files = os.listdir(os.path.join("temp", self.resource_id, "data", "contents"))
+        for f in files:
+            shutil.move("temp" + f, output_dir)
+        shutil.rmtree("temp")
 
     @property
     def content_id(self):
