@@ -142,7 +142,7 @@ class Repo2Docker(Application):
     # detecting if something will successfully `git clone` is very hard if all
     # you can do is look at the path/URL to it.
     content_providers = List(
-        [contentproviders.Local, contentproviders.Zenodo, contentproviders.Git],
+        [contentproviders.Local, contentproviders.Zenodo, contentproviders.Hydroshare, contentproviders.Git],
         config=True,
         help="""
         Ordered list by priority of ContentProviders to try in turn to fetch
