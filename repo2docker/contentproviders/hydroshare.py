@@ -74,10 +74,11 @@ class Hydroshare(ContentProvider):
         conn = urlopen(bag_url)
         while conn.info().get_content_type() != "application/zip":
             if conn.getcode() != 200:
-                yield "Failed to download bag. status code {}".format(conn.getcode())
+                yield "Failed to download bag. status code {}.\n".format(conn.getcode())
                 return
-            yield "Bag is being prepared, requesting again in 3 seconds"
-            time.sleep(3)
+            wait_time = 10
+            yield "Bag is being prepared, requesting again in {} seconds.\n".format(wait_time)
+            time.sleep(wait_time)
             conn = urlopen(bag_url)
 
         filehandle, _ = urlretrieve(bag_url)
