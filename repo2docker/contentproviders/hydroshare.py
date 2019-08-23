@@ -81,15 +81,18 @@ class Hydroshare(ContentProvider):
             time.sleep(wait_time)
             conn = urlopen(bag_url)
 
+        # Bag creation seems to need a small time buffer after it says it's ready.
+        time.sleep(1)
         filehandle, _ = urlretrieve(bag_url)
         zip_file_object = zipfile.ZipFile(filehandle, 'r')
-
+        yield "Downloaded, unpacking contents.\n"
         zip_file_object.extractall("temp")
         # resources store the contents in the data/contents directory, which is all we want to keep
         contents_dir = os.path.join("temp", self.resource_id, "data", "contents")
         files = os.listdir(contents_dir)
         for f in files:
             shutil.move(os.path.join(contents_dir, f), output_dir)
+        yield "Finished, cleaning up.\n"
         shutil.rmtree("temp")
 
     @property
