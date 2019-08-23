@@ -1,6 +1,7 @@
 import zipfile
 import os
 import shutil
+import time
 
 from urllib.request import urlopen, Request, urlretrieve
 from urllib.error import HTTPError
@@ -68,10 +69,21 @@ class Hydroshare(ContentProvider):
         yield "Fetching HydroShare Resource {}.\n".format(resource_id)
 
         bag_url = "{}{}".format(host["django_irods"], resource_id)
+
+        # bag downloads are prepared on demand and may need some time
+        conn = urlopen(bag_url)
+        while str(conn.info().get_content_type()) != "application/zip":
+            if conn.getcode() != 200:
+                yield "Failed to download bag. status code {}".format(conn.getcode())
+                return
+            yield "Bag is being prepared, requesting again in 3 seconds"
+            time.sleep(3)
+
         filehandle, _ = urlretrieve(bag_url)
         zip_file_object = zipfile.ZipFile(filehandle, 'r')
 
         zip_file_object.extractall("temp")
+        # resources store the contents in the data/contents directory, which is all we want to keep
         contents_dir = os.path.join("temp", self.resource_id, "data", "contents")
         files = os.listdir(contents_dir)
         for f in files:
