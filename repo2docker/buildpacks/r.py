@@ -174,7 +174,7 @@ class RBuildPack(PythonBuildPack):
         devtools_version = "2018-02-01"
 
         # IRKernel version - specified as a tag in the IRKernel repository
-        irkernel_version = "0.8.11"
+        irkernel_version = "1.0.2"
 
         mran_url = "https://mran.microsoft.com/snapshot/{}".format(
             self.checkpoint_date.isoformat()
