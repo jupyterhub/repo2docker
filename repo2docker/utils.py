@@ -3,6 +3,7 @@ from functools import partial
 import os
 import re
 import subprocess
+import chardet
 
 from shutil import copystat, copy2
 
@@ -68,6 +69,22 @@ def chdir(path):
         yield
     finally:
         os.chdir(old_dir)
+
+@contextmanager
+def open_utf8convert_read(path):
+    with open(path, "rb") as f:
+        file_to_encode = f.read()
+
+    encoding_detection_result = chardet.detect(file_to_encode)
+    if not "utf-8" in encoding_detection_result:
+        with open(path, "wb") as f:
+            f.write(file_to_encode.decode(encoding_detection_result["encoding"]).encode("utf-8"))
+
+    file = open(path)
+    try:
+        yield file
+    finally:
+        file.close()
 
 
 def validate_and_generate_port_mapping(port_mappings):
