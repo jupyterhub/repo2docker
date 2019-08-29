@@ -81,7 +81,6 @@ def open_guess_encoding(path):
     with open(path, "rb") as f:
         for line in f.readlines():
             detector.feed(line)
-            print(str(i) + str(detector.done))
             if detector.done:
                 break
     detector.close()
