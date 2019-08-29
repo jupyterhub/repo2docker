@@ -6,7 +6,7 @@ from collections import Mapping
 from ruamel.yaml import YAML
 
 from ..base import BaseImage
-from ...utils import is_local_pip_requirement, open_utf8convert_read
+from ...utils import is_local_pip_requirement
 
 # pattern for parsing conda dependency line
 PYTHON_REGEX = re.compile(r"python\s*=+\s*([\d\.]*)")
@@ -140,7 +140,7 @@ class CondaBuildPack(BaseImage):
             self._environment_yaml = {}
             return self._environment_yaml
 
-        with open_utf8convert_read(environment_yml) as f:
+        with open(environment_yml) as f:
             env = YAML().load(f)
             # check if the env file is empty, if so instantiate an empty dictionary.
             if env is None:

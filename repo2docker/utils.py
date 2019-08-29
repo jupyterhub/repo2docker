@@ -70,17 +70,23 @@ def chdir(path):
     finally:
         os.chdir(old_dir)
 
+
 @contextmanager
-def open_utf8convert_read(path):
+def open_guess_encoding(path):
+    """
+    Open a file in text mode, specifying its encoding,
+    that we guess using chardet.
+    """
+    detector = chardet.universaldetector.UniversalDetector()
     with open(path, "rb") as f:
-        file_to_encode = f.read()
+        for line in f.readlines():
+            detector.feed(line)
+            print(str(i) + str(detector.done))
+            if detector.done:
+                break
+    detector.close()
 
-    encoding_detection_result = chardet.detect(file_to_encode)
-    if not "utf-8" in encoding_detection_result:
-        with open(path, "wb") as f:
-            f.write(file_to_encode.decode(encoding_detection_result["encoding"]).encode("utf-8"))
-
-    file = open(path)
+    file = open(path, encoding=detector.result["encoding"])
     try:
         yield file
     finally:

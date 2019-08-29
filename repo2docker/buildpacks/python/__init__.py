@@ -2,7 +2,7 @@
 import os
 
 from ..conda import CondaBuildPack
-from ...utils import is_local_pip_requirement, open_utf8convert_read
+from ...utils import is_local_pip_requirement, open_guess_encoding
 
 
 class PythonBuildPack(CondaBuildPack):
@@ -86,7 +86,7 @@ class PythonBuildPack(CondaBuildPack):
             requirements_txt = self.binder_path(name)
             if not os.path.exists(requirements_txt):
                 continue
-            with open_utf8convert_read(requirements_txt) as f:
+            with open_guess_encoding(requirements_txt) as f:
                 for line in f:
                     if is_local_pip_requirement(line):
                         return False
