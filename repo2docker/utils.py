@@ -3,6 +3,7 @@ from functools import partial
 import os
 import re
 import subprocess
+import chardet
 
 from shutil import copystat, copy2
 
@@ -68,6 +69,27 @@ def chdir(path):
         yield
     finally:
         os.chdir(old_dir)
+
+
+@contextmanager
+def open_guess_encoding(path):
+    """
+    Open a file in text mode, specifying its encoding,
+    that we guess using chardet.
+    """
+    detector = chardet.universaldetector.UniversalDetector()
+    with open(path, "rb") as f:
+        for line in f.readlines():
+            detector.feed(line)
+            if detector.done:
+                break
+    detector.close()
+
+    file = open(path, encoding=detector.result["encoding"])
+    try:
+        yield file
+    finally:
+        file.close()
 
 
 def validate_and_generate_port_mapping(port_mappings):
