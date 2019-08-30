@@ -115,11 +115,12 @@ def test_normalize_doi():
 
 def test_open_guess_encoding():
     data = "Rică nu știa să zică râu, rățușcă, rămurică."
-    with tempfile.NamedTemporaryFile(mode='wb') as test_file:
+    with tempfile.NamedTemporaryFile(mode="wb") as test_file:
         test_file.write(str.encode(data, "utf-16"))
         test_file.seek(0)
         with utils.open_guess_encoding(test_file.name) as fd:
             assert fd.read() == data
+
 
 @pytest.mark.parametrize(
     "req, is_local",
