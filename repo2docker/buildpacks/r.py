@@ -56,6 +56,21 @@ class RBuildPack(PythonBuildPack):
         return self._runtime
 
     @property
+    def r_version(self):
+        """Detect the R version for a given `runtime.txt`
+
+        Will return '' (false-y string) as the default or other 'x.y'
+        version if found.
+        """
+        if not hasattr(self, "_r_version"):
+            if self._runtime.startswith("r-"):
+                _, self._r_version, _ = self._runtime.split("-", 2)
+            else:
+                self._r_version = ""
+
+        return self._r_version
+
+    @property
     def checkpoint_date(self):
         """
         Return the date of MRAN checkpoint to use for this repo
@@ -63,11 +78,14 @@ class RBuildPack(PythonBuildPack):
         Returns '' if no date is specified
         """
         if not hasattr(self, "_checkpoint_date"):
-            match = re.match(r"r-(\d\d\d\d)-(\d\d)-(\d\d)", self.runtime)
+            match = re.match(r"r-(\d.\d-)?(\d\d\d\d)-(\d\d)-(\d\d)", self.runtime)
             if not match:
                 self._checkpoint_date = False
             else:
-                self._checkpoint_date = datetime.date(*[int(s) for s in match.groups()])
+                # turn the last three groups of the match into a date
+                self._checkpoint_date = datetime.date(
+                    *[int(s) for s in match.groups()[-3:]]
+                )
 
         return self._checkpoint_date
 
@@ -127,20 +145,17 @@ class RBuildPack(PythonBuildPack):
         We install a base version of R, and packages required for RStudio to
         be installed.
         """
-        return (
-            super()
-            .get_packages()
-            .union(
-                [
-                    "r-base",
-                    # For rstudio
-                    "psmisc",
-                    "libapparmor1",
-                    "sudo",
-                    "lsb-release",
-                ]
-            )
-        )
+        packages = [
+            # For rstudio
+            "psmisc",
+            "libapparmor1",
+            "sudo",
+            "lsb-release",
+        ]
+        if not self.r_version:
+            packages.append("r-base")
+
+        return super().get_packages().union(packages)
 
     def get_build_scripts(self):
         """
@@ -180,7 +195,34 @@ class RBuildPack(PythonBuildPack):
             self.checkpoint_date.isoformat()
         )
 
-        scripts = [
+        scripts = []
+        if self.r_version == "3.6":
+            scripts += [
+                (
+                    "root",
+                    r"""
+                    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/r3.6-ubuntu.list
+                    """,
+                ),
+                (
+                    "root",
+                    r"""
+                    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+                    """,
+                ),
+                (
+                    "root",
+                    r"""
+                    apt-get update && \
+                    apt-get install --yes r-base-dev && \
+                    apt-get -qq purge && \
+                    apt-get -qq clean && \
+                    rm -rf /var/lib/apt/lists/*
+                    """,
+                ),
+            ]
+
+        scripts += [
             (
                 "root",
                 r"""
