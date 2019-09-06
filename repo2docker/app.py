@@ -29,6 +29,7 @@ from traitlets.config import Application
 from . import __version__
 from .buildpacks import (
     CondaBuildPack,
+    TarballBuildPack,
     DockerBuildPack,
     JuliaProjectTomlBuildPack,
     JuliaRequireBuildPack,
@@ -90,6 +91,7 @@ class Repo2Docker(Application):
 
     buildpacks = List(
         [
+            TarballBuildPack,
             LegacyBinderDockerBuildPack,
             DockerBuildPack,
             JuliaProjectTomlBuildPack,
@@ -549,6 +551,7 @@ class Repo2Docker(Application):
 
         run_kwargs.update(self.extra_run_kwargs)
 
+        self.log.debug("Running container with image {}\n".format(self.output_image_spec), extra=dict(phase="running"))
         container = client.containers.run(self.output_image_spec, **run_kwargs)
 
         while container.status == "created":
@@ -702,6 +705,8 @@ class Repo2Docker(Application):
                             self.log.info(
                                 "Fetching base image...\r", extra=dict(phase="building")
                             )
+                        elif "image" in l:
+                            self.output_image_spec = l["image"]
                         else:
                             self.log.info(json.dumps(l), extra=dict(phase="building"))
 
