@@ -63,8 +63,9 @@ class RBuildPack(PythonBuildPack):
         version if found.
         """
         if not hasattr(self, "_r_version"):
-            if self._runtime.startswith("r-"):
-                _, self._r_version, _ = self._runtime.split("-", 2)
+            parts = self.runtime.split("-")
+            if len(parts) == 5:
+                self._r_version = parts[1]
             else:
                 self._r_version = ""
 
