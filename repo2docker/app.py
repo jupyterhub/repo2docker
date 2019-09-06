@@ -369,7 +369,7 @@ class Repo2Docker(Application):
         help="""
         Save the image to a tarball after the build and before running.
 
-        The used filename is 'image.tar'.
+        The used filename is 'image.tar' in the binder directory.
         """,
     )
 
@@ -496,15 +496,17 @@ class Repo2Docker(Application):
     def save_image(self):
         """Save Docker image to file"""
         client = self.docker_client()
+        
+        with chdir(self.repo):
+            filename = self.default_buildpack().binder_path("image.tar")
+            self.log.info("Saving image to file {}\n".format(filename))
 
-        filename = "image.tar"
-        image = client.get_image(self.output_image_spec)
+            image = client.get_image(self.output_image_spec)
+            with open(filename, "wb") as f:
+                for chunk in image:
+                    f.write(chunk)
         
-        with open(filename, "wb") as f:
-            for chunk in image:
-                f.write(chunk)
-        
-        self.log.info("Successfully saved image to file {}".format(filename))
+        self.log.info("Successfully saved image\n")
 
     def run_image(self):
         """Run docker container from built image

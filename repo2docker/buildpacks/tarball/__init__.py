@@ -9,16 +9,15 @@ from ... import app
 class TarballBuildPack(BuildPack):
     """Tarball BuildPack"""
 
-    dockerfile = "image.tar"
+    image_file = "image.tar"
 
     def detect(self):
         """Check if current repo should be built with the Tarball BuildPack"""
-        return os.path.exists(self.binder_path("image.tar"))
+        return os.path.exists(self.binder_path(self.image_file))
 
     def render(self):
         """Render the Dockerfile using by reading it from the source repo"""
-        # TODO load image and generate Dockerfile form layer statements?
-        return "image.tar\n"
+        return "Found tarball {}\n".format(os.path.realpath(self.binder_path(self.image_file)))
 
     def build(
         self,
@@ -30,9 +29,9 @@ class TarballBuildPack(BuildPack):
         extra_build_kwargs,
     ):
 
-        self.log.debug("Loading image from image.tar", extra=dict(phase="loading"))
+        self.log.debug("Loading image from {}".format(self.image_file), extra=dict(phase="loading"))
 
-        with open("image.tar", "rb") as f:
+        with open(self.binder_path(self.image_file), "rb") as f:
             result = [line for line in client.load_image(f, quiet=False)]
             if "error" in str(result):
                 self.log.error(result, extra=dict(phase="failed"))
