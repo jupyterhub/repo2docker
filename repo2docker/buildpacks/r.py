@@ -59,15 +59,30 @@ class RBuildPack(PythonBuildPack):
     def r_version(self):
         """Detect the R version for a given `runtime.txt`
 
-        Will return '' (false-y string) as the default or other 'x.y'
-        version if found.
+        Will return the version specified by the user or the current default
+        version.
         """
+        version_map = {
+            "3.5": "3.5.3-1bionic",
+            "3.5.0": "3.5.0-1bionic",
+            "3.5.1": "3.5.1-2bionic",
+            "3.5.2": "3.5.2-1bionic",
+            "3.5.3": "3.5.3-1bionic",
+            "3.6": "3.6.1-3bionic",
+            "3.6.0": "3.6.0-2bionic",
+            "3.6.1": "3.6.1-3bionic",
+        }
+        # the default if nothing is specified
+        r_version = "3.6"
+
         if not hasattr(self, "_r_version"):
             parts = self.runtime.split("-")
             if len(parts) == 5:
-                self._r_version = parts[1]
-            else:
-                self._r_version = ""
+                r_version = parts[1]
+
+            # see if we need to translate the specified version into a
+            # "full" version string
+            self._r_version = version_map.get(r_version, r_version)
 
         return self._r_version
 
@@ -79,7 +94,7 @@ class RBuildPack(PythonBuildPack):
         Returns '' if no date is specified
         """
         if not hasattr(self, "_checkpoint_date"):
-            match = re.match(r"r-(\d.\d-)?(\d\d\d\d)-(\d\d)-(\d\d)", self.runtime)
+            match = re.match(r"r-(\d.\d(.\d)?-)?(\d\d\d\d)-(\d\d)-(\d\d)", self.runtime)
             if not match:
                 self._checkpoint_date = False
             else:
@@ -153,7 +168,9 @@ class RBuildPack(PythonBuildPack):
             "sudo",
             "lsb-release",
         ]
-        if not self.r_version:
+        # For R 3.4 we use the default Ubuntu package, for other versions we
+        # install from a different PPA
+        if self.r_version.startswith("3.4"):
             packages.append("r-base")
 
         return super().get_packages().union(packages)
@@ -197,7 +214,8 @@ class RBuildPack(PythonBuildPack):
         )
 
         scripts = []
-        if self.r_version == "3.6":
+        # For R 3.4 we want to use the default Ubuntu package
+        if not self.r_version.startswith("3.4"):
             scripts += [
                 (
                     "root",
@@ -215,11 +233,13 @@ class RBuildPack(PythonBuildPack):
                     "root",
                     r"""
                     apt-get update && \
-                    apt-get install --yes r-base-dev && \
+                    apt-get install --yes r-base={} && \
                     apt-get -qq purge && \
                     apt-get -qq clean && \
                     rm -rf /var/lib/apt/lists/*
-                    """,
+                    """.format(
+                        self.r_version
+                    ),
                 ),
             ]
 
