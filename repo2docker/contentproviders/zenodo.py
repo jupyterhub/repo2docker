@@ -61,7 +61,10 @@ class Zenodo(ContentProvider):
                 "type": "metadata.upload_type",
             },
             {
-                "hostname": ["https://sandbox.zenodo.org/record/", "http://sandbox.zenodo.org/record/"],
+                "hostname": [
+                    "https://sandbox.zenodo.org/record/",
+                    "http://sandbox.zenodo.org/record/",
+                ],
                 "api": "https://sandbox.zenodo.org/api/records/",
                 "filepath": "files",
                 "filename": "filename",

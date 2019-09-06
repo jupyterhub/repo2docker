@@ -18,9 +18,7 @@ from repo2docker.buildpacks import TarballBuildPack
 
 def create_test_tarball():
     if not os.path.isfile("tests/tarball/node10/image.tar"):
-        r2d = Repo2Docker(
-            repo="tests/base/node10"
-        )
+        r2d = Repo2Docker(repo="tests/base/node10")
         r2d.build()
 
         client = docker.APIClient(version="auto")
@@ -34,8 +32,7 @@ def test_image_loading_image_name():
     create_test_tarball()
 
     r2d = Repo2Docker(
-        repo="tests/tarball/node10", # will not match image name/tag below
-        run=False
+        repo="tests/tarball/node10", run=False  # will not match image name/tag below
     )
 
     r2d.initialize()
@@ -103,16 +100,20 @@ def test_save_image(tmpdir):
         fake_client.get_image.return_value = [
             "not".encode(),
             "an".encode(),
-            "image".encode()
+            "image".encode(),
         ]
 
-        with patch.object(Repo2Docker, 'docker_client', return_value=fake_client) as mock_method:
+        with patch.object(
+            Repo2Docker, "docker_client", return_value=fake_client
+        ) as mock_method:
             r2d = Repo2Docker(save=True)
             r2d.start()
             assert os.path.isfile("image.tar"), "image.tar file exists"
-        
+
         os.makedirs(os.path.join(tmpdir, ".binder"))
-        with patch.object(Repo2Docker, 'docker_client', return_value=fake_client) as mock_method:
+        with patch.object(
+            Repo2Docker, "docker_client", return_value=fake_client
+        ) as mock_method:
             r2d = Repo2Docker(save=True)
             r2d.start()
             assert os.path.isfile(".binder/image.tar"), "binder/image.tar file exists"

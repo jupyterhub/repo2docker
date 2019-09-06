@@ -17,7 +17,9 @@ class TarballBuildPack(BuildPack):
 
     def render(self):
         """Render the Dockerfile using by reading it from the source repo"""
-        return "Found tarball {}\n".format(os.path.realpath(self.binder_path(self.image_file)))
+        return "Found tarball {}\n".format(
+            os.path.realpath(self.binder_path(self.image_file))
+        )
 
     def build(
         self,
@@ -29,7 +31,9 @@ class TarballBuildPack(BuildPack):
         extra_build_kwargs,
     ):
 
-        self.log.debug("Loading image from {}".format(self.image_file), extra=dict(phase="loading"))
+        self.log.debug(
+            "Loading image from {}".format(self.image_file), extra=dict(phase="loading")
+        )
 
         with open(self.binder_path(self.image_file), "rb") as f:
             result = [line for line in client.load_image(f, quiet=False)]

@@ -175,10 +175,7 @@ def get_argparser():
         help="Use the local repository in edit mode",
     )
 
-    argparser.add_argument(
-        "--target-repo-dir",
-        help=Repo2Docker.target_repo_dir.help
-    )
+    argparser.add_argument("--target-repo-dir", help=Repo2Docker.target_repo_dir.help)
 
     argparser.add_argument(
         "--appendix",

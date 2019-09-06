@@ -435,7 +435,7 @@ class Repo2Docker(Application):
     def docker_client(self):
         """Single place to create Docker API client to allow mocking"""
         client = docker.APIClient(version="auto", **kwargs_from_env())
-        return(client)
+        return client
 
     def initialize(self):
         """Init repo2docker configuration before start"""
@@ -496,7 +496,7 @@ class Repo2Docker(Application):
     def save_image(self):
         """Save Docker image to file"""
         client = self.docker_client()
-        
+
         with chdir(self.repo):
             filename = self.default_buildpack().binder_path("image.tar")
             self.log.info("Saving image to file {}\n".format(filename))
@@ -505,7 +505,7 @@ class Repo2Docker(Application):
             with open(filename, "wb") as f:
                 for chunk in image:
                     f.write(chunk)
-        
+
         self.log.info("Successfully saved image\n")
 
     def run_image(self):
@@ -579,7 +579,10 @@ class Repo2Docker(Application):
 
         run_kwargs.update(self.extra_run_kwargs)
 
-        self.log.debug("Running container with image {}\n".format(self.output_image_spec), extra=dict(phase="running"))
+        self.log.debug(
+            "Running container with image {}\n".format(self.output_image_spec),
+            extra=dict(phase="running"),
+        )
         container = client.containers.run(self.output_image_spec, **run_kwargs)
 
         while container.status == "created":
