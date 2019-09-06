@@ -61,6 +61,14 @@ class Zenodo(ContentProvider):
                 "type": "metadata.upload_type",
             },
             {
+                "hostname": ["https://sandbox.zenodo.org/record/", "http://sandbox.zenodo.org/record/"],
+                "api": "https://sandbox.zenodo.org/api/records/",
+                "filepath": "files",
+                "filename": "filename",
+                "download": "links.download",
+                "type": "metadata.upload_type",
+            },
+            {
                 "hostname": [
                     "https://data.caltech.edu/records/",
                     "http://data.caltech.edu/records/",
