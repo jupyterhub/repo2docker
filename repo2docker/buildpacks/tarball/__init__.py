@@ -37,16 +37,25 @@ class TarballBuildPack(BuildPack):
             if "error" in str(result):
                 self.log.error(result, extra=dict(phase="failed"))
                 raise docker.errors.ImageLoadError(result)
-            
+
             if "Loaded image" in str(result):
                 line = result[0]["stream"]
                 image_tag = line.replace("Loaded image:", "").strip()
-                self.log.debug("Successfully loaded {}".format(image_tag), extra=dict(phase="loading"))
-                
-                image_metadata = client.inspect_image(image_tag)
-                image_r2d_version = image_metadata["Config"]["Labels"]["repo2docker.version"]
-                if image_r2d_version != app.Repo2Docker.version:
-                    self.log.warning("repo2docker version missmatch: image label has '{}' but running '{}'"
-                        .format(image_metadata["Config"]["Labels"]["repo2docker.version"], app.Repo2Docker.version))
+                self.log.debug(
+                    "Successfully loaded {}".format(image_tag),
+                    extra=dict(phase="loading"),
+                )
 
-                return([{ "image": image_tag }])
+                image_metadata = client.inspect_image(image_tag)
+                image_r2d_version = image_metadata["Config"]["Labels"][
+                    "repo2docker.version"
+                ]
+                if image_r2d_version != app.Repo2Docker.version:
+                    self.log.warning(
+                        "repo2docker version missmatch: image label has '{}' but running '{}'".format(
+                            image_metadata["Config"]["Labels"]["repo2docker.version"],
+                            app.Repo2Docker.version,
+                        )
+                    )
+
+                return [{"image": image_tag}]

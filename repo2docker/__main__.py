@@ -175,7 +175,10 @@ def get_argparser():
         help="Use the local repository in edit mode",
     )
 
-    argparser.add_argument("--target-repo-dir", help=Repo2Docker.target_repo_dir.help)
+    argparser.add_argument(
+        "--target-repo-dir",
+        help=Repo2Docker.target_repo_dir.help
+    )
 
     argparser.add_argument(
         "--appendix",
@@ -197,6 +200,13 @@ def get_argparser():
     )
 
     argparser.add_argument("--cache-from", action="append", default=[])
+
+    argparser.add_argument(
+        "--save-image",
+        dest="save",
+        action="store_true",
+        help="Save a tarball of the image after the build to file 'image.tar'.",
+    )
 
     return argparser
 
@@ -262,6 +272,7 @@ def make_r2d(argv=None):
 
     r2d.run = args.run
     r2d.push = args.push
+    r2d.save = args.save
 
     # check against r2d.run and not args.run as r2d.run is false on
     # --no-build. Also r2d.volumes and not args.volumes since --editable
