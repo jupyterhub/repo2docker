@@ -8,6 +8,7 @@ import escapism
 
 from repo2docker.app import Repo2Docker
 from repo2docker.__main__ import make_r2d
+from repo2docker.utils import chdir
 
 
 def test_find_image():
@@ -124,3 +125,24 @@ def test_root_not_allowed():
             builds.return_value = []
             app.build()
         builds.assert_called_once()
+
+
+def test_dryrun_works_without_docker(tmpdir):
+    with chdir(tmpdir):
+        with patch.object(docker, "APIClient") as client:
+            client.side_effect = docker.errors.DockerException("Error: no Docker")
+            app = Repo2Docker(dry_run=True)
+            app.build()
+
+
+def test_error_log_without_docker(tmpdir, caplog):
+    with chdir(tmpdir):
+        with patch.object(docker, "APIClient") as client:
+            client.side_effect = docker.errors.DockerException("Error: no Docker")
+            app = Repo2Docker()
+
+            with pytest.raises(docker.errors.DockerException):
+                app.build()
+
+                captured = capsys.readouterr()
+                assert "Check if docker is running" in captured.err
