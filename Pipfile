@@ -13,6 +13,7 @@ Sphinx = ">=1.4,!=1.5.4"
 alabaster_jupyterhub = "*"
 sphinxcontrib-autoprogram = "*"
 tox = "*"
+requests = "*"
 
 [packages]
 repo2docker = {path=".", editable=true}
