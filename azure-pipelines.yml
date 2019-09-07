@@ -1,0 +1,20 @@
+# https://docs.microsoft.com/azure/devops/pipelines/ecosystems/python
+pool:
+  vmImage: "ubuntu-16.04"
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.6'
+
+- script: python -m pip install --upgrade pip setuptools wheel
+  displayName: 'Install tools'
+
+- script: pip install -r dev-requirements.txt
+  displayName: 'Install dev requirements'
+
+- script: pip install -e .
+  displayName: 'Install r2d'
+
+- script: pytest --durations 10 --cov repo2docker -v tests
+  displayName: 'Run pytest'
