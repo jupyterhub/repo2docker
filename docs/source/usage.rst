@@ -10,14 +10,16 @@ Using ``repo2docker``
    order to run ``repo2docker``. For more information on installing
    ``repo2docker``, see :ref:`install`.
 
-``repo2docker`` is called with a URL/path to a git repository. It then
+``repo2docker`` can build a reproducible computational environment for any repository that
+follows :ref:`specification`. repo2docker is called with the URL of a Git repository,
+a Zenodo DOI or a path to a local directory. It then
 performs these steps:
 
 1. Inspects the repository for :ref:`configuration files <config-files>`. These will be used to build
    the environment needed to run the repository.
 2. Builds a Docker image with an environment specified in these :ref:`configuration files <config-files>`.
-3. Runs a Jupyter server within the image that lets you explore the
-   repository interactively (optional)
+3. Launches the image to let you explore the
+   repository interactively via Jupyter notebooks, RStudio, or many other interfaces (optional)
 4. Pushes the images to a Docker registry so that it may be accessed remotely
    (optional)
 
@@ -26,10 +28,15 @@ Calling repo2docker
 
 repo2docker is called with this command::
 
-  jupyter-repo2docker <URL-or-path to repository>
+  jupyter-repo2docker <source-repository>
 
-where ``<URL-or-path to repository>`` is a URL or path to the source repository
-for which you'd like to build an image.
+where ``<source-repository>`` is:
+
+  * a URL of a Git repository (``https://github.com/binder-examples/requirements``),
+  * a Zenodo DOI (``10.5281/zenodo.1211089``), or
+  * a path to a local directory (``a/local/directory``)
+
+of the source repository you want to build.
 
 For example, the following command will build an image of Peter Norvig's
 Pytudes_ repository::
@@ -55,7 +62,7 @@ Pasting the URL into your browser will open Jupyter Notebook with the
 dependencies and contents of the source repository in the built image.
 
 
-Building a specific branch / commit / tag
+Building a specific branch, commit or tag
 =========================================
 
 To build a particular branch and commit, use the argument ``--ref`` and
@@ -64,7 +71,7 @@ specify the ``branch-name`` or ``commit-hash``. For example::
   jupyter-repo2docker --ref 9ced85dd9a84859d0767369e58f33912a214a3cf https://github.com/norvig/pytudes
 
 .. tip::
-   For reproducible research, we recommend specifying a commit-hash to
+   For reproducible builds, we recommend specifying a commit-hash to
    deterministically build a fixed version of a repository. Not specifying a
    commit-hash will result in the latest commit of the repository being built.
 
@@ -72,17 +79,21 @@ specify the ``branch-name`` or ``commit-hash``. For example::
 Where to put configuration files
 ================================
 
-``repo2docker`` will look for configuration files in either:
+``repo2docker`` will look for configuration files in:
 
 * A folder named ``binder/`` in the root of the repository.
+* A folder named ``.binder/`` in the root of the repository.
 * The root directory of the repository.
 
-If the folder ``binder/`` is located at the top level of the repository,
-  **only configuration files in the** ``binder/`` **folder will be considered**.
+`repo2docker` searches for these folders in order (``binder/``, ``.binder/``,
+root). Only configuration files in the first identified folder are considered.
+
+Check the complete list of :ref:`configuration files <config-files>` supported
+by ``repo2docker`` to see how to configure the build process.
 
 .. note::
 
-   ``repo2docker`` builds an environment with Python 3.6 by default. If you'd
+   ``repo2docker`` builds an environment with Python 3.7 by default. If you'd
    like a different version, you can specify this in your
    :ref:`configuration files <config-files>`.
 
@@ -106,5 +117,13 @@ be used by docker directly.
   .. code-block:: bash
 
      jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
+
+
+Command line API
+================
+
+.. autoprogram:: repo2docker.__main__:argparser
+  :prog: jupyter-repo2docker
+
 
 .. _Pytudes: https://github.com/norvig/pytudes

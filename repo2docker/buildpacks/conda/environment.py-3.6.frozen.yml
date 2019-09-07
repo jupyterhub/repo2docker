@@ -1,86 +1,101 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-12-11 21:19:13 UTC
+# Frozen on 2019-07-29 15:50:44 UTC
 name: r2d
 channels:
   - conda-forge
   - defaults
   - conda-forge/label/broken
 dependencies:
-  - attrs=18.2.0=py_0
+  - _libgcc_mutex=0.1=main
+  - alembic=1.0.11=py_0
+  - asn1crypto=0.24.0=py36_1003
+  - async_generator=1.10=py_0
+  - attrs=19.1.0=py_0
   - backcall=0.1.0=py_0
-  - bleach=3.0.2=py_0
-  - ca-certificates=2018.11.29=ha4d7672_0
-  - certifi=2018.11.29=py36_1000
-  - decorator=4.3.0=py_0
+  - bleach=3.1.0=py_0
+  - blinker=1.4=py_1
+  - ca-certificates=2019.6.16=hecc5488_0
+  - certifi=2019.6.16=py36_1
+  - certipy=0.1.3=py_0
+  - cffi=1.12.3=py36h8022711_0
+  - chardet=3.0.4=py36_1003
+  - configurable-http-proxy=4.1.0=node11_1
+  - cryptography=2.7=py36h72c5cf5_0
+  - decorator=4.4.0=py_0
   - defusedxml=0.5.0=py_1
-  - entrypoints=0.2.3=py36_1002
-  - gmp=6.1.2=hfc679d8_0
-  - ipykernel=5.1.0=py36h24bf2e0_1001
-  - ipython=7.2.0=py36h24bf2e0_1000
+  - entrypoints=0.3=py36_1000
+  - idna=2.8=py36_1000
+  - ipykernel=5.1.1=py36h5ca1d4c_0
+  - ipython=7.7.0=py36h5ca1d4c_0
   - ipython_genutils=0.2.0=py_1
-  - ipywidgets=7.2.1=py36_1
-  - jedi=0.13.1=py36_1000
-  - jinja2=2.10=py_1
-  - jsonschema=3.0.0a3=py36_1000
-  - jupyter_client=5.2.4=py_0
+  - ipywidgets=7.4.2=py_0
+  - jedi=0.14.1=py36_0
+  - jinja2=2.10.1=py_0
+  - jsonschema=3.0.1=py36_0
+  - jupyter_client=5.3.1=py_0
   - jupyter_core=4.4.0=py_0
-  - jupyterlab=0.34.9=py36_0
-  - jupyterlab_launcher=0.13.1=py_2
-  - libffi=3.2.1=hfc679d8_5
-  - libgcc-ng=7.2.0=hdf63c60_3
-  - libsodium=1.0.16=h470a237_1
-  - libstdcxx-ng=7.2.0=hdf63c60_3
-  - markupsafe=1.1.0=py36h470a237_0
-  - mistune=0.8.4=py36h470a237_0
-  - nbconvert=5.4.0=1
+  - jupyterhub=1.0.0=py36_0
+  - jupyterlab=0.35.4=py36_0
+  - jupyterlab_server=0.2.0=py_0
+  - krb5=1.16.3=h05b26f9_1001
+  - libcurl=7.65.3=hda55be3_0
+  - libedit=3.1.20170329=hf8c457e_1001
+  - libffi=3.2.1=he1b5a44_1006
+  - libgcc-ng=9.1.0=hdf63c60_0
+  - libsodium=1.0.17=h516909a_0
+  - libssh2=1.8.2=h22169c7_2
+  - libstdcxx-ng=9.1.0=hdf63c60_0
+  - mako=1.0.10=py_0
+  - markupsafe=1.1.1=py36h14c3975_0
+  - mistune=0.8.4=py36h14c3975_1000
+  - nbconvert=5.4.1=py_2
   - nbformat=4.4.0=py_1
-  - ncurses=6.1=hfc679d8_2
-  - notebook=5.7.2=py36_1000
-  - openssl=1.0.2p=h470a237_1
-  - pandoc=1.19.2=0
+  - ncurses=6.1=hf484d3e_1002
+  - nodejs=11.14.0=he1b5a44_1
+  - notebook=5.7.8=py36_1
+  - nteract_on_jupyter=2.0.12=py_0
+  - oauthlib=3.0.1=py_0
+  - openssl=1.1.1c=h516909a_0
+  - pamela=1.0.0=py_0
+  - pandoc=2.7.3=0
   - pandocfilters=1.4.2=py_1
-  - parso=0.3.1=py_0
-  - pexpect=4.6.0=py36_1000
+  - parso=0.5.1=py_0
+  - pexpect=4.7.0=py36_0
   - pickleshare=0.7.5=py36_1000
-  - pip=18.1=py36_1000
-  - prometheus_client=0.5.0=py_0
-  - prompt_toolkit=2.0.7=py_0
-  - ptyprocess=0.6.0=py36_1000
-  - pygments=2.3.0=py_0
-  - pyrsistent=0.14.7=py36h470a237_0
-  - python=3.6.7=h5001a0f_1
-  - python-dateutil=2.7.5=py_0
-  - pyzmq=17.1.2=py36hae99301_1
-  - readline=7.0=haf1bffa_1
+  - pip=19.2.1=py36_0
+  - prometheus_client=0.7.1=py_0
+  - prompt_toolkit=2.0.9=py_0
+  - ptyprocess=0.6.0=py_1001
+  - pycparser=2.19=py36_1
+  - pycurl=7.43.0.2=py36h16ce93b_1
+  - pygments=2.4.2=py_0
+  - pyjwt=1.7.1=py_0
+  - pyopenssl=19.0.0=py36_0
+  - pyrsistent=0.15.4=py36h516909a_0
+  - pysocks=1.7.0=py36_0
+  - python=3.6.7=h357f687_1005
+  - python-dateutil=2.8.0=py_0
+  - python-editor=1.0.4=py_0
+  - pyzmq=18.0.2=py36h1768529_2
+  - readline=8.0=hf8c457e_0
+  - requests=2.22.0=py36_1
   - send2trash=1.5.0=py_0
-  - setuptools=40.6.2=py36_0
+  - setuptools=41.0.1=py36_0
   - six=1.12.0=py36_1000
-  - sqlite=3.26.0=hb1c47c0_0
-  - terminado=0.8.1=py36_1001
-  - testpath=0.4.2=py36_1000
-  - tk=8.6.9=ha92aebf_0
-  - tornado=5.1.1=py36h470a237_0
+  - sqlalchemy=1.3.6=py36h516909a_0
+  - sqlite=3.29.0=hcee41ef_0
+  - terminado=0.8.2=py36_0
+  - testpath=0.4.2=py_1001
+  - tk=8.6.9=hed695b0_1002
+  - tornado=6.0.3=py36h516909a_0
   - traitlets=4.3.2=py36_1000
+  - urllib3=1.25.3=py36_0
   - wcwidth=0.1.7=py_1
   - webencodings=0.5.1=py_1
-  - wheel=0.32.3=py36_0
-  - widgetsnbextension=3.2.1=py36_1
-  - xz=5.2.4=h470a237_1
-  - zeromq=4.2.5=hfc679d8_6
-  - zlib=1.2.11=h470a237_3
-  - pip:
-    - alembic==1.0.5
-    - async-generator==1.10
-    - chardet==3.0.4
-    - idna==2.8
-    - jupyterhub==0.9.4
-    - mako==1.0.7
-    - nteract-on-jupyter==1.9.6
-    - pamela==0.3.0
-    - python-editor==1.0.3
-    - python-oauth2==1.1.0
-    - requests==2.21.0
-    - sqlalchemy==1.2.14
-    - urllib3==1.24.1
+  - wheel=0.33.4=py36_0
+  - widgetsnbextension=3.4.2=py36_1000
+  - xz=5.2.4=h14c3975_1001
+  - zeromq=4.3.2=he1b5a44_2
+  - zlib=1.2.11=h516909a_1005
 prefix: /opt/conda/envs/r2d
 

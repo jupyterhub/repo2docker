@@ -16,7 +16,7 @@ import os
 libc = cdll.LoadLibrary("libc.so.6")
 libc.malloc.restype = c_void_p
 
-with open('mem_allocate_mb') as f:
+with open("mem_allocate_mb") as f:
     mem_allocate_mb = int(f.read().strip())
 
 size = 1024 * 1024 * mem_allocate_mb

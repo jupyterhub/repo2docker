@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+import there
+
+try:
+    import dummy
+    import pypi_pkg_test
+except ImportError:
+    # We want an ImportError to be thrown for this test to pass
+    pass
+else:
+    raise Exception(
+        "'dummy' and its dependency 'pypi_pkg_test' shouldn't have been installed! A Pipfile was present without explicit instructions to install the local package 'dummy'."
+    )

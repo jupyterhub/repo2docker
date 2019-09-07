@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 sudo: required
 cache: pip
@@ -12,41 +13,50 @@ install:
 - pip install -r dev-requirements.txt
 - python setup.py bdist_wheel
 - pip install dist/*.whl
+- pip freeze
 script:
-# cd into tests so CWD being repo2docker does not hide
-# possible issues with MANIFEST.in
-- pushd tests;
-  if [ ${REPO_TYPE} == "r" ] || [ ${REPO_TYPE} == "stencila-r" ] || [ ${REPO_TYPE} == "stencila-py" ]; then
-    travis_wait 30 pytest --durations 10 --cov repo2docker -v ${REPO_TYPE} || exit 1;
-  else
-    travis_retry pytest --durations 10 --cov repo2docker -v ${REPO_TYPE} || exit 1;
-  fi;
-  popd;
-- pip install -r docs/doc-requirements.txt
-- pushd docs;
-  make html || exit 1;
-  popd;
+- |
+  # run autoformat
+  if [[ "$REPO_TYPE" == "lint" ]]; then
+    pre-commit run --all-files
+  fi
+- |
+  # run any of the other tests
+  if [[ "$REPO_TYPE" != "lint" ]]; then
+    # cd into tests so CWD being repo2docker does not hide
+    # possible issues with MANIFEST.in
+    pushd tests;
+    if [ ${REPO_TYPE} == "r" ] || [ ${REPO_TYPE} == "stencila-r" ] || [ ${REPO_TYPE} == "stencila-py" ]; then
+      travis_wait 30 pytest --durations 10 --cov repo2docker -v ${REPO_TYPE} || exit 1;
+    else
+      travis_retry pytest --durations 10 --cov repo2docker -v ${REPO_TYPE} || exit 1;
+    fi;
+    popd;
+  fi
 after_success:
 - pip install codecov
 - pushd tests && codecov && popd
-jobs:
-  include:
-  - stage: deploy
-    script: skip
-    if: type = push
-    env:
-    - REPO_TYPE=
-    deploy:
-      provider: script
-      script: "./travis/travis-script.bash"
-      on:
-        tags: true
-        branch: master
+
+after_failure:
+- |
+  # point to auto-lint-fix
+  if [[ "$REPO_TYPE" == "lint" ]]; then
+    echo "You can install pre-commit hooks to automatically run formatting"
+    echo "on each commit with:"
+    echo "    pre-commit install"
+    echo "or you can run by hand on staged files with"
+    echo "    pre-commit run"
+    echo "or after-the-fact on already committed files with"
+    echo "    pre-commit run --all-files"
+  fi
+
 env:
   matrix:
+  - REPO_TYPE=lint
   - REPO_TYPE=unit
   - REPO_TYPE=base
   - REPO_TYPE=conda
+  - REPO_TYPE=pipfile
   - REPO_TYPE=venv
   - REPO_TYPE=stencila-r
   - REPO_TYPE=stencila-py
@@ -61,7 +71,7 @@ env:
   - secure: KoOOJUp60vtvx/mXzoZWpvWgB6W3rr8I0gDWL2laCTgxo6HsTL+SSOY1l12SBE2jlvFmQqVwPPBfnp5Dudna2RQFF36eO2jUlISBkvK/q/GRmOQbjpAJRtVlan8Z4dlIf4az/oQ9G0ZUEfgUliVvS5MTrEPvKej3znug2zAH1t+H0U6aon1VJeVC+b94jsETGvQ7HHupqrr+DNGrNVHOgAazw7z4j+VtfZyfNaglnrKwYPeUljw3GIOXyFmP81t/cLiDY+IjPPepUYJFQIjCoVpIDm6UR70d4mzWf/LYWONEdh8LhDJZ2UyEtnUT2IPTdhqem1BfCAKUcLedHPk3S4Lcn0jL23os0klHeQvn9JRPEDV/Ib33XGcNEIXZi0pBkluUyhx8JgTz4e+KL8jKcyf9TRX7o/ViH7Ler6viliyMu15yfs2mJKAxzw6GFMtqGzhJ8tUXjguTozfjKTJKjBpkFoYdYbO9GqNkBQo2F7H+8zAmb4D4K0jzfOo8owjYLXJzOMJN5f5pKBqfLdjOtTxve4PrCgy4B8x7GDkW41SuRz2pkVwRDMMJRCetLcbqpEK+8b9Oy/inlxt7/56oS/tvvAtBj2FlLGBPQJKpwyZozIY9XqXWu8u+VbRsSTqbRtdSHzzKyQ25a03dc7KDHmyoDAlzyehe6cHPWp1UqXg=
 matrix:
   include:
-  - python: 3.4
+  - python: 3.5
     env:
     - REPO_TYPE=venv
 deploy:

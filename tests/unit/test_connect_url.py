@@ -5,17 +5,43 @@ import requests
 import time
 from repo2docker.app import Repo2Docker
 
+
+# Minimal Dockerfile to make build as fast as possible
+DOCKER_FILE = """
+FROM python:3.7-slim
+# install the notebook package
+RUN pip install --no-cache --upgrade pip && \
+    pip install --no-cache notebook
+
+# create user with a home directory
+ARG NB_USER
+ARG NB_UID
+ENV USER ${NB_USER}
+ENV HOME /home/${NB_USER}
+
+RUN adduser --disabled-password \
+    --gecos "Default user" \
+    --uid ${NB_UID} \
+    ${NB_USER}
+WORKDIR ${HOME}
+USER ${NB_USER}
+"""
+
+
 def test_connect_url(tmpdir):
     tmpdir.chdir()
-    p = tmpdir.join("requirements.txt")
-    p.write("notebook>=5.6.0")
+    p = tmpdir.join("Dockerfile")
+    p.write(DOCKER_FILE)
 
+    # we set run=False so that we can start the container ourselves and
+    # get a handle to the container, used to inspect the logs
     app = Repo2Docker(repo=str(tmpdir), run=False)
     app.initialize()
-    app.start()  # This just build the image and does not run it.
+    app.start()
     container = app.start_container()
-    container_url = 'http://{}:{}/api'.format(app.hostname, app.port)
-    expected_url = 'http://{}:{}'.format(app.hostname, app.port)
+
+    container_url = "http://{}:{}/api".format(app.hostname, app.port)
+    expected_url = "http://{}:{}".format(app.hostname, app.port)
 
     # wait a bit for the container to be ready
     # give the container a chance to start
@@ -26,7 +52,7 @@ def test_connect_url(tmpdir):
         success = False
         for i in range(1, 4):
             container.reload()
-            assert container.status == 'running'
+            assert container.status == "running"
             if expected_url not in container.logs().decode("utf8"):
                 time.sleep(i * 3)
                 continue

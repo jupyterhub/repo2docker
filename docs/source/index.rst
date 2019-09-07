@@ -2,14 +2,20 @@ jupyter-repo2docker
 ===================
 
 ``jupyter-repo2docker`` is a tool to **build, run, and push Docker
-images from source code repositories** that run via a Jupyter server.
+images from source code repositories**.
 
 ``repo2docker`` fetches a repository
-(e.g., from GitHub or other locations) and builds a container image
-based on the configuration files found in the repository. It can be
+(from GitHub, GitLab, Zenodo, a Git repository or a local directory)
+and builds a container image in which the code can be executed.
+The image build process is based on the configuration files found in the repository.
+
+``repo2docker`` can be
 used to explore a repository locally by building and executing the
 constructed image of the repository, or as a means of building images that
 are pushed to a Docker registry.
+
+``repo2docker`` is the tool used by `BinderHub <https://binderhub.readthedocs.io>`_
+to build images on demand.
 
 Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
 `ask questions <https://gitter.im/jupyterhub/binder>`_ or
@@ -24,11 +30,13 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    faq
 
 .. toctree::
-   :maxdepth: 1
-   :caption: How-to...
+   :maxdepth: 2
+   :caption: How-To guides
 
    howto/user_interface
    howto/languages
+   howto/export_environment
+   howto/lab_workspaces
    howto/jupyterhub_images
    howto/deploy
 
@@ -37,6 +45,7 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    :caption: Complete list of configuration files
 
    config_files
+   specification
 
 .. toctree::
    :maxdepth: 2

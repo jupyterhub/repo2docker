@@ -21,6 +21,12 @@ lib64/
 share/
 include/
 
+# PyTest remnants
+tests/dockerfile/legacy/._binder.Dockerfile
+tests/dockerfile/legacy/apt-sources.list
+tests/dockerfile/legacy/python3.frozen.yml
+tests/dockerfile/legacy/root.frozen.yml
+
 # Docs
 generated/
 test_file_text.txt

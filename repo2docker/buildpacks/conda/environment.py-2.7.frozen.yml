@@ -1,53 +1,54 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2018-12-11 21:15:11 UTC
+# Frozen on 2019-07-29 15:49:47 UTC
 name: r2d
 channels:
   - conda-forge
   - defaults
   - conda-forge/label/broken
 dependencies:
+  - _libgcc_mutex=0.1=main
   - backports=1.0=py_2
   - backports.shutil_get_terminal_size=1.0.0=py_3
   - backports_abc=0.5=py_1
-  - ca-certificates=2018.11.29=ha4d7672_0
-  - certifi=2018.11.29=py27_1000
-  - decorator=4.3.0=py_0
+  - ca-certificates=2019.6.16=hecc5488_0
+  - certifi=2019.6.16=py27_1
+  - decorator=4.4.0=py_0
   - enum34=1.1.6=py27_1001
-  - futures=3.2.0=py27_1000
+  - futures=3.3.0=py27_0
   - ipykernel=4.8.2=py27_0
   - ipython=5.8.0=py27_0
   - ipython_genutils=0.2.0=py_1
-  - jupyter_client=5.2.4=py_0
+  - jupyter_client=5.3.1=py_0
   - jupyter_core=4.4.0=py_0
-  - libffi=3.2.1=hfc679d8_5
-  - libgcc-ng=7.2.0=hdf63c60_3
-  - libsodium=1.0.16=h470a237_1
-  - libstdcxx-ng=7.2.0=hdf63c60_3
-  - ncurses=6.1=hfc679d8_2
-  - openssl=1.0.2p=h470a237_1
-  - pathlib2=2.3.3=py27_1000
-  - pexpect=4.6.0=py27_1000
+  - libffi=3.2.1=he1b5a44_1006
+  - libgcc-ng=9.1.0=hdf63c60_0
+  - libsodium=1.0.17=h516909a_0
+  - libstdcxx-ng=9.1.0=hdf63c60_0
+  - ncurses=6.1=hf484d3e_1002
+  - openssl=1.1.1c=h516909a_0
+  - pathlib2=2.3.4=py27_0
+  - pexpect=4.7.0=py27_0
   - pickleshare=0.7.5=py27_1000
-  - pip=18.1=py27_1000
+  - pip=19.2.1=py27_0
   - prompt_toolkit=1.0.15=py_1
-  - ptyprocess=0.6.0=py27_1000
-  - pygments=2.3.0=py_0
-  - python=2.7.15=h33da82c_6
-  - python-dateutil=2.7.5=py_0
-  - pyzmq=17.1.2=py27hae99301_1
-  - readline=7.0=haf1bffa_1
-  - scandir=1.9.0=py27h470a237_0
-  - setuptools=40.6.2=py27_0
+  - ptyprocess=0.6.0=py_1001
+  - pygments=2.4.2=py_0
+  - python=2.7.15=h5a48372_1009
+  - python-dateutil=2.8.0=py_0
+  - pyzmq=18.0.2=py27h1768529_2
+  - readline=8.0=hf8c457e_0
+  - scandir=1.10.0=py27h14c3975_0
+  - setuptools=41.0.1=py27_0
   - simplegeneric=0.8.1=py_1
   - singledispatch=3.4.0.3=py27_1000
   - six=1.12.0=py27_1000
-  - sqlite=3.26.0=hb1c47c0_0
-  - tk=8.6.9=ha92aebf_0
-  - tornado=5.1.1=py27h470a237_0
+  - sqlite=3.29.0=hcee41ef_0
+  - tk=8.6.9=hed695b0_1002
+  - tornado=5.1.1=py27h14c3975_1000
   - traitlets=4.3.2=py27_1000
   - wcwidth=0.1.7=py_1
-  - wheel=0.32.3=py27_0
-  - zeromq=4.2.5=hfc679d8_6
-  - zlib=1.2.11=h470a237_3
+  - wheel=0.33.4=py27_0
+  - zeromq=4.3.2=he1b5a44_2
+  - zlib=1.2.11=h516909a_1005
 prefix: /opt/conda/envs/r2d
 
