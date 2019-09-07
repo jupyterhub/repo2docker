@@ -1,5 +1,5 @@
 # Note that there are a dev-requirements.txt and a docs/doc-requirements.txt
-# files in this project, if you are updating this Pipfile make sure to 
+# files in this project, if you are updating this Pipfile make sure to
 # update these accordingly
 
 [dev-packages]
@@ -12,6 +12,7 @@ alabaster = "*"
 Sphinx = ">=1.4,!=1.5.4"
 alabaster_jupyterhub = "*"
 sphinxcontrib-autoprogram = "*"
+tox = "*"
 
 [packages]
 repo2docker = {path=".", editable=true}
