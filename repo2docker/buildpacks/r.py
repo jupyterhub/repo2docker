@@ -340,17 +340,32 @@ class RBuildPack(PythonBuildPack):
         ]
 
         if "r" in self.stencila_contexts:
-            scripts += [
-                (
-                    "${NB_USER}",
-                    # Install and register stencila library
-                    r"""
-                R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
-                R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
-                R --quiet -e "stencila::register()"
-                """,
-                )
-            ]
+            # new versions of R require a different way of installing bioconductor
+            if self.r_version.startswith("3.4"):
+                scripts += [
+                    (
+                        "${NB_USER}",
+                        # Install and register stencila library
+                        r"""
+                    R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
+                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
+                    R --quiet -e "stencila::register()"
+                    """,
+                    )
+                ]
+
+            else:
+                scripts += [
+                    (
+                        "${NB_USER}",
+                        # Install and register stencila library
+                        r"""
+                    R --quiet -e "install.packages('BiocManager'); BiocManager::install(); BiocManager::install(c('graph'))" && \
+                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
+                    R --quiet -e "stencila::register()"
+                    """,
+                    )
+                ]
 
         return super().get_build_scripts() + scripts
 
