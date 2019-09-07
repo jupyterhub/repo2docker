@@ -127,22 +127,23 @@ def test_root_not_allowed():
         builds.assert_called_once()
 
 
-def test_dryrun_works_without_docker(tmpdir):
+def test_dryrun_works_without_docker(tmpdir, capsys):
     with chdir(tmpdir):
         with patch.object(docker, "APIClient") as client:
             client.side_effect = docker.errors.DockerException("Error: no Docker")
             app = Repo2Docker(dry_run=True)
             app.build()
+            captured = capsys.readouterr()
+            assert "Error: no Docker" not in captured.err
 
 
-def test_error_log_without_docker(tmpdir, caplog):
+def test_error_log_without_docker(tmpdir, capsys):
     with chdir(tmpdir):
         with patch.object(docker, "APIClient") as client:
             client.side_effect = docker.errors.DockerException("Error: no Docker")
             app = Repo2Docker()
 
-            with pytest.raises(docker.errors.DockerException):
+            with pytest.raises(SystemExit):
                 app.build()
-
                 captured = capsys.readouterr()
-                assert "Check if docker is running" in captured.err
+                assert "Error: no Docker" in captured.err

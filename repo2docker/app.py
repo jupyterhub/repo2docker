@@ -612,9 +612,10 @@ class Repo2Docker(Application):
                 docker_client = docker.APIClient(version="auto", **kwargs_from_env())
             except DockerException as e:
                 self.log.error(
-                    "\nDocker client initialization error. Check if docker is running on the host.\n\n"
+                    "\nDocker client initialization error: %s.\nCheck if docker is running on the host.\n",
+                    e,
                 )
-                raise
+                self.exit(1)
 
         # If the source to be executed is a directory, continue using the
         # directory. In the case of a local directory, it is used as both the
