@@ -686,7 +686,9 @@ class Repo2Docker(Application):
 
                 self.log.debug(picked_buildpack.render(), extra=dict(phase="building"))
 
-                if not self.dry_run:
+                if self.dry_run:
+                    print(picked_buildpack.render())
+                else:
                     if self.user_id == 0:
                         raise ValueError(
                             "Root as the primary user in the image is not permitted."
