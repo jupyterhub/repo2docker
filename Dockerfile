@@ -5,10 +5,12 @@ RUN apk add --no-cache git python3 python3-dev
 
 # build wheels in first image
 ADD . /tmp/src
+RUN cd /tmp/src && git clean -xfd && git status
 RUN mkdir /tmp/wheelhouse \
  && cd /tmp/wheelhouse \
  && pip3 install wheel \
- && pip3 wheel --no-cache-dir /tmp/src
+ && pip3 wheel --no-cache-dir /tmp/src \
+ && ls -l /tmp/wheelhouse
 
 FROM alpine:${ALPINE_VERSION}
 
@@ -17,7 +19,8 @@ RUN apk add --no-cache git git-lfs python3 bash
 
 # install repo2docker
 COPY --from=0 /tmp/wheelhouse /tmp/wheelhouse
-RUN pip3 install --no-cache-dir /tmp/wheelhouse/*.whl
+RUN pip3 install --no-cache-dir /tmp/wheelhouse/*.whl \
+ && pip3 list
 
 # add git-credential helper
 COPY ./docker/git-credential-env /usr/local/bin/git-credential-env
