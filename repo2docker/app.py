@@ -684,11 +684,12 @@ class Repo2Docker(Application):
                 picked_buildpack.labels["repo2docker.repo"] = repo_label
                 picked_buildpack.labels["repo2docker.ref"] = self.ref
 
-                self.log.debug(picked_buildpack.render(), extra=dict(phase="building"))
-
                 if self.dry_run:
                     print(picked_buildpack.render())
                 else:
+                    self.log.debug(
+                        picked_buildpack.render(), extra=dict(phase="building")
+                    )
                     if self.user_id == 0:
                         raise ValueError(
                             "Root as the primary user in the image is not permitted."
