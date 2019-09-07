@@ -202,7 +202,7 @@ Then you are good to go!
 If you only changed the documentation, you can also build the documentation locally using `sphinx` .
 
 ```bash
-#pip install -r docs/doc-requirements.txt
+pip install -r docs/doc-requirements.txt
 
 cd docs/
 make html

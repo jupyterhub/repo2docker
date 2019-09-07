@@ -33,3 +33,5 @@ test_file_text.txt
 
 
 \.vscode/
+
+tests/dockerfile_diff.sh
