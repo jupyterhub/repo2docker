@@ -433,7 +433,7 @@ class Repo2Docker(Application):
             self.log = logging.getLogger("repo2docker")
             self.log.handlers = []
             self.log.addHandler(logHandler)
-            self.log.setLevel(logging.INFO)
+            self.log.setLevel(self.log_level)
         else:
             # due to json logger stuff above,
             # our log messages include carriage returns, newlines, etc.
