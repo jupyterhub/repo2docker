@@ -214,7 +214,8 @@ class RBuildPack(PythonBuildPack):
         )
 
         scripts = []
-        # For R 3.4 we want to use the default Ubuntu package
+        # For R 3.4 we want to use the default Ubuntu package but otherwise
+        # we use the packages from a PPA
         if not self.r_version.startswith("3.4"):
             scripts += [
                 (
