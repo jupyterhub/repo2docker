@@ -196,3 +196,16 @@ Server:
 ```
 
 Then you are good to go!
+
+## Building the documentation locally
+
+If you only changed the documentation, you can also build the documentation locally using `sphinx` .
+
+```bash
+#pip install -r docs/doc-requirements.txt
+
+cd docs/
+make html
+```
+
+Then open the file `docs/build/html/index.html` in your browser.
