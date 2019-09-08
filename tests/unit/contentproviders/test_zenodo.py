@@ -13,7 +13,7 @@ from repo2docker.contentproviders import Zenodo
 
 
 def test_content_id():
-    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+    with patch.object(Zenodo, "urlopen") as fake_urlopen:
         fake_urlopen.return_value.url = "https://zenodo.org/record/3232985"
         zen = Zenodo()
 
@@ -66,7 +66,7 @@ test_hosts = [
 
 @pytest.mark.parametrize("test_input,expected", test_hosts)
 def test_detect_zenodo(test_input, expected):
-    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+    with patch.object(Zenodo, "urlopen") as fake_urlopen:
         fake_urlopen.return_value.url = test_input[0]
         # valid Zenodo DOIs trigger this content provider
         assert Zenodo().detect(test_input[0]) == expected
@@ -75,7 +75,7 @@ def test_detect_zenodo(test_input, expected):
         # only two of the three calls above have to resolve a DOI
         assert fake_urlopen.call_count == 2
 
-    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+    with patch.object(Zenodo, "urlopen") as fake_urlopen:
         # Don't trigger the Zenodo content provider
         assert Zenodo().detect("/some/path/here") is None
         assert Zenodo().detect("https://example.com/path/here") is None
@@ -120,7 +120,7 @@ def test_fetch_software_from_github_archive():
             else:
                 return urlopen(req)
 
-        with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
+        with patch.object(Zenodo, "urlopen", new=mock_urlopen):
             zen = Zenodo()
             spec = {
                 "host": {
@@ -173,7 +173,7 @@ def test_fetch_software():
             else:
                 return urlopen(req)
 
-        with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
+        with patch.object(Zenodo, "urlopen", new=mock_urlopen):
             with TemporaryDirectory() as d:
                 zen = Zenodo()
                 spec = spec = {
@@ -227,7 +227,7 @@ def test_fetch_data():
                 else:
                     return urlopen(req)
 
-            with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
+            with patch.object(Zenodo, "urlopen", new=mock_urlopen):
                 with TemporaryDirectory() as d:
                     zen = Zenodo()
                     spec = {

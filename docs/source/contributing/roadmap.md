@@ -83,4 +83,3 @@ time there is no active plan for an item. The project would like to find the
 resources and time to discuss and then execute these ideas.
 * support execution on a remote host (with more resources than available locally) via the command-line
 * add support for using ZIP files as the repo (`repo2docker https://example.com/an-archive.zip`) this will give us access to several archives (like Zenodo) that expose things as ZIP files.
-* add support for Zenodo (`repo2docker 10.5281/zenodo.1476680`) so Zenodo software archives can be used as the source in addition to a git repository
