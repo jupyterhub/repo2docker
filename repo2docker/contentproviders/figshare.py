@@ -23,19 +23,20 @@ class Figshare(DoiProvider):
       - https://figshare.com/articles/binder-examples_requirements/9784088 (only one zipfile, no DOI)
     """
 
-    hosts = [
-        {
-            "hostname": [
-                "https://figshare.com/articles/",
-                "http://figshare.com/articles/",
-                "https://figshare.com/account/articles/",
-            ],
-            "api": "https://api.figshare.com/v2/articles/",
-            "filepath": "files",
-            "filename": "name",
-            "download": "download_url",
-        }
-    ]
+    def __init__(self):
+        self.hosts = [
+            {
+                "hostname": [
+                    "https://figshare.com/articles/",
+                    "http://figshare.com/articles/",
+                    "https://figshare.com/account/articles/",
+                ],
+                "api": "https://api.figshare.com/v2/articles/",
+                "filepath": "files",
+                "filename": "name",
+                "download": "download_url",
+            }
+        ]
 
     url_regex = re.compile(r"(.*)/articles/([^/]+)/(\d+)(/\d)?")
 

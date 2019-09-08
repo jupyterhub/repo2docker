@@ -20,31 +20,32 @@ def test_content_id():
         assert fig.content_id == "9782777"
 
 
+test_fig = Figshare()
 test_dois_links = [
-    ("10.6084/m9.figshare.9782777", {"host": Figshare.hosts[0], "article": "9782777"}),
+    ("10.6084/m9.figshare.9782777", {"host": test_fig.hosts[0], "article": "9782777"}),
     (
         "10.6084/m9.figshare.9782777.v1",
-        {"host": Figshare.hosts[0], "article": "9782777"},
+        {"host": test_fig.hosts[0], "article": "9782777"},
     ),
     (
         "https://doi.org/10.6084/m9.figshare.9782777",
-        {"host": Figshare.hosts[0], "article": "9782777"},
+        {"host": test_fig.hosts[0], "article": "9782777"},
     ),
     (
         "https://figshare.com/articles/title/97827771234",
-        {"host": Figshare.hosts[0], "article": "97827771234"},
+        {"host": test_fig.hosts[0], "article": "97827771234"},
     ),
     (
         "https://figshare.com/articles/title/9782777/1",
-        {"host": Figshare.hosts[0], "article": "9782777"},
+        {"host": test_fig.hosts[0], "article": "9782777"},
     ),
     (
         "https://figshare.com/articles/title/9782777/",
-        {"host": Figshare.hosts[0], "article": "9782777"},
+        {"host": test_fig.hosts[0], "article": "9782777"},
     ),
 ]
 
-test_spec = {"host": Figshare.hosts[0], "article": "1234"}
+test_spec = {"host": test_fig.hosts[0], "article": "1234"}
 
 
 @pytest.mark.parametrize("test_input,expected", test_dois_links)
