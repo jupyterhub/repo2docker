@@ -65,6 +65,7 @@ class RBuildPack(PythonBuildPack):
         version.
         """
         version_map = {
+            "3.4": "3.4",
             "3.5": "3.5.3-1bionic",
             "3.5.0": "3.5.0-1bionic",
             "3.5.1": "3.5.1-2bionic",
@@ -81,10 +82,13 @@ class RBuildPack(PythonBuildPack):
             parts = self.runtime.split("-")
             if len(parts) == 5:
                 r_version = parts[1]
+                if r_version not in version_map:
+                    raise ValueError(
+                        "Version '{}' of R is not supported.".format(r_version)
+                    )
 
-            # see if we need to translate the specified version into a
-            # "full" version string
-            self._r_version = version_map.get(r_version, r_version)
+            # translate to the full version string
+            self._r_version = version_map.get(r_version)
 
         return self._r_version
 
