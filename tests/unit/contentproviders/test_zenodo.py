@@ -28,17 +28,7 @@ test_hosts = [
             "10.5281/zenodo.3232985",
             "https://doi.org/10.5281/zenodo.3232985",
         ],
-        {
-            "host": {
-                "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
-                "api": "https://zenodo.org/api/records/",
-                "filepath": "files",
-                "filename": "filename",
-                "download": "links.download",
-                "type": "metadata.upload_type",
-            },
-            "record": "3232985",
-        },
+        {"host": Zenodo.hosts[0], "record": "3232985"},
     ),
     (
         [
@@ -46,20 +36,7 @@ test_hosts = [
             "10.22002/d1.1235",
             "https://doi.org/10.22002/d1.1235",
         ],
-        {
-            "host": {
-                "hostname": [
-                    "https://data.caltech.edu/records/",
-                    "http://data.caltech.edu/records/",
-                ],
-                "api": "https://data.caltech.edu/api/record/",
-                "filepath": "metadata.electronic_location_and_access",
-                "filename": "electronic_name.0",
-                "download": "uniform_resource_identifier",
-                "type": "metadata.resourceType.resourceTypeGeneral",
-            },
-            "record": "1235",
-        },
+        {"host": Zenodo.hosts[1], "record": "1235"},
     ),
 ]
 
@@ -122,20 +99,7 @@ def test_fetch_software_from_github_archive():
 
         with patch.object(Zenodo, "urlopen", new=mock_urlopen):
             zen = Zenodo()
-            spec = {
-                "host": {
-                    "hostname": [
-                        "https://zenodo.org/record/",
-                        "http://zenodo.org/record/",
-                    ],
-                    "api": "https://zenodo.org/api/records/",
-                    "filepath": "files",
-                    "filename": "filename",
-                    "download": "links.download",
-                    "type": "metadata.upload_type",
-                },
-                "record": "1234",
-            }
+            spec = {"host": Zenodo.hosts[0], "record": "1234"}
 
             with TemporaryDirectory() as d:
                 output = []
@@ -176,20 +140,7 @@ def test_fetch_software():
         with patch.object(Zenodo, "urlopen", new=mock_urlopen):
             with TemporaryDirectory() as d:
                 zen = Zenodo()
-                spec = spec = {
-                    "host": {
-                        "hostname": [
-                            "https://zenodo.org/record/",
-                            "http://zenodo.org/record/",
-                        ],
-                        "api": "https://zenodo.org/api/records/",
-                        "filepath": "files",
-                        "filename": "filename",
-                        "download": "links.download",
-                        "type": "metadata.upload_type",
-                    },
-                    "record": "1234",
-                }
+                spec = spec = {"host": Zenodo.hosts[0], "record": "1234"}
                 output = []
                 for l in zen.fetch(spec, d):
                     output.append(l)
@@ -230,20 +181,7 @@ def test_fetch_data():
             with patch.object(Zenodo, "urlopen", new=mock_urlopen):
                 with TemporaryDirectory() as d:
                     zen = Zenodo()
-                    spec = {
-                        "host": {
-                            "hostname": [
-                                "https://zenodo.org/record/",
-                                "http://zenodo.org/record/",
-                            ],
-                            "api": "https://zenodo.org/api/records/",
-                            "filepath": "files",
-                            "filename": "filename",
-                            "download": "links.download",
-                            "type": "metadata.upload_type",
-                        },
-                        "record": "1234",
-                    }
+                    spec = {"host": Zenodo.hosts[0], "record": "1234"}
                     output = []
                     for l in zen.fetch(spec, d):
                         output.append(l)

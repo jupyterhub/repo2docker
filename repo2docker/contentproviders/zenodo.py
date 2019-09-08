@@ -14,36 +14,36 @@ from ..utils import copytree, deep_get
 class Zenodo(DoiProvider):
     """Provide contents of a Zenodo deposit."""
 
+    # We need the hostname (url where records are), api url (for metadata),
+    # filepath (path to files in metadata), filename (path to filename in
+    # metadata), download (path to file download URL), and type (path to item type in metadata)
+    hosts = [
+        {
+            "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
+            "api": "https://zenodo.org/api/records/",
+            "filepath": "files",
+            "filename": "filename",
+            "download": "links.download",
+            "type": "metadata.upload_type",
+        },
+        {
+            "hostname": [
+                "https://data.caltech.edu/records/",
+                "http://data.caltech.edu/records/",
+            ],
+            "api": "https://data.caltech.edu/api/record/",
+            "filepath": "metadata.electronic_location_and_access",
+            "filename": "electronic_name.0",
+            "download": "uniform_resource_identifier",
+            "type": "metadata.resourceType.resourceTypeGeneral",
+        },
+    ]
+
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Zenodo/Invenio record"""
-        # We need the hostname (url where records are), api url (for metadata),
-        # filepath (path to files in metadata), filename (path to filename in
-        # metadata), download (path to file download URL), and type (path to item type in metadata)
-        hosts = [
-            {
-                "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
-                "api": "https://zenodo.org/api/records/",
-                "filepath": "files",
-                "filename": "filename",
-                "download": "links.download",
-                "type": "metadata.upload_type",
-            },
-            {
-                "hostname": [
-                    "https://data.caltech.edu/records/",
-                    "http://data.caltech.edu/records/",
-                ],
-                "api": "https://data.caltech.edu/api/record/",
-                "filepath": "metadata.electronic_location_and_access",
-                "filename": "electronic_name.0",
-                "download": "uniform_resource_identifier",
-                "type": "metadata.resourceType.resourceTypeGeneral",
-            },
-        ]
-
         url = self.doi2url(doi)
 
-        for host in hosts:
+        for host in self.hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
                 self.record_id = url.rsplit("/", maxsplit=1)[1]
                 return {"record": self.record_id, "host": host}
