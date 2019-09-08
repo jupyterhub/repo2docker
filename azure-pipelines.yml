@@ -7,6 +7,11 @@ steps:
   inputs:
     versionSpec: '3.6'
 
+- script: |
+   git config --global user.email "ci@fake.tld"
+   git config --global user.name "CI Services"
+  displayName: 'Set up git'
+
 - script: python -m pip install --upgrade pip setuptools wheel
   displayName: 'Install tools'
 
