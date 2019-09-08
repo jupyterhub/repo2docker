@@ -2,6 +2,8 @@ import re
 import os
 import datetime
 
+from distutils.version import LooseVersion as V
+
 from .python import PythonBuildPack
 
 
@@ -170,7 +172,7 @@ class RBuildPack(PythonBuildPack):
         ]
         # For R 3.4 we use the default Ubuntu package, for other versions we
         # install from a different PPA
-        if self.r_version.startswith("3.4"):
+        if V(self.r_version) < V("3.5"):
             packages.append("r-base")
 
         return super().get_packages().union(packages)
@@ -216,7 +218,7 @@ class RBuildPack(PythonBuildPack):
         scripts = []
         # For R 3.4 we want to use the default Ubuntu package but otherwise
         # we use the packages from a PPA
-        if not self.r_version.startswith("3.4"):
+        if V(self.r_version) >= V("3.5"):
             scripts += [
                 (
                     "root",
@@ -342,7 +344,7 @@ class RBuildPack(PythonBuildPack):
 
         if "r" in self.stencila_contexts:
             # new versions of R require a different way of installing bioconductor
-            if self.r_version.startswith("3.4"):
+            if V(self.r_version) <= V("3.5"):
                 scripts += [
                     (
                         "${NB_USER}",
