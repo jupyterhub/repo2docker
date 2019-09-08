@@ -177,17 +177,9 @@ def get_argparser():
 
     argparser.add_argument("--target-repo-dir", help=Repo2Docker.target_repo_dir.help)
 
-    argparser.add_argument(
-        "--appendix",
-        type=str,
-        # help=self.traits()['appendix'].help,
-    )
+    argparser.add_argument("--appendix", type=str, help=Repo2Docker.appendix.help)
 
-    argparser.add_argument(
-        "--subdir",
-        type=str,
-        # help=self.traits()['subdir'].help,
-    )
+    argparser.add_argument("--subdir", type=str, help=Repo2Docker.subdir.help)
 
     argparser.add_argument(
         "--version",
@@ -196,7 +188,9 @@ def get_argparser():
         help="Print the repo2docker version and exit.",
     )
 
-    argparser.add_argument("--cache-from", action="append", default=[])
+    argparser.add_argument(
+        "--cache-from", action="append", default=[], help=Repo2Docker.cache_from.help
+    )
 
     return argparser
 
