@@ -16,5 +16,6 @@ steps:
 - script: pip install -e .
   displayName: 'Install r2d'
 
-- script: pytest --durations 10 --cov repo2docker -v tests
+# venv conda 
+- script: pytest --durations 10 --cov repo2docker -vs tests/unit
   displayName: 'Run pytest'
