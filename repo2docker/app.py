@@ -433,7 +433,7 @@ class Repo2Docker(Application):
             self.log = logging.getLogger("repo2docker")
             self.log.handlers = []
             self.log.addHandler(logHandler)
-            self.log.setLevel(logging.INFO)
+            self.log.setLevel(self.log_level)
         else:
             # due to json logger stuff above,
             # our log messages include carriage returns, newlines, etc.
@@ -684,9 +684,12 @@ class Repo2Docker(Application):
                 picked_buildpack.labels["repo2docker.repo"] = repo_label
                 picked_buildpack.labels["repo2docker.ref"] = self.ref
 
-                self.log.debug(picked_buildpack.render(), extra=dict(phase="building"))
-
-                if not self.dry_run:
+                if self.dry_run:
+                    print(picked_buildpack.render())
+                else:
+                    self.log.debug(
+                        picked_buildpack.render(), extra=dict(phase="building")
+                    )
                     if self.user_id == 0:
                         raise ValueError(
                             "Root as the primary user in the image is not permitted."
