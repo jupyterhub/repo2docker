@@ -212,7 +212,7 @@ If you only need to run things once during the build phase use :ref:`postBuild`.
 
 Sometimes you want to specify the version of the runtime
 (e.g. the version of Python or R),
-but the environment specification format don't let you specify this information
+but the environment specification format will not let you specify this information
 (e.g. requirements.txt or install.R).
 For these cases, we have a special file, ``runtime.txt``.
 
@@ -220,7 +220,7 @@ For these cases, we have a special file, ``runtime.txt``.
 
    ``runtime.txt`` is only supported when used with environment specifications
    that do not already support specifying the runtime
-   (e.g. when using ``environment.yml`` for conda or ``Project.toml`` for Julia,
+   (when using ``environment.yml`` for conda or ``Project.toml`` for Julia,
    ``runtime.txt`` will be ignored).
 
 To use python-2.7: add ``python-2.7`` in runtime.txt file.
@@ -231,8 +231,11 @@ Python 2 installed. To see a full example repository, visit our
 repo2docker uses R libraries pinned to a specific snapshot on
 `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
 You need to have a ``runtime.txt`` file that is formatted as
-``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot at MRAN that will be
-used for installing libraries.
+``r-<RVERSION>-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot at MRAN that will be
+used for installing libraries. You can set RVERSION to 3.4, 3.5 or 3.6 to select
+the version of R you want to use. If you do not specify a R version the latest
+released version will be used (currently R 3.6). You can also specify the exact
+patch release you want to use for the 3.5 and 3.6 series.
 
 To see an example R repository, visit our `R
 example in binder-examples <https://github.com/binder-examples/r/blob/master/runtime.txt>`_.
