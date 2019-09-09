@@ -20,6 +20,7 @@ class Figshare(DoiProvider):
 
     Examples:
       - https://doi.org/10.6084/m9.figshare.9782777
+      - https://doi.org/10.6084/m9.figshare.9782777.v2
       - https://figshare.com/articles/binder-examples_requirements/9784088 (only one zipfile, no DOI)
     """
 
@@ -38,7 +39,7 @@ class Figshare(DoiProvider):
             }
         ]
 
-    url_regex = re.compile(r"(.*)/articles/([^/]+)/(\d+)(/\d)?")
+    url_regex = re.compile(r"(.*)/articles/([^/]+)/(\d+)(/)?(\d)?")
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Figshare article"""
@@ -53,7 +54,14 @@ class Figshare(DoiProvider):
                 match = self.url_regex.match(url)
                 if match:
                     self.article_id = match.groups()[2]
-                    return {"article": self.article_id, "host": host}
+                    self.article_version = match.groups()[4]
+                    if not self.article_version:
+                        self.article_version = "1"
+                    return {
+                        "article": self.article_id,
+                        "host": host,
+                        "version": self.article_version,
+                    }
                 else:
                     return None
 
@@ -62,9 +70,13 @@ class Figshare(DoiProvider):
         article_id = spec["article"]
         host = spec["host"]
 
-        yield "Fetching Figshare article {}.\n".format(article_id)
+        yield "Fetching Figshare article {} in version {}.\n".format(
+            self.article_id, self.article_version
+        )
         req = Request(
-            "{}{}".format(host["api"], article_id),
+            "{}{}/versions/{}".format(
+                host["api"], self.article_id, self.article_version
+            ),
             headers={"accept": "application/json"},
         )
         resp = self.urlopen(req)
@@ -84,3 +96,8 @@ class Figshare(DoiProvider):
     def content_id(self):
         """The Figshare article ID"""
         return self.article_id
+
+    @property
+    def content_version(self):
+        """The Figshare article ID"""
+        return self.article_version

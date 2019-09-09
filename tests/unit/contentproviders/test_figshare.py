@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import pytest
 
 from contextlib import contextmanager
@@ -10,6 +11,7 @@ from urllib.request import urlopen, Request
 from zipfile import ZipFile
 
 from repo2docker.contentproviders import Figshare
+from repo2docker.__main__ import make_r2d
 
 
 def test_content_id():
@@ -21,31 +23,49 @@ def test_content_id():
 
 
 test_fig = Figshare()
+test_fig.article_id = "123456"
+test_fig.article_version = "42"
+
 test_dois_links = [
-    ("10.6084/m9.figshare.9782777", {"host": test_fig.hosts[0], "article": "9782777"}),
     (
-        "10.6084/m9.figshare.9782777.v1",
-        {"host": test_fig.hosts[0], "article": "9782777"},
+        "10.6084/m9.figshare.9782777",
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
     ),
     (
-        "https://doi.org/10.6084/m9.figshare.9782777",
-        {"host": test_fig.hosts[0], "article": "9782777"},
+        "10.6084/m9.figshare.9782777.v1",
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
+    ),
+    (
+        "10.6084/m9.figshare.9782777.v2",
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "2"},
+    ),
+    (
+        "https://doi.org/10.6084/m9.figshare.9782777.v1",
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
+    ),
+    (
+        "https://doi.org/10.6084/m9.figshare.9782777.v3",
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "3"},
     ),
     (
         "https://figshare.com/articles/title/97827771234",
-        {"host": test_fig.hosts[0], "article": "97827771234"},
+        {"host": test_fig.hosts[0], "article": "97827771234", "version": "1"},
     ),
     (
         "https://figshare.com/articles/title/9782777/1",
-        {"host": test_fig.hosts[0], "article": "9782777"},
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
+    ),
+    (
+        "https://figshare.com/articles/title/9782777/2",
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "2"},
     ),
     (
         "https://figshare.com/articles/title/9782777/",
-        {"host": test_fig.hosts[0], "article": "9782777"},
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
     ),
 ]
 
-test_spec = {"host": test_fig.hosts[0], "article": "1234"}
+test_spec = {"host": test_fig.hosts[0], "article": "1234", "version": "42"}
 
 
 @pytest.mark.parametrize("test_input,expected", test_dois_links)
@@ -96,9 +116,8 @@ def test_fetch_zip():
 
         with patch.object(Figshare, "urlopen", new=mock_urlopen):
             with TemporaryDirectory() as d:
-                fig = Figshare()
                 output = []
-                for l in fig.fetch(test_spec, d):
+                for l in test_fig.fetch(test_spec, d):
                     output.append(l)
 
                 unpacked_files = set(os.listdir(d))
@@ -137,10 +156,8 @@ def test_fetch_data():
 
             with patch.object(Figshare, "urlopen", new=mock_urlopen):
                 with TemporaryDirectory() as d:
-                    fig = Figshare()
-
                     output = []
-                    for l in fig.fetch(test_spec, d):
+                    for l in test_fig.fetch(test_spec, d):
                         output.append(l)
 
                     unpacked_files = set(os.listdir(d))
