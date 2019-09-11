@@ -33,7 +33,7 @@ def test_subdir_in_image_name():
     assert escaped_dirname in app.output_image_spec
 
 
-def test_subdir_invalid(caplog):
+def test_subdir_invalid():
     # test an error is raised when requesting a non existent subdir
     app = Repo2Docker(repo=TEST_REPO, subdir="invalid-sub-dir")
     app.initialize()

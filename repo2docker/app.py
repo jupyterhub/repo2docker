@@ -450,7 +450,7 @@ class Repo2Docker(Application):
             self.log = logging.getLogger("repo2docker")
             self.log.handlers = []
             self.log.addHandler(logHandler)
-            self.log.setLevel(logging.INFO)
+            self.log.setLevel(self.log_level)
         else:
             # due to json logger stuff above,
             # our log messages include carriage returns, newlines, etc.
@@ -470,24 +470,39 @@ class Repo2Docker(Application):
         client = self.docker_client()
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
+        progress_layers = {}
         layers = {}
         last_emit_time = time.time()
-        for line in client.push(self.output_image_spec, stream=True):
-            progress = json.loads(line.decode("utf-8"))
-            if "error" in progress:
-                self.log.error(progress["error"], extra=dict(phase="failed"))
-                raise docker.errors.ImageLoadError(progress["error"])
-            if "id" not in progress:
-                continue
-            if "progressDetail" in progress and progress["progressDetail"]:
-                layers[progress["id"]] = progress["progressDetail"]
-            else:
-                layers[progress["id"]] = progress["status"]
-            if time.time() - last_emit_time > 1.5:
-                self.log.info(
-                    "Pushing image\n", extra=dict(progress=layers, phase="pushing")
-                )
-                last_emit_time = time.time()
+        for chunk in client.push(self.output_image_spec, stream=True):
+            # each chunk can be one or more lines of json events
+            # split lines here in case multiple are delivered at once
+            for line in chunk.splitlines():
+                line = line.decode("utf-8", errors="replace")
+                try:
+                    progress = json.loads(line)
+                except Exception as e:
+                    self.log.warning("Not a JSON progress line: %r", line)
+                    continue
+                if "error" in progress:
+                    self.log.error(progress["error"], extra=dict(phase="failed"))
+                    raise docker.errors.ImageLoadError(progress["error"])
+                if "id" not in progress:
+                    continue
+                # deprecated truncated-progress data
+                if "progressDetail" in progress and progress["progressDetail"]:
+                    progress_layers[progress["id"]] = progress["progressDetail"]
+                else:
+                    progress_layers[progress["id"]] = progress["status"]
+                # include full progress data for each layer in 'layers' data
+                layers[progress["id"]] = progress
+                if time.time() - last_emit_time > 1.5:
+                    self.log.info(
+                        "Pushing image\n",
+                        extra=dict(
+                            progress=progress_layers, layers=layers, phase="pushing"
+                        ),
+                    )
+                    last_emit_time = time.time()
         self.log.info(
             "Successfully pushed {}".format(self.output_image_spec),
             extra=dict(phase="pushing"),
@@ -645,8 +660,12 @@ class Repo2Docker(Application):
             try:
                 self.docker_client()
             except DockerException as e:
-                self.log.exception(e)
-                raise
+                self.log.error(
+                    "\nDocker client initialization error: %s.\nCheck if docker is running on the host.\n",
+                    e,
+                )
+                self.exit(1)
+
         # If the source to be executed is a directory, continue using the
         # directory. In the case of a local directory, it is used as both the
         # source and target. Reusing a local directory seems better than
@@ -699,9 +718,12 @@ class Repo2Docker(Application):
                 picked_buildpack.labels["repo2docker.repo"] = repo_label
                 picked_buildpack.labels["repo2docker.ref"] = self.ref
 
-                self.log.debug(picked_buildpack.render(), extra=dict(phase="building"))
-
-                if not self.dry_run:
+                if self.dry_run:
+                    print(picked_buildpack.render())
+                else:
+                    self.log.debug(
+                        picked_buildpack.render(), extra=dict(phase="building")
+                    )
                     if self.user_id == 0:
                         raise ValueError(
                             "Root as the primary user in the image is not permitted."

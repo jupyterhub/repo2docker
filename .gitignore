@@ -34,6 +34,4 @@ test_file_text.txt
 
 \.vscode/
 
-tests/tarball/node10/image.tar
-
-tests/conda/binder-dir/binder/image.tar
+tests/dockerfile_diff.sh
