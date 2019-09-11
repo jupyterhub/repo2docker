@@ -21,6 +21,17 @@ def test_content_id():
         fig.detect("10.6084/m9.figshare.9782777")
         assert fig.content_id == "9782777"
 
+        fig.detect("10.6084/m9.figshare.9782777.v123")
+        assert fig.content_id == "9782777"
+
+
+def test_content_version():
+    with patch.object(Figshare, "urlopen") as fake_urlopen:
+        fake_urlopen.return_value.url = "https://figshare.com/articles/title/9782777/2"
+        fig = Figshare()
+        fig.detect("10.6084/m9.figshare.9782777.v2")
+        assert fig.content_version == "2"
+
 
 test_fig = Figshare()
 test_fig.article_id = "123456"
