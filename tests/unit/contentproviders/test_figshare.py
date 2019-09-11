@@ -63,9 +63,13 @@ test_dois_links = [
         "https://figshare.com/articles/title/9782777/",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
     ),
+    (
+        "https://figshare.com/articles/title/9782777/1234",
+        {"host": test_fig.hosts[0], "article": "9782777", "version": "1234"},
+    ),
 ]
 
-test_spec = {"host": test_fig.hosts[0], "article": "1234", "version": "42"}
+test_spec = {"host": test_fig.hosts[0], "article": "123456", "version": "42"}
 
 
 @pytest.mark.parametrize("test_input,expected", test_dois_links)

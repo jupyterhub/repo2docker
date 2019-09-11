@@ -68,15 +68,14 @@ class Figshare(DoiProvider):
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Figshare article"""
         article_id = spec["article"]
+        article_version = spec["version"]
         host = spec["host"]
 
         yield "Fetching Figshare article {} in version {}.\n".format(
-            self.article_id, self.article_version
+            article_id, article_version
         )
         req = Request(
-            "{}{}/versions/{}".format(
-                host["api"], self.article_id, self.article_version
-            ),
+            "{}{}/versions/{}".format(host["api"], article_id, article_version),
             headers={"accept": "application/json"},
         )
         resp = self.urlopen(req)

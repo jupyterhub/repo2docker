@@ -1,11 +1,12 @@
 import os
+import abc
 import json
 import shutil
 import logging
 
 from os import makedirs
 from os import path
-from urllib.request import urlopen, Request
+from urllib import request  # urlopen, Request
 from urllib.error import HTTPError
 from zipfile import ZipFile, is_zipfile
 
@@ -21,15 +22,15 @@ class DoiProvider(ContentProvider):
     def urlopen(self, req, headers=None):
         """A urlopen() helper"""
         # someone passed a string, not a request
-        if not isinstance(req, Request):
-            req = Request(req)
+        if not isinstance(req, request.Request):
+            req = request.Request(req)
 
         req.add_header("User-Agent", "repo2docker {}".format(__version__))
         if headers is not None:
             for key, value in headers.items():
                 req.add_header(key, value)
 
-        return urlopen(req)
+        return request.urlopen(req)
 
     def doi2url(self, doi):
         # Transform a DOI to a URL
@@ -90,6 +91,6 @@ class DoiProvider(ContentProvider):
                 yield "Fetched files: {}\n".format(os.listdir(output_dir))
 
     @property
+    @abc.abstractmethod
     def content_id(self):
-        """The provider's ID for the record"""
-        return None
+        pass
