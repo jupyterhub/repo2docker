@@ -12,7 +12,7 @@ Using ``repo2docker``
 
 ``repo2docker`` can build a reproducible computational environment for any repository that
 follows :ref:`specification`. repo2docker is called with the URL of a Git repository,
-a Zenodo DOI or a path to a local directory. It then
+a DOI from Zenodo or Figshare, or a path to a local directory. It then
 performs these steps:
 
 1. Inspects the repository for :ref:`configuration files <config-files>`. These will be used to build

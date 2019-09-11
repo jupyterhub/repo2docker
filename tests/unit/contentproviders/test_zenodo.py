@@ -13,7 +13,7 @@ from repo2docker.contentproviders import Zenodo
 
 
 def test_content_id():
-    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+    with patch.object(Zenodo, "urlopen") as fake_urlopen:
         fake_urlopen.return_value.url = "https://zenodo.org/record/3232985"
         zen = Zenodo()
 
@@ -21,6 +21,7 @@ def test_content_id():
         assert zen.content_id == "3232985"
 
 
+test_zen = Zenodo()
 test_hosts = [
     (
         [
@@ -28,17 +29,7 @@ test_hosts = [
             "10.5281/zenodo.3232985",
             "https://doi.org/10.5281/zenodo.3232985",
         ],
-        {
-            "host": {
-                "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
-                "api": "https://zenodo.org/api/records/",
-                "filepath": "files",
-                "filename": "filename",
-                "download": "links.download",
-                "type": "metadata.upload_type",
-            },
-            "record": "3232985",
-        },
+        {"host": test_zen.hosts[0], "record": "3232985"},
     ),
     (
         [
@@ -46,27 +37,14 @@ test_hosts = [
             "10.22002/d1.1235",
             "https://doi.org/10.22002/d1.1235",
         ],
-        {
-            "host": {
-                "hostname": [
-                    "https://data.caltech.edu/records/",
-                    "http://data.caltech.edu/records/",
-                ],
-                "api": "https://data.caltech.edu/api/record/",
-                "filepath": "metadata.electronic_location_and_access",
-                "filename": "electronic_name.0",
-                "download": "uniform_resource_identifier",
-                "type": "metadata.resourceType.resourceTypeGeneral",
-            },
-            "record": "1235",
-        },
+        {"host": test_zen.hosts[1], "record": "1235"},
     ),
 ]
 
 
 @pytest.mark.parametrize("test_input,expected", test_hosts)
 def test_detect_zenodo(test_input, expected):
-    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+    with patch.object(Zenodo, "urlopen") as fake_urlopen:
         fake_urlopen.return_value.url = test_input[0]
         # valid Zenodo DOIs trigger this content provider
         assert Zenodo().detect(test_input[0]) == expected
@@ -75,7 +53,7 @@ def test_detect_zenodo(test_input, expected):
         # only two of the three calls above have to resolve a DOI
         assert fake_urlopen.call_count == 2
 
-    with patch.object(Zenodo, "_urlopen") as fake_urlopen:
+    with patch.object(Zenodo, "urlopen") as fake_urlopen:
         # Don't trigger the Zenodo content provider
         assert Zenodo().detect("/some/path/here") is None
         assert Zenodo().detect("https://example.com/path/here") is None
@@ -120,22 +98,9 @@ def test_fetch_software_from_github_archive():
             else:
                 return urlopen(req)
 
-        with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
+        with patch.object(Zenodo, "urlopen", new=mock_urlopen):
             zen = Zenodo()
-            spec = {
-                "host": {
-                    "hostname": [
-                        "https://zenodo.org/record/",
-                        "http://zenodo.org/record/",
-                    ],
-                    "api": "https://zenodo.org/api/records/",
-                    "filepath": "files",
-                    "filename": "filename",
-                    "download": "links.download",
-                    "type": "metadata.upload_type",
-                },
-                "record": "1234",
-            }
+            spec = {"host": test_zen.hosts[0], "record": "1234"}
 
             with TemporaryDirectory() as d:
                 output = []
@@ -173,23 +138,10 @@ def test_fetch_software():
             else:
                 return urlopen(req)
 
-        with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
+        with patch.object(Zenodo, "urlopen", new=mock_urlopen):
             with TemporaryDirectory() as d:
                 zen = Zenodo()
-                spec = spec = {
-                    "host": {
-                        "hostname": [
-                            "https://zenodo.org/record/",
-                            "http://zenodo.org/record/",
-                        ],
-                        "api": "https://zenodo.org/api/records/",
-                        "filepath": "files",
-                        "filename": "filename",
-                        "download": "links.download",
-                        "type": "metadata.upload_type",
-                    },
-                    "record": "1234",
-                }
+                spec = spec = {"host": test_zen.hosts[0], "record": "1234"}
                 output = []
                 for l in zen.fetch(spec, d):
                     output.append(l)
@@ -227,23 +179,10 @@ def test_fetch_data():
                 else:
                     return urlopen(req)
 
-            with patch.object(Zenodo, "_urlopen", new=mock_urlopen):
+            with patch.object(Zenodo, "urlopen", new=mock_urlopen):
                 with TemporaryDirectory() as d:
                     zen = Zenodo()
-                    spec = {
-                        "host": {
-                            "hostname": [
-                                "https://zenodo.org/record/",
-                                "http://zenodo.org/record/",
-                            ],
-                            "api": "https://zenodo.org/api/records/",
-                            "filepath": "files",
-                            "filename": "filename",
-                            "download": "links.download",
-                            "type": "metadata.upload_type",
-                        },
-                        "record": "1234",
-                    }
+                    spec = {"host": test_zen.hosts[0], "record": "1234"}
                     output = []
                     for l in zen.fetch(spec, d):
                         output.append(l)
