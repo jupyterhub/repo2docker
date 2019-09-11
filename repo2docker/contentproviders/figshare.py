@@ -94,9 +94,4 @@ class Figshare(DoiProvider):
     @property
     def content_id(self):
         """The Figshare article ID"""
-        return self.article_id
-
-    @property
-    def content_version(self):
-        """The Figshare article ID"""
-        return self.article_version
+        return "{}.v{}".format(self.article_id, self.article_version)

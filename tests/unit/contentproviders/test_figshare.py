@@ -14,23 +14,20 @@ from repo2docker.contentproviders import Figshare
 from repo2docker.__main__ import make_r2d
 
 
-def test_content_id():
+test_content_ids = [
+    ("https://figshare.com/articles/title/9782777", "9782777.v1"),
+    ("https://figshare.com/articles/title/9782777/2", "9782777.v2"),
+    ("https://figshare.com/articles/title/9782777/1234", "9782777.v1234"),
+]
+
+
+@pytest.mark.parametrize("link,expected", test_content_ids)
+def test_content_id(link, expected):
     with patch.object(Figshare, "urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = "https://figshare.com/articles/title/9782777"
+        fake_urlopen.return_value.url = link
         fig = Figshare()
         fig.detect("10.6084/m9.figshare.9782777")
-        assert fig.content_id == "9782777"
-
-        fig.detect("10.6084/m9.figshare.9782777.v123")
-        assert fig.content_id == "9782777"
-
-
-def test_content_version():
-    with patch.object(Figshare, "urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = "https://figshare.com/articles/title/9782777/2"
-        fig = Figshare()
-        fig.detect("10.6084/m9.figshare.9782777.v2")
-        assert fig.content_version == "2"
+        assert fig.content_id == expected
 
 
 test_fig = Figshare()

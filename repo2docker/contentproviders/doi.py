@@ -1,5 +1,4 @@
 import os
-import abc
 import json
 import shutil
 import logging
@@ -89,8 +88,3 @@ class DoiProvider(ContentProvider):
                     shutil.rmtree(path.join(output_dir, d))
 
                 yield "Fetched files: {}\n".format(os.listdir(output_dir))
-
-    @property
-    @abc.abstractmethod
-    def content_id(self):
-        pass
