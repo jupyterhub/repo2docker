@@ -11,6 +11,10 @@ from repo2docker.__main__ import make_r2d
 from repo2docker.utils import chdir
 
 
+def test_always_fails():
+    assert False
+
+
 def test_find_image():
     images = [{"RepoTags": ["some-org/some-repo:latest"]}]
 

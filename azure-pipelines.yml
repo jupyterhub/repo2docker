@@ -62,7 +62,7 @@ steps:
 - script: pip install -e .
   displayName: 'Install repo2docker'
 
-- script: pushd tests; pytest --durations 10 --cov repo2docker -v $(REPO_TYPE); popd
+- script: pushd tests && pytest --durations 10 --cov repo2docker -v $(REPO_TYPE) && popd
   displayName: 'Run tests $(REPO_TYPE)'
 
 - script: |
