@@ -10,7 +10,7 @@ Release date: TBD
 
 New features
 ------------
-
+- Add support for Figshare in :pr:`788` by :user:`nuest`.
 
 API changes
 -----------
