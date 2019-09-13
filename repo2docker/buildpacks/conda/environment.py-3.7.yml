@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2019-07-29 15:52:07 UTC
+# Generated on 2019-09-13 19:50:21 UTC
 dependencies:
 - python=3.7.*
 - ipywidgets==7.4.2
@@ -7,4 +7,4 @@ dependencies:
 - jupyterhub=1.0
 - nbconvert==5.4.1
 - notebook==5.7.8
-- nteract_on_jupyter==2.0.12
+- nteract_on_jupyter==2.1.3
