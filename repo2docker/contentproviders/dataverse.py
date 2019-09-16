@@ -34,14 +34,21 @@ class Dataverse(DoiProvider):
 
         """
         url = self.doi2url(doi)
+        # Parse the url, to get the base for later API calls
+        parsed_url = urlparse(url)
 
         # Check if the url matches any known Dataverse installation, bail if not.
-        host = next((host for host in self.hosts if url.startswith(host["url"])), None)
+        host = next(
+            (
+                host
+                for host in self.hosts
+                if urlparse(host["url"]).netloc == parsed_url.netloc
+            ),
+            None,
+        )
         if host is None:
             return
 
-        # Parse the url, to get the base for later API calls
-        parsed_url = urlparse(url)
         query_args = parse_qs(parsed_url.query)
 
         # Corner case handling

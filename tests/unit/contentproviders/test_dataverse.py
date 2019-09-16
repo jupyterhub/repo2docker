@@ -13,15 +13,20 @@ from repo2docker.contentproviders import Dataverse
 
 
 test_dv = Dataverse()
-harvard_dv = next((_ for _ in test_dv.hosts if _["id"] == 1745))
+harvard_dv = next((_ for _ in test_dv.hosts if _["name"] == "Harvard Dataverse"))
+cimmyt_dv = next((_ for _ in test_dv.hosts if _["name"] == "CIMMYT Research Data"))
 test_hosts = [
     (
         [
             "doi:10.7910/DVN/6ZXAGT/3YRRYJ",
             "10.7910/DVN/6ZXAGT",
             "https://dataverse.harvard.edu/api/access/datafile/3323458",
+            "hdl:11529/10016",
         ],
-        {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"},
+        [
+            {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"},
+            {"host": cimmyt_dv, "record": "hdl:11529/10016"},
+        ],
     )
 ]
 test_responses = {
@@ -38,6 +43,7 @@ test_responses = {
         "?persistentId=doi:10.7910/DVN/6ZXAGT"
     ),
     "https://dataverse.harvard.edu/api/access/datafile/3323458": "https://dataverse.harvard.edu/api/access/datafile/3323458",
+    "hdl:11529/10016": "https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016",
 }
 test_search = {
     "data": {
@@ -57,12 +63,13 @@ def test_detect_dataverse(test_input, expected):
     ) as fake_doi2url:
         fake_urlopen.return_value.read.return_value = json.dumps(test_search).encode()
         # valid Dataverse DOIs trigger this content provider
-        assert Dataverse().detect(test_input[0]) == expected
+        assert Dataverse().detect(test_input[0]) == expected[0]
         assert fake_doi2url.call_count == 2  # File, then dataset
-        assert Dataverse().detect(test_input[1]) == expected
-        assert Dataverse().detect(test_input[2]) == expected
+        assert Dataverse().detect(test_input[1]) == expected[0]
+        assert Dataverse().detect(test_input[2]) == expected[0]
         # only two of the three calls above have to resolve a DOI
         assert fake_urlopen.call_count == 1
+        assert Dataverse().detect(test_input[3]) == expected[1]
 
     with patch.object(Dataverse, "urlopen") as fake_urlopen:
         # Don't trigger the Dataverse content provider
