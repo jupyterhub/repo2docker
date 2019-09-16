@@ -60,13 +60,15 @@ class Dataverse(DoiProvider):
             search_url = urlunparse(
                 parsed_url._replace(path="/api/search", query=search_query)
             )
+            self.log.debug("Querying Dataverse: " + search_url)
             resp = self.urlopen(search_url).read()
             data = json.loads(resp.decode("utf-8"))["data"]
             if data["count_in_response"] != 1:
-                self.log.debug("Dataverse search query failed!")
-                self.log.debug("  - doi = " + doi)
-                self.log.debug("  - url = " + url)
-                self.log.debug("  - resp = " + json.dumps(data))
+                self.log.debug(
+                    "Dataverse search query failed!\n - doi: {}\n - url: {}\n - resp: {}\n".format(
+                        doi, url, json.dump(data)
+                    )
+                )
                 return
 
             self.record_id = deep_get(data, "items.0.dataset_persistent_id")
