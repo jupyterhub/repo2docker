@@ -3,11 +3,11 @@ import json
 import shutil
 
 from urllib.request import Request
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, parse_qs
 from zipfile import ZipFile
 
 from .doi import DoiProvider
-from ..utils import copytree, deep_get, is_doi, normalize_doi
+from ..utils import copytree, deep_get
 
 
 class Dataverse(DoiProvider):
@@ -42,6 +42,7 @@ class Dataverse(DoiProvider):
 
         # Parse the url, to get the base for later API calls
         parsed_url = urlparse(url)
+        query_args = parse_qs(parsed_url.query)
 
         # Corner case handling
         if parsed_url.path.startswith("/file.xhtml"):
@@ -72,8 +73,11 @@ class Dataverse(DoiProvider):
                 return
 
             self.record_id = deep_get(data, "items.0.dataset_persistent_id")
-        elif is_doi(doi):
-            self.record_id = "doi:" + normalize_doi(doi)
+        elif (
+            parsed_url.path.startswith("/dataset.xhtml")
+            and "persistentId" in query_args
+        ):
+            self.record_id = deep_get(query_args, "persistentId.0")
 
         if hasattr(self, "record_id"):
             return {"record": self.record_id, "host": host}
@@ -127,5 +131,5 @@ class Dataverse(DoiProvider):
 
     @property
     def content_id(self):
-        """The Dataverse persistent identifier (could use internal dataset_id too)."""
+        """The Dataverse persistent identifier."""
         return self.record_id
