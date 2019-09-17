@@ -2,12 +2,10 @@ import json
 import os
 import pytest
 
-from contextlib import contextmanager
 from io import BytesIO
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 from urllib.request import urlopen, Request
-from zipfile import ZipFile
 
 from repo2docker.contentproviders import Dataverse
 
@@ -82,47 +80,65 @@ def test_detect_dataverse(test_input, expected):
         assert Dataverse().detect("https://doi.org/10.21105/joss.01277") is None
 
 
-@contextmanager
-def dv_archive(prefix="a_directory"):
-    with NamedTemporaryFile(suffix=".zip") as zfile:
-        with ZipFile(zfile.name, mode="w") as zip:
-            zip.writestr("{}/some-file.txt".format(prefix), "some content")
-            zip.writestr("{}/some-other-file.txt".format(prefix), "some more content")
+@pytest.fixture
+def dv_files(tmpdir):
 
-        yield zfile.name
+    f1 = tmpdir.join("some-file.txt")
+    f1.write("some content")
+
+    f2 = tmpdir.mkdir("directory").join("some-other-file.txt")
+    f2.write("some other content")
+
+    f3 = tmpdir.join("directory").mkdir("subdirectory").join("the-other-file.txt")
+    f3.write("yet another content")
+
+    return [f1, f2, f3]
 
 
-def test_dataverse_fetch():
+def test_dataverse_fetch(dv_files):
     mock_response_ds_query = BytesIO(
         json.dumps(
             {
                 "data": {
                     "latestVersion": {
-                        "files": [{"dataFile": {"id": 1}}, {"dataFile": {"id": 2}}]
+                        "files": [
+                            {"dataFile": {"id": 1}, "label": "some-file.txt"},
+                            {
+                                "dataFile": {"id": 2},
+                                "label": "some-other-file.txt",
+                                "directoryLabel": "directory",
+                            },
+                            {
+                                "dataFile": {"id": 3},
+                                "label": "the-other-file.txt",
+                                "directoryLabel": "directory/subdirectory",
+                            },
+                        ]
                     }
                 }
             }
         ).encode("utf-8")
     )
     spec = {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"}
+
     dv = Dataverse()
 
-    with dv_archive() as data_local_path:
+    def mock_urlopen(self, req):
+        if isinstance(req, Request):
+            return mock_response_ds_query
+        else:
+            file_no = int(req.split("/")[-1]) - 1
+            return urlopen("file://{}".format(dv_files[file_no]))
 
-        def mock_urlopen(self, req):
-            if isinstance(req, Request):
-                if "/api/datasets" in req.full_url:
-                    return mock_response_ds_query
-                elif "/api/access/datafiles" in req.full_url:
-                    assert req.full_url.endswith("1,2")
-                    return urlopen("file://{}".format(data_local_path))
+    with patch.object(Dataverse, "urlopen", new=mock_urlopen):
+        with TemporaryDirectory() as d:
+            output = []
+            for l in dv.fetch(spec, d):
+                output.append(l)
 
-        with patch.object(Dataverse, "urlopen", new=mock_urlopen):
-            with TemporaryDirectory() as d:
-                output = []
-                for l in dv.fetch(spec, d):
-                    output.append(l)
-
-                unpacked_files = set(os.listdir(d))
-                expected = set(["some-other-file.txt", "some-file.txt"])
-                assert expected == unpacked_files
+            unpacked_files = set(os.listdir(d))
+            expected = set(["directory", "some-file.txt"])
+            assert expected == unpacked_files
+            assert os.path.isfile(
+                os.path.join(d, "directory", "subdirectory", "the-other-file.txt")
+            )

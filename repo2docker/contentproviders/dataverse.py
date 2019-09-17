@@ -4,7 +4,6 @@ import shutil
 
 from urllib.request import Request
 from urllib.parse import urlparse, urlunparse, parse_qs
-from zipfile import ZipFile
 
 from .doi import DoiProvider
 from ..utils import copytree, deep_get
@@ -104,34 +103,22 @@ class Dataverse(DoiProvider):
         resp = self.urlopen(req)
         record = json.loads(resp.read().decode("utf-8"))["data"]
 
-        # In order to fetch entire dataset we build a list of file IDs we want to fetch
-        # and then receive a zip file containing all of them.
-        # TODO: Dataverse has a limit for the zipfile size (see
-        # https://github.com/jupyter/repo2docker/pull/739#issuecomment-510834729)
-        # If size of the dataset is grater than 100MB individual files should be downloaded.
-        file_ids = [
-            str(deep_get(fobj, "dataFile.id"))
-            for fobj in deep_get(record, "latestVersion.files")
-        ]
+        for fobj in deep_get(record, "latestVersion.files"):
+            file_url = "{}/api/access/datafile/{}".format(
+                host["url"], deep_get(fobj, "dataFile.id")
+            )
+            filename = os.path.join(fobj.get("directoryLabel", ""), fobj["label"])
 
-        req = Request(
-            "{}/api/access/datafiles/{}".format(host["url"], ",".join(file_ids))
-        )
+            file_ref = {"download": file_url, "filename": filename}
+            fetch_map = {key: key for key in file_ref.keys()}
 
-        dst_fname = os.path.join(output_dir, "dataverse.zip")
-        with self.urlopen(req) as src, open(dst_fname, "wb") as dst:
-            yield "Fetching files bundle\n"
-            shutil.copyfileobj(src, dst)
+            for line in self.fetch_file(file_ref, fetch_map, output_dir):
+                yield line
 
-        yield "Extracting files\n"
-        with ZipFile(dst_fname) as zfile:
-            zfile.extractall(path=output_dir)
-
-        os.remove(dst_fname)
         new_subdirs = os.listdir(output_dir)
         # if there is only one new subdirectory move its contents
         # to the top level directory
-        if len(new_subdirs) == 1:
+        if len(new_subdirs) == 1 and os.path.isdir(new_subdirs[0]):
             d = new_subdirs[0]
             copytree(os.path.join(output_dir, d), output_dir)
             shutil.rmtree(os.path.join(output_dir, d))
