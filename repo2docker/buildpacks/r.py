@@ -230,10 +230,12 @@ class RBuildPack(PythonBuildPack):
                     echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/r3.6-ubuntu.list
                     """,
                 ),
+                # Use port 80 to talk to the keyserver to increase the chances
+                # of being able to reach it from behind a firewall
                 (
                     "root",
                     r"""
-                    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+                    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
                     """,
                 ),
                 (
