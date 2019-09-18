@@ -49,10 +49,11 @@ Julia versions 0.6.x and earlier are supported via a :ref:`REQUIRE <REQUIRE>` fi
 R
 ~
 
-Only R 3.4.4 is currently supported, which is installed via ``apt`` from the
-`ubuntu bionic repository <https://packages.ubuntu.com/bionic/r-base>`_.
+The default version of R is currently R 3.6.1. You can select the version of
+R you want to use by specifying it in the :ref:`runtime.txt <runtime.txt>`
+file.
 
-
+We support R versions 3.4, 3.5 and 3.6.
 
 
 Why is my repository is failing to build with ``ResolvePackageNotFound`` ?
@@ -149,17 +150,17 @@ notebooks (among others).
     the container, use the ``--volumes`` option instead. Similarly,
     for a fully customized user Dockerfile, this option is not
     guaranteed to work.
-    
-    
+
+
 Why is my R shiny app not launching?
 ----------------------------------------------------------------------------------
 
 If you are trying to run an R shiny app using the ``/shiny/folder_containing_shiny``
 url option, but the launch returns "The application exited during initialization.",
 there might be something wrong with the specification of the app. One way of debugging
-the app in the container is by running the ``rstudio`` url, open either the ui or 
-server file for the app, and run the app in the container rstudio. This way you can 
-see the rstudio logs as it tries to initialise the shiny app. If you a missing a 
+the app in the container is by running the ``rstudio`` url, open either the ui or
+server file for the app, and run the app in the container rstudio. This way you can
+see the rstudio logs as it tries to initialise the shiny app. If you a missing a
 package or other dependency for the container, this will be obvious at this stage.
 
 
