@@ -10,7 +10,14 @@ from ..utils import copytree, deep_get
 
 
 class Dataverse(DoiProvider):
-    """Provide contents of a Dataverse dataset."""
+    """
+    Provide contents of a Dataverse dataset.
+    
+    This class loads a a list of existing Dataverse installations from the internal
+    file dataverse.json. This file is manually updated with the following command:
+
+        python setup.py generate_dataverse_file
+    """
 
     def __init__(self):
         data_file = os.path.join(os.path.dirname(__file__), "dataverse.json")
