@@ -595,7 +595,7 @@ class Repo2Docker(Application):
             copied = container.put_archive(image_workdir, repo_archive)
             shutil.rmtree(self.git_workdir, ignore_errors=True)
             if not copied:
-                self.log.error("Failed to copy repo contents into containe")
+                self.log.error("Failed to copy repo contents into container")
                 return container
 
         while container.status == "created":
