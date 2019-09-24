@@ -5,8 +5,10 @@ import io
 import os
 import re
 import logging
-import docker
+import string
 import sys
+import hashlib
+import escapism
 import xml.etree.ElementTree as ET
 
 from traitlets import Dict
@@ -534,6 +536,17 @@ class BuildPack:
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
             )
 
+        # Based on a physical location of a build script on the host,
+        # create a mapping between:
+        #   1. Location of a build script in a Docker build context
+        #      ('assemble_files/<escaped-file-path-truncated>-<6-chars-of-its-hash>')
+        #   2. Location of the aforemention script in the Docker image
+        # Base template basically does: COPY <1.> <2.>
+        build_script_files = {
+            self.generate_build_context_filename(k)[0]: v
+            for k, v in self.get_build_script_files().items()
+        }
+
         return t.render(
             packages=sorted(self.get_packages()),
             path=self.get_path(),
@@ -544,11 +557,40 @@ class BuildPack:
             preassemble_script_files=self.get_preassemble_script_files(),
             preassemble_script_directives=preassemble_script_directives,
             assemble_script_directives=assemble_script_directives,
-            build_script_files=self.get_build_script_files(),
+            build_script_files=build_script_files,
             base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.get_post_build_scripts(),
             start_script=self.get_start_script(),
             appendix=self.appendix,
+        )
+
+    @staticmethod
+    def generate_build_context_filename(src_path, hash_length=6):
+        """
+        Generate a filename for a file injected into the Docker build context.
+
+        In case the src_path is relative, it's assumed it's relative to directory of
+        this __file__. Returns the resulting filename and an absolute path to the source
+        file on host.
+        """
+        if not os.path.isabs(src_path):
+            src_parts = src_path.split("/")
+            src_path = os.path.join(os.path.dirname(__file__), *src_parts)
+
+        src_path_hash = hashlib.sha256(src_path.encode("utf-8")).hexdigest()
+        safe_chars = set(string.ascii_letters + string.digits)
+
+        def escape(s):
+            return escapism.escape(s, safe=safe_chars, escape_char="-")
+
+        src_path_slug = escape(src_path)
+        filename = "build_script_files/{name}-{hash}"
+        return (
+            filename.format(
+                name=src_path_slug[: 255 - hash_length - 20],
+                hash=src_path_hash[:hash_length],
+            ).lower(),
+            src_path,
         )
 
     def build(
@@ -580,9 +622,8 @@ class BuildPack:
             return tar
 
         for src in sorted(self.get_build_script_files()):
-            src_parts = src.split("/")
-            src_path = os.path.join(os.path.dirname(__file__), *src_parts)
-            tar.add(src_path, src, filter=_filter_tar)
+            dest_path, src_path = self.generate_build_context_filename(src)
+            tar.add(src_path, dest_path, filter=_filter_tar)
 
         tar.add(ENTRYPOINT_FILE, "repo2docker-entrypoint", filter=_filter_tar)
 

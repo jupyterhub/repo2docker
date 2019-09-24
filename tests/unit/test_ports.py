@@ -7,6 +7,7 @@ import time
 import os
 import tempfile
 import random
+from getpass import getuser
 
 import docker
 import pytest
@@ -46,7 +47,7 @@ def read_port_mapping_response(
     request.addfinalizer(td.cleanup)
     tmpdir.chdir()
 
-    username = os.getlogin()
+    username = getuser()
     tmpdir.mkdir("username")
     r2d = Repo2Docker(
         repo=str(tmpdir.mkdir("repo")),

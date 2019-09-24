@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2019-07-29 15:49:47 UTC
+# Frozen on 2019-09-13 19:45:51 UTC
 name: r2d
 channels:
   - conda-forge
@@ -10,8 +10,8 @@ dependencies:
   - backports=1.0=py_2
   - backports.shutil_get_terminal_size=1.0.0=py_3
   - backports_abc=0.5=py_1
-  - ca-certificates=2019.6.16=hecc5488_0
-  - certifi=2019.6.16=py27_1
+  - ca-certificates=2019.9.11=hecc5488_0
+  - certifi=2019.9.11=py27_0
   - decorator=4.4.0=py_0
   - enum34=1.1.6=py27_1001
   - futures=3.3.0=py27_0
@@ -29,26 +29,26 @@ dependencies:
   - pathlib2=2.3.4=py27_0
   - pexpect=4.7.0=py27_0
   - pickleshare=0.7.5=py27_1000
-  - pip=19.2.1=py27_0
+  - pip=19.2.3=py27_0
   - prompt_toolkit=1.0.15=py_1
   - ptyprocess=0.6.0=py_1001
   - pygments=2.4.2=py_0
   - python=2.7.15=h5a48372_1009
   - python-dateutil=2.8.0=py_0
-  - pyzmq=18.0.2=py27h1768529_2
+  - pyzmq=18.1.0=py27h1768529_0
   - readline=8.0=hf8c457e_0
   - scandir=1.10.0=py27h14c3975_0
-  - setuptools=41.0.1=py27_0
+  - setuptools=41.2.0=py27_0
   - simplegeneric=0.8.1=py_1
   - singledispatch=3.4.0.3=py27_1000
   - six=1.12.0=py27_1000
-  - sqlite=3.29.0=hcee41ef_0
-  - tk=8.6.9=hed695b0_1002
+  - sqlite=3.29.0=hcee41ef_1
+  - tk=8.6.9=hed695b0_1003
   - tornado=5.1.1=py27h14c3975_1000
   - traitlets=4.3.2=py27_1000
   - wcwidth=0.1.7=py_1
-  - wheel=0.33.4=py27_0
+  - wheel=0.33.6=py27_0
   - zeromq=4.3.2=he1b5a44_2
-  - zlib=1.2.11=h516909a_1005
+  - zlib=1.2.11=h516909a_1006
 prefix: /opt/conda/envs/r2d
 

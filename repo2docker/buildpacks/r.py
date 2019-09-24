@@ -2,6 +2,8 @@ import re
 import os
 import datetime
 
+from distutils.version import LooseVersion as V
+
 from .python import PythonBuildPack
 
 
@@ -56,6 +58,41 @@ class RBuildPack(PythonBuildPack):
         return self._runtime
 
     @property
+    def r_version(self):
+        """Detect the R version for a given `runtime.txt`
+
+        Will return the version specified by the user or the current default
+        version.
+        """
+        version_map = {
+            "3.4": "3.4",
+            "3.5": "3.5.3-1bionic",
+            "3.5.0": "3.5.0-1bionic",
+            "3.5.1": "3.5.1-2bionic",
+            "3.5.2": "3.5.2-1bionic",
+            "3.5.3": "3.5.3-1bionic",
+            "3.6": "3.6.1-3bionic",
+            "3.6.0": "3.6.0-2bionic",
+            "3.6.1": "3.6.1-3bionic",
+        }
+        # the default if nothing is specified
+        r_version = "3.6"
+
+        if not hasattr(self, "_r_version"):
+            parts = self.runtime.split("-")
+            if len(parts) == 5:
+                r_version = parts[1]
+                if r_version not in version_map:
+                    raise ValueError(
+                        "Version '{}' of R is not supported.".format(r_version)
+                    )
+
+            # translate to the full version string
+            self._r_version = version_map.get(r_version)
+
+        return self._r_version
+
+    @property
     def checkpoint_date(self):
         """
         Return the date of MRAN checkpoint to use for this repo
@@ -63,11 +100,14 @@ class RBuildPack(PythonBuildPack):
         Returns '' if no date is specified
         """
         if not hasattr(self, "_checkpoint_date"):
-            match = re.match(r"r-(\d\d\d\d)-(\d\d)-(\d\d)", self.runtime)
+            match = re.match(r"r-(\d.\d(.\d)?-)?(\d\d\d\d)-(\d\d)-(\d\d)", self.runtime)
             if not match:
                 self._checkpoint_date = False
             else:
-                self._checkpoint_date = datetime.date(*[int(s) for s in match.groups()])
+                # turn the last three groups of the match into a date
+                self._checkpoint_date = datetime.date(
+                    *[int(s) for s in match.groups()[-3:]]
+                )
 
         return self._checkpoint_date
 
@@ -127,20 +167,19 @@ class RBuildPack(PythonBuildPack):
         We install a base version of R, and packages required for RStudio to
         be installed.
         """
-        return (
-            super()
-            .get_packages()
-            .union(
-                [
-                    "r-base",
-                    # For rstudio
-                    "psmisc",
-                    "libapparmor1",
-                    "sudo",
-                    "lsb-release",
-                ]
-            )
-        )
+        packages = [
+            # For rstudio
+            "psmisc",
+            "libapparmor1",
+            "sudo",
+            "lsb-release",
+        ]
+        # For R 3.4 we use the default Ubuntu package, for other versions we
+        # install from a different PPA
+        if V(self.r_version) < V("3.5"):
+            packages.append("r-base")
+
+        return super().get_packages().union(packages)
 
     def get_build_scripts(self):
         """
@@ -174,13 +213,46 @@ class RBuildPack(PythonBuildPack):
         devtools_version = "2018-02-01"
 
         # IRKernel version - specified as a tag in the IRKernel repository
-        irkernel_version = "0.8.11"
+        irkernel_version = "1.0.2"
 
         mran_url = "https://mran.microsoft.com/snapshot/{}".format(
             self.checkpoint_date.isoformat()
         )
 
-        scripts = [
+        scripts = []
+        # For R 3.4 we want to use the default Ubuntu package but otherwise
+        # we use the packages from a PPA
+        if V(self.r_version) >= V("3.5"):
+            scripts += [
+                (
+                    "root",
+                    r"""
+                    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/r3.6-ubuntu.list
+                    """,
+                ),
+                # Use port 80 to talk to the keyserver to increase the chances
+                # of being able to reach it from behind a firewall
+                (
+                    "root",
+                    r"""
+                    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+                    """,
+                ),
+                (
+                    "root",
+                    r"""
+                    apt-get update && \
+                    apt-get install --yes r-base={} && \
+                    apt-get -qq purge && \
+                    apt-get -qq clean && \
+                    rm -rf /var/lib/apt/lists/*
+                    """.format(
+                        self.r_version
+                    ),
+                ),
+            ]
+
+        scripts += [
             (
                 "root",
                 r"""
@@ -277,17 +349,32 @@ class RBuildPack(PythonBuildPack):
         ]
 
         if "r" in self.stencila_contexts:
-            scripts += [
-                (
-                    "${NB_USER}",
-                    # Install and register stencila library
-                    r"""
-                R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
-                R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
-                R --quiet -e "stencila::register()"
-                """,
-                )
-            ]
+            # new versions of R require a different way of installing bioconductor
+            if V(self.r_version) <= V("3.5"):
+                scripts += [
+                    (
+                        "${NB_USER}",
+                        # Install and register stencila library
+                        r"""
+                    R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
+                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
+                    R --quiet -e "stencila::register()"
+                    """,
+                    )
+                ]
+
+            else:
+                scripts += [
+                    (
+                        "${NB_USER}",
+                        # Install and register stencila library
+                        r"""
+                    R --quiet -e "install.packages('BiocManager'); BiocManager::install(); BiocManager::install(c('graph'))" && \
+                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
+                    R --quiet -e "stencila::register()"
+                    """,
+                    )
+                ]
 
         return super().get_build_scripts() + scripts
 
