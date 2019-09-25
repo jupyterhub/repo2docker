@@ -29,11 +29,11 @@ class Hydroshare(DoiProvider):
         ]
 
         def fetch_version(resource_id, host):
-            """Fetch resource modified date and convert to epoch int"""
+            """Fetch resource modified date and convert to epoch"""
             json_response = json.loads(self.urlopen(host["version"].format(self.resource_id)).read())
             date = next(item for item in json_response["dates"] if item["type"] == "modified")["start_date"]
             date = date.split(".")[0]
-            return int(time.mktime(time.strptime(date, "%Y-%m-%dT%H:%M:%S")))
+            return str(int(time.mktime(time.strptime(date, "%Y-%m-%dT%H:%M:%S"))))
 
         url = self.doi2url(doi)
 
