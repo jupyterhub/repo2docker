@@ -6,41 +6,12 @@ import time
 from urllib.request import urlopen, Request, urlretrieve
 from urllib.error import HTTPError
 
-from .base import ContentProvider
+from .doi import DoiProvider
 from ..utils import normalize_doi, is_doi
 
 
-class Hydroshare(ContentProvider):
+class Hydroshare(DoiProvider):
     """Provide contents of a Hydroshare resource."""
-
-    def _urlopen(self, req, headers=None):
-        """A urlopen() helper"""
-        # someone passed a string, not a request
-        if not isinstance(req, Request):
-            req = Request(req)
-
-        #req.add_header("User-Agent", "repo2docker {}".format(__version__))
-        if headers is not None:
-            for key, value in headers.items():
-                req.add_header(key, value)
-
-        return urlopen(req)
-
-    def _doi2url(self, doi):
-        # Transform a DOI to a URL
-        # If not a doi, assume we have a URL and return
-        if is_doi(doi):
-            doi = normalize_doi(doi)
-
-            try:
-                resp = self._urlopen("https://doi.org/{}".format(doi))
-            # If the DOI doesn't resolve, just return URL
-            except HTTPError:
-                return doi
-            return resp.url
-        else:
-            # Just return what is actulally just a URL
-            return doi
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Zenodo/Invenio record"""
@@ -54,14 +25,17 @@ class Hydroshare(ContentProvider):
             },
         ]
 
-        url = self._doi2url(doi)
+        url = self.doi2url(doi)
 
         for host in hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
                 self.resource_id = url.strip("/").rsplit("/", maxsplit=1)[1]
                 return {"resource": self.resource_id, "host": host}
 
-    def fetch(self, spec, output_dir, yield_output=False):
+    def _urlretrieve(bag_url):
+        return urlretrieve(bag_url)
+
+    def fetch(self, spec, output_dir, yield_output=False, timeout=120):
         """Fetch and unpack a Hydroshare resource"""
         resource_id = spec["resource"]
         host = spec["host"]
@@ -71,19 +45,23 @@ class Hydroshare(ContentProvider):
         bag_url = "{}{}".format(host["django_irods"], resource_id)
 
         # bag downloads are prepared on demand and may need some time
-        conn = urlopen(bag_url)
-        while conn.info().get_content_type() != "application/zip":
-            if conn.getcode() != 200:
-                yield "Failed to download bag. status code {}.\n".format(conn.getcode())
-                return
+        conn = self.urlopen(bag_url)
+        total_wait_time = 0
+        while conn.getcode() == 200 and conn.info().get_content_type() != "application/zip":
             wait_time = 10
+            total_wait_time += wait_time
+            if total_wait_time > timeout:
+                yield "Bag taking too long to prepare, exiting now, try again later."
+                return
             yield "Bag is being prepared, requesting again in {} seconds.\n".format(wait_time)
             time.sleep(wait_time)
-            conn = urlopen(bag_url)
-
+            conn = self.urlopen(bag_url)
+        if conn.getcode() != 200:
+            yield "Failed to download bag. status code {}.\n".format(conn.getcode())
+            return
         # Bag creation seems to need a small time buffer after it says it's ready.
         time.sleep(1)
-        filehandle, _ = urlretrieve(bag_url)
+        filehandle, _ = self._urlretrieve(bag_url)
         zip_file_object = zipfile.ZipFile(filehandle, 'r')
         yield "Downloaded, unpacking contents.\n"
         zip_file_object.extractall("temp")
