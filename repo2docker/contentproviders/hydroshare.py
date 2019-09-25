@@ -32,7 +32,7 @@ class Hydroshare(DoiProvider):
                 self.resource_id = url.strip("/").rsplit("/", maxsplit=1)[1]
                 return {"resource": self.resource_id, "host": host}
 
-    def _urlretrieve(bag_url):
+    def _urlretrieve(self, bag_url):
         return urlretrieve(bag_url)
 
     def fetch(self, spec, output_dir, yield_output=False, timeout=120):
