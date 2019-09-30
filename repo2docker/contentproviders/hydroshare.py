@@ -3,7 +3,7 @@ import os
 import shutil
 import time
 import json
-import dateutil.parser
+import datetime
 
 from urllib.request import urlopen, Request, urlretrieve
 from urllib.error import HTTPError
@@ -37,7 +37,7 @@ class Hydroshare(DoiProvider):
             date = next(
                 item for item in json_response["dates"] if item["type"] == "modified"
             )["start_date"]
-            return str(int(time.mktime(dateutil.parser.parse(date))))
+            return datetime.strptime(date, "%Y-%m-%dT%H:%M:%S").timestamp()
 
         url = self.doi2url(doi)
 
