@@ -15,14 +15,19 @@ from repo2docker.contentproviders.base import ContentProviderException
 
 def test_content_id():
     with patch.object(Hydroshare, "urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
+        fake_urlopen.return_value.url = (
+            "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
+        )
+
         def read():
             return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
+
         fake_urlopen.return_value.read = read
         hydro = Hydroshare()
 
         hydro.detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61")
         assert hydro.content_id == "b8f6eae9d89241cf8b5904033460af61.v1569449357"
+
 
 test_hosts = [
     (
@@ -33,22 +38,28 @@ test_hosts = [
         ],
         {
             "host": {
-                "hostname": ["https://www.hydroshare.org/resource/", "http://www.hydroshare.org/resource/"],
+                "hostname": [
+                    "https://www.hydroshare.org/resource/",
+                    "http://www.hydroshare.org/resource/",
+                ],
                 "django_irods": "https://www.hydroshare.org/django_irods/download/bags/",
                 "version": "https://www.hydroshare.org/hsapi/resource/{}/scimeta/elements",
             },
             "resource": "b8f6eae9d89241cf8b5904033460af61",
-            "version": "1569449357"
+            "version": "1569449357",
         },
-    ),
+    )
 ]
+
 
 @pytest.mark.parametrize("test_input,expected", test_hosts)
 def test_detect_hydroshare(test_input, expected):
     with patch.object(Hydroshare, "urlopen") as fake_urlopen:
         fake_urlopen.return_value.url = test_input[0]
+
         def read():
             return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
+
         fake_urlopen.return_value.read = read
         # valid Hydroshare DOIs trigger this content provider
         assert Hydroshare().detect(test_input[0]) == expected
@@ -65,10 +76,13 @@ def test_detect_hydroshare(test_input, expected):
         fake_urlopen.return_value.url = (
             "http://joss.theoj.org/papers/10.21105/joss.01277"
         )
+
         def read():
             return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
+
         fake_urlopen.return_value.read = read
         assert Hydroshare().detect("https://doi.org/10.21105/joss.01277") is None
+
 
 @contextmanager
 def hydroshare_archive(prefix="b8f6eae9d89241cf8b5904033460af61/data/contents"):
@@ -79,12 +93,14 @@ def hydroshare_archive(prefix="b8f6eae9d89241cf8b5904033460af61/data/contents"):
 
         yield zfile
 
+
 class MockInfo:
     def __init__(self, content_type):
         self.content_type = content_type
 
     def get_content_type(self):
         return self.content_type
+
 
 class MockResponse:
     def __init__(self, content_type, status_code):
@@ -101,11 +117,21 @@ class MockResponse:
     def read():
         return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
 
+
 def test_fetch_bag():
     # we "fetch" a local ZIP file to simulate a Hydroshare resource
     with hydroshare_archive() as hydro_path:
-        with patch.object(Hydroshare, "urlopen", side_effect=[MockResponse("application/html", 200), MockResponse("application/zip", 200)]):
-            with patch.object(Hydroshare, "_urlretrieve", side_effect=[(hydro_path, None)]):
+        with patch.object(
+            Hydroshare,
+            "urlopen",
+            side_effect=[
+                MockResponse("application/html", 200),
+                MockResponse("application/zip", 200),
+            ],
+        ):
+            with patch.object(
+                Hydroshare, "_urlretrieve", side_effect=[(hydro_path, None)]
+            ):
                 hydro = Hydroshare()
                 hydro.resource_id = "b8f6eae9d89241cf8b5904033460af61"
                 spec = {
@@ -118,19 +144,22 @@ def test_fetch_bag():
                     },
                     "resource": "123456789",
                 }
-    
+
                 with TemporaryDirectory() as d:
                     output = []
                     for l in hydro.fetch(spec, d):
                         output.append(l)
-    
+
                     unpacked_files = set(os.listdir(d))
                     expected = set(["some-other-file.txt", "some-file.txt"])
                     assert expected == unpacked_files
 
+
 def test_fetch_bag_failure():
     with hydroshare_archive() as hydro_path:
-        with patch.object(Hydroshare, "urlopen", side_effect=[MockResponse("application/html", 500)]):
+        with patch.object(
+            Hydroshare, "urlopen", side_effect=[MockResponse("application/html", 500)]
+        ):
             hydro = Hydroshare()
             spec = {
                 "host": {
@@ -152,9 +181,12 @@ def test_fetch_bag_failure():
                 except ContentProviderException:
                     assert "Failed to download bag. status code 500.\n" == output[-1]
 
+
 def test_fetch_bag_timeout():
     with hydroshare_archive() as hydro_path:
-        with patch.object(Hydroshare, "urlopen", side_effect=[MockResponse("application/html", 200)]):
+        with patch.object(
+            Hydroshare, "urlopen", side_effect=[MockResponse("application/html", 200)]
+        ):
             hydro = Hydroshare()
             spec = {
                 "host": {
@@ -174,5 +206,7 @@ def test_fetch_bag_timeout():
                     print("ContentProviderException should have been thrown")
                     assert False
                 except ContentProviderException:
-                    assert "Bag taking too long to prepare, exiting now, try again later." == output[-1]
-
+                    assert (
+                        "Bag taking too long to prepare, exiting now, try again later."
+                        == output[-1]
+                    )
