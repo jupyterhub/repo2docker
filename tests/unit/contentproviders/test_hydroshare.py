@@ -26,7 +26,7 @@ def test_content_id():
         hydro = Hydroshare()
 
         hydro.detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61")
-        assert hydro.content_id == "b8f6eae9d89241cf8b5904033460af61.v1569449357"
+        assert hydro.content_id == "b8f6eae9d89241cf8b5904033460af61.v1569427757"
 
 
 test_hosts = [
@@ -46,7 +46,7 @@ test_hosts = [
                 "version": "https://www.hydroshare.org/hsapi/resource/{}/scimeta/elements",
             },
             "resource": "b8f6eae9d89241cf8b5904033460af61",
-            "version": "1569449357",
+            "version": "1569427757",
         },
     )
 ]

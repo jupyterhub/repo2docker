@@ -3,7 +3,7 @@ import os
 import shutil
 import time
 import json
-import datetime
+from datetime import datetime, timezone, timedelta
 
 from urllib.request import urlopen, Request, urlretrieve
 from urllib.error import HTTPError
@@ -37,7 +37,12 @@ class Hydroshare(DoiProvider):
             date = next(
                 item for item in json_response["dates"] if item["type"] == "modified"
             )["start_date"]
-            return datetime.strptime(date, "%Y-%m-%dT%H:%M:%S").timestamp()
+            # Hydroshare timestamp always returns the same timezone, so strip it
+            date = date.split(".")[0]
+            parsed_date =  datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
+            epoch = parsed_date.replace(tzinfo=timezone(timedelta(0))).timestamp()
+            # truncate the timestamp
+            return str(int(epoch))
 
         url = self.doi2url(doi)
 
