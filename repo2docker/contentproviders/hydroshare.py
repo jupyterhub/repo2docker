@@ -39,7 +39,7 @@ class Hydroshare(DoiProvider):
             )["start_date"]
             # Hydroshare timestamp always returns the same timezone, so strip it
             date = date.split(".")[0]
-            parsed_date =  datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
+            parsed_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
             epoch = parsed_date.replace(tzinfo=timezone(timedelta(0))).timestamp()
             # truncate the timestamp
             return str(int(epoch))
