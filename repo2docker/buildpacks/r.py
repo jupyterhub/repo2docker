@@ -202,7 +202,7 @@ class RBuildPack(PythonBuildPack):
         contents of runtime.txt.
         """
         # Via https://rstudio.com/products/rstudio/download-server/debian-ubuntu/
-        rstudio_url = "https://download2.rstudio.org/server/trusty/amd64/rstudio-server-1.2.5001-amd64.deb"
+        rstudio_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5001-amd64.deb"
         # This is MD5, because that is what RStudio download page provides!
         rstudio_checksum = "d77039693dd09c3ca48038aa74cd921a"
 
