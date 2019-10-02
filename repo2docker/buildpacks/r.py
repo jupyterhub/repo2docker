@@ -201,13 +201,15 @@ class RBuildPack(PythonBuildPack):
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt.
         """
-        rstudio_url = "https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb"
+        # Latest version as of October 2, 2019
+        rstudio_url = "https://download2.rstudio.org/rstudio-server-1.2.5001-amd64.deb"
         # This is MD5, because that is what RStudio download page provides!
-        rstudio_checksum = "24cd11f0405d8372b4168fc9956e0386"
+        rstudio_checksum = "d77039693dd09c3ca48038aa74cd921a"
 
         # Via https://www.rstudio.com/products/shiny/download-server/
-        shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.7.907-amd64.deb"
-        shiny_checksum = "78371a8361ba0e7fec44edd2b8e425ac"
+        # Latest version as of October 2, 2019
+        shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
+        shiny_checksum = "9aeef6613e7f58f21c97a4600921340e"
 
         # Version of MRAN to pull devtools from.
         devtools_version = "2018-02-01"
