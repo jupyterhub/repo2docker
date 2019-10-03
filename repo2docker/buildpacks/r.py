@@ -207,8 +207,8 @@ class RBuildPack(PythonBuildPack):
         rstudio_checksum = "d33881b9ab786c09556c410e7dc477de"
 
         # Via https://www.rstudio.com/products/shiny/download-server/
-        shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
-        shiny_checksum = "9aeef6613e7f58f21c97a4600921340e"
+        shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.7.907-amd64.deb"
+        shiny_checksum = "78371a8361ba0e7fec44edd2b8e425ac"
 
         # Version of MRAN to pull devtools from.
         devtools_version = "2018-02-01"
