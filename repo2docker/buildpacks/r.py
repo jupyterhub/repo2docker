@@ -40,6 +40,8 @@ class RBuildPack(PythonBuildPack):
 
     The `r-base` package from Ubuntu apt repositories is used to install
     R itself, rather than any of the methods from https://cran.r-project.org/.
+
+    The `r-base-dev` package is installed as advised in RStudio instructions.
     """
 
     @property
@@ -177,7 +179,7 @@ class RBuildPack(PythonBuildPack):
         # For R 3.4 we use the default Ubuntu package, for other versions we
         # install from a different PPA
         if V(self.r_version) < V("3.5"):
-            packages.append("r-base")
+            packages.append("r-base", "r-base-dev")
 
         return super().get_packages().union(packages)
 
@@ -245,6 +247,7 @@ class RBuildPack(PythonBuildPack):
                     r"""
                     apt-get update && \
                     apt-get install --yes r-base={} && \
+                    apt-get install --yes r-base-dev={} && \
                     apt-get -qq purge && \
                     apt-get -qq clean && \
                     rm -rf /var/lib/apt/lists/*
