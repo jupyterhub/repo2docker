@@ -179,7 +179,8 @@ class RBuildPack(PythonBuildPack):
         # For R 3.4 we use the default Ubuntu package, for other versions we
         # install from a different PPA
         if V(self.r_version) < V("3.5"):
-            packages.append("r-base", "r-base-dev")
+            packages.append("r-base")
+            packages.append("r-base-dev")
 
         return super().get_packages().union(packages)
 
@@ -205,9 +206,9 @@ class RBuildPack(PythonBuildPack):
         """
         
         # Via https://rstudio.com/products/rstudio/download-server/debian-ubuntu/
-        rstudio_url = "https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb"
+        rstudio_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5001-amd64.deb"
         # This is MD5, because that is what RStudio download page provides!
-        rstudio_checksum = "24cd11f0405d8372b4168fc9956e0386"
+        rstudio_checksum = "d33881b9ab786c09556c410e7dc477de"
 
         # Via https://www.rstudio.com/products/shiny/download-server/
         shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
