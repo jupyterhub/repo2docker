@@ -181,6 +181,7 @@ class RBuildPack(PythonBuildPack):
         if V(self.r_version) < V("3.5"):
             packages.append("r-base")
             packages.append("r-base-dev")
+            packages.append("libclang-dev")
 
         return super().get_packages().union(packages)
 
