@@ -39,6 +39,7 @@ from .buildpacks import (
     RBuildPack,
 )
 from . import contentproviders
+from .podman import PodmanClient
 from .utils import ByteSpecification, chdir
 
 
@@ -634,6 +635,14 @@ class Repo2Docker(Application):
             except DockerException as e:
                 self.log.error(
                     "\nDocker client initialization error: %s.\nCheck if docker is running on the host.\n",
+                    e,
+                )
+                self.exit(1)
+            try:
+                docker_client = PodmanClient()
+            except Exception as e:
+                self.log.error(
+                    "\nPodman error: %s.\nCheck if podman is installed.\n",
                     e,
                 )
                 self.exit(1)
