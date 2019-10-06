@@ -44,7 +44,7 @@ ENV HOME /home/${NB_USER}
 
 RUN groupadd \
         --gid ${NB_UID} \
-        ${NB_USER} &&
+        ${NB_USER} && \
     useradd \
         --comment "Default user" \
         --create-home \
