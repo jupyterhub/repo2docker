@@ -40,6 +40,8 @@ class RBuildPack(PythonBuildPack):
 
     The `r-base` package from Ubuntu apt repositories is used to install
     R itself, rather than any of the methods from https://cran.r-project.org/.
+
+    The `r-base-dev` package is installed as advised in RStudio instructions.
     """
 
     @property
@@ -178,6 +180,8 @@ class RBuildPack(PythonBuildPack):
         # install from a different PPA
         if V(self.r_version) < V("3.5"):
             packages.append("r-base")
+            packages.append("r-base-dev")
+            packages.append("libclang-dev")
 
         return super().get_packages().union(packages)
 
@@ -201,13 +205,15 @@ class RBuildPack(PythonBuildPack):
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt.
         """
-        rstudio_url = "https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb"
+
+        # Via https://rstudio.com/products/rstudio/download-server/debian-ubuntu/
+        rstudio_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5001-amd64.deb"
         # This is MD5, because that is what RStudio download page provides!
-        rstudio_checksum = "24cd11f0405d8372b4168fc9956e0386"
+        rstudio_checksum = "d33881b9ab786c09556c410e7dc477de"
 
         # Via https://www.rstudio.com/products/shiny/download-server/
-        shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.7.907-amd64.deb"
-        shiny_checksum = "78371a8361ba0e7fec44edd2b8e425ac"
+        shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
+        shiny_checksum = "9aeef6613e7f58f21c97a4600921340e"
 
         # Version of MRAN to pull devtools from.
         devtools_version = "2018-02-01"
@@ -242,12 +248,14 @@ class RBuildPack(PythonBuildPack):
                     "root",
                     r"""
                     apt-get update && \
-                    apt-get install --yes r-base={} && \
+                    apt-get install --yes r-base={R_version} \
+                         r-base-dev={R_version} \
+                         libclang-dev && \
                     apt-get -qq purge && \
                     apt-get -qq clean && \
                     rm -rf /var/lib/apt/lists/*
                     """.format(
-                        self.r_version
+                        R_version=self.r_version
                     ),
                 ),
             ]
