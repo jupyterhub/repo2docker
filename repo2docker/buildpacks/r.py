@@ -205,7 +205,7 @@ class RBuildPack(PythonBuildPack):
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt.
         """
-        
+
         # Via https://rstudio.com/products/rstudio/download-server/debian-ubuntu/
         rstudio_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5001-amd64.deb"
         # This is MD5, because that is what RStudio download page provides!
