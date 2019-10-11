@@ -31,6 +31,12 @@ def pytest_collect_file(parent, path):
         return RemoteRepoList(path, parent)
 
 
+def engine_args():
+    if os.getenv('ENGINE') == 'podman':
+        return ['--podman']
+    return []
+
+
 def make_test_func(args):
     """Generate a test function that runs repo2docker"""
 
@@ -202,6 +208,7 @@ class LocalRepo(pytest.File):
             args += extra_args
 
         args.append(self.fspath.dirname)
+        args.extend(engine_args())
 
         yield Repo2DockerTest("build", self, args=args)
         yield Repo2DockerTest(self.fspath.basename, self, args=args + ["./verify"])
