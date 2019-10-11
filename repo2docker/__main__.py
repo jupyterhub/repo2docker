@@ -192,6 +192,13 @@ def get_argparser():
         "--cache-from", action="append", default=[], help=Repo2Docker.cache_from.help
     )
 
+    argparser.add_argument(
+        "--podman",
+        dest="podman",
+        action="store_true",
+        help="Use Podman instead of Docker client.",
+    )
+
     return argparser
 
 
@@ -337,6 +344,9 @@ def make_r2d(argv=None):
 
     if args.target_repo_dir:
         r2d.target_repo_dir = args.target_repo_dir
+
+    if args.podman:
+        r2d.podman = True
 
     return r2d
 

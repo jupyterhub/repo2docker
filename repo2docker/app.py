@@ -368,6 +368,14 @@ class Repo2Docker(Application):
         config=True,
     )
 
+    podman = Bool(
+        False,
+        help="""
+        User Podman instead of Docker client
+        """,
+        config=True,
+    )
+
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
 
@@ -457,6 +465,8 @@ class Repo2Docker(Application):
 
     def push_image(self):
         """Push docker image to registry"""
+        if self.podman:
+            raise NotImplementedError('podman push not implemented')
         client = docker.APIClient(version="auto", **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
@@ -511,6 +521,8 @@ class Repo2Docker(Application):
 
         Returns running container
         """
+        if self.podman:
+            raise NotImplementedError('podman start not implemented')
         client = docker.from_env(version="auto")
 
         docker_host = os.environ.get("DOCKER_HOST")
@@ -616,36 +628,46 @@ class Repo2Docker(Application):
         if self.dry_run:
             return False
         # check if we already have an image for this content
-        client = docker.APIClient(version="auto", **kwargs_from_env())
-        for image in client.images():
-            if image["RepoTags"] is not None:
-                for tag in image["RepoTags"]:
-                    if tag == self.output_image_spec + ":latest":
-                        return True
+        if self.podman:
+            client = PodmanClient()
+            for image in client.images():
+                if 'names' in image and image['names']:
+                    for tag in image['names']:
+                        if tag == 'localhost/' + self.output_image_spec + ':latest':
+                            return True
+        else:
+            client = docker.APIClient(version="auto", **kwargs_from_env())
+            for image in client.images():
+                if image["RepoTags"] is not None:
+                    for tag in image["RepoTags"]:
+                        if tag == self.output_image_spec + ":latest":
+                            return True
         return False
 
     def build(self):
         """
         Build docker image
         """
-        # Check if r2d can connect to docker daemon
+        # Check if r2d can connect to container client
         if not self.dry_run:
-            try:
-                docker_client = docker.APIClient(version="auto", **kwargs_from_env())
-            except DockerException as e:
-                self.log.error(
-                    "\nDocker client initialization error: %s.\nCheck if docker is running on the host.\n",
-                    e,
-                )
-                self.exit(1)
-            try:
-                docker_client = PodmanClient()
-            except Exception as e:
-                self.log.error(
-                    "\nPodman error: %s.\nCheck if podman is installed.\n",
-                    e,
-                )
-                self.exit(1)
+            if self.podman:
+                try:
+                    docker_client = PodmanClient()
+                except Exception as e:
+                    self.log.error(
+                        "\nPodman error: %s.\nCheck if podman is installed.\n",
+                        e,
+                    )
+                    self.exit(1)
+            else:
+                try:
+                    docker_client = docker.APIClient(version="auto", **kwargs_from_env())
+                except DockerException as e:
+                    self.log.error(
+                        "\nDocker client initialization error: %s.\nCheck if docker is running on the host.\n",
+                        e,
+                    )
+                    self.exit(1)
 
         # If the source to be executed is a directory, continue using the
         # directory. In the case of a local directory, it is used as both the

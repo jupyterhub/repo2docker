@@ -1,4 +1,5 @@
 # Use Podman isntead of Docker
+import json
 from tempfile import TemporaryDirectory
 import tarfile
 from .utils import execute_cmd
@@ -6,7 +7,7 @@ from .utils import execute_cmd
 class PodmanClient:
 
     def __init__(self):
-        list(execute_cmd(['podman', 'info']))
+        execute_cmd(['podman', 'info'])
 
     def build(self, **kwargs):
         """
@@ -85,3 +86,11 @@ class PodmanClient:
             print(cmdline)
             for line in execute_cmd(cmdline):
                 yield line
+
+    def images(self):
+        print('podman image list')
+        lines = list(execute_cmd(
+            ['podman', 'image', 'list', '--format', 'json'], capture=True))
+        # print('lines', lines)
+        # print('json', json.loads(''.join(lines)))
+        return json.loads(''.join(lines))
