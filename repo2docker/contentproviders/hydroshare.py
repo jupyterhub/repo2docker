@@ -64,9 +64,9 @@ class Hydroshare(DoiProvider):
         resource_id = spec["resource"]
         host = spec["host"]
 
-        yield "Fetching HydroShare Resource {}.\n".format(resource_id)
-
         bag_url = "{}{}".format(host["django_irods"], resource_id)
+
+        yield "Downloading {}.\n".format(bag_url)
 
         # bag downloads are prepared on demand and may need some time
         conn = self.urlopen(bag_url)
