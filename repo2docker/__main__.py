@@ -193,10 +193,11 @@ def get_argparser():
     )
 
     argparser.add_argument(
-        "--podman",
-        dest="podman",
-        action="store_true",
-        help="Use Podman instead of Docker client.",
+        "--engine",
+        default="docker",
+        type=str,
+        choices=("docker", "podman"),
+        help="Container engine.",
     )
 
     return argparser
@@ -345,8 +346,7 @@ def make_r2d(argv=None):
     if args.target_repo_dir:
         r2d.target_repo_dir = args.target_repo_dir
 
-    if args.podman:
-        r2d.podman = True
+    r2d.engine = args.engine
 
     return r2d
 

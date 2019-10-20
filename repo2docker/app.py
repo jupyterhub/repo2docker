@@ -368,10 +368,10 @@ class Repo2Docker(Application):
         config=True,
     )
 
-    podman = Bool(
-        False,
+    engine = Unicode(
+        "docker",
         help="""
-        User Podman instead of Docker client
+        Container engine.
         """,
         config=True,
     )
@@ -465,8 +465,8 @@ class Repo2Docker(Application):
 
     def push_image(self):
         """Push docker image to registry"""
-        if self.podman:
-            raise NotImplementedError('podman push not implemented')
+        if self.engine == "podman":
+            raise NotImplementedError("podman push not implemented")
         client = docker.APIClient(version="auto", **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
@@ -521,9 +521,10 @@ class Repo2Docker(Application):
 
         Returns running container
         """
-        if self.podman:
-            raise NotImplementedError('podman start not implemented')
-        client = docker.from_env(version="auto")
+        if self.engine == "podman":
+            client = PodmanClient()
+        else:
+            client = docker.from_env(version="auto")
 
         docker_host = os.environ.get("DOCKER_HOST")
         if docker_host:
@@ -560,6 +561,8 @@ class Repo2Docker(Application):
 
         container_volumes = {}
         if self.volumes:
+            if self.engine == "podman":
+                raise NotImplementedError("podman run volumes not implemented")
             api_client = docker.APIClient(
                 version="auto", **docker.utils.kwargs_from_env()
             )
@@ -628,13 +631,12 @@ class Repo2Docker(Application):
         if self.dry_run:
             return False
         # check if we already have an image for this content
-        if self.podman:
+        if self.engine == "podman":
             client = PodmanClient()
+            image_tag = "localhost/" + self.output_image_spec + ":latest"
             for image in client.images():
-                if 'names' in image and image['names']:
-                    for tag in image['names']:
-                        if tag == 'localhost/' + self.output_image_spec + ':latest':
-                            return True
+                if image.get("names") and image_tag in image.get("names"):
+                    return True
         else:
             client = docker.APIClient(version="auto", **kwargs_from_env())
             for image in client.images():
@@ -650,18 +652,19 @@ class Repo2Docker(Application):
         """
         # Check if r2d can connect to container client
         if not self.dry_run:
-            if self.podman:
+            if self.engine == "podman":
                 try:
                     docker_client = PodmanClient()
                 except Exception as e:
                     self.log.error(
-                        "\nPodman error: %s.\nCheck if podman is installed.\n",
-                        e,
+                        "\nPodman error: %s.\nCheck if podman is installed.\n", e
                     )
                     self.exit(1)
             else:
                 try:
-                    docker_client = docker.APIClient(version="auto", **kwargs_from_env())
+                    docker_client = docker.APIClient(
+                        version="auto", **kwargs_from_env()
+                    )
                 except DockerException as e:
                     self.log.error(
                         "\nDocker client initialization error: %s.\nCheck if docker is running on the host.\n",

@@ -32,8 +32,9 @@ def pytest_collect_file(parent, path):
 
 
 def engine_args():
-    if os.getenv('ENGINE') == 'podman':
-        return ['--podman']
+    engine = os.getenv("ENGINE")
+    if engine:
+        return ["--engine", engine]
     return []
 
 
@@ -199,6 +200,7 @@ class Repo2DockerTest(pytest.Function):
 class LocalRepo(pytest.File):
     def collect(self):
         args = ["--appendix", 'RUN echo "appendix" > /tmp/appendix']
+        args.extend(engine_args())
         # If there's an extra-args.yaml file in a test dir, assume it contains
         # a yaml list with extra arguments to be passed to repo2docker
         extra_args_path = os.path.join(self.fspath.dirname, "extra-args.yaml")
@@ -208,7 +210,6 @@ class LocalRepo(pytest.File):
             args += extra_args
 
         args.append(self.fspath.dirname)
-        args.extend(engine_args())
 
         yield Repo2DockerTest("build", self, args=args)
         yield Repo2DockerTest(self.fspath.basename, self, args=args + ["./verify"])
