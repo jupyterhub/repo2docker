@@ -7,8 +7,12 @@ services:
 python:
 - 3.6
 before_install:
+# Install podman
 - sudo sh -c "add-apt-repository -y ppa:projectatomic/ppa && apt-get update -y && apt-get install -y podman slirp4netns"
 - sudo sh -c "echo \"[registries.search]\nregistries = ['docker.io']\n\" > /etc/containers/registries.conf"
+# On ubuntu:xenial running podman as non-root defaults to using VFS instead of overlay as the kernel is too old to support fuse-overlayfs
+# VFS is extremely inefficient so for now run podman as root
+- /bin/echo -e '#!/bin/sh\nexec sudo podman "$@"' > ~/bin/podman && chmod +x ~/bin/podman
 - podman info
 install:
 # Make a wheel and install it to test to catch possible
