@@ -145,6 +145,10 @@ def repo_with_submodule():
         submod_sha1_b = _get_sha1(git_b_dir)
         _add_content_to_git(git_b_dir)
 
+        # create a new branch in the parent without any submodule
+        subprocess.check_call(
+            ["git", "checkout", "-b", "branch-without-submod"], cwd=git_a_dir
+        )
         # create a new branch in the parent to add the submodule
         subprocess.check_call(
             ["git", "checkout", "-b", "branch-with-submod"], cwd=git_a_dir
