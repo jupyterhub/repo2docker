@@ -23,15 +23,18 @@ class Git(ContentProvider):
         try:
             cmd = ["git", "clone"]
             if ref is None:
+                # check out of HEAD is performed after the clone is complete
                 cmd.extend(["--depth", "1"])
             else:
-                cmd.extend(["--branch", ref])
+                # don't check out HEAD, the given ref will be checked out later
+                # this prevents HEAD's submodules to be cloned if ref doesn't have them
+                cmd.extend(["--no-checkout"])
             cmd.extend([repo, output_dir])
             for line in execute_cmd(cmd, capture=yield_output):
                 yield line
 
         except subprocess.CalledProcessError as e:
-            msg = "Failed to clone repository from {repo}".format(repo=repo)
+            msg = "Failed to clone repository from {repo}.".format(repo=repo)
             if ref is not None:
                 msg += " (ref {ref})".format(ref=ref)
             msg += "."
@@ -39,6 +42,15 @@ class Git(ContentProvider):
 
         # check out the specific ref given by the user
         if ref is not None:
+            # check out ref as it has not been done yet
+            try:
+                for line in execute_cmd(
+                    ["git", "checkout", ref], cwd=output_dir, capture=yield_output
+                ):
+                    yield line
+            except subprocess.CalledProcessError as e:
+                msg = "Failed to check out ref {ref}.".format(ref=ref)
+                raise ContentProviderException(msg) from e
             hash = check_ref(ref, output_dir)
             if hash is None:
                 self.log.error(
