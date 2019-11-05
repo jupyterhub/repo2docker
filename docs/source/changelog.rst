@@ -10,6 +10,7 @@ Release date: TBD
 
 New features
 ------------
+- Fix for submodule check out in :pr:`809` by :user:`davidbrochart`.
 - Add support for Figshare in :pr:`788` by :user:`nuest`.
 - Add support for Dataverse in :pr:`739` by :user:`Xarthisius`.
 
