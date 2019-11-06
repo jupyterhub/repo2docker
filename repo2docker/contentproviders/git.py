@@ -42,21 +42,17 @@ class Git(ContentProvider):
 
         # check out the specific ref given by the user
         if ref is not None:
-            # check out ref as it has not been done yet
-            try:
-                for line in execute_cmd(
-                    ["git", "checkout", ref], cwd=output_dir, capture=yield_output
-                ):
-                    yield line
-            except subprocess.CalledProcessError as e:
-                msg = "Failed to check out ref {ref}.".format(ref=ref)
-                raise ContentProviderException(msg) from e
             hash = check_ref(ref, output_dir)
             if hash is None:
                 self.log.error(
                     "Failed to check out ref %s", ref, extra=dict(phase="failed")
                 )
                 raise ValueError("Failed to check out ref {}".format(ref))
+            # check out ref as it has not been done yet
+            for line in execute_cmd(
+                ["git", "checkout", ref], cwd=output_dir, capture=yield_output
+            ):
+                yield line
             # If the hash is resolved above, we should be able to reset to it
             for line in execute_cmd(
                 ["git", "reset", "--hard", hash], cwd=output_dir, capture=yield_output
