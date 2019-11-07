@@ -34,7 +34,7 @@ class Git(ContentProvider):
                 yield line
 
         except subprocess.CalledProcessError as e:
-            msg = "Failed to clone repository from {repo}.".format(repo=repo)
+            msg = "Failed to clone repository from {repo}".format(repo=repo)
             if ref is not None:
                 msg += " (ref {ref})".format(ref=ref)
             msg += "."
