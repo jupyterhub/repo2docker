@@ -19,7 +19,7 @@ API changes
 
 Bug fixes
 ---------
-
+- Fix for submodule check out in :pr:`809` by :user:`davidbrochart`.
 
 
 Version 0.10.0
