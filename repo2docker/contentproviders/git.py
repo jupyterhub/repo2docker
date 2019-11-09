@@ -48,12 +48,9 @@ class Git(ContentProvider):
                     "Failed to check out ref %s", ref, extra=dict(phase="failed")
                 )
                 raise ValueError("Failed to check out ref {}".format(ref))
-            # check out ref as it has not been done yet
-            for line in execute_cmd(
-                ["git", "checkout", hash], cwd=output_dir, capture=yield_output
-            ):
-                yield line
-            # If the hash is resolved above, we should be able to reset to it
+            # We don't need to explicitly checkout things as the reset will
+            # take of that. If the hash is resolved above, we should be
+            # able to reset to it
             for line in execute_cmd(
                 ["git", "reset", "--hard", hash], cwd=output_dir, capture=yield_output
             ):
