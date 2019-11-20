@@ -1,5 +1,6 @@
 # Use Podman instead of Docker
 import json
+import re
 from subprocess import CalledProcessError
 from tempfile import TemporaryDirectory
 import tarfile
@@ -144,6 +145,7 @@ class PodmanClient:
 
     def __init__(self):
         exec_podman(["info"])
+        self.default_transport = "docker://docker.io/"
 
     def build(self, **kwargs):
         """
@@ -236,3 +238,38 @@ class PodmanClient:
         if lines.strip():
             return json.loads(lines)
         return []
+
+    def push(self, output_image_spec, stream=True):
+        if re.match("\w+://", output_image_spec):
+            destination = output_image_spec
+        else:
+            destination = self.default_transport + output_image_spec
+        args = ["push", output_image_spec, destination]
+
+        def parse(line):
+            # Copying blob sha256:c3251e9470f15a56da9566af818bb8a573620416da2e8d5eb22d6cb253b4851f
+            # line = line.encode("utf-8")
+            m = re.match("(?P<error>Error.+)", line, re.IGNORECASE)
+            if m:
+                m = m.groupdict()
+            else:
+                m = re.match("(?P<before>.+) (?P<id>sha256:\w+)( (?P<after>.+))?", line)
+                if m:
+                    m = m.groupdict()
+                    m["status"] = m["before"]
+                    if m["after"]:
+                        m["status"] += ", " + m["after"]
+            if m:
+                return json.dumps(m).encode("utf-8")
+            print("No logmatch:", line)
+            return line.encode("utf-8")
+
+        if stream:
+
+            def iter_out():
+                for line in exec_podman(args, capture=True):
+                    # yield {"stream": line}
+                    yield parse(line)
+
+            return iter_out()
+        return "".join(exec_podman(args, capture=True))

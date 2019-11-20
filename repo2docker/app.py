@@ -466,8 +466,9 @@ class Repo2Docker(Application):
     def push_image(self):
         """Push docker image to registry"""
         if self.engine == "podman":
-            raise NotImplementedError("podman push not implemented")
-        client = docker.APIClient(version="auto", **kwargs_from_env())
+            client = PodmanClient()
+        else:
+            client = docker.APIClient(version="auto", **kwargs_from_env())
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
         progress_layers = {}
