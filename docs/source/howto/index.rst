@@ -3,6 +3,7 @@ How-to Guides
 =============
 
 Short, actionable guides that cover specific topics with repo2docker.
+Select from the pages listed below to get started.
 
 .. toctree::
    :maxdepth: 2
