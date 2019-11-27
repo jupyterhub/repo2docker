@@ -2,6 +2,8 @@
 How-to Guides
 =============
 
+How-to guides cover short topics in getting something specific done.
+
 .. toctree::
    :maxdepth: 2
    :caption: How-To guides
