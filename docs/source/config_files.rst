@@ -17,12 +17,8 @@ GitHub contains a list of sample repositories for common configurations
 that ``repo2docker`` can build with various configuration files such as
 Python and R installation in a repository.
 
-Below is a list of supported configuration files (roughly in the order of build priority):
-
-.. contents::
-   :local:
-   :depth: 1
-
+A list of supported configuration files (roughly in the order of build priority)
+can be found on this page (and to the right).
 
 .. _environment.yml:
 
