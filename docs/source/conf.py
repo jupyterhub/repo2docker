@@ -109,7 +109,7 @@ pygments_style = "sphinx"
 todo_include_todos = False
 
 # repo2docker Logo
-html_logo = "_static/images/repo2docker.svg"
+html_logo = "_static/images/logo.png"
 html_favicon = "_static/images/favicon.ico"
 
 # -- Options for HTML output ----------------------------------------------
@@ -117,10 +117,7 @@ html_favicon = "_static/images/favicon.ico"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-import alabaster_jupyterhub
-
-html_theme = "alabaster_jupyterhub"
-html_theme_path = [alabaster_jupyterhub.get_html_theme_path()]
+html_theme = "pandas_sphinx_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -132,9 +129,7 @@ html_theme_path = [alabaster_jupyterhub.get_html_theme_path()]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
-html_sidebars = {
-    "**": ["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html"]
-}
+html_sidebars = {}
 
 # -- Options for HTMLHelp output ------------------------------------------
 
