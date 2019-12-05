@@ -15,3 +15,4 @@ repo2docker package.
    ../design
    tasks
    buildpack
+   contentprovider

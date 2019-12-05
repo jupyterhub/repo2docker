@@ -1,4 +1,4 @@
-# Contributing to repo2docker development
+# Contributing to repo2docker
 
 Thank you for thinking about contributing to repo2docker!
 This is an open source project that is developed and maintained entirely by volunteers.
