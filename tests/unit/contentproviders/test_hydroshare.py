@@ -3,10 +3,8 @@ import os
 import pytest
 
 from contextlib import contextmanager
-from io import BytesIO
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 from unittest.mock import patch
-from urllib.request import urlopen, Request, urlretrieve
 from zipfile import ZipFile
 
 from repo2docker.contentproviders import Hydroshare
@@ -51,9 +49,8 @@ test_hosts = [
     )
 ]
 
-
-@pytest.mark.parametrize("test_input,expected", test_hosts)
-def test_detect_hydroshare(test_input, expected):
+@pytest.mark.parametrize("test_input", test_hosts)
+def test_detect_hydroshare(test_input):
     with patch.object(Hydroshare, "urlopen") as fake_urlopen:
         fake_urlopen.return_value.url = test_input[0]
 
@@ -62,10 +59,15 @@ def test_detect_hydroshare(test_input, expected):
 
         fake_urlopen.return_value.read = read
         # valid Hydroshare DOIs trigger this content provider
+        expected = "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
         assert Hydroshare().detect(test_input[0]) == expected
+        # assert a call to urlopen was called to fetch version
+        assert fake_urlopen.call_count == 1
         assert Hydroshare().detect(test_input[1]) == expected
+        # assert 2 more calls were made, one to resolve the DOI and another to fetch the version
+        assert fake_urlopen.call_count == 3
         assert Hydroshare().detect(test_input[2]) == expected
-        # only two of the three calls above have to resolve a DOI
+        # assert 2 more calls were made, one to resolve the DOI and another to fetch the version
         assert fake_urlopen.call_count == 5
 
     with patch.object(Hydroshare, "urlopen") as fake_urlopen:
@@ -114,7 +116,7 @@ class MockResponse:
     def info(self):
         return self.mock_info
 
-    def read():
+    def read(self):
         return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
 
 
@@ -172,14 +174,8 @@ def test_fetch_bag_failure():
                 "resource": "123456789",
             }
             with TemporaryDirectory() as d:
-                output = []
-                try:
-                    for l in hydro.fetch(spec, d):
-                        output.append(l)
-                    print("ContentProviderException should have been thrown")
-                    assert False
-                except ContentProviderException:
-                    assert "Failed to download bag. status code 500.\n" == output[-1]
+                with pytest.raises(ContentProviderException, match="Failed to download bag. status code 500.\n"):
+                    hydro.fetch(spec, d)
 
 
 def test_fetch_bag_timeout():
@@ -199,14 +195,6 @@ def test_fetch_bag_timeout():
                 "resource": "123456789",
             }
             with TemporaryDirectory() as d:
-                output = []
-                try:
-                    for l in hydro.fetch(spec, d, timeout=0):
-                        output.append(l)
-                    print("ContentProviderException should have been thrown")
-                    assert False
-                except ContentProviderException:
-                    assert (
-                        "Bag taking too long to prepare, exiting now, try again later."
-                        == output[-1]
-                    )
+                with pytest.raises(ContentProviderException,
+                                   match="Bag taking too long to prepare, exiting now, try again later."):
+                    hydro.fetch(spec, d, timeout=0)

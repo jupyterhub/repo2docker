@@ -5,16 +5,29 @@ import time
 import json
 from datetime import datetime, timezone, timedelta
 
-from urllib.request import urlopen, Request, urlretrieve
-from urllib.error import HTTPError
+from urllib.request import urlretrieve
 
 from .doi import DoiProvider
 from .base import ContentProviderException
-from ..utils import normalize_doi, is_doi
 
 
 class Hydroshare(DoiProvider):
     """Provide contents of a Hydroshare resource."""
+
+    def _fetch_version(self, host):
+        """Fetch resource modified date and convert to epoch"""
+        json_response = json.loads(
+            self.urlopen(host["version"].format(self.resource_id)).read()
+        )
+        date = next(
+            item for item in json_response["dates"] if item["type"] == "modified"
+        )["start_date"]
+        # Hydroshare timestamp always returns the same timezone, so strip it
+        date = date.split(".")[0]
+        parsed_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
+        epoch = parsed_date.replace(tzinfo=timezone(timedelta(0))).timestamp()
+        # truncate the timestamp
+        return str(int(epoch))
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Hydroshare resource"""
@@ -28,28 +41,12 @@ class Hydroshare(DoiProvider):
                 "version": "https://www.hydroshare.org/hsapi/resource/{}/scimeta/elements",
             }
         ]
-
-        def fetch_version(resource_id, host):
-            """Fetch resource modified date and convert to epoch"""
-            json_response = json.loads(
-                self.urlopen(host["version"].format(self.resource_id)).read()
-            )
-            date = next(
-                item for item in json_response["dates"] if item["type"] == "modified"
-            )["start_date"]
-            # Hydroshare timestamp always returns the same timezone, so strip it
-            date = date.split(".")[0]
-            parsed_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
-            epoch = parsed_date.replace(tzinfo=timezone(timedelta(0))).timestamp()
-            # truncate the timestamp
-            return str(int(epoch))
-
         url = self.doi2url(doi)
 
         for host in hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
                 self.resource_id = url.strip("/").rsplit("/", maxsplit=1)[1]
-                self.version = fetch_version(self.resource_id, host)
+                self.version = self._fetch_version(host)
                 return {
                     "resource": self.resource_id,
                     "host": host,
