@@ -1,4 +1,3 @@
-import json
 import os
 import pytest
 
@@ -27,14 +26,18 @@ def test_content_id():
         assert hydro.content_id == "b8f6eae9d89241cf8b5904033460af61.v1569427757"
 
 
-test_hosts = [
-    (
-        [
-            "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61",
-            "10.4211/hs.b8f6eae9d89241cf8b5904033460af61",
-            "https://doi.org/10.4211/hs.b8f6eae9d89241cf8b5904033460af61",
-        ],
-        {
+def test_detect_hydroshare():
+    with patch.object(Hydroshare, "urlopen") as fake_urlopen:
+        fake_urlopen.return_value.url = (
+            "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
+        )
+
+        def read():
+            return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
+
+        fake_urlopen.return_value.read = read
+        # valid Hydroshare DOIs trigger this content provider
+        expected = {
             "host": {
                 "hostname": [
                     "https://www.hydroshare.org/resource/",
@@ -45,27 +48,27 @@ test_hosts = [
             },
             "resource": "b8f6eae9d89241cf8b5904033460af61",
             "version": "1569427757",
-        },
-    )
-]
-
-def test_detect_hydroshare():
-    with patch.object(Hydroshare, "urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
-
-        def read():
-            return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
-
-        fake_urlopen.return_value.read = read
-        # valid Hydroshare DOIs trigger this content provider
-        expected = "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
-        assert Hydroshare().detect("https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61") == expected
+        }
+        assert (
+            Hydroshare().detect(
+                "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
+            )
+            == expected
+        )
         # assert a call to urlopen was called to fetch version
         assert fake_urlopen.call_count == 1
-        assert Hydroshare().detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61") == expected
+        assert (
+            Hydroshare().detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61")
+            == expected
+        )
         # assert 2 more calls were made, one to resolve the DOI and another to fetch the version
         assert fake_urlopen.call_count == 3
-        assert Hydroshare().detect("https://doi.org/10.4211/hs.b8f6eae9d89241cf8b5904033460af61") == expected
+        assert (
+            Hydroshare().detect(
+                "https://doi.org/10.4211/hs.b8f6eae9d89241cf8b5904033460af61"
+            )
+            == expected
+        )
         # assert 2 more calls were made, one to resolve the DOI and another to fetch the version
         assert fake_urlopen.call_count == 5
 
@@ -115,9 +118,6 @@ class MockResponse:
     def info(self):
         return self.mock_info
 
-    def read(self):
-        return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
-
 
 def test_fetch_bag():
     # we "fetch" a local ZIP file to simulate a Hydroshare resource
@@ -157,7 +157,7 @@ def test_fetch_bag():
 
 
 def test_fetch_bag_failure():
-    with hydroshare_archive() as hydro_path:
+    with hydroshare_archive():
         with patch.object(
             Hydroshare, "urlopen", side_effect=[MockResponse("application/html", 500)]
         ):
@@ -173,12 +173,17 @@ def test_fetch_bag_failure():
                 "resource": "123456789",
             }
             with TemporaryDirectory() as d:
-                with pytest.raises(ContentProviderException, match=r"Failed to download bag. status code 500.\n"):
-                    hydro.fetch(spec, d)
+                with pytest.raises(
+                    ContentProviderException,
+                    match=r"Failed to download bag\. status code 500\.",
+                ):
+                    # loop for yield statements
+                    for l in hydro.fetch(spec, d):
+                        pass
 
 
 def test_fetch_bag_timeout():
-    with hydroshare_archive() as hydro_path:
+    with hydroshare_archive():
         with patch.object(
             Hydroshare, "urlopen", side_effect=[MockResponse("application/html", 200)]
         ):
@@ -194,6 +199,10 @@ def test_fetch_bag_timeout():
                 "resource": "123456789",
             }
             with TemporaryDirectory() as d:
-                with pytest.raises(ContentProviderException,
-                                   match=r"Bag taking too long to prepare, exiting now, try again later."):
-                    hydro.fetch(spec, d, timeout=0)
+                with pytest.raises(
+                    ContentProviderException,
+                    match=r"Bag taking too long to prepare, exiting now, try again later\.",
+                ):
+                    # loop for yield statements
+                    for l in hydro.fetch(spec, d, timeout=0):
+                        pass
