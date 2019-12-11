@@ -17,7 +17,7 @@ from subprocess import check_call
 import sys
 
 # need conda ≥ 4.4 to avoid bug adding spurious pip dependencies
-CONDA_VERSION = "4.4.11"
+CONDA_VERSION = "4.7.10"
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
@@ -45,13 +45,13 @@ def freeze(env_name, env_file, frozen_file):
             "--rm",
             "-v" f"{HERE}:/r2d",
             "-it",
-            f"andrewosh/binder-base",
+            f"andrewosh/binder-base@sha256:eabde24f4c55174832ed8795faa40cea62fc9e2a4a9f1ee1444f8a2e4f9710ee",
             "sh",
             "-c",
             "; ".join(
                 [
-                    "conda update -yq conda",
-                    f"conda install -yq conda={CONDA_VERSION}",
+                    "conda update -yq conda>=4.3",
+                    f"conda install -y conda={CONDA_VERSION}",
                     "conda config --system --set auto_update_conda false",
                     f"conda env update -f /r2d/{env_file} -n {env_name}",
                     # exclude conda packages because we don't want to pin them
