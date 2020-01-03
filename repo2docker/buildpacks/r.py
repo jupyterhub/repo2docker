@@ -250,6 +250,7 @@ class RBuildPack(PythonBuildPack):
                     apt-get update && \
                     apt-get install --yes r-base={R_version} \
                          r-base-dev={R_version} \
+                         r-recommended={R_version} \
                          libclang-dev && \
                     apt-get -qq purge && \
                     apt-get -qq clean && \
