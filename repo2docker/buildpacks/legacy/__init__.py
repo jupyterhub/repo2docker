@@ -25,7 +25,7 @@ class LegacyBinderDockerBuildPack:
                     if line.startswith("FROM"):
                         if "andrewosh/binder-base" in line.split("#")[0].lower():
                             log.error(
-                                "The legacy buildpack was deprecated in January 2020."
+                                "The legacy buildpack was removed in January 2020."
                             )
                             log.error(
                                 "Please see https://repo2docker.readthedocs.io/en/"
