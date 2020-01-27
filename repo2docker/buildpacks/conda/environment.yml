@@ -2,7 +2,7 @@ dependencies:
   - python=3.7
   - ipywidgets==7.4.2
   - jupyterlab==0.35.4
-  - jupyterhub=1.0
+  - jupyterhub=1.1.0
   - nbconvert==5.4.1
   - notebook==5.7.8
   - nteract_on_jupyter==2.1.3
