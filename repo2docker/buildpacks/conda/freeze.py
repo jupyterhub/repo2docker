@@ -76,7 +76,7 @@ def freeze(env_file, frozen_file):
             "; ".join(
                 [
                     "set -ex",
-                    f"conda install -yq conda={CONDA_VERSION}",
+                    f"conda install -yq -S conda={CONDA_VERSION}",
                     "conda config --add channels conda-forge",
                     "conda config --system --set auto_update_conda false",
                     f"conda env create -v -f /r2d/{env_file.relative_to(HERE)} -n r2d",
