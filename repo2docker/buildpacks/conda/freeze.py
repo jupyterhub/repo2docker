@@ -119,7 +119,7 @@ def set_python(py_env_file, py):
 
 if __name__ == "__main__":
     # allow specifying which Pythons to update on argv
-    pys = sys.argv[1:] or ("2.7", "3.5", "3.6", "3.7")
+    pys = sys.argv[1:] or ("2.7", "3.6", "3.7", "3.8")
     for py in pys:
         env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
         set_python(env_file, py)
