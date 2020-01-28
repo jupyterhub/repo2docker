@@ -6,7 +6,7 @@ It runs the freeze in a continuumio/miniconda3 image to ensure portability
 
 Usage:
 
-python freeze.py [3.5]
+python freeze.py [3.8]
 """
 
 from datetime import datetime
@@ -120,11 +120,11 @@ def set_python(py_env_file, py):
 if __name__ == "__main__":
     # allow specifying which Pythons to update on argv
     pys = sys.argv[1:] or ("2.7", "3.6", "3.7", "3.8")
+    default_py = "3.7"
     for py in pys:
         env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
         set_python(env_file, py)
         frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + ".frozen.yml")
         freeze(env_file, frozen_file)
-
-    # use last version as default
-    shutil.copy(frozen_file, FROZEN_FILE)
+        if py == default_py:
+            shutil.copy(frozen_file, FROZEN_FILE)
