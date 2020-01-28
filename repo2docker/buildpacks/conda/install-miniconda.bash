@@ -3,11 +3,11 @@
 set -ex
 
 cd $(dirname $0)
-MINICONDA_VERSION=4.7.10
+MINICONDA_VERSION=4.7.12.1
 CONDA_VERSION=4.7.12
 # Only MD5 checksums are available for miniconda
 # Can be obtained from https://repo.continuum.io/miniconda/
-MD5SUM="1c945f2b3335c7b2b15130b1b2dc5cf4"
+MD5SUM="81c773ff87af5cfac79ab862942ab6b3"
 
 URL="https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniconda-installer.sh
