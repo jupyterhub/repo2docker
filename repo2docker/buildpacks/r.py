@@ -5,6 +5,7 @@ import datetime
 from distutils.version import LooseVersion as V
 
 from .python import PythonBuildPack
+from ._r_base import rstudio_base_scripts, DEVTOOLS_VERSION, IRKERNEL_VERSION
 
 
 class RBuildPack(PythonBuildPack):
@@ -206,21 +207,6 @@ class RBuildPack(PythonBuildPack):
         contents of runtime.txt.
         """
 
-        # Via https://rstudio.com/products/rstudio/download-server/debian-ubuntu/
-        rstudio_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5001-amd64.deb"
-        # This is MD5, because that is what RStudio download page provides!
-        rstudio_checksum = "d33881b9ab786c09556c410e7dc477de"
-
-        # Via https://www.rstudio.com/products/shiny/download-server/
-        shiny_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
-        shiny_checksum = "9aeef6613e7f58f21c97a4600921340e"
-
-        # Version of MRAN to pull devtools from.
-        devtools_version = "2018-02-01"
-
-        # IRKernel version - specified as a tag in the IRKernel repository
-        irkernel_version = "1.0.2"
-
         mran_url = "https://mran.microsoft.com/snapshot/{}".format(
             self.checkpoint_date.isoformat()
         )
@@ -261,38 +247,17 @@ class RBuildPack(PythonBuildPack):
                 ),
             ]
 
-        scripts += [
+        scripts.append(
             (
                 "root",
                 r"""
                 mkdir -p ${R_LIBS_USER} && \
                 chown -R ${NB_USER}:${NB_USER} ${R_LIBS_USER}
                 """,
-            ),
-            (
-                "root",
-                # Install RStudio!
-                r"""
-                curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
-                echo '{rstudio_checksum} /tmp/rstudio.deb' | md5sum -c - && \
-                dpkg -i /tmp/rstudio.deb && \
-                rm /tmp/rstudio.deb
-                """.format(
-                    rstudio_url=rstudio_url, rstudio_checksum=rstudio_checksum
-                ),
-            ),
-            (
-                "root",
-                # Install Shiny Server!
-                r"""
-                curl --silent --location --fail {url} > {deb} && \
-                echo '{checksum} {deb}' | md5sum -c - && \
-                dpkg -i {deb} && \
-                rm {deb}
-                """.format(
-                    url=shiny_url, checksum=shiny_checksum, deb="/tmp/shiny.deb"
-                ),
-            ),
+            )
+        )
+        scripts += rstudio_base_scripts()
+        scripts += [
             (
                 "root",
                 # Set paths so that RStudio shares libraries with base R
@@ -305,24 +270,13 @@ class RBuildPack(PythonBuildPack):
             ),
             (
                 "${NB_USER}",
-                # Install nbrsessionproxy
-                r"""
-                pip install --no-cache-dir https://github.com/jupyterhub/jupyter-server-proxy/archive/7ac0125.zip && \
-                pip install --no-cache-dir jupyter-rsession-proxy==1.0b6 && \
-                jupyter serverextension enable jupyter_server_proxy --sys-prefix && \
-                jupyter nbextension install --py jupyter_server_proxy --sys-prefix && \
-                jupyter nbextension enable --py jupyter_server_proxy --sys-prefix
-                """,
-            ),
-            (
-                "${NB_USER}",
                 # Install a pinned version of IRKernel and set it up for use!
                 r"""
                 R --quiet -e "install.packages('devtools', repos='https://mran.microsoft.com/snapshot/{devtools_version}', method='libcurl')" && \
                 R --quiet -e "devtools::install_github('IRkernel/IRkernel', ref='{irkernel_version}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """.format(
-                    devtools_version=devtools_version, irkernel_version=irkernel_version
+                    devtools_version=DEVTOOLS_VERSION, irkernel_version=IRKERNEL_VERSION
                 ),
             ),
             (
@@ -343,17 +297,6 @@ class RBuildPack(PythonBuildPack):
                 """.format(
                     mran_url=mran_url
                 ),
-            ),
-            (
-                # Not all of these locations are configurable; so we make sure
-                # they exist and have the correct permissions
-                "root",
-                r"""
-                install -o ${NB_USER} -g ${NB_USER} -d /var/log/shiny-server && \
-                install -o ${NB_USER} -g ${NB_USER} -d /var/lib/shiny-server && \
-                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/log/shiny-server.log && \
-                install -o ${NB_USER} -g ${NB_USER} /dev/null /var/run/shiny-server.pid
-                """,
             ),
         ]
 

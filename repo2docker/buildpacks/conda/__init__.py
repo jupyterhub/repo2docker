@@ -6,10 +6,12 @@ from collections import Mapping
 from ruamel.yaml import YAML
 
 from ..base import BaseImage
+from .._r_base import rstudio_base_scripts, IRKERNEL_VERSION
 from ...utils import is_local_pip_requirement
 
 # pattern for parsing conda dependency line
 PYTHON_REGEX = re.compile(r"python\s*=+\s*([\d\.]*)")
+R_REGEX = re.compile(r"r-base\s*=+\s*([\d\.]*)")
 # current directory
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -179,6 +181,7 @@ class CondaBuildPack(BaseImage):
         Will return 'x.y' if version is found (e.g '3.6'),
         or a Falsy empty string '' if not found.
 
+        Version information below the minor level is dropped.
         """
         if not hasattr(self, "_python_version"):
             py_version = None
@@ -203,6 +206,40 @@ class CondaBuildPack(BaseImage):
                 self._python_version = ""
 
         return self._python_version
+
+    @property
+    def r_version(self):
+        """Detect the Python version for a given `environment.yml`
+
+        Will return 'x.y' if version is found (e.g '3.6'),
+        or a Falsy empty string '' if not found.
+
+        """
+        if not hasattr(self, "_r_version"):
+            self._r_version = ""
+            env = self.environment_yaml
+            for dep in env.get("dependencies", []):
+                if not isinstance(dep, str):
+                    continue
+                match = R_REGEX.match(dep)
+                if not match:
+                    continue
+                self._r_version = match.group(1)
+                break
+
+        return self._r_version
+
+    @property
+    def uses_r(self):
+        """Detect whether the user also installs R packages.
+
+        Will return True when a package prefixed with 'r-' is being installed.
+        """
+        if not hasattr(self, "_uses_r"):
+            deps = self.environment_yaml.get("dependencies", [])
+            self._uses_r = any(dep.startswith("r-") for dep in deps)
+
+        return self._uses_r
 
     @property
     def py2(self):
@@ -241,6 +278,46 @@ class CondaBuildPack(BaseImage):
                     ),
                 )
             )
+
+        if self.uses_r:
+            if self.r_version:
+                r_pin = "=" + self.r_version
+            else:
+                r_pin = ""
+            scripts.append(
+                (
+                    "${NB_USER}",
+                    r"""
+                conda install -p {0} r-base{1} r-irkernel={2} r-devtools && \
+                conda clean --all -f -y && \
+                conda list -p {0}
+                """.format(
+                        env_prefix, r_pin, IRKERNEL_VERSION
+                    ),
+                )
+            )
+            scripts += rstudio_base_scripts()
+            scripts += [
+                (
+                    "root",
+                    r"""
+                    echo auth-none=1 >> /etc/rstudio/rserver.conf && \
+                    echo auth-minimum-user-id=0 >> /etc/rstudio/rserver.conf && \
+                    echo "rsession-which-r={0}/bin/R" >> /etc/rstudio/rserver.conf
+                    """.format(
+                        env_prefix
+                    ),
+                ),
+                (
+                    "${NB_USER}",
+                    # Install a pinned version of IRKernel and set it up for use!
+                    r"""
+                 R --quiet -e "IRkernel::installspec(prefix='{0}')"
+                 """.format(
+                        env_prefix
+                    ),
+                ),
+            ]
         return scripts
 
     def get_preassemble_scripts(self):
