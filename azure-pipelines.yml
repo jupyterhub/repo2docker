@@ -3,9 +3,6 @@ pool:
   vmImage: "ubuntu-16.04"
 strategy:
   matrix:
-    lint:
-      REPO_TYPE: 'lint'
-      python_version: '3.6'
     unit:
       REPO_TYPE: 'unit'
       python_version: '3.6'
