@@ -1,4 +1,4 @@
-# The repo2docker roadmap
+# Roadmap
 
 This roadmap collects "next steps" for repo2docker. It is about creating a
 shared understanding of the project's vision and direction amongst
