@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2020-01-27 12:32:13 UTC
+# Frozen on 2020-01-29 16:12:17 UTC
 name: r2d
 channels:
   - conda-forge
@@ -19,31 +19,30 @@ dependencies:
   - certipy=0.1.3=py_0
   - cffi=1.13.2=py37h8022711_0
   - chardet=3.0.4=py37_1003
-  - configurable-http-proxy=4.2.0=node13_he01fd0c_2
   - cryptography=2.8=py37h72c5cf5_1
   - decorator=4.4.1=py_0
   - defusedxml=0.6.0=py_0
   - entrypoints=0.3=py37_1000
-  - icu=64.2=he1b5a44_1
   - idna=2.8=py37_1000
-  - importlib_metadata=1.4.0=py37_0
+  - importlib_metadata=1.5.0=py37_0
   - inflect=4.0.0=py37_1
-  - ipykernel=5.1.3=py37h5ca1d4c_0
+  - ipykernel=5.1.4=py37h5ca1d4c_0
   - ipython=7.11.1=py37h5ca1d4c_0
   - ipython_genutils=0.2.0=py_1
-  - ipywidgets=7.4.2=py_0
+  - ipywidgets=7.5.1=py_0
   - jaraco.itertools=5.0.0=py_0
   - jedi=0.16.0=py37_0
-  - jinja2=2.10.3=py_0
+  - jinja2=2.11.0=py_0
+  - json5=0.8.5=py_0
   - jsonschema=3.2.0=py37_0
   - jupyter_client=5.3.4=py37_1
   - jupyter_core=4.6.1=py37_0
   - jupyter_telemetry=0.0.4=py_0
-  - jupyterhub=1.1.0=py37_0
-  - jupyterlab=0.35.4=py37_0
-  - jupyterlab_server=0.2.0=py_0
+  - jupyterhub-base=1.1.0=py37_2
+  - jupyterlab=1.2.6=py_0
+  - jupyterlab_server=1.0.6=py_0
   - krb5=1.16.4=h2fd8d38_0
-  - ld_impl_linux-64=2.33.1=h53a641e_7
+  - ld_impl_linux-64=2.33.1=h53a641e_8
   - libcurl=7.65.3=hda55be3_0
   - libedit=3.1.20170329=hf8c457e_1001
   - libffi=3.2.1=he1b5a44_1006
@@ -52,16 +51,14 @@ dependencies:
   - libsodium=1.0.17=h516909a_0
   - libssh2=1.8.2=h22169c7_2
   - libstdcxx-ng=9.2.0=hdf63c60_2
-  - libuv=1.34.0=h516909a_0
   - mako=1.1.0=py_0
   - markupsafe=1.1.1=py37h516909a_0
   - mistune=0.8.4=py37h516909a_1000
-  - more-itertools=8.1.0=py_0
-  - nbconvert=5.4.1=py_2
+  - more-itertools=8.2.0=py_0
+  - nbconvert=5.6.1=py37_0
   - nbformat=5.0.4=py_0
   - ncurses=6.1=hf484d3e_1002
-  - nodejs=13.7.0=h10a4023_0
-  - notebook=5.7.8=py37_1
+  - notebook=6.0.3=py37_0
   - nteract_on_jupyter=2.1.3=py_0
   - oauthlib=3.0.1=py_0
   - openssl=1.1.1d=h516909a_0
@@ -73,7 +70,7 @@ dependencies:
   - pickleshare=0.7.5=py37_1000
   - pip=20.0.2=py37_0
   - prometheus_client=0.7.1=py_0
-  - prompt_toolkit=3.0.2=py_0
+  - prompt_toolkit=3.0.3=py_0
   - ptyprocess=0.6.0=py_1001
   - pycparser=2.19=py37_1
   - pycurl=7.43.0.4=py37h16ce93b_0
@@ -104,8 +101,8 @@ dependencies:
   - urllib3=1.25.7=py37_0
   - wcwidth=0.1.8=py_0
   - webencodings=0.5.1=py_1
-  - wheel=0.33.6=py37_0
-  - widgetsnbextension=3.4.2=py37_1000
+  - wheel=0.34.1=py37_0
+  - widgetsnbextension=3.5.1=py37_0
   - xz=5.2.4=h14c3975_1001
   - zeromq=4.3.2=he1b5a44_2
   - zipp=2.1.0=py_0
