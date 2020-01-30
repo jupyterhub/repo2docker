@@ -1,7 +1,7 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2020-01-30 10:54:21 UTC
+# Generated on 2020-01-30 10:53:33 UTC
 dependencies:
-- python=3.6.*
+- python=3.8.*
 - ipywidgets==7.5.1
 - jupyterlab==1.2.6
 - jupyterhub-singleuser==1.1.0

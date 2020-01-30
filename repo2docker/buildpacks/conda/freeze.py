@@ -6,7 +6,7 @@ It runs the freeze in a continuumio/miniconda3 image to ensure portability
 
 Usage:
 
-python freeze.py [3.5]
+python freeze.py [3.8]
 """
 
 from datetime import datetime
@@ -21,8 +21,8 @@ from ruamel.yaml import YAML
 
 # Docker image version can be different than conda version,
 # since miniconda3 docker images seem to lag conda releases.
-MINICONDA_DOCKER_VERSION = "4.5.12"
-CONDA_VERSION = "4.7.10"
+MINICONDA_DOCKER_VERSION = "4.7.12"
+CONDA_VERSION = "4.7.12"
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
@@ -76,7 +76,7 @@ def freeze(env_file, frozen_file):
             "; ".join(
                 [
                     "set -ex",
-                    f"conda install -yq conda={CONDA_VERSION}",
+                    f"conda install -yq -S conda={CONDA_VERSION}",
                     "conda config --add channels conda-forge",
                     "conda config --system --set auto_update_conda false",
                     f"conda env create -v -f /r2d/{env_file.relative_to(HERE)} -n r2d",
@@ -119,12 +119,12 @@ def set_python(py_env_file, py):
 
 if __name__ == "__main__":
     # allow specifying which Pythons to update on argv
-    pys = sys.argv[1:] or ("2.7", "3.5", "3.6", "3.7")
+    pys = sys.argv[1:] or ("2.7", "3.6", "3.7", "3.8")
+    default_py = "3.7"
     for py in pys:
         env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
         set_python(env_file, py)
         frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + ".frozen.yml")
         freeze(env_file, frozen_file)
-
-    # use last version as default
-    shutil.copy(frozen_file, FROZEN_FILE)
+        if py == default_py:
+            shutil.copy(frozen_file, FROZEN_FILE)
