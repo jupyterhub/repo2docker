@@ -39,6 +39,7 @@ dependencies:
   - jupyter_core=4.6.1=py37_0
   - jupyter_telemetry=0.0.4=py_0
   - jupyterhub-base=1.1.0=py37_2
+  - jupyterhub-singleuser=1.1.0=py37_2
   - jupyterlab=1.2.6=py_0
   - jupyterlab_server=1.0.6=py_0
   - krb5=1.16.4=h2fd8d38_0
