@@ -3,9 +3,6 @@ pool:
   vmImage: "ubuntu-16.04"
 strategy:
   matrix:
-    lint:
-      REPO_TYPE: 'lint'
-      python_version: '3.6'
     unit:
       REPO_TYPE: 'unit'
       python_version: '3.6'
@@ -62,7 +59,7 @@ steps:
 - script: pip install -e .
   displayName: 'Install repo2docker'
 
-- script: pushd tests; pytest --durations 10 --cov repo2docker -v $(REPO_TYPE); popd
+- script: pushd tests && pytest --durations 10 --cov repo2docker -v $(REPO_TYPE) && popd
   displayName: 'Run tests $(REPO_TYPE)'
 
 - script: |
