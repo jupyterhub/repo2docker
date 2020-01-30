@@ -237,7 +237,13 @@ class CondaBuildPack(BaseImage):
         """
         if not hasattr(self, "_uses_r"):
             deps = self.environment_yaml.get("dependencies", [])
-            self._uses_r = any(dep.startswith("r-") for dep in deps)
+            self._uses_r = False
+            for dep in deps:
+                if not isinstance(dep, str):
+                    continue
+                if dep.startswith("r-"):
+                    self._uses_r = True
+                    break
 
         return self._uses_r
 
