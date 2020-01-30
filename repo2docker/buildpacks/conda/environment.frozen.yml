@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2020-01-29 16:12:17 UTC
+# Frozen on 2020-01-30 10:54:05 UTC
 name: r2d
 channels:
   - conda-forge
@@ -74,7 +74,7 @@ dependencies:
   - prompt_toolkit=3.0.3=py_0
   - ptyprocess=0.6.0=py_1001
   - pycparser=2.19=py37_1
-  - pycurl=7.43.0.4=py37h16ce93b_0
+  - pycurl=7.43.0.5=py37h16ce93b_0
   - pygments=2.5.2=py_0
   - pyjwt=1.7.1=py_0
   - pyopenssl=19.1.0=py37_0
