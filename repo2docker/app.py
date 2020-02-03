@@ -147,6 +147,7 @@ class Repo2Docker(Application):
             contentproviders.Zenodo,
             contentproviders.Figshare,
             contentproviders.Dataverse,
+            contentproviders.Hydroshare,
             contentproviders.Git,
         ],
         config=True,
