@@ -50,6 +50,13 @@ echo "installing notebook env:"
 cat /tmp/environment.yml
 conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
 
+# Install jupyter-offline-notebook to allow users to download notebooks
+# after the server connection has been lost
+# This will install and enable the extension for jupyter notebook
+${NB_PYTHON_PREFIX}/bin/python -m pip install https://github.com/manics/jupyter-offlinenotebook/archive/7ba3520.zip
+# and this installs it for lab
+${NB_PYTHON_PREFIX}/bin/jupyter labextension install jupyter-offlinenotebook
+
 # empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
 # which we don't intend.
