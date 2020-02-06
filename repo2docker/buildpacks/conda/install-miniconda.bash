@@ -50,12 +50,9 @@ echo "installing notebook env:"
 cat /tmp/environment.yml
 conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
 
-# Install jupyter-offline-notebook to allow users to download notebooks
-# after the server connection has been lost
-# This will install and enable the extension for jupyter notebook
-${NB_PYTHON_PREFIX}/bin/python -m pip install https://github.com/manics/jupyter-offlinenotebook/archive/7ba3520.zip
-# and this installs it for lab. Keep going if the lab version is incompatible
-# with the extension
+# Install the lab part of jupyter-offline-notebook (this allows users to
+# download notebooks after the server connection has been lost)
+# Keep going if the lab version is incompatible with the extension.
 ${NB_PYTHON_PREFIX}/bin/jupyter labextension install jupyter-offlinenotebook || true
 
 # empty conda history file,
