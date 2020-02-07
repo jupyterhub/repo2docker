@@ -3,19 +3,76 @@ Changelog
 =========
 
 
-Version x.x.x
-=============
+Version 0.11.0
+==============
 
-Release date: TBD
+Release date: 2020-02-05
 
 New features
 ------------
+- Add support for Figshare in :pr:`788` by :user:`nuest`.
+- Add support for Dataverse in :pr:`739` by :user:`Xarthisius`.
+- Add support for configuring the version of R installed in :pr:`772` by
+  :user:`betatim`.
+- Add support for Julia 1.2.0 in :pr:`768` by :user:`davidanthoff`.
+- Add support for Julia 1.3.0 and 1.0.5 in :pr:`822` by :user:`davidanthoff`.
+- Add support for Julia 1.3.1 in :pr:`831` by :user:`davidanthoff`.
+- Update Miniconda to 4.7.10 in :pr:`769` by :user:`davidrpugh`.
+- Update IRKernel to 1.0.2 in :pr:`770` by :user:`GeorgianaElena`.
+- Update RStudio to 1.2 in :pr:`803` by :user:`pablobernabeu`.
+- Switch to "pandas" sphinx theme for documentation in :pr:`816` by :user:`choldgraf`.
+- Add content provider documentation in :pr:`824` by :user:`choldgraf`.
+- Remove legacy buildpack in :pr:`829` by :user:`betatim`.
+- Add support for automatic RStudio install when using R packages via conda
+  in :pr:`838` by :user:`xhochy`.
+- Add support for Python 3.8 in :pr:`840` by :user:`minrk`.
+- Add Hydroshare as content provider in :pr:`800` by :user:`sblack-usu`.
+- Update to Jupyter Notebook 6 and Lab 1.2 in :pr:`839` by :user:`minrk`.
+
+
+Bug fixes
+---------
+- Fix for submodule check out in :pr:`809` by :user:`davidbrochart`.
+- Handle `requirements.txt` files with different encodings in :pr:`771`
+  by :user:`GeorgianaElena`.
+- Update to nteract-on-jupyter 2.1.3 in :pr:`2.1.3 by :user:`betatim`.
+- Use `useradd --no-log-init` to fix exhausting disk space in :pr:`804` by
+  :user:`manics.`
+- Add help text for commandline arguments in :pr:`517` by :user:`yuvipanda`.
+- Fix submodule checkout in :pr:`809` by :user:`davidbrochart`.
+
+
+Version 0.10.0
+==============
+
+Release date: 2019-08-07
+
+New features
+------------
+- Increased minimum Python version supported for running  `repo2docker` itself
+  to Python 3.5 in :pr:`684` by :user:`betatim`.
+- Support for `Pipfile` and `Pipfile.lock` implemented in :pr:`649` by
+  :user:`consideratio`.
+- Use only conda packages for our base environments in :pr:`728` by
+  :user:`scottyhq`.
+- Fast rebuilds when repo dependencies haven't changed by :user:`minrk` and
+  :user:`betatim` in :pr:`743`, :pr:`752`, :pr:`718` and :pr:`716`.
+- Add support for Zenodo in :pr:`693` by :user:`betatim`.
+- Add support for general Invenio repositories in :pr:`704` by :user:`tmorrell`.
+- Add support for julia 1.0.4 and 1.1.1 in :pr:`710` by :user:`davidanthoff`.
+- Bump Conda from 4.6.14 to 4.7.5 in :pr:`719` by :user:`davidrpugh`.
+
 
 API changes
 -----------
 
 Bug fixes
 ---------
+- Prevent building the image as root if --user-id and --user-name are not specified
+  in :pr:`676` by :user:`Xarthisius`.
+- Add bash to Dockerfile to fix usage of private repos with git-crendential-env in
+  :pr:`738` by :user:`eexwhyzee`.
+- Fix memory limit enforcement in :pr:`677` by :user:`betatim`.
 
 
 Version 0.9.0

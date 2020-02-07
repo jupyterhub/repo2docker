@@ -4,3 +4,4 @@ include setup.cfg
 recursive-include repo2docker/buildpacks *
 include versioneer.py
 include repo2docker/_version.py
+include repo2docker/contentproviders/dataverse.json

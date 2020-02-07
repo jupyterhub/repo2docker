@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+import pypi_pkg_test
+import there
+
+try:
+    import numpy
+except ImportError:
+    # We want an ImportError to be thrown for this test to pass
+    pass
+else:
+    raise Exception(
+        "'numpy' shouldn't have been installed! It was listed in requirements.txt but not in the Pipfile that has precedence."
+    )

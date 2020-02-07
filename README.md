@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/jupyter/repo2docker.svg?branch=master)](https://travis-ci.org/jupyter/repo2docker)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://dev.azure.com/jupyter/repo2docker/_apis/build/status/jupyter.repo2docker?branchName=master)](https://dev.azure.com/jupyter/repo2docker/_build/latest?definitionId=1&branchName=master)
+[![Contribute](https://img.shields.io/badge/I_want_to_contribute!-grey?logo=jupyter)](https://repo2docker.readthedocs.io/en/latest/contributing/contributing.html)
 
 `repo2docker` fetches a git repository and builds a container image based on
 the configuration files found in the repository.
@@ -22,7 +24,7 @@ to learn about where the project is heading.
 
 1. Docker to build & run the repositories. The [community edition](https://store.docker.com/search?type=edition&offering=community)
    is recommended.
-2. Python 3.4+.
+2. Python 3.5+.
 
 Supported on Linux and macOS. [See documentation note about Windows support.](http://repo2docker.readthedocs.io/en/latest/install.html#note-about-windows-support)
 

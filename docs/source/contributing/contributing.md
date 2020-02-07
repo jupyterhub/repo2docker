@@ -1,4 +1,4 @@
-# Contributing to repo2docker development
+# Contributing to repo2docker
 
 Thank you for thinking about contributing to repo2docker!
 This is an open source project that is developed and maintained entirely by volunteers.
@@ -116,7 +116,7 @@ make that your current directory with `cd repo2docker`.
 
 ### Set up a local virtual environment
 
-After cloning the repository (or your fork of the repository), you should set up an
+After cloning the repository, you should set up an
 isolated environment to install libraries required for running / developing
 repo2docker.
 
@@ -130,6 +130,7 @@ source bin/activate
 pip3 install -e .
 pip3 install -r dev-requirements.txt
 pip3 install -r docs/doc-requirements.txt
+pip3 install black
 ```
 
 This should install all the libraries required for testing & running repo2docker!
@@ -145,7 +146,22 @@ pipenv install --dev
 
 This should install both the dev and docs requirements at once!
 
-### Set up
+
+### Code formatting
+
+We use [`black`](https://black.readthedocs.io/en/stable/) as code formatter to
+get a consistent layout for all the code in this project. This makes reading
+the code easier.
+
+To format your code run `black .` in the top-level directory of this repository.
+Many editors have plugins that will automatically apply black as you edit files.
+
+We also have a pre-commit hook setup that will check that code is formatted
+according to black's style guide. You can activate it with `pre-commit install`.
+
+As part of our continuous integration tests we will check that code is
+formatted properly and the tests will fail if this is not the case.
+
 
 ### Verify that docker is installed and running
 
@@ -180,3 +196,16 @@ Server:
 ```
 
 Then you are good to go!
+
+## Building the documentation locally
+
+If you only changed the documentation, you can also build the documentation locally using `sphinx` .
+
+```bash
+pip install -r docs/doc-requirements.txt
+
+cd docs/
+make html
+```
+
+Then open the file `docs/build/html/index.html` in your browser.

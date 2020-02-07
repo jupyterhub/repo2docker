@@ -5,6 +5,8 @@ import os
 import subprocess
 import tempfile
 import time
+from getpass import getuser
+
 
 def test_env():
     """
@@ -12,20 +14,25 @@ def test_env():
     """
     ts = str(time.time())
     with tempfile.TemporaryDirectory() as tmpdir:
-        username = os.getlogin()
-        subprocess.check_call([
-            'repo2docker',
-            '-v', '{}:/home/{}'.format(tmpdir, username),
-            '-e', 'FOO={}'.format(ts), 
-            '--env', 'BAR=baz',
-            '--',
-            tmpdir,
-            '/bin/bash',
-            '-c', 'echo -n $FOO > ts && echo -n $BAR > bar'
-        ])
+        username = getuser()
+        subprocess.check_call(
+            [
+                "repo2docker",
+                "-v",
+                "{}:/home/{}".format(tmpdir, username),
+                "-e",
+                "FOO={}".format(ts),
+                "--env",
+                "BAR=baz",
+                "--",
+                tmpdir,
+                "/bin/bash",
+                "-c",
+                "echo -n $FOO > ts && echo -n $BAR > bar",
+            ]
+        )
 
-        with open(os.path.join(tmpdir, 'ts')) as f:
+        with open(os.path.join(tmpdir, "ts")) as f:
             assert f.read().strip() == ts
-        with open(os.path.join(tmpdir, 'bar')) as f:
-            assert f.read().strip() == 'baz'
-
+        with open(os.path.join(tmpdir, "bar")) as f:
+            assert f.read().strip() == "baz"

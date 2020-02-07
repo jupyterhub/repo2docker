@@ -13,45 +13,58 @@ class Git(ContentProvider):
         # old behaviour when git and local directories were the only supported
         # content providers. This means that this content provider will always
         # match. The downside is that the call to `fetch()` later on might fail
-        return {'repo': source, 'ref': ref}
+        return {"repo": source, "ref": ref}
 
     def fetch(self, spec, output_dir, yield_output=False):
-        repo = spec['repo']
-        ref = spec.get('ref', None)
+        repo = spec["repo"]
+        ref = spec.get("ref", None)
 
         # make a, possibly shallow, clone of the remote repository
         try:
-            cmd = ['git', 'clone', '--recursive']
+            cmd = ["git", "clone"]
             if ref is None:
-                cmd.extend(['--depth', '1'])
+                # check out of HEAD is performed after the clone is complete
+                cmd.extend(["--depth", "1"])
+            else:
+                # don't check out HEAD, the given ref will be checked out later
+                # this prevents HEAD's submodules to be cloned if ref doesn't have them
+                cmd.extend(["--no-checkout"])
             cmd.extend([repo, output_dir])
             for line in execute_cmd(cmd, capture=yield_output):
                 yield line
 
         except subprocess.CalledProcessError as e:
-            msg = "Failed to clone repository from {repo}.".format(repo=repo)
+            msg = "Failed to clone repository from {repo}".format(repo=repo)
+            if ref is not None:
+                msg += " (ref {ref})".format(ref=ref)
+            msg += "."
             raise ContentProviderException(msg) from e
 
         # check out the specific ref given by the user
         if ref is not None:
             hash = check_ref(ref, output_dir)
             if hash is None:
-                self.log.error('Failed to check out ref %s', ref,
-                               extra=dict(phase='failed'))
-                raise ValueError('Failed to check out ref {}'.format(ref))
-            # If the hash is resolved above, we should be able to reset to it
-            for line in execute_cmd(['git', 'reset', '--hard', hash],
-                                    cwd=output_dir,
-                                    capture=yield_output):
+                self.log.error(
+                    "Failed to check out ref %s", ref, extra=dict(phase="failed")
+                )
+                raise ValueError("Failed to check out ref {}".format(ref))
+            # We don't need to explicitly checkout things as the reset will
+            # take of that. If the hash is resolved above, we should be
+            # able to reset to it
+            for line in execute_cmd(
+                ["git", "reset", "--hard", hash], cwd=output_dir, capture=yield_output
+            ):
                 yield line
 
         # ensure that git submodules are initialised and updated
-        for line in execute_cmd(['git', 'submodule', 'update', '--init', '--recursive'],
-                                cwd=output_dir,
-                                capture=yield_output):
+        for line in execute_cmd(
+            ["git", "submodule", "update", "--init", "--recursive"],
+            cwd=output_dir,
+            capture=yield_output,
+        ):
             yield line
 
-        cmd = ['git', 'rev-parse', 'HEAD']
+        cmd = ["git", "rev-parse", "HEAD"]
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)
         self._sha1 = sha1.stdout.read().decode().strip()
 

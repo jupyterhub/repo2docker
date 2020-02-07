@@ -5,8 +5,10 @@ import io
 import os
 import re
 import logging
-import docker
+import string
 import sys
+import hashlib
+import escapism
 import xml.etree.ElementTree as ET
 
 from traitlets import Dict
@@ -40,10 +42,17 @@ ARG NB_UID
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
-RUN adduser --disabled-password \
-    --gecos "Default user" \
-    --uid ${NB_UID} \
-    ${NB_USER}
+RUN groupadd \
+        --gid ${NB_UID} \
+        ${NB_USER} && \
+    useradd \
+        --comment "Default user" \
+        --create-home \
+        --gid ${NB_UID} \
+        --no-log-init \
+        --shell /bin/bash \
+        --uid ${NB_UID} \
+        ${NB_USER}
 
 RUN wget --quiet -O - https://deb.nodesource.com/gpgkey/nodesource.gpg.key |  apt-key add - && \
     DISTRO="bionic" && \
@@ -90,7 +99,7 @@ ENV PATH {{ ':'.join(path) }}:${PATH}
 
 {% if build_script_files -%}
 # If scripts required during build are present, copy them
-{% for src, dst in build_script_files.items() %}
+{% for src, dst in build_script_files|dictsort %}
 COPY {{ src }} {{ dst }}
 {% endfor -%}
 {% endif -%}
@@ -114,12 +123,6 @@ WORKDIR ${REPO_DIR}
 # installs. See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 ENV PATH ${HOME}/.local/bin:${REPO_DIR}/.local/bin:${PATH}
 
-# Copy and chown stuff. This doubles the size of the repo, because
-# you can't actually copy as USER, only as root! Thanks, Docker!
-USER root
-COPY src/ ${REPO_DIR}
-RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
-
 {% if env -%}
 # The rest of the environment
 {% for item in env -%}
@@ -127,9 +130,34 @@ ENV {{item[0]}} {{item[1]}}
 {% endfor -%}
 {% endif -%}
 
+# Run pre-assemble scripts! These are instructions that depend on the content
+# of the repository but don't access any files in the repository. By executing
+# them before copying the repository itself we can cache these steps. For
+# example installing APT packages.
+{% if preassemble_script_files -%}
+# If scripts required during build are present, copy them
+{% for src, dst in preassemble_script_files|dictsort %}
+COPY src/{{ src }} ${REPO_DIR}/{{ dst }}
+{% endfor -%}
+{% endif -%}
 
-# Run assemble scripts! These will actually build the specification
-# in the repository into the image.
+{% if preassemble_script_directives -%}
+USER root
+RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
+{% endif -%}
+
+{% for sd in preassemble_script_directives -%}
+{{ sd }}
+{% endfor %}
+
+# Copy and chown stuff. This doubles the size of the repo, because
+# you can't actually copy as USER, only as root! Thanks, Docker!
+USER root
+COPY src/ ${REPO_DIR}
+RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
+
+# Run assemble scripts! These will actually turn the specification
+# in the repository into an image.
 {% for sd in assemble_script_directives -%}
 {{ sd }}
 {% endfor %}
@@ -137,7 +165,7 @@ ENV {{item[0]}} {{item[1]}}
 # Container image Labels!
 # Put these at the end, since we don't want to rebuild everything
 # when these change! Did I mention I hate Dockerfile cache semantics?
-{% for k, v in labels.items() %}
+{% for k, v in labels|dictsort %}
 LABEL {{k}}="{{v}}"
 {%- endfor %}
 
@@ -172,8 +200,7 @@ CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
 """
 
 ENTRYPOINT_FILE = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "repo2docker-entrypoint",
+    os.path.dirname(os.path.abspath(__file__)), "repo2docker-entrypoint"
 )
 
 
@@ -195,12 +222,14 @@ class BuildPack:
     """
 
     def __init__(self):
-        self.log = logging.getLogger('repo2docker')
-        self.appendix = ''
+        self.log = logging.getLogger("repo2docker")
+        self.appendix = ""
         self.labels = {}
-        if sys.platform.startswith('win'):
-            self.log.warning("Windows environment detected. Note that Windows "
-                             "support is experimental in repo2docker.")
+        if sys.platform.startswith("win"):
+            self.log.warning(
+                "Windows environment detected. Note that Windows "
+                "support is experimental in repo2docker."
+            )
 
     def get_packages(self):
         """
@@ -288,7 +317,7 @@ class BuildPack:
     @property
     def stencila_manifest_dir(self):
         """Find the stencila manifest dir if it exists"""
-        if hasattr(self, '_stencila_manifest_dir'):
+        if hasattr(self, "_stencila_manifest_dir"):
             return self._stencila_manifest_dir
 
         # look for a manifest.xml that suggests stencila could be used
@@ -304,8 +333,7 @@ class BuildPack:
                 self.log.debug("Found a manifest.xml at %s", root)
                 self._stencila_manifest_dir = root.split(os.path.sep, 1)[1]
                 self.log.info(
-                    "Using stencila manifest.xml in %s",
-                    self._stencila_manifest_dir,
+                    "Using stencila manifest.xml in %s", self._stencila_manifest_dir
                 )
                 break
         return self._stencila_manifest_dir
@@ -313,7 +341,7 @@ class BuildPack:
     @property
     def stencila_contexts(self):
         """Find the stencila manifest contexts from file path in manifest"""
-        if hasattr(self, '_stencila_contexts'):
+        if hasattr(self, "_stencila_contexts"):
             return self._stencila_contexts
 
         # look at the content of the documents in the manifest
@@ -323,11 +351,14 @@ class BuildPack:
         # get paths to the article files from manifest
         files = []
         if self.stencila_manifest_dir:
-            manifest = ET.parse(os.path.join(self.stencila_manifest_dir,
-                                             'manifest.xml'))
-            documents = manifest.findall('./documents/document')
-            files = [os.path.join(self.stencila_manifest_dir, x.get('path'))
-                     for x in documents]
+            manifest = ET.parse(
+                os.path.join(self.stencila_manifest_dir, "manifest.xml")
+            )
+            documents = manifest.findall("./documents/document")
+            files = [
+                os.path.join(self.stencila_manifest_dir, x.get("path"))
+                for x in documents
+            ]
 
         else:
             return self._stencila_contexts
@@ -338,12 +369,11 @@ class BuildPack:
             # extract code languages from file
             document = ET.parse(filename)
             code_chunks = document.findall('.//code[@specific-use="source"]')
-            languages = [x.get('language') for x in code_chunks]
+            languages = [x.get("language") for x in code_chunks]
             self._stencila_contexts.update(languages)
 
             self.log.info(
-                "Added executions contexts, now have %s",
-                self._stencila_contexts,
+                "Added executions contexts, now have %s", self._stencila_contexts
             )
             break
 
@@ -368,6 +398,35 @@ class BuildPack:
         username and the execution script.
         """
 
+        return []
+
+    def get_preassemble_script_files(self):
+        """
+        Dict of files to be copied to the container image for use in preassembly.
+
+        This is copied before the `build_scripts`, `preassemble_scripts` and
+        `assemble_scripts` are run, so can be executed from either of them.
+
+        It's a dictionary where the key is the source file path in the
+        repository and the value is the destination file path inside the
+        repository in the container.
+        """
+        return {}
+
+    def get_preassemble_scripts(self):
+        """
+        Ordered list of shell snippets to build an image for this repository.
+
+        A list of tuples, where the first item is a username & the
+        second is a single logical line of a bash script that should
+        be RUN as that user.
+
+        These are run before the source of the repository is copied into
+        the container image. These should be the scripts that depend on the
+        repository but do not need access to the contents.
+
+        For example the list of APT packages to install.
+        """
         return []
 
     def get_assemble_scripts(self):
@@ -431,7 +490,8 @@ class BuildPack:
         if has_binder and has_dotbinder:
             raise RuntimeError(
                 "The repository contains both a 'binder' and a '.binder' "
-                "directory. However they are exclusive.")
+                "directory. However they are exclusive."
+            )
 
         if has_dotbinder:
             return ".binder"
@@ -454,24 +514,45 @@ class BuildPack:
         t = jinja2.Template(TEMPLATE)
 
         build_script_directives = []
-        last_user = 'root'
+        last_user = "root"
         for user, script in self.get_build_scripts():
             if last_user != user:
                 build_script_directives.append("USER {}".format(user))
                 last_user = user
-            build_script_directives.append("RUN {}".format(
-                textwrap.dedent(script.strip('\n'))
-            ))
+            build_script_directives.append(
+                "RUN {}".format(textwrap.dedent(script.strip("\n")))
+            )
 
         assemble_script_directives = []
-        last_user = 'root'
+        last_user = "root"
         for user, script in self.get_assemble_scripts():
             if last_user != user:
                 assemble_script_directives.append("USER {}".format(user))
                 last_user = user
-            assemble_script_directives.append("RUN {}".format(
-                textwrap.dedent(script.strip('\n'))
-            ))
+            assemble_script_directives.append(
+                "RUN {}".format(textwrap.dedent(script.strip("\n")))
+            )
+
+        preassemble_script_directives = []
+        last_user = "root"
+        for user, script in self.get_preassemble_scripts():
+            if last_user != user:
+                preassemble_script_directives.append("USER {}".format(user))
+                last_user = user
+            preassemble_script_directives.append(
+                "RUN {}".format(textwrap.dedent(script.strip("\n")))
+            )
+
+        # Based on a physical location of a build script on the host,
+        # create a mapping between:
+        #   1. Location of a build script in a Docker build context
+        #      ('assemble_files/<escaped-file-path-truncated>-<6-chars-of-its-hash>')
+        #   2. Location of the aforemention script in the Docker image
+        # Base template basically does: COPY <1.> <2.>
+        build_script_files = {
+            self.generate_build_context_filename(k)[0]: v
+            for k, v in self.get_build_script_files().items()
+        }
 
         return t.render(
             packages=sorted(self.get_packages()),
@@ -480,56 +561,98 @@ class BuildPack:
             env=self.get_env(),
             labels=self.get_labels(),
             build_script_directives=build_script_directives,
+            preassemble_script_files=self.get_preassemble_script_files(),
+            preassemble_script_directives=preassemble_script_directives,
             assemble_script_directives=assemble_script_directives,
-            build_script_files=self.get_build_script_files(),
+            build_script_files=build_script_files,
             base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.get_post_build_scripts(),
             start_script=self.get_start_script(),
             appendix=self.appendix,
         )
 
-    def build(self, client, image_spec, memory_limit, build_args, cache_from, extra_build_kwargs):
+    @staticmethod
+    def generate_build_context_filename(src_path, hash_length=6):
+        """
+        Generate a filename for a file injected into the Docker build context.
+
+        In case the src_path is relative, it's assumed it's relative to directory of
+        this __file__. Returns the resulting filename and an absolute path to the source
+        file on host.
+        """
+        if not os.path.isabs(src_path):
+            src_parts = src_path.split("/")
+            src_path = os.path.join(os.path.dirname(__file__), *src_parts)
+
+        src_path_hash = hashlib.sha256(src_path.encode("utf-8")).hexdigest()
+        safe_chars = set(string.ascii_letters + string.digits)
+
+        def escape(s):
+            return escapism.escape(s, safe=safe_chars, escape_char="-")
+
+        src_path_slug = escape(src_path)
+        filename = "build_script_files/{name}-{hash}"
+        return (
+            filename.format(
+                name=src_path_slug[: 255 - hash_length - 20],
+                hash=src_path_hash[:hash_length],
+            ).lower(),
+            src_path,
+        )
+
+    def build(
+        self,
+        client,
+        image_spec,
+        memory_limit,
+        build_args,
+        cache_from,
+        extra_build_kwargs,
+    ):
         tarf = io.BytesIO()
-        tar = tarfile.open(fileobj=tarf, mode='w')
+        tar = tarfile.open(fileobj=tarf, mode="w")
         dockerfile_tarinfo = tarfile.TarInfo("Dockerfile")
-        dockerfile = self.render().encode('utf-8')
+        dockerfile = self.render().encode("utf-8")
         dockerfile_tarinfo.size = len(dockerfile)
 
-        tar.addfile(
-            dockerfile_tarinfo,
-            io.BytesIO(dockerfile)
-        )
+        tar.addfile(dockerfile_tarinfo, io.BytesIO(dockerfile))
 
         def _filter_tar(tar):
             # We need to unset these for build_script_files we copy into tar
             # Otherwise they seem to vary each time, preventing effective use
             # of the cache!
             # https://github.com/docker/docker-py/pull/1582 is related
-            tar.uname = ''
-            tar.gname = ''
-            tar.uid = int(build_args.get('NB_UID', 1000))
-            tar.gid = int(build_args.get('NB_UID', 1000))
+            tar.uname = ""
+            tar.gname = ""
+            tar.uid = int(build_args.get("NB_UID", 1000))
+            tar.gid = int(build_args.get("NB_UID", 1000))
             return tar
 
         for src in sorted(self.get_build_script_files()):
-            src_parts = src.split('/')
-            src_path = os.path.join(os.path.dirname(__file__), *src_parts)
-            tar.add(src_path, src, filter=_filter_tar)
+            dest_path, src_path = self.generate_build_context_filename(src)
+            tar.add(src_path, dest_path, filter=_filter_tar)
 
         tar.add(ENTRYPOINT_FILE, "repo2docker-entrypoint", filter=_filter_tar)
 
-        tar.add('.', 'src/', filter=_filter_tar)
+        tar.add(".", "src/", filter=_filter_tar)
 
         tar.close()
         tarf.seek(0)
 
-        limits = {
-            # Always disable memory swap for building, since mostly
-            # nothing good can come of that.
-            'memswap': -1
-        }
+        # If you work on this bit of code check the corresponding code in
+        # buildpacks/docker.py where it is duplicated
+        if not isinstance(memory_limit, int):
+            raise ValueError(
+                "The memory limit has to be specified as an"
+                "integer but is '{}'".format(type(memory_limit))
+            )
+        limits = {}
         if memory_limit:
-            limits['memory'] = memory_limit
+            # We want to always disable swap. Docker expects `memswap` to
+            # be total allowable memory, *including* swap - while `memory`
+            # points to non-swap memory. We set both values to the same so
+            # we use no swap.
+            limits = {"memory": memory_limit, "memswap": memory_limit}
 
         build_kwargs = dict(
             fileobj=tarf,
@@ -554,14 +677,12 @@ class BaseImage(BuildPack):
         """Return env directives required for build"""
         return [
             ("APP_BASE", "/srv"),
-            ('NPM_DIR', '${APP_BASE}/npm'),
-            ('NPM_CONFIG_GLOBALCONFIG','${NPM_DIR}/npmrc')
+            ("NPM_DIR", "${APP_BASE}/npm"),
+            ("NPM_CONFIG_GLOBALCONFIG", "${NPM_DIR}/npmrc"),
         ]
 
     def get_path(self):
-        return super().get_path() + [
-            '${NPM_DIR}/bin'
-        ]
+        return super().get_path() + ["${NPM_DIR}/bin"]
 
     def get_build_scripts(self):
         scripts = [
@@ -570,14 +691,14 @@ class BaseImage(BuildPack):
                 r"""
                 mkdir -p ${NPM_DIR} && \
                 chown -R ${NB_USER}:${NB_USER} ${NPM_DIR}
-                """
+                """,
             ),
             (
                 "${NB_USER}",
                 r"""
                 npm config --global set prefix ${NPM_DIR}
-                """
-                ),
+                """,
+            ),
         ]
 
         return super().get_build_scripts() + scripts
@@ -594,47 +715,57 @@ class BaseImage(BuildPack):
             # exists.
 
             archive_dir, archive = os.path.split(self.stencila_manifest_dir)
-            env.extend([
-                ("STENCILA_ARCHIVE_DIR", "${REPO_DIR}/" + archive_dir),
-                ("STENCILA_ARCHIVE", archive),
-            ])
+            env.extend(
+                [
+                    ("STENCILA_ARCHIVE_DIR", "${REPO_DIR}/" + archive_dir),
+                    ("STENCILA_ARCHIVE", archive),
+                ]
+            )
         return env
 
     def detect(self):
         return True
 
-    def get_assemble_scripts(self):
-        assemble_scripts = []
+    def get_preassemble_scripts(self):
+        scripts = []
         try:
-            with open(self.binder_path('apt.txt')) as f:
+            with open(self.binder_path("apt.txt")) as f:
                 extra_apt_packages = []
                 for l in f:
-                    package = l.partition('#')[0].strip()
+                    package = l.partition("#")[0].strip()
                     if not package:
                         continue
                     # Validate that this is, indeed, just a list of packages
                     # We're doing shell injection around here, gotta be careful.
                     # FIXME: Add support for specifying version numbers
                     if not re.match(r"^[a-z0-9.+-]+", package):
-                        raise ValueError("Found invalid package name {} in "
-                                         "apt.txt".format(package))
+                        raise ValueError(
+                            "Found invalid package name {} in "
+                            "apt.txt".format(package)
+                        )
                     extra_apt_packages.append(package)
 
-            assemble_scripts.append((
-                'root',
-                # This apt-get install is *not* quiet, since users explicitly asked for this
-                r"""
+            scripts.append(
+                (
+                    "root",
+                    # This apt-get install is *not* quiet, since users explicitly asked for this
+                    r"""
                 apt-get -qq update && \
                 apt-get install --yes --no-install-recommends {} && \
                 apt-get -qq purge && \
                 apt-get -qq clean && \
                 rm -rf /var/lib/apt/lists/*
-                """.format(' '.join(extra_apt_packages))
-            ))
+                """.format(
+                        " ".join(sorted(extra_apt_packages))
+                    ),
+                )
+            )
+
         except FileNotFoundError:
             pass
-        if 'py' in self.stencila_contexts:
-            assemble_scripts.extend(
+
+        if "py" in self.stencila_contexts:
+            scripts.extend(
                 [
                     (
                         "${NB_USER}",
@@ -646,7 +777,7 @@ class BaseImage(BuildPack):
                 ]
             )
         if self.stencila_manifest_dir:
-            assemble_scripts.extend(
+            scripts.extend(
                 [
                     (
                         "${NB_USER}",
@@ -659,21 +790,25 @@ class BaseImage(BuildPack):
                     )
                 ]
             )
-        return assemble_scripts
+        return scripts
+
+    def get_assemble_scripts(self):
+        """Return directives to run after the entire repository has been added to the image"""
+        return []
 
     def get_post_build_scripts(self):
-        post_build = self.binder_path('postBuild')
+        post_build = self.binder_path("postBuild")
         if os.path.exists(post_build):
             return [post_build]
         return []
 
     def get_start_script(self):
-        start = self.binder_path('start')
+        start = self.binder_path("start")
         if os.path.exists(start):
             # Return an absolute path to start
             # This is important when built container images start with
             # a working directory that is different from ${REPO_DIR}
             # This isn't a problem with anything else, since start is
             # the only path evaluated at container start time rather than build time
-            return os.path.join('${REPO_DIR}', start)
+            return os.path.join("${REPO_DIR}", start)
         return None

@@ -11,14 +11,18 @@ Using ``repo2docker``
    ``repo2docker``, see :ref:`install`.
 
 ``repo2docker`` can build a reproducible computational environment for any repository that
-follows :ref:`specification`. repo2docker is called with a URL/path to a repository. It then
-performs these steps:
+follows :ref:`specification`. repo2docker is called with the URL of a Git repository,
+a `DOI  <https://en.wikipedia.org/wiki/Digital_object_identifier>`_ from Zenodo or Figshare,
+a `Handle <https://en.wikipedia.org/wiki/Handle_System>`_ or DOI from a Dataverse installation,
+or a path to a local directory.
+
+It then performs these steps:
 
 1. Inspects the repository for :ref:`configuration files <config-files>`. These will be used to build
    the environment needed to run the repository.
 2. Builds a Docker image with an environment specified in these :ref:`configuration files <config-files>`.
-3. Runs a Jupyter server within the image that lets you explore the
-   repository interactively (optional)
+3. Launches the image to let you explore the
+   repository interactively via Jupyter notebooks, RStudio, or many other interfaces (optional)
 4. Pushes the images to a Docker registry so that it may be accessed remotely
    (optional)
 
@@ -27,10 +31,15 @@ Calling repo2docker
 
 repo2docker is called with this command::
 
-  jupyter-repo2docker <URL-or-path to repository>
+  jupyter-repo2docker <source-repository>
 
-where ``<URL-or-path to repository>`` is a URL or path to the source repository
-for which you'd like to build an image.
+where ``<source-repository>`` is:
+
+  * a URL of a Git repository (``https://github.com/binder-examples/requirements``),
+  * a Zenodo DOI (``10.5281/zenodo.1211089``), or
+  * a path to a local directory (``a/local/directory``)
+
+of the source repository you want to build.
 
 For example, the following command will build an image of Peter Norvig's
 Pytudes_ repository::

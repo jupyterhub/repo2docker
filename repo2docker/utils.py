@@ -3,6 +3,9 @@ from functools import partial
 import os
 import re
 import subprocess
+import chardet
+
+from shutil import copystat, copy2
 
 from traitlets import Integer, TraitError
 
@@ -14,8 +17,8 @@ def execute_cmd(cmd, capture=False, **kwargs):
     Must be yielded from.
     """
     if capture:
-        kwargs['stdout'] = subprocess.PIPE
-        kwargs['stderr'] = subprocess.STDOUT
+        kwargs["stdout"] = subprocess.PIPE
+        kwargs["stderr"] = subprocess.STDOUT
 
     proc = subprocess.Popen(cmd, **kwargs)
 
@@ -34,17 +37,17 @@ def execute_cmd(cmd, capture=False, **kwargs):
 
     def flush():
         """Flush next line of the buffer"""
-        line = b''.join(buf).decode('utf8', 'replace')
+        line = b"".join(buf).decode("utf8", "replace")
         buf[:] = []
         return line
 
-    c_last = ''
+    c_last = ""
     try:
-        for c in iter(partial(proc.stdout.read, 1), b''):
-            if c_last == b'\r' and buf and c != b'\n':
+        for c in iter(partial(proc.stdout.read, 1), b""):
+            if c_last == b"\r" and buf and c != b"\n":
                 yield flush()
             buf.append(c)
-            if c == b'\n':
+            if c == b"\n":
                 yield flush()
             c_last = c
     finally:
@@ -68,6 +71,27 @@ def chdir(path):
         os.chdir(old_dir)
 
 
+@contextmanager
+def open_guess_encoding(path):
+    """
+    Open a file in text mode, specifying its encoding,
+    that we guess using chardet.
+    """
+    detector = chardet.universaldetector.UniversalDetector()
+    with open(path, "rb") as f:
+        for line in f.readlines():
+            detector.feed(line)
+            if detector.done:
+                break
+    detector.close()
+
+    file = open(path, encoding=detector.result["encoding"])
+    try:
+        yield file
+    finally:
+        file.close()
+
+
 def validate_and_generate_port_mapping(port_mappings):
     """
     Validate a list of port mappings and return a dictionary of port mappings.
@@ -89,38 +113,44 @@ def validate_and_generate_port_mapping(port_mappings):
         single container_port to multiple host_ports
         (docker-py supports this but repo2docker does not)
     """
+
     def check_port(port):
         try:
             p = int(port)
         except ValueError as e:
-            raise ValueError('Port specification "{}" has '
-                             'an invalid port.'.format(mapping))
+            raise ValueError(
+                'Port specification "{}" has ' "an invalid port.".format(mapping)
+            )
         if p > 65535:
-            raise ValueError('Port specification "{}" specifies '
-                             'a port above 65535.'.format(mapping))
+            raise ValueError(
+                'Port specification "{}" specifies '
+                "a port above 65535.".format(mapping)
+            )
         return port
 
     def check_port_string(p):
-        parts = p.split('/')
+        parts = p.split("/")
         if len(parts) == 2:  # 134/tcp
             port, protocol = parts
-            if protocol not in ('tcp', 'udp'):
-                raise ValueError('Port specification "{}" has '
-                                 'an invalid protocol.'.format(mapping))
+            if protocol not in ("tcp", "udp"):
+                raise ValueError(
+                    'Port specification "{}" has '
+                    "an invalid protocol.".format(mapping)
+                )
         elif len(parts) == 1:
             port = parts[0]
-            protocol = 'tcp'
+            protocol = "tcp"
 
         check_port(port)
 
-        return '/'.join((port, protocol))
+        return "/".join((port, protocol))
 
     ports = {}
     if port_mappings is None:
         return ports
 
     for mapping in port_mappings:
-        parts = mapping.split(':')
+        parts = mapping.split(":")
 
         *host, container_port = parts
         # just a port
@@ -162,7 +192,8 @@ def is_valid_docker_image_name(image_name):
         This pattern will not allow cases like `TEST.com/name:latest` though
         docker considers it a valid tag.
     """
-    reference_regex = re.compile(r"""
+    reference_regex = re.compile(
+        r"""
         ^  # Anchored at start and end of string
 
         (  # Start capturing name
@@ -211,7 +242,9 @@ def is_valid_docker_image_name(image_name):
         # optionally capture <digest-pattern>='@<digest>'
         (?:@[A-Za-z][A-Za-z0-9]*(?:[-_+.][A-Za-z][A-Za-z0-9]*)*[:][A-Fa-f0-9]{32,})?
         $
-        """, re.VERBOSE)
+        """,
+        re.VERBOSE,
+    )
 
     return reference_regex.match(image_name) is not None
 
@@ -230,10 +263,10 @@ class ByteSpecification(Integer):
     """
 
     UNIT_SUFFIXES = {
-        'K': 1024,
-        'M': 1024 * 1024,
-        'G': 1024 * 1024 * 1024,
-        'T': 1024 * 1024 * 1024 * 1024,
+        "K": 1024,
+        "M": 1024 * 1024,
+        "G": 1024 * 1024 * 1024,
+        "T": 1024 * 1024 * 1024 * 1024,
     }
 
     # Default to allowing None as a value
@@ -254,16 +287,14 @@ class ByteSpecification(Integer):
             num = float(value[:-1])
         except ValueError:
             raise TraitError(
-                '{val} is not a valid memory specification. '
-                'Must be an int or a string with suffix K, M, G, T'
-                .format(val=value)
+                "{val} is not a valid memory specification. "
+                "Must be an int or a string with suffix K, M, G, T".format(val=value)
             )
         suffix = value[-1]
         if suffix not in self.UNIT_SUFFIXES:
             raise TraitError(
-                '{val} is not a valid memory specification. '
-                'Must be an int or a string with suffix K, M, G, T'
-                .format(val=value)
+                "{val} is not a valid memory specification. "
+                "Must be an int or a string with suffix K, M, G, T".format(val=value)
             )
         else:
             return int(float(num) * self.UNIT_SUFFIXES[suffix])
@@ -272,9 +303,11 @@ class ByteSpecification(Integer):
 def check_ref(ref, cwd=None):
     """Prepare a ref and ensure it works with git reset --hard."""
     # Try original ref, then trying a remote ref, then removing remote
-    refs = [ref,                        # Original ref
-            '/'.join(["origin", ref]),  # In case its a remote branch
-            ref.split('/')[-1]]         # In case partial commit w/ remote
+    refs = [
+        ref,  # Original ref
+        "/".join(["origin", ref]),  # In case its a remote branch
+        ref.split("/")[-1],
+    ]  # In case partial commit w/ remote
 
     hash = None
     for i_ref in refs:
@@ -287,3 +320,162 @@ def check_ref(ref, cwd=None):
             # We'll throw an error later if no refs resolve
             pass
     return hash
+
+
+class Error(OSError):
+    pass
+
+
+# a copy of shutil.copytree() that is ok with the target directory
+# already existing
+def copytree(
+    src,
+    dst,
+    symlinks=False,
+    ignore=None,
+    copy_function=copy2,
+    ignore_dangling_symlinks=False,
+):
+    """Recursively copy a directory tree.
+    The destination directory must not already exist.
+    If exception(s) occur, an Error is raised with a list of reasons.
+    If the optional symlinks flag is true, symbolic links in the
+    source tree result in symbolic links in the destination tree; if
+    it is false, the contents of the files pointed to by symbolic
+    links are copied. If the file pointed by the symlink doesn't
+    exist, an exception will be added in the list of errors raised in
+    an Error exception at the end of the copy process.
+    You can set the optional ignore_dangling_symlinks flag to true if you
+    want to silence this exception. Notice that this has no effect on
+    platforms that don't support os.symlink.
+    The optional ignore argument is a callable. If given, it
+    is called with the `src` parameter, which is the directory
+    being visited by copytree(), and `names` which is the list of
+    `src` contents, as returned by os.listdir():
+        callable(src, names) -> ignored_names
+    Since copytree() is called recursively, the callable will be
+    called once for each directory that is copied. It returns a
+    list of names relative to the `src` directory that should
+    not be copied.
+    The optional copy_function argument is a callable that will be used
+    to copy each file. It will be called with the source path and the
+    destination path as arguments. By default, copy2() is used, but any
+    function that supports the same signature (like copy()) can be used.
+    """
+    names = os.listdir(src)
+    if ignore is not None:
+        ignored_names = ignore(src, names)
+    else:
+        ignored_names = set()
+
+    os.makedirs(dst, exist_ok=True)
+    errors = []
+    for name in names:
+        if name in ignored_names:
+            continue
+        srcname = os.path.join(src, name)
+        dstname = os.path.join(dst, name)
+        try:
+            if os.path.islink(srcname):
+                linkto = os.readlink(srcname)
+                if symlinks:
+                    # We can't just leave it to `copy_function` because legacy
+                    # code with a custom `copy_function` may rely on copytree
+                    # doing the right thing.
+                    os.symlink(linkto, dstname)
+                    copystat(srcname, dstname, follow_symlinks=not symlinks)
+                else:
+                    # ignore dangling symlink if the flag is on
+                    if not os.path.exists(linkto) and ignore_dangling_symlinks:
+                        continue
+                    # otherwise let the copy occurs. copy2 will raise an error
+                    if os.path.isdir(srcname):
+                        copytree(srcname, dstname, symlinks, ignore, copy_function)
+                    else:
+                        copy_function(srcname, dstname)
+            elif os.path.isdir(srcname):
+                copytree(srcname, dstname, symlinks, ignore, copy_function)
+            else:
+                # Will raise a SpecialFileError for unsupported file types
+                copy_function(srcname, dstname)
+        # catch the Error from the recursive copytree so that we can
+        # continue with other files
+        except Error as err:
+            errors.extend(err.args[0])
+        except OSError as why:
+            errors.append((srcname, dstname, str(why)))
+    try:
+        copystat(src, dst)
+    except OSError as why:
+        # Copying file access times may fail on Windows
+        if getattr(why, "winerror", None) is None:
+            errors.append((src, dst, str(why)))
+    if errors:
+        raise Error(errors)
+    return dst
+
+
+def deep_get(dikt, path):
+    """Get a value located in `path` from a nested dictionary.
+
+    Use a string separated by periods as the path to access
+    values in a nested dictionary:
+
+    deep_get(data, "data.files.0") == data["data"]["files"][0]
+    """
+    value = dikt
+    for component in path.split("."):
+        if component.isdigit():
+            value = value[int(component)]
+        else:
+            value = value[component]
+    return value
+
+
+# doi_regexp, is_doi, and normalize_doi are from idutils (https://github.com/inveniosoftware/idutils)
+# Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2018 Alan Rubin.
+# Licensed under BSD-3-Clause license
+doi_regexp = re.compile(
+    r"(doi:\s*|(?:https?://)?(?:dx\.)?doi\.org/)?(10\.\d+(.\d+)*/.+)$", flags=re.I
+)
+
+
+def is_doi(val):
+    """Returns None if val doesn't match pattern of a DOI.
+    http://en.wikipedia.org/wiki/Digital_object_identifier."""
+    return doi_regexp.match(val)
+
+
+def normalize_doi(val):
+    """Return just the DOI (e.g. 10.1234/jshd123)
+    from a val that could include a url or doi
+    (e.g. https://doi.org/10.1234/jshd123)"""
+    m = doi_regexp.match(val)
+    return m.group(2)
+
+
+def is_local_pip_requirement(line):
+    """Return whether a pip requirement (e.g. in requirements.txt file) references a local file"""
+    # trim comments and skip empty lines
+    line = line.split("#", 1)[0].strip()
+    if not line:
+        return False
+    if line.startswith(("-r", "-c")):
+        # local -r or -c references break isolation
+        return True
+    # strip off `-e, etc.`
+    if line.startswith("-"):
+        line = line.split(None, 1)[1]
+    if "file://" in line:
+        # file references break isolation
+        return True
+    if "://" in line:
+        # handle git://../local/file
+        path = line.split("://", 1)[1]
+    else:
+        path = line
+    if path.startswith("."):
+        # references a local file
+        return True
+    return False

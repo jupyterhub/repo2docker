@@ -1,0 +1,5 @@
+#!/bin/sh
+
+jupyter serverextension list 2>&1 | grep jupyter_server_proxy
+jupyter nbextension list 2>&1 | grep jupyter_server_proxy
+R -e "library('ggplot2')"

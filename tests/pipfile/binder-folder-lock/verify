@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+import pypi_pkg_test
+
+# pypi_pkg_test is installed from the binder folder's Pipfile, but not from the
+# root folder's Pipfile!
