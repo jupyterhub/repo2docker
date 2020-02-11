@@ -607,7 +607,7 @@ class Repo2Docker(Application):
             if container.status == "running":
                 self.log.info("Stopping container...\n", extra=dict(phase="running"))
                 container.kill()
-            exit_code = container.attrs["State"]["ExitCode"]
+            exit_code = container.exitcode
 
             container.wait()
 

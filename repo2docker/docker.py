@@ -26,6 +26,10 @@ class DockerContainer(Container):
         return self._c.stop(timeout=timeout)
 
     @property
+    def exitcode(self):
+        return self._c.attrs["State"]["ExitCode"]
+
+    @property
     def status(self):
         return self._c.status
 

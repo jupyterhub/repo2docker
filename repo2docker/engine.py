@@ -64,6 +64,13 @@ class Container(ABC):
 
     @property
     @abstractmethod
+    def exitcode(self):
+        """
+        The container exit code if exited
+        """
+
+    @property
+    @abstractmethod
     def status(self):
         """
         The status of the container
