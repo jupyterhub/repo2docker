@@ -50,9 +50,6 @@ class DockerBuildPack(BuildPack):
             dockerfile=self.binder_path(self.dockerfile),
             tag=image_spec,
             buildargs=build_args,
-            decode=True,
-            forcerm=True,
-            rm=True,
             container_limits=limits,
             cache_from=cache_from,
         )

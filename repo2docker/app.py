@@ -576,7 +576,6 @@ class Repo2Docker(Application):
         run_kwargs = dict(
             publish_all_ports=self.all_ports,
             ports=ports,
-            detach=True,
             command=run_cmd,
             volumes=container_volumes,
             environment=self.environment,
