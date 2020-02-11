@@ -2,8 +2,8 @@ import argparse
 import sys
 import os
 import logging
-import docker
 from .app import Repo2Docker
+from .engine import BuildError, ImageLoadError
 from . import __version__
 from .utils import validate_and_generate_port_mapping, is_valid_docker_image_name
 
@@ -371,12 +371,12 @@ def main():
     r2d.initialize()
     try:
         r2d.start()
-    except docker.errors.BuildError as e:
+    except BuildError as e:
         # This is only raised by us
         if r2d.log_level == logging.DEBUG:
             r2d.log.exception(e)
         sys.exit(1)
-    except docker.errors.ImageLoadError as e:
+    except ImageLoadError as e:
         # This is only raised by us
         if r2d.log_level == logging.DEBUG:
             r2d.log.exception(e)
