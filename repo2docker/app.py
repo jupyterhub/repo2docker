@@ -11,6 +11,7 @@ import json
 import sys
 import logging
 import os
+import entrypoints
 import getpass
 import shutil
 import tempfile
@@ -381,6 +382,33 @@ class Repo2Docker(Application):
         config=True,
     )
 
+    engine = Unicode(
+        "docker",
+        config=True,
+        help="""
+        Name of the container engine.
+
+        Defaults to 'docker'.
+        """,
+    )
+
+    def get_engine(self):
+        """Return an instance of the container engine.
+
+        Currently no arguments are passed to the engine constructor.
+        """
+        engines = entrypoints.get_group_named("repo2docker.engines")
+        try:
+            entry = engines[self.engine]
+        except KeyError:
+            raise ContainerEngineException(
+                "Container engine '{}' not found. Available engines: {}".format(
+                    self.engine, ",".join(engines.keys())
+                )
+            )
+        engine_class = entry.load()
+        return engine_class()
+
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
 
@@ -473,7 +501,7 @@ class Repo2Docker(Application):
 
     def push_image(self):
         """Push docker image to registry"""
-        client = DockerEngine()
+        client = self.get_engine()
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
         progress_layers = {}
@@ -527,7 +555,7 @@ class Repo2Docker(Application):
 
         Returns running container
         """
-        client = DockerEngine()
+        client = self.get_engine()
 
         docker_host = os.environ.get("DOCKER_HOST")
         if docker_host:
@@ -640,7 +668,7 @@ class Repo2Docker(Application):
         if self.dry_run:
             return False
         # check if we already have an image for this content
-        client = DockerEngine()
+        client = self.get_engine()
         for image in client.images():
             if image["RepoTags"] is not None:
                 for tag in image["RepoTags"]:
@@ -655,7 +683,7 @@ class Repo2Docker(Application):
         # Check if r2d can connect to docker daemon
         if not self.dry_run:
             try:
-                docker_client = DockerEngine()
+                docker_client = self.get_engine()
             except ContainerEngineException as e:
                 self.log.error("\nContainer engine initialization error: %s\n", e)
                 self.exit(1)
