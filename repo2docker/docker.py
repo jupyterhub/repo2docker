@@ -61,7 +61,10 @@ class DockerEngine(ContainerEngine):
         dockerfile="",
         fileobj=None,
         path="",
-        **kwargs,
+        # fmt: off
+        # black adds a trailing , but this is invalid in Python 3.5
+        **kwargs
+        # fmt: on
     ):
         return self._apiclient.build(
             buildargs=buildargs,
@@ -98,7 +101,10 @@ class DockerEngine(ContainerEngine):
         publish_all_ports=False,
         remove=False,
         volumes=None,
-        **kwargs,
+        # fmt: off
+        # black adds a trailing , but this is invalid in Python 3.5
+        **kwargs
+        # fmt: on
     ):
         client = docker.from_env(version="auto")
         container = client.containers.run(
