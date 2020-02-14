@@ -86,7 +86,8 @@ class DockerEngine(ContainerEngine):
         return [Image(tags=image["RepoTags"]) for image in images]
 
     def inspect_image(self, image):
-        return self._apiclient.inspect_image(image)
+        image = self._apiclient.inspect_image(image)
+        return Image(tags=image["RepoTags"], config=image["ContainerConfig"])
 
     def push(self, image_spec):
         return self._apiclient.push(image_spec, stream=True)

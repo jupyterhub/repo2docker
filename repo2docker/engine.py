@@ -89,8 +89,9 @@ class Image:
     Information about a container image
     """
 
-    def __init__(self, *, tags):
+    def __init__(self, *, tags, config=None):
         self._tags = tags or []
+        self._config = config
 
     @property
     def tags(self):
@@ -102,8 +103,19 @@ class Image:
         """
         return self._tags
 
+    @property
+    def config(self):
+        """
+        A dictionary of image configuration information
+
+        If this is `None` the information has not been loaded.
+        If not `None` this must include the following fields:
+        - WorkingDir: The default working directory
+        """
+        return self._config
+
     def __repr__(self):
-        return "Image(tags={})".format(self.tags)
+        return "Image(tags={},config={})".format(self.tags, self.config)
 
 
 class ContainerEngine(LoggingConfigurable):
@@ -211,7 +223,7 @@ class ContainerEngine(LoggingConfigurable):
 
         Returns
         -------
-        dict
+        Image object with .config dict.
         """
         raise NotImplementedError("inspect_image not implemented")
 

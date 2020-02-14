@@ -597,7 +597,7 @@ class Repo2Docker(Application):
         container_volumes = {}
         if self.volumes:
             image = client.inspect_image(self.output_image_spec)
-            image_workdir = image["ContainerConfig"]["WorkingDir"]
+            image_workdir = image.config["WorkingDir"]
 
             for k, v in self.volumes.items():
                 container_volumes[os.path.abspath(k)] = {
