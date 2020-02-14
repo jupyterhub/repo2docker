@@ -3,6 +3,7 @@ Interface for a repo2docker container engine
 """
 
 from abc import ABC, abstractmethod
+from traitlets.config import LoggingConfigurable
 
 
 # Based on https://docker-py.readthedocs.io/en/4.2.0/containers.html
@@ -106,16 +107,27 @@ class Image:
         return "Image(tags={})".format(self.tags)
 
 
-class ContainerEngine(ABC):
+class ContainerEngine(LoggingConfigurable):
     """
     Abstract container engine.
+
+    Inherits from LoggingConfigurable, which means it has a log property.
+    Initialised with a reference to the parent so can also be configured using traitlets.
     """
 
-    # containers = Container
+    def __init__(self, *, parent):
+        """
+        Initialise the container engine
+
+        Parameters
+        ----------
+        parent: Application
+            Reference to the parent application so that its configuration file can be used in this plugin.
+        """
+        super().__init__(parent=parent)
 
     # Based on https://docker-py.readthedocs.io/en/4.2.0/api.html#module-docker.api.build
 
-    @abstractmethod
     def build(
         self,
         *,
@@ -170,8 +182,8 @@ class ContainerEngine(ABC):
         path : str
             path to the Dockerfile
         """
+        raise NotImplementedError("build not implemented")
 
-    @abstractmethod
     def images(self):
         """
         List images
@@ -180,8 +192,8 @@ class ContainerEngine(ABC):
         -------
         list[Image] : List of Image objects.
         """
+        raise NotImplementedError("images not implemented")
 
-    @abstractmethod
     def inspect_image(self, image):
         """
         Get information about an image
@@ -197,8 +209,8 @@ class ContainerEngine(ABC):
         -------
         dict
         """
+        raise NotImplementedError("inspect_image not implemented")
 
-    @abstractmethod
     def push(self, image_spec, *, stream=True):
         """
         Push image to a registry
@@ -210,6 +222,7 @@ class ContainerEngine(ABC):
         stream : bool
             If `True` return output logs as a generator
         """
+        raise NotImplementedError("push not implemented")
 
     # Note this is different from the Docker client which has Client.containers.run
     def run(

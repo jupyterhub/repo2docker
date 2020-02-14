@@ -39,7 +39,8 @@ class DockerEngine(ContainerEngine):
     https://docker-py.readthedocs.io/en/4.2.0/api.html#module-docker.api.build
     """
 
-    def __init__(self):
+    def __init__(self, *, parent):
+        super().__init__(parent=parent)
         try:
             self._apiclient = docker.APIClient(
                 version="auto", **docker.utils.kwargs_from_env()

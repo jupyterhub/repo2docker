@@ -407,7 +407,7 @@ class Repo2Docker(Application):
                 )
             )
         engine_class = entry.load()
-        return engine_class()
+        return engine_class(parent=self)
 
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
