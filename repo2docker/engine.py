@@ -147,7 +147,8 @@ class ContainerEngine(LoggingConfigurable):
         custom_context=False,
         dockerfile="",
         fileobj=None,
-        path=""
+        path="",
+        **kwargs
     ):
         """
         Build a container
@@ -242,7 +243,8 @@ class ContainerEngine(LoggingConfigurable):
         ports={},
         publish_all_ports=False,
         remove=False,
-        volumes={}
+        volumes={},
+        **kwargs
     ):
         """
         Run a container

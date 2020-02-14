@@ -61,7 +61,8 @@ class DockerEngine(ContainerEngine):
         custom_context=False,
         dockerfile="",
         fileobj=None,
-        path=""
+        path="",
+        **kwargs,
     ):
         return self._apiclient.build(
             buildargs=buildargs,
@@ -75,6 +76,7 @@ class DockerEngine(ContainerEngine):
             dockerfile=dockerfile,
             fileobj=fileobj,
             path=path,
+            **kwargs,
         )
 
     def images(self):
@@ -96,7 +98,8 @@ class DockerEngine(ContainerEngine):
         ports=None,
         publish_all_ports=False,
         remove=False,
-        volumes=None
+        volumes=None,
+        **kwargs,
     ):
         container = self._client.containers.run(
             image_spec,
@@ -107,5 +110,6 @@ class DockerEngine(ContainerEngine):
             publish_all_ports=publish_all_ports,
             remove=remove,
             volumes=(volumes or {}),
+            **kwargs,
         )
         return DockerContainer(container)
