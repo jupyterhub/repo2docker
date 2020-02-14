@@ -18,7 +18,6 @@ import tempfile
 import time
 
 from .engine import BuildError, ContainerEngineException, ImageLoadError
-from .docker import DockerEngine
 from urllib.parse import urlparse
 import escapism
 from pythonjsonlogger import jsonlogger
