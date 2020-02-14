@@ -44,12 +44,14 @@ def test_editable_by_host():
 
     try:
         with tempfile.NamedTemporaryFile(dir=DIR, prefix="testfile", suffix=".txt"):
-            status, output = container.exec_run(["sh", "-c", "ls testfile????????.txt"])
+            status, output = container._c.exec_run(
+                ["sh", "-c", "ls testfile????????.txt"]
+            )
             assert status == 0
             assert re.match(br"^testfile\w{8}\.txt\n$", output) is not None
         # After exiting the with block the file should stop existing
         # in the container as well as locally
-        status, output = container.exec_run(["sh", "-c", "ls testfile????????.txt"])
+        status, output = container._c.exec_run(["sh", "-c", "ls testfile????????.txt"])
         assert status == 2
         assert re.match(br"^testfile\w{8}\.txt\n$", output) is None
 
