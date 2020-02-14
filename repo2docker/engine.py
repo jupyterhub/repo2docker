@@ -84,9 +84,31 @@ class Container(ABC):
         """
 
 
+class Image:
+    """
+    Information about a container image
+    """
+
+    def __init__(self, *, tags):
+        self._tags = tags or []
+
+    @property
+    def tags(self):
+        """
+        A list of tags associated with an image.
+
+        If locally built images have a localhost prefix this prefix should be removed or the image may not be recognised.
+        If there are no tags [] will be returned.
+        """
+        return self._tags
+
+    def __repr__(self):
+        return "Image(tags={})".format(self.tags)
+
+
 class ContainerEngine(ABC):
     """
-    Abstract container engine
+    Abstract container engine.
     """
 
     # containers = Container
@@ -156,7 +178,7 @@ class ContainerEngine(ABC):
 
         Returns
         -------
-        list[str] : List of images
+        list[Image] : List of Image objects.
         """
 
     @abstractmethod

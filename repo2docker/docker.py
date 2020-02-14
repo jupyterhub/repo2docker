@@ -3,7 +3,7 @@ Docker container engine for repo2docker
 """
 
 import docker
-from .engine import Container, ContainerEngine, ContainerEngineException
+from .engine import Container, ContainerEngine, ContainerEngineException, Image
 
 
 class DockerContainer(Container):
@@ -78,7 +78,8 @@ class DockerEngine(ContainerEngine):
         )
 
     def images(self):
-        return self._apiclient.images()
+        images = self._apiclient.images()
+        return [Image(tags=image["RepoTags"]) for image in images]
 
     def inspect_image(self, image):
         return self._apiclient.inspect_image(image)

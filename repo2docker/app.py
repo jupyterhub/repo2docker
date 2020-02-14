@@ -670,10 +670,9 @@ class Repo2Docker(Application):
         # check if we already have an image for this content
         client = self.get_engine()
         for image in client.images():
-            if image["RepoTags"] is not None:
-                for tag in image["RepoTags"]:
-                    if tag == self.output_image_spec + ":latest":
-                        return True
+            for tag in image.tags:
+                if tag == self.output_image_spec + ":latest":
+                    return True
         return False
 
     def build(self):
