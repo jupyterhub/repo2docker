@@ -774,7 +774,7 @@ class Repo2Docker(Application):
                             self.log.info(l["stream"], extra=dict(phase="building"))
                         elif "error" in l:
                             self.log.info(l["error"], extra=dict(phase="failure"))
-                            raise BuildError(l["error"], build_log="")
+                            raise BuildError(l["error"])
                         elif "status" in l:
                             self.log.info(
                                 "Fetching base image...\r", extra=dict(phase="building")
