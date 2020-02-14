@@ -47,9 +47,8 @@ class DockerEngine(ContainerEngine):
             self._apiclient = docker.APIClient(
                 version="auto", **docker.utils.kwargs_from_env()
             )
-            self._client = docker.from_env(version="auto")
         except docker.errors.DockerException as e:
-            raise ContainerEngineException(e)
+            raise ContainerEngineException("Check if docker is running on the host.", e)
 
     def build(
         self,
@@ -101,7 +100,8 @@ class DockerEngine(ContainerEngine):
         volumes=None,
         **kwargs,
     ):
-        container = self._client.containers.run(
+        client = docker.from_env(version="auto")
+        container = client.containers.run(
             image_spec,
             command=command,
             environment=(environment or []),
