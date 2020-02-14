@@ -507,7 +507,12 @@ class Repo2Docker(Application):
         progress_layers = {}
         layers = {}
         last_emit_time = time.time()
-        for chunk in client.push(self.output_image_spec, stream=True):
+        for chunk in client.push(self.output_image_spec):
+            if client.string_output:
+                self.log.info(chunk, extra=dict(phase="pushing"))
+                continue
+            # else this is Docker output
+
             # each chunk can be one or more lines of json events
             # split lines here in case multiple are delivered at once
             for line in chunk.splitlines():
@@ -770,7 +775,10 @@ class Repo2Docker(Application):
                         self.cache_from,
                         self.extra_build_kwargs,
                     ):
-                        if "stream" in l:
+                        if docker_client.string_output:
+                            self.log.info(l, extra=dict(phase="building"))
+                        # else this is Docker output
+                        elif "stream" in l:
                             self.log.info(l["stream"], extra=dict(phase="building"))
                         elif "error" in l:
                             self.log.info(l["error"], extra=dict(phase="failure"))

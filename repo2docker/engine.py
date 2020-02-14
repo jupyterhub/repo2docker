@@ -21,19 +21,18 @@ class Container(ABC):
         """
 
     @abstractmethod
-    def logs(self, stream=False):
+    def logs(self, *, stream=False):
         """
         Get the container logs.
 
         Parameters
         ----------
         stream : bool
-            If `True` return an iterator over the log lines, otherwise return all
-            logs
+            If `True` return an iterator over the log lines, otherwise return all logs
 
         Returns
         -------
-        str or iterator
+        str or generator of log strings
         """
 
     @abstractmethod
@@ -115,6 +114,16 @@ class ContainerEngine(LoggingConfigurable):
     Initialised with a reference to the parent so can also be configured using traitlets.
     """
 
+    string_output = True
+    """
+    Whether progress events should be strings or an object.
+
+    Originally Docker was the only container engine supported by repo2docker.
+    Some operations including build() and push() would return generators of events in a Docker specific format.
+    This format of events is not easily constructable with other engines so the default is to return strings and raise an exception if an error occurs.
+    If an engine returns docker style events set this variable to False.
+    """
+
     def __init__(self, *, parent):
         """
         Initialise the container engine
@@ -168,6 +177,13 @@ class ContainerEngine(LoggingConfigurable):
             TODO: Specific to Docker, other clients can untar this to a tempdir
         path : str
             path to the Dockerfile
+
+        Returns
+        -------
+        A generator of strings. If an error occurs an exception must be thrown.
+
+        If `string_output=True` this should instead be whatever Docker returns:
+        https://github.com/jupyter/repo2docker/blob/0.11.0/repo2docker/app.py#L725-L735
         """
         raise NotImplementedError("build not implemented")
 
@@ -198,7 +214,7 @@ class ContainerEngine(LoggingConfigurable):
         """
         raise NotImplementedError("inspect_image not implemented")
 
-    def push(self, image_spec, *, stream=True):
+    def push(self, image_spec):
         """
         Push image to a registry
 
@@ -206,8 +222,13 @@ class ContainerEngine(LoggingConfigurable):
         ----------
         image_spec : str
             The repository spec to push to
-        stream : bool
-            If `True` return output logs as a generator
+
+        Returns
+        -------
+        A generator of strings. If an error occurs an exception must be thrown.
+
+        If `string_output=True` this should instead be whatever Docker returns:
+        https://github.com/jupyter/repo2docker/blob/0.11.0/repo2docker/app.py#L469-L495
         """
         raise NotImplementedError("push not implemented")
 

@@ -13,7 +13,7 @@ class DockerContainer(Container):
     def reload(self):
         return self._c.reload()
 
-    def logs(self, stream=False):
+    def logs(self, *, stream=False):
         return self._c.logs(stream=stream)
 
     def kill(self, *, signal="KILL"):
@@ -38,6 +38,8 @@ class DockerEngine(ContainerEngine):
     """
     https://docker-py.readthedocs.io/en/4.2.0/api.html#module-docker.api.build
     """
+
+    string_output = False
 
     def __init__(self, *, parent):
         super().__init__(parent=parent)
@@ -82,8 +84,8 @@ class DockerEngine(ContainerEngine):
     def inspect_image(self, image):
         return self._apiclient.inspect_image(image)
 
-    def push(self, image_spec, *, stream=True):
-        return self._apiclient.push(image_spec, stream=stream)
+    def push(self, image_spec):
+        return self._apiclient.push(image_spec, stream=True)
 
     def run(
         self,
