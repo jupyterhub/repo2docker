@@ -134,11 +134,8 @@ class ContainerEngine(LoggingConfigurable):
         buildargs={},
         cache_from=[],
         container_limits={},
-        # forcerm=False,
-        # rm=False,
         tag="",
         custom_context=False,
-        # decode=False,
         dockerfile="",
         fileobj=None,
         path=""
@@ -158,22 +155,12 @@ class ContainerEngine(LoggingConfigurable):
               - `cpushares`
               - `memory`
               - `memswap`
-        # forcerm : bool
-        #     Always remove containers including unsuccessful builds
-        # always True
-        # rm : bool
-        #     Remove intermediate containers
-        # always True
         tag : str
             Tag to add to the image
 
         custom_context : bool
             If `True` fileobj is a Tar file object containing the build context
             TODO: Specific to Docker
-        # decode : bool
-        #     If `True` decode responses into dicts
-        #     TODO: repo2docker sets this to True but it's not clear what other clients should return
-        # always True
         dockerfile : str
             Path to Dockerfile within the build context
         fileobj : tarfile
@@ -226,11 +213,11 @@ class ContainerEngine(LoggingConfigurable):
 
     # Note this is different from the Docker client which has Client.containers.run
     def run(
+        self,
         image_spec,
         *,
         command=[],
         environment=[],
-        # detach=False,
         ports={},
         publish_all_ports=False,
         remove=False,
@@ -247,9 +234,6 @@ class ContainerEngine(LoggingConfigurable):
             The command to run
         environment : list[str]
             List of environment variables in the form `ENVVAR=value`
-        # detach : bool
-        #     If `True` run container in background
-        # always True
         ports : dict
             Container port bindings in the format expected by the engine
             TODO: Should we use a fixed format and convert to whatever's required by the engine?
