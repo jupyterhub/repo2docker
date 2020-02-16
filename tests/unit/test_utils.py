@@ -27,6 +27,14 @@ def test_capture_cmd_capture_success():
         assert line == "test\n"
 
 
+def test_capture_cmd_noeol_capture_success():
+    # This should succeed
+    lines = list(
+        utils.execute_cmd(["/bin/bash", "-c", "echo -en 'test\ntest'"], capture=True)
+    )
+    assert lines == ["test\n", "test"]
+
+
 def test_capture_cmd_capture_fail():
     with pytest.raises(subprocess.CalledProcessError):
         for line in utils.execute_cmd(
