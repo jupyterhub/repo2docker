@@ -50,6 +50,8 @@ def execute_cmd(cmd, capture=False, **kwargs):
             if c == b"\n":
                 yield flush()
             c_last = c
+        if buf:
+            yield flush()
     finally:
         ret = proc.wait()
         if ret != 0:
