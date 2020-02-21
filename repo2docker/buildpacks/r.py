@@ -195,7 +195,7 @@ class RBuildPack(PythonBuildPack):
         Starts from `startdate` and tries up to `max_prior` previous days.
         Raises `requests.HTTPError` with the last tried URL if no working snapshot found.
         """
-        for days in range(0, max_prior + 1):
+        for days in range(max_prior + 1):
             test_date = startdate - datetime.timedelta(days=days)
             mran_url = "https://mran.microsoft.com/snapshot/{}".format(
                 test_date.isoformat()
