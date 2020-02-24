@@ -1,6 +1,7 @@
 import re
 import os
 import datetime
+import requests
 
 from distutils.version import LooseVersion as V
 
@@ -135,8 +136,9 @@ class RBuildPack(PythonBuildPack):
                 # no R snapshot date set through runtime.txt
                 # set the R runtime to the latest date that is guaranteed to
                 # be on MRAN across timezones
-                self._checkpoint_date = datetime.date.today() - datetime.timedelta(
-                    days=2
+                two_days_ago = datetime.date.today() - datetime.timedelta(days=2)
+                self._checkpoint_date = self._get_latest_working_mran_date(
+                    two_days_ago, 3
                 )
                 self._runtime = "r-{}".format(str(self._checkpoint_date))
             return True
@@ -185,6 +187,29 @@ class RBuildPack(PythonBuildPack):
             packages.append("libclang-dev")
 
         return super().get_packages().union(packages)
+
+    def _get_latest_working_mran_date(self, startdate, max_prior):
+        """
+        Look for a working MRAN snapshot
+
+        Starts from `startdate` and tries up to `max_prior` previous days.
+        Raises `requests.HTTPError` with the last tried URL if no working snapshot found.
+        """
+        for days in range(max_prior + 1):
+            test_date = startdate - datetime.timedelta(days=days)
+            mran_url = "https://mran.microsoft.com/snapshot/{}".format(
+                test_date.isoformat()
+            )
+            r = requests.head(mran_url)
+            if r.ok:
+                return test_date
+            self.log.warning(
+                "Failed to get MRAN snapshot URL %s: %s %s",
+                mran_url,
+                r.status_code,
+                r.reason,
+            )
+        r.raise_for_status()
 
     def get_build_scripts(self):
         """

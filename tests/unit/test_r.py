@@ -1,6 +1,8 @@
 from datetime import date
 
 import pytest
+from requests.models import Response
+from unittest.mock import patch
 
 from repo2docker import buildpacks
 
@@ -60,6 +62,32 @@ def test_mran_date(tmpdir, runtime, expected):
 
     r = buildpacks.RBuildPack()
     assert r.checkpoint_date == date(*expected)
+
+
+@pytest.mark.parametrize(
+    "expected", ["2019-12-29", "2019-12-26"],
+)
+def test_mran_latestdate(tmpdir, expected):
+    def mock_request_head(url):
+        r = Response()
+        if url == "https://mran.microsoft.com/snapshot/" + expected:
+            r.status_code = 200
+        else:
+            r.status_code = 404
+            r.reason = "Mock MRAN no snapshot"
+        return r
+
+    tmpdir.chdir()
+
+    with open("DESCRIPTION", "w") as f:
+        f.write("")
+
+    with patch("requests.head", side_effect=mock_request_head):
+        with patch("datetime.date") as mockdate:
+            mockdate.today.return_value = date(2019, 12, 31)
+            r = buildpacks.RBuildPack()
+            r.detect()
+    assert r.checkpoint_date.isoformat() == expected
 
 
 def test_install_from_base(tmpdir):
