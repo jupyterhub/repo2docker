@@ -3,7 +3,7 @@
 Installing ``repo2docker``
 ==========================
 
-repo2docker requires Python 3.5 and above on Linux and macOS. See
+repo2docker requires Python 3.5 and above on Linux or macOS. See
 :ref:`below <windows>` for more information about Windows support.
 
 Prerequisite: Docker
@@ -25,13 +25,17 @@ for more details.
 Installing with ``pip``
 -----------------------
 
-We recommend installing ``repo2docker`` with the ``pip`` tool::
+We recommend installing ``repo2docker`` the most recent code from the
+upstream repository, to do this run::
+
+    python3 -m pip install -U https://github.com/jupyter/repo2docker/archive/master.zip
+
+To install the latest release with the ``pip`` tool::
 
     python3 -m pip install jupyter-repo2docker
 
-for the latest release. To install the most recent code from the upstream repository, run::
-
-    python3 -m pip install https://github.com/jupyter/repo2docker/archive/master.zip
+Releases are made every three months and hence will not contain the latest
+and greatest features and improvements.
 
 For information on using ``repo2docker``, see :ref:`usage`.
 

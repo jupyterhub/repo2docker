@@ -32,13 +32,22 @@ Supported on Linux and macOS. [See documentation note about Windows support.](ht
 
 This a quick guide to installing `repo2docker`, see our documentation for [a full guide](https://repo2docker.readthedocs.io/en/latest/install.html).
 
-To install from PyPI:
+We recommend you install the latest and greatest version:
+```bash
+pip install -U https://github.com/jupyter/repo2docker/archive/master.zip
+```
+We frequently improve repo2docker and update the version of repo2docker on
+mybinder.org a few hours later. This means it is rare that this version
+doesn't work.
+
+Roughly every three months we will tag a release which you can install from PyPI:
 
 ```bash
-pip install jupyter-repo2docker
+pip install -U jupyter-repo2docker
 ```
 
-To install from source:
+To contribute to the documentation or source code you might want to
+install and run from a local checkout:
 
 ```bash
 git clone https://github.com/jupyter/repo2docker.git
