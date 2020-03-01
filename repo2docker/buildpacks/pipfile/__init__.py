@@ -12,6 +12,7 @@ import re
 import toml
 
 from ..conda import CondaBuildPack
+from ...utils import open_guess_encoding
 
 VERSION_PAT = re.compile(r"\d+(\.\d+)*")
 
@@ -74,6 +75,35 @@ class PipfileBuildPack(CondaBuildPack):
             self._python_version = self.major_pythons["3"]
             return self._python_version
 
+    @property
+    def _should_preassemble_pipenv(self):
+        """Peek in Pipfile.lock to determine if we can assemble from only env files
+
+        If there are any local references, e.g. `"path": "./package.tar.gz"`,
+        stage the whole repo prior to installation.
+        """
+        if not os.path.exists("binder") and os.path.exists("setup.py"):
+            # can't install from subset if we're using setup.py
+            return False
+
+        pipfile_lock_path = self.binder_path("Pipfile.lock")
+        with open_guess_encoding(pipfile_lock_path) as f:
+            pipfile_lock = json.load(f)
+
+            all_packages = []
+
+            if "default" in pipfile_lock:
+                all_packages.extend(pipfile_lock["default"].values())
+
+            if "develop" in pipfile_lock:
+                all_packages.extend(pipfile_lock["develop"].values())
+
+            for package in all_packages:
+                if isinstance(package, dict) and "path" in package:
+                    return False
+
+        return True
+
     def get_preassemble_script_files(self):
         """Return files needed for preassembly"""
         files = super().get_preassemble_script_files()
@@ -90,6 +120,8 @@ class PipfileBuildPack(CondaBuildPack):
         scripts.append(
             ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv==2018.11.26")
         )
+        if self._should_preassemble_pipenv:
+            scripts.extend(self._get_pipenv_scripts())
         return scripts
 
     def get_assemble_scripts(self):
@@ -104,7 +136,13 @@ class PipfileBuildPack(CondaBuildPack):
         # environment, if Python 2 had been specified for the kernel
         # environment.
         assemble_scripts = super().get_assemble_scripts()
+        if not self._should_preassemble_pipenv:
+            assemble_scripts.extend(self._get_pipenv_scripts())
 
+        return assemble_scripts
+
+    def _get_pipenv_scripts(self):
+        scripts = []
         if self.py2:
             # using Python 2 as a kernel, but Python 3 for the notebook server
 
@@ -112,7 +150,7 @@ class PipfileBuildPack(CondaBuildPack):
             # notebook servers Python environment
             nb_requirements_file = self.binder_path("requirements3.txt")
             if os.path.exists(nb_requirements_file):
-                assemble_scripts.append(
+                scripts.append(
                     (
                         "${NB_USER}",
                         '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
@@ -150,7 +188,7 @@ class PipfileBuildPack(CondaBuildPack):
         #   Dockerfile where this later is read within, will thanks to the '\'
         #   let the RUN command continue on the next line. So it is only added
         #   to avoid forcing us to write it all on a single line.
-        assemble_scripts.append(
+        scripts.append(
             (
                 "${NB_USER}",
                 """(cd {working_directory} && \\
@@ -165,7 +203,7 @@ class PipfileBuildPack(CondaBuildPack):
             )
         )
 
-        return assemble_scripts
+        return scripts
 
     def detect(self):
         """Check if current repo should be built with the Pipfile buildpack.
