@@ -34,5 +34,6 @@ test_file_text.txt
 
 \.vscode/
 venv
+docs/source/_build
 
 tests/dockerfile_diff.sh
