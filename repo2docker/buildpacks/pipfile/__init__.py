@@ -87,6 +87,7 @@ class PipfileBuildPack(CondaBuildPack):
             return False
 
         lockfile = self.binder_path("Pipfile.lock")
+        pipfile = self.binder_path("Pipfile")
         if os.path.exists(lockfile):
             with open_guess_encoding(lockfile) as f:
                 pipfile_lock = json.load(f)
@@ -95,6 +96,16 @@ class PipfileBuildPack(CondaBuildPack):
                 all_packages.extend(pipfile_lock.get("default", {}).values())
                 all_packages.extend(pipfile_lock.get("develop", {}).values())
 
+                for package in all_packages:
+                    if isinstance(package, dict) and "path" in package:
+                        return False
+        elif os.path.exists(pipfile):
+            with open(pipfile) as f:
+                pipfile_info = toml.load(f)
+
+                all_packages = []
+                all_packages.extend(pipfile_info.get("packages", {}).values())
+                all_packages.extend(pipfile_info.get("dev-packages", {}).values())
                 for package in all_packages:
                     if isinstance(package, dict) and "path" in package:
                         return False
