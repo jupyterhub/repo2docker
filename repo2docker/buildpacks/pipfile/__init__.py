@@ -86,21 +86,18 @@ class PipfileBuildPack(CondaBuildPack):
             # can't install from subset if we're using setup.py
             return False
 
-        pipfile_lock_path = self.binder_path("Pipfile.lock")
-        with open_guess_encoding(pipfile_lock_path) as f:
-            pipfile_lock = json.load(f)
+        lockfile = self.binder_path("Pipfile.lock")
+        if os.path.exists(lockfile):
+            with open_guess_encoding(lockfile) as f:
+                pipfile_lock = json.load(f)
 
-            all_packages = []
+                all_packages = []
+                all_packages.extend(pipfile_lock.get("default", {}).values())
+                all_packages.extend(pipfile_lock.get("develop", {}).values())
 
-            if "default" in pipfile_lock:
-                all_packages.extend(pipfile_lock["default"].values())
-
-            if "develop" in pipfile_lock:
-                all_packages.extend(pipfile_lock["develop"].values())
-
-            for package in all_packages:
-                if isinstance(package, dict) and "path" in package:
-                    return False
+                for package in all_packages:
+                    if isinstance(package, dict) and "path" in package:
+                        return False
 
         return True
 
