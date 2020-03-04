@@ -63,7 +63,7 @@ class CondaBuildPack(BaseImage):
 
         All scripts here should be independent of contents of the repository.
 
-        This sets up through `install-miniconda.bash` (found in this directory):
+        This sets up through `install-miniforge.bash` (found in this directory):
 
         - a directory for the conda environment and its ownership by the
           notebook user
@@ -79,8 +79,8 @@ class CondaBuildPack(BaseImage):
             (
                 "root",
                 r"""
-                bash /tmp/install-miniconda.bash && \
-                rm /tmp/install-miniconda.bash /tmp/environment.yml
+                bash /tmp/install-miniforge.bash && \
+                rm /tmp/install-miniforge.bash /tmp/environment.yml
                 """,
             )
         ]
@@ -103,7 +103,7 @@ class CondaBuildPack(BaseImage):
 
         """
         files = {
-            "conda/install-miniconda.bash": "/tmp/install-miniconda.bash",
+            "conda/install-miniforge.bash": "/tmp/install-miniforge.bash",
             "conda/activate-conda.sh": "/etc/profile.d/activate-conda.sh",
         }
         py_version = self.python_version
