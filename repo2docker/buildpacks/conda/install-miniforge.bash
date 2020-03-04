@@ -4,11 +4,10 @@ set -ex
 
 cd $(dirname $0)
 MINIFORGE_VERSION=4.8.2-1
-CONDA_VERSION=4.8.2
 # SHA256 for installers can be obtained from https://github.com/conda-forge/miniforge/releases
 SHA256SUM="4f897e503bd0edfb277524ca5b6a5b14ad818b3198c2f07a36858b7d88c928db"
 
-URL="https://github.com/conda-forge/miniforge/releases/download/4.8.2-1/Miniforge3-${MINIFORGE_VERSION}-Linux-x86_64.sh"
+URL="https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniforge-installer.sh
 
 # make sure we don't do anything funky with user's $HOME
@@ -33,14 +32,6 @@ conda config --system --set show_channel_urls true
 
 # bug in conda 4.3.>15 prevents --set update_dependencies
 echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
-
-# install conda itself, if needed
-# FIXME: MINIFORGE_VERSION might have a build number, like -1.
-# This will force conda to be installed each time
-# Use a better way of finding conda version!
-if [[ "${CONDA_VERSION}" != "${MINIFORGE_VERSION}" ]]; then
-    conda install -yq conda==${CONDA_VERSION}
-fi
 
 # avoid future changes to default channel_priority behavior
 conda config --system --set channel_priority "flexible"
