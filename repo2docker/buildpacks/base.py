@@ -150,11 +150,10 @@ RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 {{ sd }}
 {% endfor %}
 
-# Copy and chown stuff. This doubles the size of the repo, because
-# you can't actually copy as USER, only as root! Thanks, Docker!
+# We need docker 19.03 for --chown to work with variable substitution
+# https://github.com/moby/moby/issues/35018
 USER root
-COPY src/ ${REPO_DIR}
-RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
+COPY --chown ${NB_USER} src/ ${REPO_DIR}
 
 # Run assemble scripts! These will actually turn the specification
 # in the repository into an image.
