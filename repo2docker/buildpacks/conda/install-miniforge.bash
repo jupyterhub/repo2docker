@@ -20,7 +20,7 @@ chmod +x ${INSTALLER_PATH}
 
 # check sha256 checksum
 if ! echo "${SHA256SUM}  ${INSTALLER_PATH}" | sha256sum  --quiet -c -; then
-    echo "md5sum mismatch for ${INSTALLER_PATH}, exiting!"
+    echo "sha256 mismatch for ${INSTALLER_PATH}, exiting!"
     exit 1
 fi
 
