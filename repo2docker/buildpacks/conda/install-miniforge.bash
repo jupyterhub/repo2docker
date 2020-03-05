@@ -26,6 +26,9 @@ fi
 bash ${INSTALLER_PATH} -b -p ${CONDA_DIR}
 export PATH="${CONDA_DIR}/bin:$PATH"
 
+# Preserve behavior of miniconda - packages come from conda-forge + defaults
+conda config --system --add channels defaults
+
 # Do not attempt to auto update conda or dependencies
 conda config --system --set auto_update_conda false
 conda config --system --set show_channel_urls true
