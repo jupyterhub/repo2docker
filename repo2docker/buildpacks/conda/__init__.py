@@ -96,12 +96,6 @@ class CondaBuildPack(BaseImage):
                 chown -R ${NB_USER}:${NB_USER} ${NPM_DIR}
                 """,
             ),
-            (
-                "${NB_USER}",
-                r"""
-                ${NB_PYTHON_PREFIX}/bin/npm config --global set prefix ${NPM_DIR}
-                """,
-            ),
         ]
 
     major_pythons = {"2": "2.7", "3": "3.7"}
