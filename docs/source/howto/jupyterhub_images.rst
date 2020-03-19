@@ -12,7 +12,7 @@ to allow anyone to build a Docker image of a git repository online and
 share an executable version of the repository with a URL to the built image.
 
 To build JupyterHub_-ready Docker images with ``repo2docker``, the
-version of your JupterHub deployment must be included in the
+version of your JupyterHub deployment must be included in the
 ``environment.yml`` or ``requirements.txt`` of the git repositories you
 build.
 
