@@ -26,6 +26,24 @@ be resolved (``ResolvePackageNotFound``).
 The solution
 ============
 
+Export your explicit install commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you only want to have an ``environment.yml`` that reflects the
+``conda install`` you have run to build your conda environment, you can use
+``conda env export --from-history environment.yml``. The resulting
+``environment.yml`` then contains a loose pinning of the versions used, e.g.
+``pandas=0.25`` if you explicitly requested this ``pandas`` version on
+installation. If you didn't list a version constraint during installation, it
+will also not be listed in your ``environment.yml``.
+
+While this approach doesn't lead to perfect reproducibilty, it will contain
+just the same packages as if you would recreate the enviroment with the same
+commands again today.
+
+Strict version export
+~~~~~~~~~~~~~~~~~~~~~
+
 Follow this procedure to create a strict export of your environment that will
 work with ``repo2docker`` and sites like `mybinder.org <https://mybinder.org/>`_.
 
