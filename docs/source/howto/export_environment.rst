@@ -29,9 +29,10 @@ The solution
 Export your explicit install commands
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you only want to have an ``environment.yml`` that reflects the
-``conda install`` you have run to build your conda environment, you can use
-``conda env export --from-history environment.yml``. The resulting
+To get a minimal ``environment.yml`` that only contains the packages you
+explicitly installed run
+``conda env export --from-history -f environment.yml``. We recommend that you
+use this option to create your ``environment.yml``. The resulting
 ``environment.yml`` then contains a loose pinning of the versions used, e.g.
 ``pandas=0.25`` if you explicitly requested this ``pandas`` version on
 installation. If you didn't list a version constraint during installation, it
