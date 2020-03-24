@@ -82,7 +82,7 @@ class PipfileBuildPack(CondaBuildPack):
         If there are any local references, e.g. `"path": "./package.tar.gz"`,
         stage the whole repo prior to installation.
         """
-        if not os.path.exists("binder") and os.path.exists("setup.py"):
+        if not os.path.exists(self.binder_path(".")) and os.path.exists("setup.py"):
             # can't install from subset if we're using setup.py
             return False
 
