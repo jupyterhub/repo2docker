@@ -135,6 +135,7 @@ def test_open_guess_encoding():
     [
         ("-r requirements.txt", True),
         ("-e .", True),
+        ("--editable=.", True),
         ("file://subdir", True),
         ("file://./subdir", True),
         ("git://github.com/jupyter/repo2docker", False),
