@@ -188,6 +188,7 @@ ENV R2D_ENTRYPOINT "{{ start_script }}"
 
 # Add entrypoint
 COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
+RUN ls -hals /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
 # Specify the default command to run
