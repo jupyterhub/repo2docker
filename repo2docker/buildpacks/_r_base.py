@@ -55,8 +55,8 @@ def rstudio_base_scripts():
             "${NB_USER}",
             # Install nbrsessionproxy
             r"""
-                pip install --no-cache-dir https://github.com/jupyterhub/jupyter-server-proxy/archive/7ac0125.zip && \
-                pip install --no-cache-dir jupyter-rsession-proxy==1.0b6 && \
+                pip install --no-cache-dir jupyter-server-proxy==1.3.2 && \
+                pip install --no-cache-dir https://github.com/jupyterhub/jupyter-rsession-proxy/archive/d5efed5455870556fc414f30871d0feca675a4b4.zip && \
                 jupyter serverextension enable jupyter_server_proxy --sys-prefix && \
                 jupyter nbextension install --py jupyter_server_proxy --sys-prefix && \
                 jupyter nbextension enable --py jupyter_server_proxy --sys-prefix
