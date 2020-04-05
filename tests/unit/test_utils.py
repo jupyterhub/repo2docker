@@ -135,6 +135,11 @@ def test_open_guess_encoding():
     [
         ("-r requirements.txt", True),
         ("-e .", True),
+        ("--editable=.", True),
+        (
+            "--editable=git+https://github.com/popgensims/stdpopsim.git#egg=stdpopsim-master",
+            False,
+        ),
         ("file://subdir", True),
         ("file://./subdir", True),
         ("git://github.com/jupyter/repo2docker", False),

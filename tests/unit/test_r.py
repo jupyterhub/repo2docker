@@ -64,9 +64,7 @@ def test_mran_date(tmpdir, runtime, expected):
     assert r.checkpoint_date == date(*expected)
 
 
-@pytest.mark.parametrize(
-    "expected", ["2019-12-29", "2019-12-26"],
-)
+@pytest.mark.parametrize("expected", ["2019-12-29", "2019-12-26"])
 def test_mran_latestdate(tmpdir, expected):
     def mock_request_head(url):
         r = Response()

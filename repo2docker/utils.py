@@ -466,7 +466,15 @@ def is_local_pip_requirement(line):
     if line.startswith(("-r", "-c")):
         # local -r or -c references break isolation
         return True
-    # strip off `-e, etc.`
+    if line.startswith(("--requirement", "--constraint")):
+        # as above but flags are spelt out
+        return True
+    # strip off things like `--editable=`. Long form arguments require a =
+    if line.startswith("--"):
+        line = line.split("=", 1)[1]
+    # strip off short form arguments like `-e`. Short form arguments can be
+    # followed by a space `-e foo` or use `-e=foo`. The latter is not handled
+    # here. We can deal with it when we see someone using it.
     if line.startswith("-"):
         line = line.split(None, 1)[1]
     if "file://" in line:
