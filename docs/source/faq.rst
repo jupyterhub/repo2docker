@@ -56,7 +56,7 @@ file.
 We support R versions 3.4, 3.5 and 3.6.
 
 
-Why is my repository is failing to build with ``ResolvePackageNotFound`` ?
+Why is my repository failing to build with ``ResolvePackageNotFound`` ?
 --------------------------------------------------------------------------
 
 If you used ``conda env export`` to generate your ``environment.yml`` it will
@@ -133,7 +133,7 @@ This builds a Docker container from the files in that repository
 then runs that container, while connecting the working directory
 inside the container to the local repository outside the
 container. For example, in case there is a notebook file (``.ipynb``),
-this will open in a local webbrowser, and one can edit it and save
+this will open in a local web browser, and one can edit it and save
 it. The resulting notebook is updated in both the Docker container and
 the local repository. Once the container is exited, the changed file
 will still be in the local repository.
