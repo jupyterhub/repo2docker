@@ -158,6 +158,10 @@ def get_argparser():
         "--user-name", help="Username of the primary user in the image"
     )
 
+    # Process the environment options the same way that docker does, as
+    # they are passed directly to docker as the environment to use. This
+    # requires a custom action for argparse.
+    # see https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file
     argparser.add_argument(
         "--env",
         "-e",

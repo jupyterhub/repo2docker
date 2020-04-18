@@ -560,8 +560,6 @@ class Repo2Docker(Application):
                     "mode": "rw",
                 }
 
-        # self.environment needs to be modified to match the semantics
-        # of docker's --env option
         run_kwargs = dict(
             publish_all_ports=self.all_ports,
             ports=ports,
