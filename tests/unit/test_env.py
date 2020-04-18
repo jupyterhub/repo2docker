@@ -15,6 +15,7 @@ def test_env():
     ts = str(time.time())
     with tempfile.TemporaryDirectory() as tmpdir:
         username = getuser()
+        os.environ["SPAM"] = "eggs"
         subprocess.check_call(
             [
                 "repo2docker",
@@ -24,11 +25,13 @@ def test_env():
                 "FOO={}".format(ts),
                 "--env",
                 "BAR=baz",
+                "--env",
+                "SPAM",
                 "--",
                 tmpdir,
                 "/bin/bash",
                 "-c",
-                "echo -n $FOO > ts && echo -n $BAR > bar",
+                "echo -n $FOO > ts && echo -n $BAR > bar && echo -n $SPAM > eggs",
             ]
         )
 
@@ -36,3 +39,5 @@ def test_env():
             assert f.read().strip() == ts
         with open(os.path.join(tmpdir, "bar")) as f:
             assert f.read().strip() == "baz"
+        with open(os.path.join(tmpdir, "eggs")) as f:
+            assert f.read().strip() == "eggs"
