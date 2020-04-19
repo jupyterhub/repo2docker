@@ -39,6 +39,27 @@ def validate_image_name(image_name):
     return image_name
 
 
+# See https://github.com/jupyter/repo2docker/issues/871 for reason
+class MimicDockerEnvHandling(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        # There are 3 cases:
+        #  key=value    pass as is
+        #  key=         pass as is
+        #  key          pass using current value, or don't pass
+        if "=" not in values:
+            try:
+                value_to_append = "{}={}".format(values, os.environ[values])
+            except KeyError:
+                # no local def, so don't pass
+                return
+        else:
+            value_to_append = values
+
+        # destination variable is initially defined as an empty list, so
+        # no special casing of first time is needed.
+        getattr(namespace, self.dest).append(value_to_append)
+
+
 def get_argparser():
     """Get arguments that may be used by repo2docker"""
     argparser = argparse.ArgumentParser(
@@ -161,12 +182,11 @@ def get_argparser():
     # Process the environment options the same way that docker does, as
     # they are passed directly to docker as the environment to use. This
     # requires a custom action for argparse.
-    # see https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file
     argparser.add_argument(
         "--env",
         "-e",
         dest="environment",
-        action="append",
+        action=MimicDockerEnvHandling,
         help="Environment variables to define at container run time",
         default=[],
     )
