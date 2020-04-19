@@ -16,11 +16,9 @@ def test_env():
     with tempfile.TemporaryDirectory() as tmpdir:
         username = getuser()
         os.environ["SPAM"] = "eggs"
-        subprocess.check_call(
+        result = subprocess.run(
             [
                 "repo2docker",
-                "-v",
-                "{}:/home/{}".format(tmpdir, username),
                 "-e",
                 "FOO={}".format(ts),
                 "--env",
@@ -31,13 +29,18 @@ def test_env():
                 tmpdir,
                 "/bin/bash",
                 "-c",
-                "echo -n $FOO > ts && echo -n $BAR > bar && echo -n $SPAM > eggs",
-            ]
+                # Docker exports all passed env variables, so we can
+                # just look at that output
+                "export",
+            ],
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-
-        with open(os.path.join(tmpdir, "ts")) as f:
-            assert f.read().strip() == ts
-        with open(os.path.join(tmpdir, "bar")) as f:
-            assert f.read().strip() == "baz"
-        with open(os.path.join(tmpdir, "eggs")) as f:
-            assert f.read().strip() == "eggs"
+    assert result.returncode == 0
+    # all docker output is returned by repo2docker on stderr
+    # extract just the declare for better failure message formatting
+    declares = [x for x in result.stderr.split("\n") if x.startswith("declare")]
+    assert 'declare -x FOO="{}"'.format(ts) in declares
+    assert 'declare -x BAR="baz"' in declares
+    assert 'declare -x SPAM="eggs"' in declares
