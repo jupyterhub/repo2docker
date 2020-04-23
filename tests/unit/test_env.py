@@ -13,7 +13,11 @@ def test_env():
     Validate that you can define environment variables
     """
     ts = str(time.time())
-    with tempfile.TemporaryDirectory() as tmpdir:
+    # There appear to be some odd combinations of default dir that do
+    # not work on macOS Catalina with Docker CE 2.2.0.5, so use
+    # the current dir -- it'll be deleted immediately
+
+    with tempfile.TemporaryDirectory(dir=os.path.abspath(os.curdir)) as tmpdir:
         username = getuser()
         subprocess.check_call(
             [
