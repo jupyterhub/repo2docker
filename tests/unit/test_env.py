@@ -16,7 +16,11 @@ def test_env():
     for how docker handles its -e & --env argument values
     """
     ts = str(time.time())
-    with tempfile.TemporaryDirectory() as tmpdir:
+    # There appear to be some odd combinations of default dir that do
+    # not work on macOS Catalina with Docker CE 2.2.0.5, so use
+    # the current dir -- it'll be deleted immediately
+
+    with tempfile.TemporaryDirectory(dir=os.path.abspath(os.curdir)) as tmpdir:
         username = getuser()
         os.environ["SPAM"] = "eggs"
         os.environ["SPAM_2"] = "ham"
