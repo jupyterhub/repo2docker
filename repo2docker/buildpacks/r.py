@@ -314,6 +314,15 @@ class RBuildPack(PythonBuildPack):
                 ),
             ),
             (
+                "${NB_USER}",
+                # Install rmarkdown library (for background, see https://github.com/jupyter/repo2docker/issues/799, as well as Section 3.2 at https://docs.rstudio.com/shiny-server/)
+                r"""
+                R --quiet -e "install.packages('rmarkdown', repos='{}', method='libcurl')"
+                """.format(
+                    mran_url
+                ),
+            ),
+            (
                 "root",
                 # We set the default CRAN repo to the MRAN one at given date
                 # We set download method to be curl so we get HTTPS support
