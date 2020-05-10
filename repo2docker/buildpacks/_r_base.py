@@ -17,7 +17,7 @@ SHINY_CHECKSUM = "9aeef6613e7f58f21c97a4600921340e"
 DEVTOOLS_VERSION = "2018-02-01"
 
 # IRKernel version - specified as a tag in the IRKernel repository
-IRKERNEL_VERSION = "1.0.2"
+IRKERNEL_VERSION = "1.1"
 
 
 def rstudio_base_scripts():
