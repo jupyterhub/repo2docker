@@ -23,6 +23,16 @@ If you want to run a specific test, you can do so with:
 py.test -s tests/<path-to-test>
 ```
 
+### Troubleshooting Tests
+
+Some of the tests have non-python requirements for your development machine. They are:
+
+- `git-lfs` must be installed ([instructions](https://github.com/git-lfs/git-lfs)). It need not be activated -- there is no need to run the `git lfs install` command. It just needs to be available to the test suite. 
+   - If your test failure messages include "`git-lfs filter-process: git-lfs: command not found`", this step should address the problem.
+
+- Minimum Docker Image size of 128GB is required. If you are not running docker on a linux OS, you may need to expand the runtime image size for your installation. See Docker's instructions for [macOS](https://docs.docker.com/docker-for-mac/space/) or [Windows 10](https://docs.docker.com/docker-for-windows/#resources) for more information.
+    - If your test failure messages include "`No space left on device: '/home/...`", this step should address the problem.
+
 ## Update and Freeze BuildPack Dependencies
 
 This section covers the process by which repo2docker defines and updates the
