@@ -17,12 +17,8 @@ GitHub contains a list of sample repositories for common configurations
 that ``repo2docker`` can build with various configuration files such as
 Python and R installation in a repository.
 
-Below is a list of supported configuration files (roughly in the order of build priority):
-
-.. contents::
-   :local:
-   :depth: 1
-
+A list of supported configuration files (roughly in the order of build priority)
+can be found on this page (and to the right).
 
 .. _environment.yml:
 
@@ -32,10 +28,10 @@ Below is a list of supported configuration files (roughly in the order of build 
 ``environment.yml`` is the standard configuration file used by `conda <https://conda.io>`_
 that lets you install any kind of package,
 including Python, R, and C/C++ packages.
-``repo2docker`` does not use ``environment.yml`` to create and activate a new conda environment.
-Rather, it updates a base conda environment with the packages listed in ``environment.yml``.
+``repo2docker`` does not use your ``environment.yml`` to create and activate a new conda environment.
+Rather, it updates a base conda environment `defined here <https://github.com/jupyter/repo2docker/blob/master/repo2docker/buildpacks/conda/environment.yml>`_ with the packages listed in your ``environment.yml``.
 This means that the environment will always have the same default name, not the name
-specified in ``environment.yml``.
+specified in your ``environment.yml``.
 
 .. note::
 
@@ -180,6 +176,9 @@ To see example repositories, visit our
 A script that can contain arbitrary commands to be run after the whole repository has been built. If you
 want this to be a shell script, make sure the first line is ``#!/bin/bash``.
 
+Note that by default the build will not be stopped if an error occurs inside a shell script.
+You should include ``set -e`` or the equivalent at the start of the script to avoid errors being silently ignored.
+
 An example use-case of ``postBuild`` file is JupyterLab's demo on mybinder.org.
 It uses a ``postBuild`` file in a folder called ``binder`` to `prepare
 their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master/binder/postBuild>`_.
@@ -212,7 +211,7 @@ If you only need to run things once during the build phase use :ref:`postBuild`.
 
 Sometimes you want to specify the version of the runtime
 (e.g. the version of Python or R),
-but the environment specification format don't let you specify this information
+but the environment specification format will not let you specify this information
 (e.g. requirements.txt or install.R).
 For these cases, we have a special file, ``runtime.txt``.
 
@@ -220,7 +219,7 @@ For these cases, we have a special file, ``runtime.txt``.
 
    ``runtime.txt`` is only supported when used with environment specifications
    that do not already support specifying the runtime
-   (e.g. when using ``environment.yml`` for conda or ``Project.toml`` for Julia,
+   (when using ``environment.yml`` for conda or ``Project.toml`` for Julia,
    ``runtime.txt`` will be ignored).
 
 To use python-2.7: add ``python-2.7`` in runtime.txt file.
@@ -231,8 +230,11 @@ Python 2 installed. To see a full example repository, visit our
 repo2docker uses R libraries pinned to a specific snapshot on
 `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
 You need to have a ``runtime.txt`` file that is formatted as
-``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot at MRAN that will be
-used for installing libraries.
+``r-<RVERSION>-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot at MRAN that will be
+used for installing libraries. You can set RVERSION to 3.4, 3.5 or 3.6 to select
+the version of R you want to use. If you do not specify a R version the latest
+released version will be used (currently R 3.6). You can also specify the exact
+patch release you want to use for the 3.5 and 3.6 series.
 
 To see an example R repository, visit our `R
 example in binder-examples <https://github.com/binder-examples/r/blob/master/runtime.txt>`_.

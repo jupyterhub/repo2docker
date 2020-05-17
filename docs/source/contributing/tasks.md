@@ -23,6 +23,16 @@ If you want to run a specific test, you can do so with:
 py.test -s tests/<path-to-test>
 ```
 
+### Troubleshooting Tests
+
+Some of the tests have non-python requirements for your development machine. They are:
+
+- `git-lfs` must be installed ([instructions](https://github.com/git-lfs/git-lfs)). It need not be activated -- there is no need to run the `git lfs install` command. It just needs to be available to the test suite. 
+   - If your test failure messages include "`git-lfs filter-process: git-lfs: command not found`", this step should address the problem.
+
+- Minimum Docker Image size of 128GB is required. If you are not running docker on a linux OS, you may need to expand the runtime image size for your installation. See Docker's instructions for [macOS](https://docs.docker.com/docker-for-mac/space/) or [Windows 10](https://docs.docker.com/docker-for-windows/#resources) for more information.
+    - If your test failure messages include "`No space left on device: '/home/...`", this step should address the problem.
+
 ## Update and Freeze BuildPack Dependencies
 
 This section covers the process by which repo2docker defines and updates the
@@ -202,3 +212,58 @@ same syntax to update the Pipfile and viceversa.
 
 At the moment this has to be done manually so please make sure to update both
 files accordingly.
+
+# Uncommon tasks
+
+## Compare generated Dockerfiles between repo2docker versions
+
+For larger refactorings it can be useful to check that the generated Dockerfiles match
+between an older version of r2d and the current version. The following shell script 
+automates this test.
+
+```bash
+#! /bin/bash -e
+
+current_version=$(jupyter-repo2docker --version | sed s@+@-@)
+echo "Comparing $(pwd) (local $current_version vs. $R2D_COMPARE_TO)"
+basename="dockerfilediff"
+
+diff_r2d_dockerfiles_with_version () {
+    docker run --rm -t -v "$(pwd)":"$(pwd)" --user 1000 jupyter/repo2docker:"$1" jupyter-repo2docker --no-build --debug "$(pwd)" &> "$basename"."$1"
+    jupyter-repo2docker --no-build --debug "$(pwd)" &> "$basename"."$current_version"
+    
+    # remove first line logging the path
+    sed -i '/^\[Repo2Docker\]/d' "$basename"."$1"
+    sed -i '/^\[Repo2Docker\]/d' "$basename"."$current_version"
+
+    diff --strip-trailing-cr "$basename"."$1" "$basename"."$current_version" | colordiff
+    rm "$basename"."$current_version" "$basename"."$1"
+}
+
+startdir="$(pwd)"
+cd "$1"
+
+#diff_r2d_dockerfiles 0.10.0-22.g4f428c3.dirty
+diff_r2d_dockerfiles_with_version "$R2D_COMPARE_TO"
+
+cd "$startdir"
+```
+
+Put the code above in a file `tests/dockerfile_diff.sh` and make it executable: `chmod +x dockerfile_diff.sh`.
+
+Configure the repo2docker version you want to compare with your local version in the environment variable `R2D_COMPARE_TO`.
+The scripts takes one input: the directory where repo2docker should be executed.
+
+```bash
+cd tests/
+R2D_COMPARE_TO=0.10.0 ./dockerfile_diff.sh venv/py35/
+```
+
+Run it for all directories where there is a `verify` file:
+
+```bash
+cd tests/
+R2D_COMPARE_TO=0.10.0 CMD=$(pwd)/dockerfile_diff.sh find . -name 'verify' -execdir bash -c '$CMD $(pwd)' \;
+```
+
+To keep the created Dockefilers for further inspection, comment out the deletion line in the script.

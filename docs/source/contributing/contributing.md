@@ -1,4 +1,4 @@
-# Contributing to repo2docker development
+# Contributing to repo2docker
 
 Thank you for thinking about contributing to repo2docker!
 This is an open source project that is developed and maintained entirely by volunteers.
@@ -196,3 +196,16 @@ Server:
 ```
 
 Then you are good to go!
+
+## Building the documentation locally
+
+If you only changed the documentation, you can also build the documentation locally using `sphinx` .
+
+```bash
+pip install -r docs/doc-requirements.txt
+
+cd docs/
+make html
+```
+
+Then open the file `docs/build/html/index.html` in your browser.

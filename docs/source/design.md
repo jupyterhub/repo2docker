@@ -49,10 +49,8 @@ Many ingredients go into making an image from a repository:
 1. versions of the libraries installed by the repository
 
 `repo2docker` controls the first two, the user controls the third one. The current
-policy for the version of the base image is that we will keep pace with Ubuntu
-releases until we reach the next release with Long Term Support (LTS). We
-currently use Artful Aardvark (17.10) and the next LTS version will be
-Bionic Beaver (18.04).
+policy for the version of the base image is that we will use the current LTS
+version Bionic Beaver (18.04) for the foreseeable future.
 
 The version of `repo2docker` used to build an image can influence which packages
 are installed by default and which features are supported during the build
@@ -73,7 +71,7 @@ that's separated out cleanly. This allows easy use by other projects (like
 BinderHub).
 
 There is additional (and very useful) design advice on this in
-the [Art of Unix Programming](http://www.faqs.org/docs/artu/ch01s06.html) which
+the [Art of Unix Programming](https://web.archive.org/web/20190921131144/http://www.faqs.org/docs/artu/ch01s06.html) which
 is a highly recommended quick read.
 
 ## Composability

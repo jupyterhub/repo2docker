@@ -1,7 +1,6 @@
-# Note that there is also a Pipfile for this project if you are updating this 
+# Note that there is also a Pipfile for this project if you are updating this
 # file do not forget to update the Pipfile accordingly
 sphinx>=1.4, !=1.5.4
 recommonmark
-alabaster
-alabaster_jupyterhub
 sphinxcontrib-autoprogram
+pydata-sphinx-theme

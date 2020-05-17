@@ -223,7 +223,6 @@ def test_invalid_container_port_protocol_mapping_fail(temp_cwd):
     assert not validate_arguments(builddir, args_list, "Port specification")
 
 
-@pytest.mark.xfail(reason="Regression in new arg parsing")
 def test_docker_handle_fail(temp_cwd):
     """
     Test to check if r2d fails with minimal error message on not being able to connect to docker daemon
@@ -233,19 +232,22 @@ def test_docker_handle_fail(temp_cwd):
     assert not validate_arguments(
         builddir,
         args_list,
-        "Docker client initialization error. Check if docker is running on the host.",
+        "Check if docker is running on the host.",
         disable_dockerd=True,
     )
 
 
 def test_docker_handle_debug_fail(temp_cwd):
     """
-    Test to check if r2d fails with stack trace on not being able to connect to docker daemon and debug enabled
+    Test to check if r2d fails with helpful error message on not being able to connect to docker daemon and debug enabled
     """
     args_list = ["--debug"]
 
     assert not validate_arguments(
-        builddir, args_list, "docker.errors.DockerException", disable_dockerd=True
+        builddir,
+        args_list,
+        "Check if docker is running on the host.",
+        disable_dockerd=True,
     )
 
 

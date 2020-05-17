@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/jupyter/repo2docker.svg?branch=master)](https://travis-ci.org/jupyter/repo2docker)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://dev.azure.com/jupyter/repo2docker/_apis/build/status/jupyter.repo2docker?branchName=master)](https://dev.azure.com/jupyter/repo2docker/_build/latest?definitionId=1&branchName=master)
+[![Contribute](https://img.shields.io/badge/I_want_to_contribute!-grey?logo=jupyter)](https://repo2docker.readthedocs.io/en/latest/contributing/contributing.html)
 
 `repo2docker` fetches a git repository and builds a container image based on
 the configuration files found in the repository.

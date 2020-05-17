@@ -1,11 +1,19 @@
-"""Buildpack for git repos with Pipfile.lock or Pipfile within them. `pipenv`
-will be used to install the dependencies but we will manually install declared
-Python versions instead of using PyEnv."""
+"""Buildpack for git repos with Pipfile.lock or Pipfile
 
+`pipenv` will be used to install the dependencies
+conda will provide the base Python environment,
+same as the Python or Conda build packs.
+"""
+
+import json
 import os
 import re
 
+import toml
+
 from ..conda import CondaBuildPack
+
+VERSION_PAT = re.compile(r"\d+(\.\d+)*")
 
 
 class PipfileBuildPack(CondaBuildPack):
@@ -23,38 +31,39 @@ class PipfileBuildPack(CondaBuildPack):
             return self._python_version
 
         files_to_search_in_order = [
-            {
-                "path": self.binder_path("Pipfile.lock"),
-                "pattern": r"\s*[\",\']python_(?:full_)?version[\",\']: [\",\']?([0-9a-z\.]*)[\",\']?",  # '            "python_version": "3.6"'
-            },
-            {
-                "path": self.binder_path("Pipfile"),
-                "pattern": r"python_(?:full_)?version\s*=+\s*[\",\']?([0-9a-z\.]*)[\",\']?",  # 'python_version = "3.6"'
-            },
-            {
-                "path": self.binder_path("runtime.txt"),
-                "pattern": r"\s*python-([0-9a-z\.]*)\s*",  # 'python-3.6'
-            },
+            self.binder_path("Pipfile.lock"),
+            self.binder_path("Pipfile"),
         ]
 
+        lockfile = self.binder_path("Pipfile.lock")
+        requires_sources = []
+        if os.path.exists(lockfile):
+            with open(lockfile) as f:
+                lock_info = json.load(f)
+                requires_sources.append(lock_info.get("_meta", {}).get("requires", {}))
+
+        pipfile = self.binder_path("Pipfile")
+        if os.path.exists(pipfile):
+            with open(pipfile) as f:
+                pipfile_info = toml.load(f)
+            requires_sources.append(pipfile_info.get("requires", {}))
+
         py_version = None
-        for file in files_to_search_in_order:
-            try:
-                with open(file["path"]) as f:
-                    for line in f:
-                        match = re.match(file["pattern"], line)
-                        if not match:
-                            continue
-                        py_version = match.group(1)
-                        break
-            except FileNotFoundError:
-                pass
+        for requires in requires_sources:
+            for key in ("python_full_version", "python_version"):
+                version_str = requires.get(key, None)
+                if version_str:
+                    match = VERSION_PAT.match(version_str)
+                    if match:
+                        py_version = match.group()
+                if py_version:
+                    break
             if py_version:
                 break
 
         # extract major.minor
         if py_version:
-            if len(py_version) == 1:
+            if len(py_version.split(".")) == 1:
                 self._python_version = self.major_pythons.get(py_version[0])
             else:
                 # return major.minor
@@ -64,6 +73,24 @@ class PipfileBuildPack(CondaBuildPack):
             # use the default Python
             self._python_version = self.major_pythons["3"]
             return self._python_version
+
+    def get_preassemble_script_files(self):
+        """Return files needed for preassembly"""
+        files = super().get_preassemble_script_files()
+        for name in ("requirements3.txt", "Pipfile", "Pipfile.lock"):
+            path = self.binder_path(name)
+            if os.path.exists(path):
+                files[path] = path
+        return files
+
+    def get_preassemble_scripts(self):
+        """scripts to run prior to staging the repo contents"""
+        scripts = super().get_preassemble_scripts()
+        # install pipenv to install dependencies within Pipfile.lock or Pipfile
+        scripts.append(
+            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv==2018.11.26")
+        )
+        return scripts
 
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository.
@@ -103,11 +130,6 @@ class PipfileBuildPack(CondaBuildPack):
         #     [packages]
         #     my_package_example = {path=".", editable=true}
         working_directory = self.binder_dir or "."
-
-        # install pipenv to install dependencies within Pipfile.lock or Pipfile
-        assemble_scripts.append(
-            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv==2018.11.26")
-        )
 
         # NOTES:
         # - Without prioritizing the PATH to KERNEL_PYTHON_PREFIX over

@@ -5,6 +5,7 @@ import os
 import subprocess
 import tempfile
 import time
+from getpass import getuser
 from unittest import mock
 
 from repo2docker import Repo2Docker
@@ -26,7 +27,7 @@ def test_user():
     """
     ts = str(time.time())
     # FIXME: Use arbitrary login here, We need it now since we wanna put things to volume.
-    username = os.getlogin()
+    username = getuser()
     userid = str(os.geteuid())
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir = os.path.realpath(tmpdir)

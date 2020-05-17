@@ -11,6 +11,9 @@ MANIFEST
 .cache
 
 repo2docker/s2i
+hooks
+htmlcov
+
 
 ^bin/
 lib/

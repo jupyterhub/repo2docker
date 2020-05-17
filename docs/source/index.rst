@@ -5,8 +5,8 @@ jupyter-repo2docker
 images from source code repositories**.
 
 ``repo2docker`` fetches a repository
-(from GitHub, GitLab, Zenodo, a Git repository or a local directory)
-and builds a container image inn which the code can be executed.
+(from GitHub, GitLab, Zenodo, Figshare, Dataverse installations, a Git repository or a local directory)
+and builds a container image in which the code can be executed.
 The image build process is based on the configuration files found in the repository.
 
 ``repo2docker`` can be
@@ -25,38 +25,15 @@ Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
    :maxdepth: 2
    :caption: Getting started with repo2docker
 
-   install
-   usage
-   faq
-
-.. toctree::
-   :maxdepth: 2
-   :caption: How-To guides
-
-   howto/user_interface
-   howto/languages
-   howto/export_environment
-   howto/lab_workspaces
-   howto/jupyterhub_images
-   howto/deploy
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Complete list of configuration files
-
-   config_files
-   specification
+   getting-started/index
+   howto/index
+   configuration/index
 
 .. toctree::
    :maxdepth: 2
    :caption: Contribute to repo2docker
 
-   contributing/contributing
-   contributing/roadmap
-   architecture
-   design
-   contributing/tasks
-   contributing/buildpack
+   contributing/index
 
 .. toctree::
    :maxdepth: 2
