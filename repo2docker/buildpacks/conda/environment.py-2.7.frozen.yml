@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2020-06-02 18:05:28 UTC
+# Frozen on 2020-06-03 20:30:54 UTC
 name: r2d
 channels:
   - conda-forge
@@ -52,7 +52,7 @@ dependencies:
   - tk=8.6.10=hed695b0_0
   - tornado=5.1.1=py27h14c3975_1000
   - traitlets=4.3.3=py27h8c360ce_1
-  - wcwidth=0.2.3=pyh9f0ad1d_0
+  - wcwidth=0.1.9=pyh9f0ad1d_0
   - wheel=0.34.2=py_1
   - zeromq=4.3.2=he1b5a44_2
   - zlib=1.2.11=h516909a_1006
