@@ -1,3 +1,4 @@
 dependencies:
 - python=2.7.*
 - ipykernel==4.8.2
+- wcwidth==0.1.9
