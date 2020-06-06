@@ -191,7 +191,7 @@ COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
 # Specify the default command to run
-CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
+CMD [{% for c in command -%} "{{ c }}"{{ "," if not loop.last }} {% endfor -%}]
 
 {% if appendix -%}
 # Appendix:
@@ -482,6 +482,14 @@ class BuildPack:
         """
         return None
 
+    def get_command(self):
+        """
+        The default command to be run by docker.
+
+        This should return a list of strings to be used as Dockerfile `CMD`.
+        """
+        return ["jupyter", "notebook", "--ip", "0.0.0.0"]
+
     @property
     def binder_dir(self):
         has_binder = os.path.isdir("binder")
@@ -568,6 +576,7 @@ class BuildPack:
             base_packages=sorted(self.get_base_packages()),
             post_build_scripts=self.get_post_build_scripts(),
             start_script=self.get_start_script(),
+            command=self.get_command(),
             appendix=self.appendix,
         )
 
