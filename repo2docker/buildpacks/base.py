@@ -13,7 +13,7 @@ import jinja2
 
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
-FROM buildpack-deps:bionic
+FROM buildpack-deps:focal
 
 # Avoid prompts from apt
 ENV DEBIAN_FRONTEND=noninteractive
