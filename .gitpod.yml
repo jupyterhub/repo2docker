@@ -1,0 +1,10 @@
+tasks:
+  - init: |
+      pip3 install sphinx-autobuild
+      pip3 install -r docs/doc-requirements.txt
+      pip3 install -e.
+    command: |
+      sphinx-autobuild docs/source/ docs/build/html/
+    name: Sphinx preview
+ports:
+- port: 8000
