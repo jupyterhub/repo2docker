@@ -1,9 +1,9 @@
 # Note that there are a dev-requirements.txt and a docs/doc-requirements.txt
-# files in this project, if you are updating this Pipfile make sure to 
+# files in this project, if you are updating this Pipfile make sure to
 # update these accordingly
 
 [dev-packages]
-pytest=">=3.6"
+pytest=">=4.6"
 wheel="*"
 pytest-cov="*"
 PyYAML = "*"
