@@ -222,23 +222,13 @@ For these cases, we have a special file, ``runtime.txt``.
    (when using ``environment.yml`` for conda or ``Project.toml`` for Julia,
    ``runtime.txt`` will be ignored).
 
-To use python-2.7: add ``python-2.7`` in runtime.txt file.
-The repository will run in an env with
-Python 2 installed. To see a full example repository, visit our
-`Python2 example <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
+Have ``python-x.y`` in ``runtime.txt`` to run the repository with Python version x.y.
+See our `Python2 example repository <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
 
-repo2docker uses R libraries pinned to a specific snapshot on
-`MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
-You need to have a ``runtime.txt`` file that is formatted as
-``r-<RVERSION>-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot at MRAN that will be
-used for installing libraries. You can set RVERSION to 3.4, 3.5 or 3.6 to select
-the version of R you want to use. If you do not specify a R version the latest
-released version will be used (currently R 3.6). You can also specify the exact
-patch release you want to use for the 3.5 and 3.6 series.
-
-To see an example R repository, visit our `R
-example in binder-examples <https://github.com/binder-examples/r/blob/master/runtime.txt>`_.
-
+Have ``r-<RVERSION>-<YYYY>-<MM>-<DD>`` in ``runtime.txt`` to run the repository with R version RVERSION and libraries from a YYYY-MM-DD snapshot of `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
+RVERSION can be set to 3.4, 3.5, 3.6, or to patch releases for the 3.5 and 3.6 series.
+If you do not specify a version, the latest release will be used (currently R 3.6).
+See our `R example repository <https://github.com/binder-examples/r/blob/master/runtime.txt>`_.
 
 .. _default.nix:
 
