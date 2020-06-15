@@ -22,8 +22,8 @@ can be found on this page (and to the right).
 
 .. _environment.yml:
 
-``environment.yml`` - Install a Python environment
-==================================================
+``environment.yml`` - Install a conda environment
+=================================================
 
 ``environment.yml`` is the standard configuration file used by `conda <https://conda.io>`_
 that lets you install any kind of package,
