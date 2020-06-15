@@ -191,7 +191,7 @@ COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
 # Specify the default command to run
-CMD [{% for c in command -%} "{{ c }}"{{ "," if not loop.last }} {% endfor -%}]
+CMD [{% for c in command -%} "{{ c }}"{{ ", " if not loop.last }}{% endfor -%}]
 
 {% if appendix -%}
 # Appendix:
