@@ -79,7 +79,7 @@ class CondaBuildPack(BaseImage):
             (
                 "root",
                 r"""
-                bash /tmp/install-miniforge.bash && \
+                bash -c 'time /tmp/install-miniforge.bash' && \
                 rm /tmp/install-miniforge.bash /tmp/environment.yml
                 """,
             )
@@ -275,9 +275,10 @@ class CondaBuildPack(BaseImage):
                 (
                     "${NB_USER}",
                     r"""
-                conda env update -p {0} -f "{1}" && \
-                conda clean --all -f -y && \
-                conda list -p {0}
+                bash -c 'time mamba env update -p {0} -f "{1}" && \
+                time mamba clean --all -f -y && \
+                mamba list -p {0} \
+                '
                 """.format(
                         env_prefix, environment_yml
                     ),
@@ -293,9 +294,9 @@ class CondaBuildPack(BaseImage):
                 (
                     "${NB_USER}",
                     r"""
-                conda install -p {0} r-base{1} r-irkernel={2} r-devtools && \
-                conda clean --all -f -y && \
-                conda list -p {0}
+                time mamba install -p {0} r-base{1} r-irkernel={2} r-devtools && \
+                time mamba clean --all -f -y && \
+                mamba list -p {0}
                 """.format(
                         env_prefix, r_pin, IRKERNEL_VERSION
                     ),
