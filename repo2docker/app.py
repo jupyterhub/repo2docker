@@ -595,8 +595,24 @@ class Repo2Docker(Application):
         self.hostname = host_name
 
         if not self.run_cmd:
-            port = str(self._get_free_port())
-            self.port = port
+            if len(self.ports) == 1:
+                # single port mapping specified
+                # retrieve container and host port from dict
+                # {'8888/tcp': ('hostname', 'port')}
+                # or
+                # {'8888/tcp': 'port'}
+                container_port_proto, host_port = next(iter(self.ports.items()))
+                if isinstance(host_port, tuple):
+                    # (hostname, port) tuple or string port
+                    host_name, host_port = host_port
+                    self.hostname = host_name
+                host_port = int(host_port)
+                container_port = int(container_port_proto.split("/", 1)[0])
+            else:
+                # no port specified, pick a random one
+                container_port = host_port = str(self._get_free_port())
+                self.ports = {"%s/tcp" % container_port: host_port}
+            self.port = host_port
             # To use the option --NotebookApp.custom_display_url
             # make sure the base-notebook image is updated:
             # docker pull jupyter/base-notebook
@@ -606,20 +622,13 @@ class Repo2Docker(Application):
                 "--ip",
                 "0.0.0.0",
                 "--port",
-                port,
-                "--NotebookApp.custom_display_url=http://{}:{}".format(host_name, port),
+                container_port,
+                f"--NotebookApp.custom_display_url=http://{host_name}:{host_port}"
                 "--NotebookApp.default_url=/lab",
             ]
-            ports = {"%s/tcp" % port: port}
         else:
             # run_cmd given by user, if port is also given then pass it on
             run_cmd = self.run_cmd
-            if self.ports:
-                ports = self.ports
-            else:
-                ports = {}
-        # store ports on self so they can be retrieved in tests
-        self.ports = ports
 
         container_volumes = {}
         if self.volumes:
@@ -634,7 +643,7 @@ class Repo2Docker(Application):
 
         run_kwargs = dict(
             publish_all_ports=self.all_ports,
-            ports=ports,
+            ports=self.ports,
             command=run_cmd,
             volumes=container_volumes,
             environment=self.environment,
