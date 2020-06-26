@@ -1,9 +1,12 @@
 #!/bin/bash
-# This downloads and installs a pinned version of miniconda
+# This downloads and installs a pinned version of miniforge
+# and sets up the base environment
 set -ex
+
 
 cd $(dirname $0)
 MINIFORGE_VERSION=4.8.2-1
+MAMBA_VERSION=0.3.8
 # SHA256 for installers can be obtained from https://github.com/conda-forge/miniforge/releases
 SHA256SUM="4f897e503bd0edfb277524ca5b6a5b14ad818b3198c2f07a36858b7d88c928db"
 
@@ -14,7 +17,7 @@ INSTALLER_PATH=/tmp/miniforge-installer.sh
 # since this is run as root
 unset HOME
 
-wget --quiet $URL -O ${INSTALLER_PATH}
+time wget --quiet $URL -O ${INSTALLER_PATH}
 chmod +x ${INSTALLER_PATH}
 
 # check sha256 checksum
@@ -23,7 +26,7 @@ if ! echo "${SHA256SUM}  ${INSTALLER_PATH}" | sha256sum  --quiet -c -; then
     exit 1
 fi
 
-bash ${INSTALLER_PATH} -b -p ${CONDA_DIR}
+time bash ${INSTALLER_PATH} -b -p ${CONDA_DIR}
 export PATH="${CONDA_DIR}/bin:$PATH"
 
 # Preserve behavior of miniconda - packages come from conda-forge + defaults
@@ -39,17 +42,22 @@ echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 # avoid future changes to default channel_priority behavior
 conda config --system --set channel_priority "flexible"
 
+# do all installation with mamba
+time conda install -y mamba==${MAMBA_VERSION}
+# switch back to conda
+# ln -s $CONDA_DIR/bin/conda $CONDA_DIR/bin/mamba
+
 echo "installing notebook env:"
 cat /tmp/environment.yml
-conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
+time mamba env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
 
 # Install jupyter-offline-notebook to allow users to download notebooks
 # after the server connection has been lost
 # This will install and enable the extension for jupyter notebook
-${NB_PYTHON_PREFIX}/bin/python -m pip install jupyter-offlinenotebook==0.1.0
+time ${NB_PYTHON_PREFIX}/bin/python -m pip install jupyter-offlinenotebook==0.1.0
 # and this installs it for lab. Keep going if the lab version is incompatible
 # with the extension
-${NB_PYTHON_PREFIX}/bin/jupyter labextension install jupyter-offlinenotebook || true
+time ${NB_PYTHON_PREFIX}/bin/jupyter labextension install jupyter-offlinenotebook || true
 
 # empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
@@ -62,14 +70,14 @@ if [[ -f /tmp/kernel-environment.yml ]]; then
     echo "installing kernel env:"
     cat /tmp/kernel-environment.yml
 
-    conda env create -p ${KERNEL_PYTHON_PREFIX} -f /tmp/kernel-environment.yml
+    time mamba env create -p ${KERNEL_PYTHON_PREFIX} -f /tmp/kernel-environment.yml
     ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${NB_PYTHON_PREFIX}"
     echo '' > ${KERNEL_PYTHON_PREFIX}/conda-meta/history
-    conda list -p ${KERNEL_PYTHON_PREFIX}
+    mamba list -p ${KERNEL_PYTHON_PREFIX}
 fi
 
 # Clean things out!
-conda clean --all -f -y
+time mamba clean --all -f -y
 
 # Remove the big installer so we don't increase docker image size too much
 rm ${INSTALLER_PATH}
@@ -79,5 +87,5 @@ rm -rf /root/.cache
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
 
-conda list -n root
-conda list -p ${NB_PYTHON_PREFIX}
+mamba list -n root
+mamba list -p ${NB_PYTHON_PREFIX}
