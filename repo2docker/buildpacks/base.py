@@ -188,6 +188,10 @@ ENV R2D_ENTRYPOINT "{{ start_script }}"
 
 # Add entrypoint
 COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
+USER root
+RUN chmod a+rx /usr/local/bin/repo2docker-entrypoint
+RUN chown ${NB_USER}:${NB_USER} /usr/local/bin/repo2docker-entrypoint
+USER ${NB_USER}
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
 # Specify the default command to run
