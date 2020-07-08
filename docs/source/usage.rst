@@ -91,7 +91,7 @@ Where to put configuration files
 * The root directory of the repository.
 
 Having both ``binder/`` and ``.binder/`` folders is not allowed.
-And if one of these folders exists, configuration files in that folder are considered only.
+If one of these folders exists, only configuration files in that folder are considered, configuration in the root directory will be ignored.
 
 Check the complete list of :ref:`configuration files <config-files>` supported
 by ``repo2docker`` to see how to configure the build process.
