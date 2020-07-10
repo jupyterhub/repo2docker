@@ -232,8 +232,22 @@ class RBuildPack(PythonBuildPack):
         contents of runtime.txt.
         """
 
-        mran_url = "https://mran.microsoft.com/snapshot/{}".format(
-            self.checkpoint_date.isoformat()
+        # parse API resonse from packagemanger.rstudio.com mapping dates to
+        # transaction_ids (= build ids) required for finaly repo url string
+        timediffs = {
+            x['transaction_id']:(
+                datetime.datetime.strptime(
+                    # unfortunately, some but time stamps come with microseconds - strip them via regex
+                    re.search("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}", x['date']).group(),
+                    '%Y-%m-%dT%H:%M:%S'
+                ) -
+                datetime.datetime.strptime(querydate, '%Y-%m-%d')
+            ).total_seconds()
+            for x in requests.get('https://packagemanager.rstudio.com/__api__/repos/1/transaction-dates?_sort=date&_order=asc').json()
+        }
+        # build  the final repository url
+        repo_url = "https://packagemanager.rstudio.com/all/__linux__/xenial/{transaction_id}".format(
+            transaction_id=max(key for key in timediffs if timediffs[key] <= 0)
         )
 
         scripts = []
@@ -318,9 +332,9 @@ class RBuildPack(PythonBuildPack):
                 # We set the default CRAN repo to the MRAN one at given date
                 # We set download method to be curl so we get HTTPS support
                 r"""
-                echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
+                echo "options(repos = c(CRAN='{repo_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
                 """.format(
-                    mran_url=mran_url
+                    repo_url=repo_url
                 ),
             ),
         ]
