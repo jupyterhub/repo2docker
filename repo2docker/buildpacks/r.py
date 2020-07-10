@@ -232,6 +232,8 @@ class RBuildPack(PythonBuildPack):
         contents of runtime.txt.
         """
 
+        # TODO: decide date cutoff, use mran url before cutoff.
+
         # parse API resonse from packagemanger.rstudio.com mapping dates to
         # transaction_ids (= build ids) required for finaly repo url string
         timediffs = {
