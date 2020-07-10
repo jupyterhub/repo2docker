@@ -326,7 +326,7 @@ class RBuildPack(PythonBuildPack):
                 r"""
                 R --quiet -e "install.packages('shiny', repos='{}', method='libcurl')"
                 """.format(
-                    mran_url
+                    repo_url
                 ),
             ),
             (
