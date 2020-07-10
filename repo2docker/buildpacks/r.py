@@ -243,7 +243,7 @@ class RBuildPack(PythonBuildPack):
                     re.search("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}", x['date']).group(),
                     '%Y-%m-%dT%H:%M:%S'
                 ) -
-                datetime.datetime.strptime(querydate, '%Y-%m-%d')
+                datetime.datetime.strptime(self.checkpoint_date.isoformat(), '%Y-%m-%d')
             ).total_seconds()
             for x in requests.get('https://packagemanager.rstudio.com/__api__/repos/1/transaction-dates?_sort=date&_order=asc').json()
         }
