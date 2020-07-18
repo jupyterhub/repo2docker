@@ -6,7 +6,7 @@ set -ex
 
 cd $(dirname $0)
 MINIFORGE_VERSION=4.8.2-1
-MAMBA_VERSION=0.3.8
+MAMBA_VERSION=0.4.4
 # SHA256 for installers can be obtained from https://github.com/conda-forge/miniforge/releases
 SHA256SUM="4f897e503bd0edfb277524ca5b6a5b14ad818b3198c2f07a36858b7d88c928db"
 
