@@ -21,6 +21,13 @@ def temp_cwd(tmpdir):
     tmpdir.chdir()
 
 
+invalid_image_name_template = (
+    "%r is not a valid docker image name. Image name "
+    "must start with a lowercase or numeric character and "
+    "can then use _ . or - in addition to lowercase and numeric."
+)
+
+
 def validate_arguments(builddir, args_list=".", expected=None, disable_dockerd=False):
     try:
         cmd = ["repo2docker"]
@@ -50,11 +57,7 @@ def test_image_name_fail(temp_cwd):
 
     image_name = "Test/Invalid_name:1.0.0"
     args_list = ["--no-run", "--no-build", "--image-name", image_name]
-    expected = (
-        "%r is not a valid docker image name. Image name"
-        "must start with an alphanumeric character and"
-        "can then use _ . or - in addition to alphanumeric." % image_name
-    )
+    expected = invalid_image_name_template % image_name
     assert not validate_arguments(builddir, args_list, expected)
 
 
@@ -65,11 +68,7 @@ def test_image_name_underscore_fail(temp_cwd):
 
     image_name = "_test/invalid_name:1.0.0"
     args_list = ["--no-run", "--no-build", "--image-name", image_name]
-    expected = (
-        "%r is not a valid docker image name. Image name"
-        "must start with an alphanumeric character and"
-        "can then use _ . or - in addition to alphanumeric." % image_name
-    )
+    expected = invalid_image_name_template % image_name
     assert not validate_arguments(builddir, args_list, expected)
 
 
@@ -80,11 +79,7 @@ def test_image_name_double_dot_fail(temp_cwd):
 
     image_name = "test..com/invalid_name:1.0.0"
     args_list = ["--no-run", "--no-build", "--image-name", image_name]
-    expected = (
-        "%r is not a valid docker image name. Image name"
-        "must start with an alphanumeric character and"
-        "can then use _ . or - in addition to alphanumeric." % image_name
-    )
+    expected = invalid_image_name_template % image_name
     assert not validate_arguments(builddir, args_list, expected)
 
 
@@ -96,12 +91,7 @@ def test_image_name_valid_restircted_registry_domain_name_fail(temp_cwd):
 
     image_name = "Test.com/valid_name:1.0.0"
     args_list = ["--no-run", "--no-build", "--image-name", image_name]
-    expected = (
-        "%r is not a valid docker image name. Image name"
-        "must start with an alphanumeric character and"
-        "can then use _ . or - in addition to alphanumeric." % image_name
-    )
-
+    expected = invalid_image_name_template % image_name
     assert not validate_arguments(builddir, args_list, expected)
 
 

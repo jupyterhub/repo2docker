@@ -31,9 +31,9 @@ def validate_image_name(image_name):
     """
     if not is_valid_docker_image_name(image_name):
         msg = (
-            "%r is not a valid docker image name. Image name"
-            "must start with an alphanumeric character and"
-            "can then use _ . or - in addition to alphanumeric." % image_name
+            "%r is not a valid docker image name. Image name "
+            "must start with a lowercase or numeric character and "
+            "can then use _ . or - in addition to lowercase and numeric." % image_name
         )
         raise argparse.ArgumentTypeError(msg)
     return image_name
