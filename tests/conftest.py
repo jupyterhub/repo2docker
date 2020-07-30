@@ -20,15 +20,14 @@ from tempfile import TemporaryDirectory
 import pytest
 import yaml
 
-from repo2docker.app import Repo2Docker
 from repo2docker.__main__ import make_r2d
 
 
 def pytest_collect_file(parent, path):
     if path.basename == "verify":
-        return LocalRepo(path, parent)
+        return LocalRepo.from_parent(parent, fspath=path)
     elif path.basename.endswith(".repos.yaml"):
-        return RemoteRepoList(path, parent)
+        return RemoteRepoList.from_parent(parent, fspath=path)
 
 
 def make_test_func(args):
@@ -172,7 +171,7 @@ def repo_with_submodule():
 class Repo2DockerTest(pytest.Function):
     """A pytest.Item for running repo2docker"""
 
-    def __init__(self, name, parent, args):
+    def __init__(self, name, parent, args=None):
         self.args = args
         self.save_cwd = os.getcwd()
         f = parent.obj = make_test_func(args)
@@ -207,8 +206,10 @@ class LocalRepo(pytest.File):
 
         args.append(self.fspath.dirname)
 
-        yield Repo2DockerTest("build", self, args=args)
-        yield Repo2DockerTest(self.fspath.basename, self, args=args + ["./verify"])
+        yield Repo2DockerTest.from_parent(self, name="build", args=args)
+        yield Repo2DockerTest.from_parent(
+            self, name=self.fspath.basename, args=args + ["./verify"]
+        )
 
 
 class RemoteRepoList(pytest.File):
@@ -220,4 +221,5 @@ class RemoteRepoList(pytest.File):
             if "ref" in repo:
                 args += ["--ref", repo["ref"]]
             args += [repo["url"], "--"] + shlex.split(repo["verify"])
-            yield Repo2DockerTest(repo["name"], self, args=args)
+
+            yield Repo2DockerTest.from_parent(self, name=repo["name"], args=args)
