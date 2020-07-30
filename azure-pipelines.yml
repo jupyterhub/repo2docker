@@ -18,9 +18,6 @@ strategy:
     venv:
       REPO_TYPE: 'venv'
       python_version: '3.6'
-    stencila_r:
-      REPO_TYPE: 'stencila-r'
-      python_version: '3.6'
     stencila_py:
       REPO_TYPE: 'stencila-py'
       python_version: '3.6'
