@@ -34,8 +34,8 @@
 extensions = ["sphinx.ext.extlinks", "sphinxcontrib.autoprogram", "recommonmark"]
 
 extlinks = {
-    "issue": ("https://github.com/jupyter/repo2docker/issues/%s", "Issue #"),
-    "pr": ("https://github.com/jupyter/repo2docker/pull/%s", "PR #"),
+    "issue": ("https://github.com/jupyterhub/repo2docker/issues/%s", "Issue #"),
+    "pr": ("https://github.com/jupyterhub/repo2docker/pull/%s", "PR #"),
     "user": ("https://github.com/%s", "@"),
 }
 

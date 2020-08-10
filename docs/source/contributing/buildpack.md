@@ -1,7 +1,7 @@
 # Add a new buildpack
 
 A new buildpack is needed when a new language or a new package manager should be
-supported. [Existing buildpacks](https://github.com/jupyter/repo2docker/tree/master/repo2docker/buildpacks)
+supported. [Existing buildpacks](https://github.com/jupyterhub/repo2docker/tree/master/repo2docker/buildpacks)
 are a good model for how new buildpacks should be structured.
 See [the Buildpacks page](buildpacks) for more information about the
 structure of a buildpack.
