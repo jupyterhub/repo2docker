@@ -48,8 +48,8 @@ To update one of the dependencies shared across all `repo2docker` builds, you
 must follow these steps (with more detailed information in the sections below):
 
 1. Make sure you have [Docker](https://www.docker.com/) running on your computer
-2. Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#conda-dependencies))
-3. Make a pull request with your changes ([link](https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md#make-a-pull-request))
+2. Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](https://github.com/jupyterhub/repo2docker/blob/master/CONTRIBUTING.md#conda-dependencies))
+3. Make a pull request with your changes ([link](https://github.com/jupyterhub/repo2docker/blob/master/CONTRIBUTING.md#make-a-pull-request))
 
 See the subsections below for more detailed instructions.
 
@@ -118,13 +118,13 @@ We follow [semantic versioning](https://semver.org/).
 
 A new release will automatically be created when a new git tag is created
 and pushed to the repository (using
-[Travis CI](https://github.com/jupyter/repo2docker/blob/master/.travis.yml#L52)).
+[Travis CI](https://github.com/jupyterhub/repo2docker/blob/master/.travis.yml#L52)).
 
 To create a new release, follow these steps:
 
 ### Confirm that the changelog is ready
 
-[The changelog](https://github.com/jupyter/repo2docker/blob/master/docs/source/changelog.rst)
+[The changelog](https://github.com/jupyterhub/repo2docker/blob/master/docs/source/changelog.rst)
 should reflect all significant enhancements and fixes to repo2docker and
 its documentation. In addition, ensure that the correct version is displayed
 at the top, and create a new `dev` section if needed.
@@ -150,12 +150,12 @@ Once this has completed, make sure that the new version has been updated.
 ### Create a new release on the GitHub repository
 
 Once the new release has been pushed to PyPI, we need to create a new
-release on the [GitHub repository releases page](https://github.com/jupyter/repo2docker/releases). Once on that page, follow these steps:
+release on the [GitHub repository releases page](https://github.com/jupyterhub/repo2docker/releases). Once on that page, follow these steps:
 
 * Click "Draft a new release"
 * Choose a tag version using the same tag you just created above
 * The release name is simply the tag version
-* The description is [a link to the Changelog](https://github.com/jupyter/repo2docker/blob/master/docs/source/changelog.rst),
+* The description is [a link to the Changelog](https://github.com/jupyterhub/repo2docker/blob/master/docs/source/changelog.rst),
   ideally with an anchor to the latest release.
 * Finally, click "Publish release"
 
@@ -229,7 +229,7 @@ echo "Comparing $(pwd) (local $current_version vs. $R2D_COMPARE_TO)"
 basename="dockerfilediff"
 
 diff_r2d_dockerfiles_with_version () {
-    docker run --rm -t -v "$(pwd)":"$(pwd)" --user 1000 jupyter/repo2docker:"$1" jupyter-repo2docker --no-build --debug "$(pwd)" &> "$basename"."$1"
+    docker run --rm -t -v "$(pwd)":"$(pwd)" --user 1000 jupyterhub/repo2docker:"$1" jupyter-repo2docker --no-build --debug "$(pwd)" &> "$basename"."$1"
     jupyter-repo2docker --no-build --debug "$(pwd)" &> "$basename"."$current_version"
     
     # remove first line logging the path

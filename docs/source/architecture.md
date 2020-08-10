@@ -126,7 +126,7 @@ commands:
   should return any value other than `None` if the path matches what the ContentProvider is looking
   for.
 
-  > For example, the [`Local` ContentProvider](https://github.com/jupyter/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L64)
+  > For example, the [`Local` ContentProvider](https://github.com/jupyterhub/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L64)
   > checks whether the argument is a valid local path. If so, then `detect(`
   > returns a dictionary: `{'path': source}` which defines the path to the repository.
   > This path is used by `fetch()` to check that it matches the output directory.
@@ -135,7 +135,7 @@ commands:
   result in the contents of the repository being placed locally to a folder.
 
 For more information on ContentProviders, take a look at
-[the ContentProvider base class](https://github.com/jupyter/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L16-L60)
+[the ContentProvider base class](https://github.com/jupyterhub/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L16-L60)
 which has more explanation.
 
 

@@ -17,9 +17,9 @@ are pushed to a Docker registry.
 ``repo2docker`` is the tool used by `BinderHub <https://binderhub.readthedocs.io>`_
 to build images on demand.
 
-Please report `Bugs <https://github.com/jupyter/repo2docker/issues>`_,
+Please report `Bugs <https://github.com/jupyterhub/repo2docker/issues>`_,
 `ask questions <https://gitter.im/jupyterhub/binder>`_ or
-`contribute to the project <https://github.com/jupyter/repo2docker/blob/master/CONTRIBUTING.md>`_.
+`contribute to the project <https://github.com/jupyterhub/repo2docker/blob/master/CONTRIBUTING.md>`_.
 
 .. toctree::
    :maxdepth: 2

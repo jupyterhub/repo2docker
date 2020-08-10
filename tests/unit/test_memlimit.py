@@ -55,7 +55,7 @@ def test_memlimit_same_postbuild():
     Validate that the postBuild files for the dockerfile and non-dockerfile
     tests are the same
 
-    Until https://github.com/jupyter/repo2docker/issues/160 gets fixed.
+    Until https://github.com/jupyterhub/repo2docker/issues/160 gets fixed.
     """
     filepaths = [
         os.path.join(basedir, "memlimit", t, "postBuild")

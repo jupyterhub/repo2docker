@@ -79,7 +79,7 @@ deploy:
   distributions: sdist bdist_wheel
   on:
     tags: true
-    repo: jupyter/repo2docker
+    repo: jupyterhub/repo2docker
     condition: "$REPO_TYPE = conda"
   password:
     secure: Vcbr4UtckHRjKKhOFKyHkmBQRB9H3SnJvOoxuqXhzCR6JtVe2L1m4UJaSk5aq6CDauZI6fejYhMxJ6W5oqz2q7DH8RnemIVCmTaqTNqblQy6s1XK7iUjtWUtr+MfjFWNx99hqAy9VGVoi++9w4ZaDba448D69rkzVqQTJUjHTlJql66ZIyuPWLhgkWRxMNd5Hnwjf+ETc7efasD2NsvsASsI0AEZijjb+Lbi9V+hR1e1JTn+a8Gz4zskPGVT2kMTobLGE6ucfsYyPy/FxAp5GedEZdAaipjdHmN64ylV8fxDrsCKj4zwD+w43XJzJPJVpqmeYm93SKhWr2v5xn/IGFH/Ea/9/rzFogpDdCUIgv4/xNKgVFVaMalTSUs9aOwYoBVFrmWNkyPSv7vihgWtO2ljo239Eb81SHMiwnbsHG5Ao0XY32USn7CmLO7/BbnY+JVJpNHWoG/jdTn73OzXextGK30f7fp1IxSxhnGdMBkNbKeujOfmhtDj1DIyMM2eNy0YMprv90+d9zxn15PG3TjspXzM6d9wd7BhmuPfMnD6pC51l83S7kmTMJ9nK+WexACpZ0+jwLYsJUnwXClD4S1nZxaEW6cMfSEYFU/l93eyBQqiQC0EjvWCBXwfl8ZMVQr3gr/ZbqCVSaqtINri4JqA3iqHJl3mEdA2WJ5VDZw=

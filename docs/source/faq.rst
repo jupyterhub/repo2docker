@@ -28,7 +28,7 @@ Repo2docker officially supports the following versions of Python
 - 2.7
 
 Additional versions may work, as long as the
-`base environment <https://github.com/jupyter/repo2docker/blob/master/repo2docker/buildpacks/conda/environment.yml>`_
+`base environment <https://github.com/jupyterhub/repo2docker/blob/master/repo2docker/buildpacks/conda/environment.yml>`_
 can be installed for your version of Python.
 The most likely source of incompatibility is if one of the packages
 in the base environment is not packaged for your Python,
