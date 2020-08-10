@@ -1,6 +1,6 @@
 dist: xenial
+os: linux
 language: python
-sudo: required
 cache: pip
 services:
 - docker
@@ -37,7 +37,7 @@ after_failure:
 
 deploy:
   provider: pypi
-  user: mybinderteam
+  username: mybinderteam
   distributions: sdist bdist_wheel
   on:
     tags: true
