@@ -13,7 +13,11 @@ on:
   - pull_request
 
 # Global environment variables
-env: {}
+env:
+  GIT_COMMITTER_EMAIL: ci-user@github.local
+  GIT_COMMITTER_NAME: CI User
+  GIT_AUTHOR_EMAIL: ci-user@github.local
+  GIT_AUTHOR_NAME: CI User
 
 jobs:
   # Job to run linter / autoformat
