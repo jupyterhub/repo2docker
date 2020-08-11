@@ -1,0 +1,111 @@
+# Useful GitHub Actions docs:
+#
+# - https://help.github.com/en/actions
+# - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
+# - https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow
+# - https://help.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
+
+name: Continuous Integration
+
+# Only trigger the workflow when pushing to master
+on:
+  - push
+  - pull_request
+
+# Global environment variables
+env: {}
+
+jobs:
+  # Job to run linter / autoformat
+  lint:
+    runs-on: ubuntu-18.04
+    steps:
+      # Action Repo: https://github.com/actions/checkout
+      - name: "Checkout repo"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Action Repo: https://github.com/actions/setup-python
+      - name: "Setup Python"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      # Action Repo: https://github.com/actions/cache
+      - name: "Cache pip dependencies"
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: "Install dependencies"
+        run: |
+          pip install --upgrade setuptools pip
+          pip install --upgrade -r dev-requirements.txt
+          pip freeze
+
+      - name: "Run linter"
+        run: |
+          pre-commit run --all-files
+
+  test:
+    # Previous job must have successfully completed for this job to execute
+    # - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idneeds
+    needs: lint
+    runs-on: ubuntu-18.04
+    # - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategy
+    strategy:
+      fail-fast: false  # Do not cancel all jobs if one fails
+      matrix:
+        python_version: ["3.8"]
+        repo_type:
+          - base
+          - conda
+          - dockerfile
+          - external
+          - julia
+          - nix
+          - pipfile
+          - r
+          - stencila-py
+          - unit
+          - venv
+        include:
+          - python_version: "3.5"
+            repo_type: venv
+
+    steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v2
+
+      - name: "Setup Python"
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
+
+      # Action Repo: https://github.com/actions/cache
+      - name: "Cache pip dependencies"
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: "Install"
+        run: |
+          pip install --upgrade setuptools pip wheel
+          pip install --upgrade -r dev-requirements.txt
+          python setup.py bdist_wheel
+          pip install dist/*.whl
+          pip freeze
+
+      - name: "Run tests"
+        run: |
+          pytest --durations 10 --cov repo2docker -v tests/${{ matrix.repo_type }}
+
+      # Action Repo: https://github.com/codecov/codecov-action
+      - uses: codecov/codecov-action@v1
