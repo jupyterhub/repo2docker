@@ -473,14 +473,29 @@ def is_local_pip_requirement(line):
     # we just care that this isn't a "local pip requirement"
     if line.startswith("--pre"):
         return False
+
     # strip off things like `--editable=`. Long form arguments require a =
     if line.startswith("--"):
-        line = line.split("=", 1)[1]
+        # if splitting doesn't work it is probably because the line contains
+        # a syntax error or our "parser" is too simplistic so we return True
+        # just in case
+        try:
+            line = line.split("=", 1)[1]
+        except IndexError:
+            return True
+
     # strip off short form arguments like `-e`. Short form arguments can be
     # followed by a space `-e foo` or use `-e=foo`. The latter is not handled
     # here. We can deal with it when we see someone using it.
     if line.startswith("-"):
-        line = line.split(None, 1)[1]
+        # if splitting doesn't work it is probably because the line contains
+        # a syntax error or our "parser" is too simplistic so we return True
+        # just in case
+        try:
+            line = line.split(None, 1)[1]
+        except IndexError:
+            return True
+
     if "file://" in line:
         # file references break isolation
         return True

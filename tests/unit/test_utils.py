@@ -147,7 +147,13 @@ def test_open_guess_encoding():
         ("numpy", False),
         ("# -e .", False),
         ("--pre", False),
+        # pip ignores the package name and treats this like `--pre` on a line
+        # by itself
         ("--pre pandas", False),
+        # These are invalid lines as far as pip is concerned, check that our
+        # code is robust and continues running
+        ("--unrecognized", True),
+        ("-e", True),
     ],
 )
 def test_local_pip_requirement(req, is_local):
