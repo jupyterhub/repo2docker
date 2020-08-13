@@ -146,6 +146,8 @@ def test_open_guess_encoding():
         ("git+https://github.com/jupyterhub/repo2docker", False),
         ("numpy", False),
         ("# -e .", False),
+        ("--pre", False),
+        ("--pre pandas", False),
     ],
 )
 def test_local_pip_requirement(req, is_local):

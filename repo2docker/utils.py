@@ -469,6 +469,10 @@ def is_local_pip_requirement(line):
     if line.startswith(("--requirement", "--constraint")):
         # as above but flags are spelt out
         return True
+    # the `--pre` flag is a global flag and should appear on a line by itself
+    # we just care that this isn't a "local pip requirement"
+    if line.startswith("--pre"):
+        return False
     # strip off things like `--editable=`. Long form arguments require a =
     if line.startswith("--"):
         line = line.split("=", 1)[1]
