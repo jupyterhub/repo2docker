@@ -1,7 +1,7 @@
 """BuildPack for conda environments"""
 import os
 import re
-from collections import Mapping
+from collections.abc import Mapping
 
 from ruamel.yaml import YAML
 
