@@ -309,7 +309,8 @@ class CondaBuildPack(BaseImage):
                     r"""
                     echo auth-none=1 >> /etc/rstudio/rserver.conf && \
                     echo auth-minimum-user-id=0 >> /etc/rstudio/rserver.conf && \
-                    echo "rsession-which-r={0}/bin/R" >> /etc/rstudio/rserver.conf
+                    echo "rsession-which-r={0}/bin/R" >> /etc/rstudio/rserver.conf && \
+                    echo www-frame-origin=same >> /etc/rstudio/rserver.conf
                     """.format(
                         env_prefix
                     ),
