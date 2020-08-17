@@ -152,8 +152,8 @@ def test_open_guess_encoding():
         ("--pre pandas", False),
         # These are invalid lines as far as pip is concerned, check that our
         # code is robust and continues running
-        ("--unrecognized", True),
-        ("-e", True),
+        ("--unrecognized", False),
+        ("-e", False),
     ],
 )
 def test_local_pip_requirement(req, is_local):
