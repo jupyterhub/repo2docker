@@ -463,29 +463,48 @@ def is_local_pip_requirement(line):
     line = line.split("#", 1)[0].strip()
     if not line:
         return False
+
     if line.startswith(("-r", "-c")):
         # local -r or -c references break isolation
         return True
+
     if line.startswith(("--requirement", "--constraint")):
         # as above but flags are spelt out
         return True
+
+    # the `--pre` flag is a global flag and should appear on a line by itself
+    # we just care that this isn't a "local pip requirement"
+    if line.startswith("--pre"):
+        return False
+
     # strip off things like `--editable=`. Long form arguments require a =
-    if line.startswith("--"):
-        line = line.split("=", 1)[1]
+    # if there is no = it is probably because the line contains
+    # a syntax error or our "parser" is too simplistic
+    if line.startswith("--") and "=" in line:
+        _, line = line.split("=", 1)
+
     # strip off short form arguments like `-e`. Short form arguments can be
     # followed by a space `-e foo` or use `-e=foo`. The latter is not handled
     # here. We can deal with it when we see someone using it.
     if line.startswith("-"):
-        line = line.split(None, 1)[1]
+        _, *rest = line.split(None, 1)
+        if not rest:
+            # no argument after `--flag`, skip line
+            return False
+        line = rest[0]
+
     if "file://" in line:
         # file references break isolation
         return True
+
     if "://" in line:
         # handle git://../local/file
         path = line.split("://", 1)[1]
     else:
         path = line
+
     if path.startswith("."):
         # references a local file
         return True
+
     return False
