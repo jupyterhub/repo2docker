@@ -30,6 +30,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         "1.4.1",
         "1.4.2",
         "1.5.0",
+        "1.5.1",
     ]
 
     @property
