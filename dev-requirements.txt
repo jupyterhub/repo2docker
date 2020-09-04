@@ -6,3 +6,5 @@ wheel
 pytest-cov
 pre-commit
 requests
+mercurial
+hg-evolve
