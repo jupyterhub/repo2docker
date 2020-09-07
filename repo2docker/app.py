@@ -148,6 +148,7 @@ class Repo2Docker(Application):
             contentproviders.Figshare,
             contentproviders.Dataverse,
             contentproviders.Hydroshare,
+            contentproviders.Mercurial,
             contentproviders.Git,
         ],
         config=True,
