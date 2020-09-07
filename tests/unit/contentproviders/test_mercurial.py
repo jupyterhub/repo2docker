@@ -1,10 +1,16 @@
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
+import sys
 
 import pytest
 
 from repo2docker.contentproviders import Mercurial
+
+
+skipif_py35 = pytest.mark.skipif(
+    sys.version_info < (3, 6), reason="requires python3.6"
+)
 
 
 def _add_content_to_hg(repo_dir):
@@ -19,7 +25,9 @@ def _add_content_to_hg(repo_dir):
 
 def _get_sha1(repo_dir):
     """Get repository's current commit SHA1."""
-    sha1 = subprocess.Popen(["hg", "identify"], stdout=subprocess.PIPE, cwd=repo_dir)
+    sha1 = subprocess.Popen(
+        ["hg", "identify"], stdout=subprocess.PIPE, cwd=repo_dir
+    )
     return sha1.stdout.read().decode().strip()
 
 
@@ -44,6 +52,7 @@ def hg_repo_with_content(hg_repo):
     yield hg_repo, sha1
 
 
+@skipif_py35
 def test_detect_mercurial(hg_repo_with_content, repo_with_content):
     mercurial = Mercurial()
     assert mercurial.detect("this-is-not-a-directory") is None
@@ -56,6 +65,7 @@ def test_detect_mercurial(hg_repo_with_content, repo_with_content):
     assert mercurial.detect(hg_repo) == {"repo": hg_repo, "ref": None}
 
 
+@skipif_py35
 def test_clone(hg_repo_with_content):
     """Test simple hg clone to a target dir"""
     upstream, sha1 = hg_repo_with_content
@@ -70,6 +80,7 @@ def test_clone(hg_repo_with_content):
         assert mercurial.content_id == sha1[:7]
 
 
+@skipif_py35
 def test_bad_ref(hg_repo_with_content):
     """
     Test trying to checkout a ref that doesn't exist
