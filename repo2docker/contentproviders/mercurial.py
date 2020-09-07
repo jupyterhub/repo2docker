@@ -66,14 +66,12 @@ class Mercurial(ContentProvider):
                 )
                 raise ValueError("Failed to update to ref {}".format(ref))
 
-        cmd = ["hg", "identify"]
+        cmd = ["hg", "identify", "-i"]
         cmd.extend(hg_config)
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)
-        self._sha1 = sha1.stdout.read().decode().strip()
+        self._node_id = sha1.stdout.read().decode().strip()
 
     @property
     def content_id(self):
-        """A unique ID to represent the version of the content.
-        Uses the first seven characters of the git commit ID of the repository.
-        """
-        return self._sha1[:7]
+        """A unique ID to represent the version of the content."""
+        return self._node_id
