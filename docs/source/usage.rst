@@ -79,6 +79,8 @@ specify the ``branch-name`` or ``commit-hash``. For example::
    commit-hash will result in the latest commit of the repository being built.
 
 
+.. _usage-config-file-location:
+
 Where to put configuration files
 ================================
 
