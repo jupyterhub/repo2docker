@@ -16,15 +16,13 @@ For support questions please search or post to https://discourse.jupyter.org/c/b
 See the [contributing guide](CONTRIBUTING.md) for information on contributing to
 repo2docker.
 
-See [our roadmap](https://repo2docker.readthedocs.io/en/latest/contributing/roadmap.html)
-to learn about where the project is heading.
 
 ## Using repo2docker
 ### Prerequisites
 
 1. Docker to build & run the repositories. The [community edition](https://store.docker.com/search?type=edition&offering=community)
    is recommended.
-2. Python 3.5+.
+2. Python 3.6+.
 
 Supported on Linux and macOS. [See documentation note about Windows support.](http://repo2docker.readthedocs.io/en/latest/install.html#note-about-windows-support)
 
