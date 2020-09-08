@@ -78,7 +78,7 @@ jobs:
           - unit
           - venv
         include:
-          - python_version: "3.5"
+          - python_version: "3.6"
             repo_type: venv
 
     steps:

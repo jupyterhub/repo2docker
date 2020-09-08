@@ -56,7 +56,7 @@ setup(
         "toml",
         "semver",
     ],
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     author="Project Jupyter Contributors",
     author_email="jupyter@googlegroups.com",
     url="https://repo2docker.readthedocs.io/en/latest/",
