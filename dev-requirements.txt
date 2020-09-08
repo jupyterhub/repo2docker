@@ -6,5 +6,3 @@ wheel
 pytest-cov
 pre-commit
 requests
-mercurial>=5.2; python_version > '3.5'
-hg-evolve>=10.0; python_version > '3.5'

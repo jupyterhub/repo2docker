@@ -12,8 +12,6 @@ alabaster = "*"
 Sphinx = ">=1.4,!=1.5.4"
 alabaster_jupyterhub = "*"
 sphinxcontrib-autoprogram = "*"
-mercurial = {version = ">=5.2", markers="python_version > '3.5'"}
-hg-evolve = {version = ">=10.0", markers="python_version > '3.5'"}
 
 [packages]
 repo2docker = {path=".", editable=true}
