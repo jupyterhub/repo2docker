@@ -18,7 +18,8 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           repository: jupyter/repo2docker
+          tags: pr
           push: false
 
       - name: Run repo2docker Docker image
-        run: docker run jupyter/repo2docker repo2docker --version
+        run: docker run jupyter/repo2docker:pr repo2docker --version
