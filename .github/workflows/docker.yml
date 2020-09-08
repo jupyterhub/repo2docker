@@ -1,0 +1,25 @@
+name: Docker build
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  docker:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # https://github.com/docker/build-push-action
+      - name: Build Docker image
+        uses: docker/build-push-action@v1
+        with:
+          repository: jupyter/repo2docker
+          tags: pr
+          push: false
+
+      - name: Run repo2docker Docker image
+        run: docker run jupyter/repo2docker:pr repo2docker --version
