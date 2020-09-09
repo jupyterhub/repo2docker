@@ -4,16 +4,6 @@ from .base import ContentProvider, ContentProviderException
 from ..utils import execute_cmd
 
 
-hg_config = [
-    "--config",
-    "extensions.hggit=!",
-    "--config",
-    "extensions.evolve=",
-    "--config",
-    "extensions.topic=",
-]
-
-
 class Mercurial(ContentProvider):
     """Provide contents of a remote Mercurial repository."""
 
@@ -22,7 +12,8 @@ class Mercurial(ContentProvider):
             return None
         try:
             subprocess.check_output(
-                ["hg", "identify", source] + hg_config, stderr=subprocess.DEVNULL,
+                ["hg", "identify", source, "--config", "extensions.hggit=!"],
+                stderr=subprocess.DEVNULL,
             )
         except subprocess.CalledProcessError:
             return None
@@ -36,7 +27,6 @@ class Mercurial(ContentProvider):
         # make a clone of the remote repository
         try:
             cmd = ["hg", "clone", repo, output_dir]
-            cmd.extend(hg_config)
             if ref is not None:
                 # don't update so the clone will include an empty working
                 # directory, the given ref will be updated out later
@@ -55,7 +45,7 @@ class Mercurial(ContentProvider):
         if ref is not None:
             try:
                 for line in execute_cmd(
-                    ["hg", "update", "--clean", ref] + hg_config,
+                    ["hg", "update", "--clean", ref],
                     cwd=output_dir,
                     capture=yield_output,
                 ):
@@ -67,7 +57,6 @@ class Mercurial(ContentProvider):
                 raise ValueError("Failed to update to ref {}".format(ref))
 
         cmd = ["hg", "identify", "-i"]
-        cmd.extend(hg_config)
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)
         self._node_id = sha1.stdout.read().decode().strip()
 

@@ -55,8 +55,6 @@ setup(
         "ruamel.yaml>=0.15",
         "toml",
         "semver",
-        "mercurial>=5.2",
-        "hg-evolve>=10.0",
     ],
     python_requires=">=3.6",
     author="Project Jupyter Contributors",
