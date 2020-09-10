@@ -146,7 +146,7 @@ def test_ref_topic(hg_repo_with_content):
     """
     upstream, node_id = hg_repo_with_content
     node_id = subprocess.Popen(
-        ["hg", "identify", "-i", "-r", "topic(test-topic)"],
+        ["hg", "identify", "-i", "-r", "topic(test-topic)"] + args_enabling_topic,
         stdout=subprocess.PIPE,
         cwd=upstream,
     )
