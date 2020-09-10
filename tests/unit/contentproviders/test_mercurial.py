@@ -29,6 +29,11 @@ if SKIP_HG_EVOLVE:
 
 @skip_if_no_hg_tests
 def test_if_mercurial_is_available():
+    """
+    To skip the tests related to Mercurial repositories (to avoid to install
+    Mercurial), one can use the environment variable
+    REPO2DOCKER_SKIP_HG_TESTS.
+    """
     subprocess.check_output(["hg", "version"])
 
 
@@ -134,6 +139,10 @@ def test_bad_ref(hg_repo_with_content):
 def test_ref_topic(hg_repo_with_content):
     """
     Test trying to update to a topic
+
+    To skip this test (to avoid to install hg-evolve), one can use the
+    environment variable REPO2DOCKER_SKIP_HG_EVOLVE_TESTS.
+
     """
     upstream, node_id = hg_repo_with_content
     node_id = subprocess.Popen(

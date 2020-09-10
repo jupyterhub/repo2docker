@@ -22,6 +22,17 @@ The `BinderHub <https://binderhub.readthedocs.io/>`_ helm chart uses version
 `helm chart <https://github.com/jupyterhub/binderhub/blob/master/helm-chart/binderhub/values.yaml#L167>`_
 for more details.
 
+Optional: Mercurial
+-------------------
+
+For `Mercurial <https://www.mercurial-scm.org>`_ repositories, `Mercurial needs
+to be installed <https://www.mercurial-scm.org/download>`_. For support of
+`Mercurial topics
+<https://www.mercurial-scm.org/doc/evolution/tutorials/topic-tutorial.html>`_,
+also install `hg-evolve <https://www.mercurial-scm.org/doc/evolution/>`_ which
+provides the topic extension (however, no need to explicitly enable it in a
+Mercurial configuration file).
+
 Installing with ``pip``
 -----------------------
 

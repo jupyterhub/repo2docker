@@ -23,11 +23,15 @@ If you want to run a specific test, you can do so with:
 py.test -s tests/<path-to-test>
 ```
 
+To skip the tests related to Mercurial repositories (to avoid to install
+Mercurial or hg-evolve), one can use the environment variables
+``REPO2DOCKER_SKIP_HG_TESTS`` or ``REPO2DOCKER_SKIP_HG_EVOLVE_TESTS``.
+
 ### Troubleshooting Tests
 
 Some of the tests have non-python requirements for your development machine. They are:
 
-- `git-lfs` must be installed ([instructions](https://github.com/git-lfs/git-lfs)). It need not be activated -- there is no need to run the `git lfs install` command. It just needs to be available to the test suite. 
+- `git-lfs` must be installed ([instructions](https://github.com/git-lfs/git-lfs)). It need not be activated -- there is no need to run the `git lfs install` command. It just needs to be available to the test suite.
    - If your test failure messages include "`git-lfs filter-process: git-lfs: command not found`", this step should address the problem.
 
 - Minimum Docker Image size of 128GB is required. If you are not running docker on a linux OS, you may need to expand the runtime image size for your installation. See Docker's instructions for [macOS](https://docs.docker.com/docker-for-mac/space/) or [Windows 10](https://docs.docker.com/docker-for-windows/#resources) for more information.
@@ -218,7 +222,7 @@ files accordingly.
 ## Compare generated Dockerfiles between repo2docker versions
 
 For larger refactorings it can be useful to check that the generated Dockerfiles match
-between an older version of r2d and the current version. The following shell script 
+between an older version of r2d and the current version. The following shell script
 automates this test.
 
 ```bash
@@ -231,7 +235,7 @@ basename="dockerfilediff"
 diff_r2d_dockerfiles_with_version () {
     docker run --rm -t -v "$(pwd)":"$(pwd)" --user 1000 jupyterhub/repo2docker:"$1" jupyter-repo2docker --no-build --debug "$(pwd)" &> "$basename"."$1"
     jupyter-repo2docker --no-build --debug "$(pwd)" &> "$basename"."$current_version"
-    
+
     # remove first line logging the path
     sed -i '/^\[Repo2Docker\]/d' "$basename"."$1"
     sed -i '/^\[Repo2Docker\]/d' "$basename"."$current_version"
