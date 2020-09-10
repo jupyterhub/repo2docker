@@ -86,9 +86,9 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     def get_path(self):
         """Adds path to Julia binaries to user's PATH.
 
-         Returns:
-             an ordered list of path strings. The path to the Julia
-             executable is added to the list.
+        Returns:
+            an ordered list of path strings. The path to the Julia
+            executable is added to the list.
 
         """
         return super().get_path() + ["${JULIA_PATH}/bin"]

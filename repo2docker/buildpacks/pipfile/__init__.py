@@ -93,8 +93,7 @@ class PipfileBuildPack(CondaBuildPack):
         return scripts
 
     def get_assemble_scripts(self):
-        """Return series of build-steps specific to this repository.
-        """
+        """Return series of build-steps specific to this repository."""
         # If we have either Pipfile.lock, Pipfile, or runtime.txt declare the
         # use of Python 2, Python 2.7 will be made available in the *kernel*
         # environment. The notebook servers environment on the other hand
@@ -168,8 +167,7 @@ class PipfileBuildPack(CondaBuildPack):
         return assemble_scripts
 
     def detect(self):
-        """Check if current repo should be built with the Pipfile buildpack.
-        """
+        """Check if current repo should be built with the Pipfile buildpack."""
         # first make sure python is not explicitly unwanted
         runtime_txt = self.binder_path("runtime.txt")
         if os.path.exists(runtime_txt):
