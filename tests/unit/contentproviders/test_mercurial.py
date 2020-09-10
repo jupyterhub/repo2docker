@@ -1,33 +1,42 @@
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
+import os
+from distutils.util import strtobool
 
 import pytest
 
 from repo2docker.contentproviders import Mercurial
-from repo2docker.contentproviders.mercurial import (
-    HG_REQUIRED,
-    HG_EVOLVE_REQUIRED,
-    is_mercurial_available,
+from repo2docker.contentproviders.mercurial import args_enabling_topic
+
+SKIP_HG = strtobool(os.environ.get("REPO2DOCKER_SKIP_HG_TESTS", "False"))
+SKIP_HG_EVOLVE = SKIP_HG or strtobool(
+    os.environ.get("REPO2DOCKER_SKIP_HG_EVOLVE_TESTS", "False")
 )
 
-skip_if_no_hg = pytest.mark.skipif(
-    not HG_REQUIRED and not is_mercurial_available(),
-    reason="not HG_REQUIRED and Mercurial not available",
+skip_if_no_hg_tests = pytest.mark.skipif(
+    SKIP_HG,
+    reason="REPO2DOCKER_SKIP_HG_TESTS",
+)
+skip_if_no_evolve_tests = pytest.mark.skipif(
+    SKIP_HG_EVOLVE,
+    reason="REPO2DOCKER_SKIP_HG_EVOLVE_TESTS",
 )
 
-
-def is_evolve_available():
-    if not is_mercurial_available():
-        return False
-    output = subprocess.getoutput("hg version -v")
-    return " evolve " in output
+if SKIP_HG_EVOLVE:
+    args_enabling_topic = []
 
 
-EVOLVE_AVAILABLE = is_evolve_available()
+@skip_if_no_hg_tests
+def test_if_mercurial_is_available():
+    subprocess.check_output(["hg", "version"])
 
-if HG_EVOLVE_REQUIRED and not EVOLVE_AVAILABLE:
-    raise RuntimeError("HG_EVOLVE_REQUIRED and not EVOLVE_AVAILABLE")
+
+@skip_if_no_evolve_tests
+def test_if_topic_is_available():
+    """Check that the topic extension can be enabled"""
+    output = subprocess.getoutput("hg version -v --config extensions.topic=")
+    assert "failed to import extension topic" not in output
 
 
 def _add_content_to_hg(repo_dir):
@@ -39,19 +48,22 @@ def _add_content_to_hg(repo_dir):
     subprocess.check_call(["hg", "add", "test"], cwd=repo_dir)
     subprocess.check_call(["hg", "commit", "-m", "Test commit"], cwd=repo_dir)
 
-    if EVOLVE_AVAILABLE:
-        subprocess.check_call(["hg", "topic", "test-topic"], cwd=repo_dir)
-        subprocess.check_call(
-            ["hg", "commit", "-m", "Test commit in topic test-topic"],
-            cwd=repo_dir,
-        )
-        subprocess.check_call(["hg", "up", "default"], cwd=repo_dir)
+    if not SKIP_HG_EVOLVE:
+
+        def check_call(command):
+            subprocess.check_call(command + args_enabling_topic, cwd=repo_dir)
+
+        check_call(["hg", "topic", "test-topic"])
+        check_call(["hg", "commit", "-m", "Test commit in topic test-topic"])
+        check_call(["hg", "up", "default"])
 
 
 def _get_node_id(repo_dir):
     """Get repository's current commit node ID (currently SHA1)."""
     node_id = subprocess.Popen(
-        ["hg", "identify", "-i"], stdout=subprocess.PIPE, cwd=repo_dir
+        ["hg", "identify", "-i"] + args_enabling_topic,
+        stdout=subprocess.PIPE,
+        cwd=repo_dir,
     )
     return node_id.stdout.read().decode().strip()
 
@@ -77,7 +89,7 @@ def hg_repo_with_content(hg_repo):
     yield hg_repo, node_id
 
 
-@skip_if_no_hg
+@skip_if_no_hg_tests
 def test_detect_mercurial(hg_repo_with_content, repo_with_content):
     mercurial = Mercurial()
     assert mercurial.detect("this-is-not-a-directory") is None
@@ -90,7 +102,7 @@ def test_detect_mercurial(hg_repo_with_content, repo_with_content):
     assert mercurial.detect(hg_repo) == {"repo": hg_repo, "ref": None}
 
 
-@skip_if_no_hg
+@skip_if_no_hg_tests
 def test_clone(hg_repo_with_content):
     """Test simple hg clone to a target dir"""
     upstream, node_id = hg_repo_with_content
@@ -105,7 +117,7 @@ def test_clone(hg_repo_with_content):
         assert mercurial.content_id == node_id
 
 
-@skip_if_no_hg
+@skip_if_no_hg_tests
 def test_bad_ref(hg_repo_with_content):
     """
     Test trying to update to a ref that doesn't exist
@@ -118,11 +130,7 @@ def test_bad_ref(hg_repo_with_content):
                 pass
 
 
-@pytest.mark.skipif(
-    not HG_EVOLVE_REQUIRED and not EVOLVE_AVAILABLE,
-    reason="not HG_EVOLVE_REQUIRED and hg-evolve not available",
-)
-@skip_if_no_hg
+@skip_if_no_evolve_tests
 def test_ref_topic(hg_repo_with_content):
     """
     Test trying to update to a topic

@@ -1,38 +1,9 @@
 import subprocess
-import os
-from distutils.util import strtobool
 
 from .base import ContentProvider, ContentProviderException
 from ..utils import execute_cmd
 
-HG_EVOLVE_REQUIRED = strtobool(
-    os.environ.get("REPO2DOCKER_HG_EVOLVE_REQUIRED", "False")
-)
-
-if HG_EVOLVE_REQUIRED:
-    if "REPO2DOCKER_HG_REQUIRED" in os.environ:
-        HG_REQUIRED = strtobool(os.environ["REPO2DOCKER_HG_REQUIRED"])
-        if not HG_REQUIRED:
-            raise ValueError(
-                "Incompatible values for environment variables "
-                "REPO2DOCKER_HG_EVOLVE_REQUIRED=1 and REPO2DOCKER_HG_REQUIRED=0"
-            )
-    else:
-        HG_REQUIRED = True
-else:
-    HG_REQUIRED = strtobool(os.environ.get("REPO2DOCKER_HG_REQUIRED", "False"))
-
-
-def is_mercurial_available():
-    try:
-        subprocess.check_output(["hg", "version"])
-    except subprocess.CalledProcessError:
-        return False
-    return True
-
-
-if HG_REQUIRED and not is_mercurial_available():
-    raise RuntimeError("REPO2DOCKER_HG_REQUIRED but the command `hg` is not available")
+args_enabling_topic = ["--config", "extensions.topic="]
 
 
 class Mercurial(ContentProvider):
@@ -43,12 +14,11 @@ class Mercurial(ContentProvider):
             return None
         try:
             subprocess.check_output(
-                ["hg", "identify", source, "--config", "extensions.hggit=!"],
+                ["hg", "identify", source, "--config", "extensions.hggit=!"]
+                + args_enabling_topic,
                 stderr=subprocess.DEVNULL,
             )
         except subprocess.CalledProcessError:
-            # warning: if hg is not installed and `not HG_REQUIRED`,
-            # we return None even for a hg repo
             return None
 
         return {"repo": source, "ref": ref}
@@ -66,7 +36,7 @@ class Mercurial(ContentProvider):
                 output_dir,
                 "--config",
                 "phases.publish=False",
-            ]
+            ] + args_enabling_topic
             if ref is not None:
                 # don't update so the clone will include an empty working
                 # directory, the given ref will be updated out later
@@ -85,7 +55,7 @@ class Mercurial(ContentProvider):
         if ref is not None:
             try:
                 for line in execute_cmd(
-                    ["hg", "update", "--clean", ref],
+                    ["hg", "update", "--clean", ref] + args_enabling_topic,
                     cwd=output_dir,
                     capture=yield_output,
                 ):
@@ -96,7 +66,7 @@ class Mercurial(ContentProvider):
                 )
                 raise ValueError("Failed to update to ref {}".format(ref))
 
-        cmd = ["hg", "identify", "-i"]
+        cmd = ["hg", "identify", "-i"] + args_enabling_topic
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)
         self._node_id = sha1.stdout.read().decode().strip()
 

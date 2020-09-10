@@ -18,9 +18,8 @@ FROM alpine:${ALPINE_VERSION}
 # install python, git, bash, mercurial
 RUN apk add --no-cache git git-lfs python3 py-pip bash docker mercurial
 
-# install and activate the evolve and topic Mercurial extensions
+# install hg-evolve (Mercurial extensions)
 RUN pip3 install hg-evolve --user --no-cache-dir
-RUN mkdir -p /etc/mercurial/hgrc.d && echo -e "[extensions]\nevolve =\ntopic =\n" >  /etc/mercurial/hgrc.d/evolve.rc
 
 # install repo2docker
 COPY --from=0 /tmp/wheelhouse /tmp/wheelhouse
