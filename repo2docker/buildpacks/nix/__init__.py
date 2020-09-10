@@ -8,8 +8,7 @@ class NixBuildPack(BaseImage):
     """A nix Package Manager BuildPack"""
 
     def get_path(self):
-        """Return paths to be added to PATH environemnt variable
-        """
+        """Return paths to be added to PATH environemnt variable"""
         return super().get_path() + ["/home/${NB_USER}/.nix-profile/bin"]
 
     def get_env(self):
@@ -47,16 +46,14 @@ class NixBuildPack(BaseImage):
         ]
 
     def get_build_script_files(self):
-        """Dict of files to be copied to the container image for use in building
-        """
+        """Dict of files to be copied to the container image for use in building"""
         return {
             "nix/install-nix.bash": "/home/${NB_USER}/.local/bin/install-nix.bash",
             "nix/nix-shell-wrapper": "/usr/local/bin/nix-shell-wrapper",
         }
 
     def get_assemble_scripts(self):
-        """Return series of build-steps specific to this source repository.
-        """
+        """Return series of build-steps specific to this source repository."""
         return super().get_assemble_scripts() + [
             (
                 "${NB_USER}",

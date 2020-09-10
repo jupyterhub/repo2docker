@@ -15,7 +15,7 @@ from ..utils import copytree, deep_get
 
 class Figshare(DoiProvider):
     """Provide contents of a Figshare article.
-    
+
     See https://docs.figshare.com/#public_article for API docs.
 
     Examples:
