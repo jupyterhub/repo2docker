@@ -10,7 +10,6 @@ import sys
 import hashlib
 import escapism
 import xml.etree.ElementTree as ET
-from collections.abc import Iterable
 
 from traitlets import Dict
 
