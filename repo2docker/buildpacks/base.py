@@ -571,7 +571,9 @@ class BuildPack:
             cmd = str(cmd).replace("'", '"')
         if not isinstance(cmd, str):
             raise ValueError(
-                'Method "get_command" of buildpack "%s" must return a string, a list or a tuple.' % self.__class__.__name__)
+                'Method "get_command" of buildpack "%s" must return a string, a list or a tuple.'
+                % self.__class__.__name__
+            )
 
         return t.render(
             packages=sorted(self.get_packages()),
