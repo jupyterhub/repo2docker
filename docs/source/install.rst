@@ -25,13 +25,19 @@ for more details.
 Optional: Mercurial
 -------------------
 
-For `Mercurial <https://www.mercurial-scm.org>`_ repositories, `Mercurial needs
-to be installed <https://www.mercurial-scm.org/download>`_. For support of
-`Mercurial topics
-<https://www.mercurial-scm.org/doc/evolution/tutorials/topic-tutorial.html>`_,
-also install `hg-evolve <https://www.mercurial-scm.org/doc/evolution/>`_ which
-provides the topic extension (however, no need to explicitly enable it in a
-Mercurial configuration file).
+For `Mercurial <https://www.mercurial-scm.org>`_ repositories, Mercurial and
+`hg-evolve <https://www.mercurial-scm.org/doc/evolution/>`_ need to be
+installed. For example, on Debian based distributions, one can do::
+
+  sudo apt install mercurial
+  $(hg debuginstall --template "{pythonexe}") -m pip install hg-evolve --user
+
+To install Mercurial on other systems, see `here
+<https://www.mercurial-scm.org/download>`_.
+
+Note that for old Mercurial versions, you may need to specify a version for
+hg-evolve. For example, ``hg-evolve==9.2`` for hg 4.5 (which is installed with
+`apt` on Ubuntu 18.4).
 
 Installing with ``pip``
 -----------------------

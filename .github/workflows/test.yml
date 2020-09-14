@@ -106,7 +106,9 @@ jobs:
           python setup.py bdist_wheel
           pip install dist/*.whl
           pip freeze
-          pip install mercurial hg-evolve
+          # hg-evolve pinned to 9.2 because hg-evolve dropped support for
+          # hg 4.5, installed with apt in Ubuntu 18.04
+          $(hg debuginstall --template "{pythonexe}") -m pip install hg-evolve==9.2 --user
 
       - name: "Run tests"
         run: |

@@ -24,8 +24,8 @@ py.test -s tests/<path-to-test>
 ```
 
 To skip the tests related to Mercurial repositories (to avoid to install
-Mercurial or hg-evolve), one can use the environment variables
-``REPO2DOCKER_SKIP_HG_TESTS`` or ``REPO2DOCKER_SKIP_HG_EVOLVE_TESTS``.
+Mercurial and hg-evolve), one can use the environment variable
+``REPO2DOCKER_SKIP_HG_TESTS``.
 
 ### Troubleshooting Tests
 

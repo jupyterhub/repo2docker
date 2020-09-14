@@ -10,34 +10,24 @@ from repo2docker.contentproviders import Mercurial
 from repo2docker.contentproviders.mercurial import args_enabling_topic
 
 SKIP_HG = strtobool(os.environ.get("REPO2DOCKER_SKIP_HG_TESTS", "False"))
-SKIP_HG_EVOLVE = SKIP_HG or strtobool(
-    os.environ.get("REPO2DOCKER_SKIP_HG_EVOLVE_TESTS", "False")
-)
 
 skip_if_no_hg_tests = pytest.mark.skipif(
     SKIP_HG,
     reason="REPO2DOCKER_SKIP_HG_TESTS",
 )
-skip_if_no_evolve_tests = pytest.mark.skipif(
-    SKIP_HG_EVOLVE,
-    reason="REPO2DOCKER_SKIP_HG_EVOLVE_TESTS",
-)
-
-if SKIP_HG_EVOLVE:
-    args_enabling_topic = []
 
 
 @skip_if_no_hg_tests
 def test_if_mercurial_is_available():
     """
     To skip the tests related to Mercurial repositories (to avoid to install
-    Mercurial), one can use the environment variable
+    Mercurial and hg-evolve), one can use the environment variable
     REPO2DOCKER_SKIP_HG_TESTS.
     """
     subprocess.check_output(["hg", "version"])
 
 
-@skip_if_no_evolve_tests
+@skip_if_no_hg_tests
 def test_if_topic_is_available():
     """Check that the topic extension can be enabled"""
     output = subprocess.getoutput("hg version -v --config extensions.topic=")
@@ -50,17 +40,14 @@ def _add_content_to_hg(repo_dir):
     with open(Path(repo_dir) / "test", "a") as f:
         f.write("Hello")
 
-    subprocess.check_call(["hg", "add", "test"], cwd=repo_dir)
-    subprocess.check_call(["hg", "commit", "-m", "Test commit"], cwd=repo_dir)
+    def check_call(command):
+        subprocess.check_call(command + args_enabling_topic, cwd=repo_dir)
 
-    if not SKIP_HG_EVOLVE:
-
-        def check_call(command):
-            subprocess.check_call(command + args_enabling_topic, cwd=repo_dir)
-
-        check_call(["hg", "topic", "test-topic"])
-        check_call(["hg", "commit", "-m", "Test commit in topic test-topic"])
-        check_call(["hg", "up", "default"])
+    check_call(["hg", "add", "test"])
+    check_call(["hg", "commit", "-m", "Test commit"])
+    check_call(["hg", "topic", "test-topic"])
+    check_call(["hg", "commit", "-m", "Test commit in topic test-topic"])
+    check_call(["hg", "up", "default"])
 
 
 def _get_node_id(repo_dir):
@@ -135,13 +122,13 @@ def test_bad_ref(hg_repo_with_content):
                 pass
 
 
-@skip_if_no_evolve_tests
+@skip_if_no_hg_tests
 def test_ref_topic(hg_repo_with_content):
     """
     Test trying to update to a topic
 
-    To skip this test (to avoid to install hg-evolve), one can use the
-    environment variable REPO2DOCKER_SKIP_HG_EVOLVE_TESTS.
+    To skip this test (to avoid to install Mercurial and hg-evolve), one can
+    use the environment variable REPO2DOCKER_SKIP_HG_TESTS.
 
     """
     upstream, node_id = hg_repo_with_content
