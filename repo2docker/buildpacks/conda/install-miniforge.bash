@@ -48,8 +48,13 @@ conda env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
 # This will install and enable the extension for jupyter notebook
 ${NB_PYTHON_PREFIX}/bin/python -m pip install jupyter-offlinenotebook==0.1.0
 # and this installs it for lab. Keep going if the lab version is incompatible
-# with the extension
-${NB_PYTHON_PREFIX}/bin/jupyter labextension install jupyter-offlinenotebook || true
+# with the extension.
+# Don't minimize build as it may fail, possibly due to excessive resource usage
+# https://discourse.jupyter.org/t/tip-binder-jupyterlab-extension/6022
+# https://discourse.jupyter.org/t/jupyter-lab-build-hangs-and-then-fails-at-webpack-config-webpack-prod-minimize-config-js/6017/3
+${NB_PYTHON_PREFIX}/bin/jupyter labextension install --no-build jupyter-offlinenotebook && \
+$NB_PYTHON_PREFIX/bin/jupyter lab build --minimize=False || \
+true
 
 # empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
