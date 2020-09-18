@@ -294,7 +294,7 @@ class CondaBuildPack(BaseImage):
                 (
                     "${NB_USER}",
                     r"""
-                mamba install -p {0} r-base{1} r-irkernel={2} r-devtools && \
+                mamba install -p {0} r-base{1} r-irkernel={2} r-devtools -y && \
                 mamba clean --all -f -y && \
                 mamba list -p {0}
                 """.format(
