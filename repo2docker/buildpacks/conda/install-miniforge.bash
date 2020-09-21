@@ -61,7 +61,7 @@ time ${NB_PYTHON_PREFIX}/bin/python -m pip install jupyter-offlinenotebook==0.1.
 # https://discourse.jupyter.org/t/tip-binder-jupyterlab-extension/6022
 # https://discourse.jupyter.org/t/jupyter-lab-build-hangs-and-then-fails-at-webpack-config-webpack-prod-minimize-config-js/6017/3
 time ${NB_PYTHON_PREFIX}/bin/jupyter labextension install --no-build jupyter-offlinenotebook && \
-$NB_PYTHON_PREFIX/bin/jupyter lab build --minimize=False || \
+time $NB_PYTHON_PREFIX/bin/jupyter lab build --minimize=False || \
 true
 
 # empty conda history file,
