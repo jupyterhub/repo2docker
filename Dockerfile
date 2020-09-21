@@ -1,7 +1,7 @@
-ARG ALPINE_VERSION=3.9.4
+ARG ALPINE_VERSION=3.12.0
 FROM alpine:${ALPINE_VERSION}
 
-RUN apk add --no-cache git python3 python3-dev
+RUN apk add --no-cache git python3 python3-dev py-pip
 
 # build wheels in first image
 ADD . /tmp/src
@@ -15,8 +15,11 @@ RUN mkdir /tmp/wheelhouse \
 
 FROM alpine:${ALPINE_VERSION}
 
-# install python, git, bash
-RUN apk add --no-cache git git-lfs python3 bash docker
+# install python, git, bash, mercurial
+RUN apk add --no-cache git git-lfs python3 py-pip bash docker mercurial
+
+# install hg-evolve (Mercurial extensions)
+RUN pip3 install hg-evolve --user --no-cache-dir
 
 # install repo2docker
 COPY --from=0 /tmp/wheelhouse /tmp/wheelhouse
