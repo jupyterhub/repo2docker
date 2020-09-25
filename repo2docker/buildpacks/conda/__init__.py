@@ -79,6 +79,7 @@ class CondaBuildPack(BaseImage):
             (
                 "root",
                 r"""
+                TIMEFORMAT='time: %3R' \
                 bash -c 'time /tmp/install-miniforge.bash' && \
                 rm /tmp/install-miniforge.bash /tmp/environment.yml
                 """,
@@ -275,6 +276,7 @@ class CondaBuildPack(BaseImage):
                 (
                     "${NB_USER}",
                     r"""
+                TIMEFORMAT='time: %3R' \
                 bash -c 'time mamba env update -p {0} -f "{1}" && \
                 time mamba clean --all -f -y && \
                 mamba list -p {0} \
