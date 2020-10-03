@@ -47,6 +47,7 @@ setup(
     name="jupyter-repo2docker",
     version=versioneer.get_version(),
     install_requires=[
+        "boto3",
         "docker",
         "traitlets",
         "python-json-logger",
