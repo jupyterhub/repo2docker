@@ -508,3 +508,10 @@ def is_local_pip_requirement(line):
         return True
 
     return False
+
+
+def remove_ansi_escape(s):
+    """Remove all ANSI escape codes from a string
+    https://superuser.com/a/380778
+    """
+    return re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", s)

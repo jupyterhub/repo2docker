@@ -40,7 +40,7 @@ from .buildpacks import (
     RBuildPack,
 )
 from . import contentproviders
-from .utils import ByteSpecification, chdir
+from .utils import ByteSpecification, chdir, remove_ansi_escape
 
 
 class Repo2Docker(Application):
@@ -735,7 +735,7 @@ class Repo2Docker(Application):
                         if "stream" in l:
                             self.log.info(l["stream"], extra=dict(phase="building"))
                             if logfile:
-                                logfile.write(l["stream"])
+                                logfile.write(remove_ansi_escape(l["stream"]))
                         elif "error" in l:
                             self.log.info(l["error"], extra=dict(phase="failure"))
                             if logfile:
