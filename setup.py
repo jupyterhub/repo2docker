@@ -47,7 +47,6 @@ setup(
     name="jupyter-repo2docker",
     version=versioneer.get_version(),
     install_requires=[
-        "boto3",
         "docker",
         "traitlets",
         "python-json-logger",
@@ -57,6 +56,9 @@ setup(
         "toml",
         "semver",
     ],
+    extras_require={
+        "s3log": ["boto3"],
+    },
     python_requires=">=3.6",
     author="Project Jupyter Contributors",
     author_email="jupyter@googlegroups.com",

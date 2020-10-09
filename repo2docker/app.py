@@ -11,7 +11,6 @@ import json
 import sys
 import logging
 import os
-import boto3
 import getpass
 import shutil
 import tempfile
@@ -24,7 +23,7 @@ from docker.errors import DockerException
 import escapism
 from pythonjsonlogger import jsonlogger
 
-from traitlets import Any, Dict, Int, List, Unicode, Bool, default
+from traitlets import Any, Dict, Instance, Int, List, Type, Unicode, Bool, default
 from traitlets.config import Application
 
 from . import __version__
@@ -40,7 +39,8 @@ from .buildpacks import (
     RBuildPack,
 )
 from . import contentproviders
-from .utils import ByteSpecification, chdir, remove_ansi_escape
+from .logstore import LogStore
+from .utils import ByteSpecification, chdir
 
 
 class Repo2Docker(Application):
@@ -327,12 +327,6 @@ class Repo2Docker(Application):
         config=True,
     )
 
-    s3_logs_endpoint = Unicode("", help="S3 endpoint", config=True)
-    s3_logs_access_key = Unicode("", help="S3 access key ", config=True)
-    s3_logs_secret_key = Unicode("", help="S3 secret key", config=True)
-    s3_logs_bucket = Unicode("", help="S3 bucket", config=True)
-    s3_logs_region = Unicode("", help="S3 region", config=True)
-
     all_ports = Bool(
         False,
         help="""
@@ -375,6 +369,14 @@ class Repo2Docker(Application):
         """,
         config=True,
     )
+
+    logstore = Type(LogStore, help="Log store for build logs", config=True)
+
+    _logstore = Instance(LogStore)
+
+    @default("_logstore")
+    def _default_logstore(self):
+        return self.logstore(parent=self)
 
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
@@ -632,7 +634,7 @@ class Repo2Docker(Application):
                         return True
         return False
 
-    def build(self, logfile=None):
+    def build(self):
         """
         Build docker image
         """
@@ -721,8 +723,7 @@ class Repo2Docker(Application):
                         bp.__class__.__name__,
                         extra=dict(phase="building"),
                     )
-                    if logfile:
-                        logfile.write("Using %s builder\n" % bp.__class__.__name__)
+                    self._logstore.write("Using %s builder\n" % bp.__class__.__name__)
 
                     for l in picked_buildpack.build(
                         docker_client,
@@ -734,12 +735,10 @@ class Repo2Docker(Application):
                     ):
                         if "stream" in l:
                             self.log.info(l["stream"], extra=dict(phase="building"))
-                            if logfile:
-                                logfile.write(remove_ansi_escape(l["stream"]))
+                            self._logstore.write(l["stream"])
                         elif "error" in l:
                             self.log.info(l["error"], extra=dict(phase="failure"))
-                            if logfile:
-                                logfile.write(l["error"])
+                            self._logstore.write(l["error"])
                             raise docker.errors.BuildError(l["error"], build_log="")
                         elif "status" in l:
                             self.log.info(
@@ -754,35 +753,16 @@ class Repo2Docker(Application):
                 shutil.rmtree(checkout_path, ignore_errors=True)
 
     def start(self):
-        logfile = None
-        if (
-            self.s3_logs_endpoint
-            and self.s3_logs_access_key
-            and self.s3_logs_secret_key
-            and self.s3_logs_bucket
-        ):
-            logfile = tempfile.NamedTemporaryFile("w", delete=False)
+        self._logstore.logname = f"{self.output_image_spec}/repodocker.log"
         try:
-            self.build(logfile=logfile)
+            self.build()
         finally:
-            if logfile:
-                logfile.close()
-                if os.stat(logfile.name).st_size:
-                    dest = f"buildlogs/{self.output_image_spec}/repo2docker.log"
-                    self.log.info(f"Uploading log to {self.s3_logs_bucket}/{dest}")
-                    s3 = boto3.resource(
-                        "s3",
-                        endpoint_url=self.s3_logs_endpoint,
-                        aws_access_key_id=self.s3_logs_access_key,
-                        aws_secret_access_key=self.s3_logs_secret_key,
-                        config=boto3.session.Config(signature_version="s3v4"),
-                        region_name=self.s3_logs_region,
-                    )
-                    s3.Bucket(self.s3_logs_bucket).upload_file(
-                        logfile.name,
-                        dest,
-                        ExtraArgs={"ContentType": "text/plain"},
-                    )
+            try:
+                r = self._logstore.close()
+                if r:
+                    self.log.info(f"Log path: {r}")
+            except Exception as e:
+                self.log.error("Failed to save log: {}".format(e))
 
         if self.push:
             self.push_image()
