@@ -5,12 +5,15 @@ Test S3LogStore
 # https://botocore.amazonaws.com/v1/documentation/api/latest/reference/stubber.html
 # but it doesn't work with upload_file so use mock instead
 # https://sgillies.net/2017/10/19/mock-is-magic.html
+import os
+from tempfile import NamedTemporaryFile
 from unittest.mock import patch
 from repo2docker import logstore
 
 
 @patch("repo2docker.logstore.boto3")
 def test_s3logstore_upload(boto3):
+    tmp_logfile = NamedTemporaryFile("w", delete=False)
     store = logstore.S3LogStore(
         endpoint="http://localhost:9000",
         access_key="access",
@@ -19,10 +22,12 @@ def test_s3logstore_upload(boto3):
         keyprefix="prefix/",
         logname="test/build.log",
         metadata={"test-key": "test value"},
+        # Override for testing so we know the name of the tempfile
+        _logfile=tmp_logfile,
     )
 
     store.write("hello\n")
-    r = store.close()
+    store.close()
 
     boto3.resource.assert_called_with(
         "s3",
@@ -34,7 +39,7 @@ def test_s3logstore_upload(boto3):
     )
     boto3.resource().Bucket.assert_called_with("bucket")
     boto3.resource().Bucket().upload_file.assert_called_with(
-        store._logfile.name,
+        tmp_logfile.name,
         "prefix/test/build.log",
         ExtraArgs={
             "ContentType": "text/plain; charset=utf-8",
@@ -42,6 +47,7 @@ def test_s3logstore_upload(boto3):
             "Metadata": {"test-key": "test value"},
         },
     )
+    assert not os.path.exists(tmp_logfile.name)
 
 
 @patch("repo2docker.logstore.boto3")

@@ -753,7 +753,7 @@ class Repo2Docker(Application):
                 shutil.rmtree(checkout_path, ignore_errors=True)
 
     def start(self):
-        self._logstore.logname = f"{self.output_image_spec}/repo2docker.log"
+        self._logstore.logname = "repo2docker.log"
         try:
             self.build()
         finally:

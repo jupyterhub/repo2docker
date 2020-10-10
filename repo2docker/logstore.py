@@ -2,7 +2,7 @@ import logging
 import os
 from tempfile import NamedTemporaryFile
 import re
-from traitlets import Any, Dict, Unicode, default
+from traitlets import Any, Dict, Unicode
 from traitlets.config import LoggingConfigurable
 
 try:
@@ -11,7 +11,6 @@ try:
     S3_ENABLED = True
 except ImportError:
     S3_ENABLED = False
-    pass
 
 
 """Match all ANSI escape codes https://superuser.com/a/380778"""
@@ -61,10 +60,6 @@ class S3LogStore(LogStore):
 
     _logfile = Any(allow_none=True)
 
-    @default("_logfile")
-    def _default_logfile(self):
-        return NamedTemporaryFile("w", delete=False)
-
     def __init__(self, **kwargs):
         if not S3_ENABLED:
             raise RuntimeError("S3LogStore requires the boto3 library")
@@ -85,31 +80,37 @@ class S3LogStore(LogStore):
     def write(self, s):
         """Write a log, newlines are not automatically added,
         removes ANSI terminal escape codes"""
+        if s and not self._logfile:
+            self._logfile = NamedTemporaryFile("w", delete=False)
         cleaned = ansi_escape_regex.sub("", str(s))
         self._logfile.write(cleaned)
 
     def close(self):
         """Upload the logfile to S3"""
-        self._logfile.close()
-        if not os.stat(self._logfile.name).st_size:
-            # Empty log means image already exists so nothing was built
+        if not self._logfile:
+            # No log means image already exists so nothing was built
+            self.log.debug("No log file")
             return
+        self._logfile.close()
         dest = f"{self.keyprefix}{self.logname}"
         self.log.info(
             f"Uploading log to {self.endpoint} bucket:{self.bucket} key:{dest}"
         )
-        s3 = boto3.resource(
-            "s3",
-            config=boto3.session.Config(signature_version="s3v4"),
-            **self._s3_credentials(),
-        )
-        s3.Bucket(self.bucket).upload_file(
-            self._logfile.name,
-            dest,
-            ExtraArgs={
-                "ContentType": "text/plain; charset=utf-8",
-                "ACL": self.acl,
-                "Metadata": self.metadata,
-            },
-        )
-        os.remove(self._logfile.name)
+        try:
+            s3 = boto3.resource(
+                "s3",
+                config=boto3.session.Config(signature_version="s3v4"),
+                **self._s3_credentials(),
+            )
+            s3.Bucket(self.bucket).upload_file(
+                self._logfile.name,
+                dest,
+                ExtraArgs={
+                    "ContentType": "text/plain; charset=utf-8",
+                    "ACL": self.acl,
+                    "Metadata": self.metadata,
+                },
+            )
+            os.remove(self._logfile.name)
+        finally:
+            self._logfile = None
