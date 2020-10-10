@@ -759,8 +759,6 @@ class Repo2Docker(Application):
         finally:
             try:
                 r = self._logstore.close()
-                if r:
-                    self.log.info(f"Log path: {r}")
             except Exception as e:
                 self.log.error("Failed to save log: {}".format(e))
 

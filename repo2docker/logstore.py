@@ -7,8 +7,6 @@ from traitlets.config import LoggingConfigurable
 
 try:
     import boto3
-    from botocore import UNSIGNED
-    from botocore.config import Config
 
     S3_ENABLED = True
 except ImportError:
@@ -31,8 +29,7 @@ class LogStore(LoggingConfigurable):
         pass
 
     def close(self):
-        """Finish logging. Implementations may save or copy the log.
-        May return a path to the saved log"""
+        """Finish logging. Implementations may save or copy the log."""
         pass
 
 
@@ -89,7 +86,9 @@ class S3LogStore(LogStore):
             # Empty log means image already exists so nothing was built
             return
         dest = f"{self.keyprefix}{self.logname}"
-        self.log.debug(f"Uploading log to {self.endpoint} key:{self.bucket}/{dest}")
+        self.log.info(
+            f"Uploading log to {self.endpoint} bucket:{self.bucket} key:{dest}"
+        )
         s3 = boto3.resource(
             "s3",
             config=boto3.session.Config(signature_version="s3v4"),
@@ -101,22 +100,3 @@ class S3LogStore(LogStore):
             ExtraArgs={"ContentType": "text/plain", "ACL": self.acl},
         )
         os.remove(self._logfile.name)
-        return self._get_url()
-
-    def _get_url(self):
-        # For simple S3 servers you can easily build the canonical URL.
-        # For AWS S3 this can be more complicated as it depends on your region.
-        # boto3 doesn't have a way to just get the public URL, so instead we create a pre-signed
-        # URL but discard the parameters since the object is public.
-        s3unsigned = boto3.client(
-            "s3", config=Config(UNSIGNED), **self._s3_credentials()
-        )
-        link = s3unsigned.generate_presigned_url(
-            "get_object",
-            ExpiresIn=0,
-            Params={
-                "Bucket": self.bucket,
-                "Key": f"{self.keyprefix}{self.logname}",
-            },
-        )
-        return link.split("?", 1)[0]
