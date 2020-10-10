@@ -2,7 +2,7 @@ import logging
 import os
 from tempfile import NamedTemporaryFile
 import re
-from traitlets import Any, Unicode, default
+from traitlets import Any, Dict, Unicode, default
 from traitlets.config import LoggingConfigurable
 
 try:
@@ -23,6 +23,11 @@ class LogStore(LoggingConfigurable):
     This default implementation does nothing."""
 
     logname = Unicode("", help="The name and/or path of the log", config=True)
+    metadata = Dict(
+        {},
+        help="Metadata to be associated with the log file",
+        config=True,
+    )
 
     def write(self, s):
         """Write to the log"""
@@ -34,7 +39,11 @@ class LogStore(LoggingConfigurable):
 
 
 class S3LogStore(LogStore):
-    """Store a build log and upload to a S3 bucket on close"""
+    """Store a build log and upload to a S3 bucket on close
+
+    If metadata is provided keys must be valid HTML headers, and values must be strings
+    https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html#object-metadata
+    """
 
     # Connection details
     endpoint = Unicode(help="S3 endpoint", config=True)
@@ -97,6 +106,10 @@ class S3LogStore(LogStore):
         s3.Bucket(self.bucket).upload_file(
             self._logfile.name,
             dest,
-            ExtraArgs={"ContentType": "text/plain; charset=utf-8", "ACL": self.acl},
+            ExtraArgs={
+                "ContentType": "text/plain; charset=utf-8",
+                "ACL": self.acl,
+                "Metadata": self.metadata,
+            },
         )
         os.remove(self._logfile.name)
