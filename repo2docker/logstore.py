@@ -97,6 +97,6 @@ class S3LogStore(LogStore):
         s3.Bucket(self.bucket).upload_file(
             self._logfile.name,
             dest,
-            ExtraArgs={"ContentType": "text/plain", "ACL": self.acl},
+            ExtraArgs={"ContentType": "text/plain; charset=utf-8", "ACL": self.acl},
         )
         os.remove(self._logfile.name)

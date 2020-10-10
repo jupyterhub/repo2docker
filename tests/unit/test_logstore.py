@@ -35,7 +35,7 @@ def test_s3logstore_upload(boto3):
     boto3.resource().Bucket().upload_file.assert_called_with(
         store._logfile.name,
         "prefix/test/build.log",
-        ExtraArgs={"ContentType": "text/plain", "ACL": "public-read"},
+        ExtraArgs={"ContentType": "text/plain; charset=utf-8", "ACL": "public-read"},
     )
 
 
