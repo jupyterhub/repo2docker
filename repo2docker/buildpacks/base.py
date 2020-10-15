@@ -100,7 +100,7 @@ ENV PATH {{ ':'.join(path) }}:${PATH}
 {% if build_script_files -%}
 # If scripts required during build are present, copy them
 {% for src, dst in build_script_files|dictsort %}
-COPY {{ src }} {{ dst }}
+COPY --chown=${NB_USER}:${NB_USER} {{ src }} {{ dst }}
 {% endfor -%}
 {% endif -%}
 
@@ -137,24 +137,16 @@ ENV {{item[0]}} {{item[1]}}
 {% if preassemble_script_files -%}
 # If scripts required during build are present, copy them
 {% for src, dst in preassemble_script_files|dictsort %}
-COPY src/{{ src }} ${REPO_DIR}/{{ dst }}
+COPY --chown=${NB_USER}:${NB_USER} src/{{ src }} ${REPO_DIR}/{{ dst }}
 {% endfor -%}
-{% endif -%}
-
-{% if preassemble_script_directives -%}
-USER root
-RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 {% endif -%}
 
 {% for sd in preassemble_script_directives -%}
 {{ sd }}
 {% endfor %}
 
-# Copy and chown stuff. This doubles the size of the repo, because
-# you can't actually copy as USER, only as root! Thanks, Docker!
-USER root
-COPY src/ ${REPO_DIR}
-RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
+# Copy stuff.
+COPY --chown=${NB_USER}:${NB_USER} src/ ${REPO_DIR}
 
 # Run assemble scripts! These will actually turn the specification
 # in the repository into an image.
