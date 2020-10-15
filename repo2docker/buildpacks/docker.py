@@ -14,7 +14,7 @@ class DockerBuildPack(BuildPack):
         """Check if current repo should be built with the Docker BuildPack"""
         return os.path.exists(self.binder_path("Dockerfile"))
 
-    def render(self):
+    def render(self, build_args=None):
         """Render the Dockerfile using by reading it from the source repo"""
         Dockerfile = self.binder_path("Dockerfile")
         with open(Dockerfile) as f:
