@@ -12,11 +12,12 @@ import toml
 from ..conda import CondaBuildPack
 
 #  Minimum version of python for use with Poetry
-COMPATIBLE_PYTHON2_VERSIONS = parse_constraint('>=2.7')
+COMPATIBLE_PYTHON2_VERSIONS = parse_constraint(">=2.7")
 
 #  Min and max compatible versions of python3. N.B. the maximum constraint will
 #  have to be manually bumped
-COMPATIBLE_PYTHON3_VERSIONS = parse_constraint('>=3.5, <3.10')
+COMPATIBLE_PYTHON3_VERSIONS = parse_constraint(">=3.5, <3.10")
+
 
 class PoetryBuildPack(CondaBuildPack):
     """Setup Python with poetry for use with a repository."""
@@ -32,18 +33,17 @@ class PoetryBuildPack(CondaBuildPack):
         if hasattr(self, "_python_version"):
             return self._python_version
 
-        requested_version = '*'
+        requested_version = "*"
 
         pyproject = self.binder_path("pyproject.toml")
         if os.path.exists(pyproject):
             with open(pyproject) as f:
                 pyproject_info = toml.load(f)
                 specified_version = (
-                    pyproject_info
-                    .get('tool', {})
-                    .get('poetry', {})
-                    .get('dependencies', {})
-                    .get('python', None)
+                    pyproject_info.get("tool", {})
+                    .get("poetry", {})
+                    .get("dependencies", {})
+                    .get("python", None)
                 )
 
                 if not specified_version is None:
@@ -53,9 +53,8 @@ class PoetryBuildPack(CondaBuildPack):
         if os.path.exists(lockfile):
             with open(lockfile) as f:
                 lock_info = toml.load(f)
-                specified_version = (
-                    lock_info.get('metadata', {})
-                    .get('python-versions', None)
+                specified_version = lock_info.get("metadata", {}).get(
+                    "python-versions", None
                 )
 
                 if not specified_version is None:
@@ -63,12 +62,12 @@ class PoetryBuildPack(CondaBuildPack):
 
         requested_constraint = parse_constraint(requested_version)
 
-        version_range = parse_constraint('*')
+        version_range = parse_constraint("*")
 
-        if requested_constraint.allows(parse_constraint('2')):
+        if requested_constraint.allows(parse_constraint("2")):
             version_range = version_range.intersect(COMPATIBLE_PYTHON2_VERSIONS)
 
-        if requested_constraint.allows(parse_constraint('3')):
+        if requested_constraint.allows(parse_constraint("3")):
             #  If the given constraint allows for python 3, then this will
             #  overwrite the range provided by python 2
             version_range = version_range.intersect(COMPATIBLE_PYTHON3_VERSIONS)
@@ -180,7 +179,9 @@ class PoetryBuildPack(CondaBuildPack):
         if os.path.exists(pyproject):
             with open(pyproject) as f:
                 pyproject_info = toml.load(f)
-                backend = pyproject_info.get('build-system', {}).get('build-backend', '')
-                is_poetry = backend == 'poetry.masonry.api'
+                backend = pyproject_info.get("build-system", {}).get(
+                    "build-backend", ""
+                )
+                is_poetry = backend == "poetry.masonry.api"
 
         return is_poetry or os.path.exists(poetry_lock)
