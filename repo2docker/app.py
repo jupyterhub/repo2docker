@@ -33,6 +33,7 @@ from .buildpacks import (
     LegacyBinderDockerBuildPack,
     NixBuildPack,
     PipfileBuildPack,
+    PoetryBuildPack,
     PythonBuildPack,
     RBuildPack,
 )
@@ -97,6 +98,7 @@ class Repo2Docker(Application):
             RBuildPack,
             CondaBuildPack,
             PipfileBuildPack,
+            PoetryBuildPack,
             PythonBuildPack,
         ],
         config=True,
