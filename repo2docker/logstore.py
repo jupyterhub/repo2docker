@@ -54,9 +54,6 @@ class S3LogStore(LogStore):
     # Where to store the log
     bucket = Unicode(help="S3 bucket", config=True)
     keyprefix = Unicode("", help="Prefix log path with this", config=True)
-    acl = Unicode(
-        "public-read", help="ACL for the object, default public-read", config=True
-    )
 
     _logfile = Any(allow_none=True)
 
@@ -107,7 +104,6 @@ class S3LogStore(LogStore):
                 dest,
                 ExtraArgs={
                     "ContentType": "text/plain; charset=utf-8",
-                    "ACL": self.acl,
                     "Metadata": self.metadata,
                 },
             )

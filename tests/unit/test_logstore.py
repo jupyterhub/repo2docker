@@ -43,7 +43,6 @@ def test_s3logstore_upload(boto3):
         "prefix/test/build.log",
         ExtraArgs={
             "ContentType": "text/plain; charset=utf-8",
-            "ACL": "public-read",
             "Metadata": {"test-key": "test value"},
         },
     )
