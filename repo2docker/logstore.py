@@ -21,13 +21,6 @@ class LogStore(LoggingConfigurable):
     """Abstract interface for a class that stores a build log.
     This default implementation does nothing."""
 
-    logname = Unicode("", help="The name and/or path of the log", config=True)
-    metadata = Dict(
-        {},
-        help="Metadata to be associated with the log file",
-        config=True,
-    )
-
     def write(self, s):
         """Write to the log"""
         pass
@@ -42,6 +35,32 @@ class S3LogStore(LogStore):
 
     If metadata is provided keys must be valid HTML headers, and values must be strings
     https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html#object-metadata
+
+    Example bucket policy to allow public read of objects, but prevent listing
+
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                "Action": [
+                    "s3:GetObject"
+                ],
+                "Effect": "Allow",
+                "Principal": {
+                    "AWS": [
+                    "*"
+                    ]
+                },
+                "Resource": [
+                    "arn:aws:s3:::mybinder/*"
+                ],
+                "Sid": ""
+                }
+            ]
+        }
+
+    Source: https://gist.github.com/harshavardhana/400558963e4dfe3709623203222ed30c#granting-read-only-permission-to-an-anonymous-user
+
     """
 
     # Connection details
@@ -53,7 +72,15 @@ class S3LogStore(LogStore):
 
     # Where to store the log
     bucket = Unicode(help="S3 bucket", config=True)
-    keyprefix = Unicode("", help="Prefix log path with this", config=True)
+    logname = Unicode(
+        "repo2docker.log", help="The name and/or path of the log", config=True
+    )
+
+    metadata = Dict(
+        {},
+        help="Metadata to be associated with the log file",
+        config=True,
+    )
 
     _logfile = Any(allow_none=True)
 
@@ -89,9 +116,8 @@ class S3LogStore(LogStore):
             self.log.debug("No log file")
             return
         self._logfile.close()
-        dest = f"{self.keyprefix}{self.logname}"
         self.log.info(
-            f"Uploading log to {self.endpoint} bucket:{self.bucket} key:{dest}"
+            f"Uploading log to {self.endpoint} bucket:{self.bucket} key:{self.logname}"
         )
         try:
             s3 = boto3.resource(
@@ -101,7 +127,7 @@ class S3LogStore(LogStore):
             )
             s3.Bucket(self.bucket).upload_file(
                 self._logfile.name,
-                dest,
+                self.logname,
                 ExtraArgs={
                     "ContentType": "text/plain; charset=utf-8",
                     "Metadata": self.metadata,

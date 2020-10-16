@@ -19,7 +19,6 @@ def test_s3logstore_upload(boto3):
         access_key="access",
         secret_key="secret",
         bucket="bucket",
-        keyprefix="prefix/",
         logname="test/build.log",
         metadata={"test-key": "test value"},
         # Override for testing so we know the name of the tempfile
@@ -40,7 +39,7 @@ def test_s3logstore_upload(boto3):
     boto3.resource().Bucket.assert_called_with("bucket")
     boto3.resource().Bucket().upload_file.assert_called_with(
         tmp_logfile.name,
-        "prefix/test/build.log",
+        "test/build.log",
         ExtraArgs={
             "ContentType": "text/plain; charset=utf-8",
             "Metadata": {"test-key": "test value"},
@@ -56,7 +55,6 @@ def test_s3logstore_empty(boto3):
         access_key="access",
         secret_key="secret",
         bucket="bucket",
-        keyprefix="prefix/",
         logname="test/build.log",
     )
 
