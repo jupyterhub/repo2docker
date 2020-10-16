@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
-try:
-    import sampleproject
-except ImportError:
-    # We want an ImportError to be thrown for this test to pass
+import sample
+import cowsay
+
+#  The pyproject.toml asks for any version of cowsay, and will by default pick
+#  the highest compatible version, but the lockfile specifically requests
+#  version 1.0, so we check that the lockfile-requested version is installed
+if cowsay.main.__version__ == 1.0:
     pass
 else:
     raise Exception(
-        "'sampleproject' shouldn't have been installed! It was listed in Pipfile but not in the Pipfile.lock."
+        f"Installed `cowsay` version is {cowsay.main.__version__}, not 1.0 as "
+        "requested by the lockfile, is the lockfile being used?"
     )
