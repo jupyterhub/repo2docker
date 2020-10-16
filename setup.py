@@ -53,6 +53,7 @@ setup(
         "escapism",
         "iso8601",
         "jinja2",
+        "poetry-core",
         "python-json-logger",
         "requests",
         "ruamel.yaml>=0.15",
