@@ -11,12 +11,11 @@ import toml
 
 from ..conda import CondaBuildPack
 
-#  Minimum version of python for use with Poetry
+#  Minimum compatible version of python2 for use with Poetry
 COMPATIBLE_PYTHON2_VERSIONS = parse_constraint(">=2.7")
 
-#  Min and max compatible versions of python3. N.B. the maximum constraint will
-#  have to be manually bumped
-COMPATIBLE_PYTHON3_VERSIONS = parse_constraint(">=3.5, <3.10")
+#  Minimum compatible version of python3 for use with Poetry
+COMPATIBLE_PYTHON3_VERSIONS = parse_constraint(">=3.5")
 
 
 class PoetryBuildPack(CondaBuildPack):
