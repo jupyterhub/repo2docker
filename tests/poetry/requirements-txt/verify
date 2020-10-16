@@ -2,7 +2,7 @@
 import cowsay
 
 try:
-    import sampleproject
+    import sample
 except ImportError:
     # We want an ImportError to be thrown for this test to pass
     pass

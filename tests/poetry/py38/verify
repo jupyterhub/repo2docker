@@ -2,7 +2,7 @@
 import sys
 
 import cowsay
-import sampleproject
+import sample
 
 print(sys.version_info)
 assert sys.version_info[:2] == (3, 8)

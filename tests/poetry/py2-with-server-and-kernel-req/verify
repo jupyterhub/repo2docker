@@ -14,7 +14,7 @@ if status_code == 0:
     raise Exception("notebook server's Python: 'cowsay' IS installed")
 
 # Verify - notebook server's Python: 'sampleproject' isn't installed
-status_code = os.system("python3 -c 'import sampleproject'")
+status_code = os.system("python3 -c 'import sample'")
 if status_code == 0:
     raise Exception("notebook server's Python: 'sampleproject' IS installed")
 
@@ -43,6 +43,6 @@ except ImportError:
 
 # Verify - kernel's Python: 'sampleproject' is installed
 try:
-    import sampleproject
+    import sample
 except ImportError:
     raise Exception("kernel's Python: 'sampleproject' ISN'T installed")
