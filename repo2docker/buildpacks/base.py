@@ -105,7 +105,9 @@ USER root
 
 # Allow target path repo is cloned to be configurable
 ARG REPO_DIR=${HOME}
-ENV REPO_DIR ${REPO_DIR}
+RUN [ ! -d ${REPO_DIR} ] \
+    && mkdir -p ${REPO_DIR} \
+    && chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 WORKDIR ${REPO_DIR}
 RUN chown ${NB_USER}:${NB_USER} ${REPO_DIR}
 
@@ -144,7 +146,7 @@ COPY --chown={{ user }}:{{ user }} src/{{ src }} ${REPO_DIR}/{{ dst }}
 USER root
 
 # Copy stuff.
-COPY --chown={{ user }}:{{ user }} src/ ${REPO_DIR}
+COPY --chown={{ user }}:{{ user }} src/ ${REPO_DIR}/
 
 # Run assemble scripts! These will actually turn the specification
 # in the repository into an image.
