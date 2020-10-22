@@ -96,7 +96,8 @@ def get_argparser():
     argparser.add_argument(
         "--ref",
         help=(
-            "If building a git url, which reference to check out. " "E.g., `master`."
+            "Reference to build instead of default reference. For example"
+            " branch name or commit for a Git repository."
         ),
     )
 
