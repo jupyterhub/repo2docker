@@ -1,0 +1,6 @@
+name: lume-model-server-demo
+dependencies:
+  - python=3.7
+  # specify a channel name in the dependency
+  # mamba < 0.6 doesn't handle this right
+  - bokeh::jupyter_bokeh==2.0.3
