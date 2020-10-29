@@ -78,6 +78,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             ("JULIA_DEPOT_PATH", "${JULIA_PATH}/pkg"),
             ("JULIA_VERSION", self.julia_version),
             ("JUPYTER", "${NB_PYTHON_PREFIX}/bin/jupyter"),
+            ("JUPYTER_CONFIG_DIR", "${NB_PYTHON_PREFIX}/etc/jupyter"),
             ("JUPYTER_DATA_DIR", "${NB_PYTHON_PREFIX}/share/jupyter"),
         ]
 
