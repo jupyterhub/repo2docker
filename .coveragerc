@@ -1,3 +1,11 @@
 [run]
 # this file comes from versioneer and we don't test it
 omit = */_version.py
+
+[paths]
+# This tells coverage how to combine results together or said differently
+# which files at different paths are actually the same file
+# documented at https://coverage.readthedocs.io/en/latest/config.html#paths
+source =
+    repo2docker/
+    /opt/hostedtoolcache/Python/*/site-packages/repo2docker
