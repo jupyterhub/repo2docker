@@ -120,4 +120,5 @@ jobs:
       - name: "Upload code coverage stats"
         run: |
           pip install codecov
-          pushd tests && codecov && popd
+          pushd tests && codecov && cat
+          cat /home/runner/work/repo2docker/repo2docker/tests/coverage.xml
