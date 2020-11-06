@@ -117,8 +117,7 @@ jobs:
           cd tests
           pytest --durations 10 --cov repo2docker -v ${{ matrix.repo_type }}
 
-      # Action Repo: https://github.com/codecov/codecov-action
-      - uses: codecov/codecov-action@v1
-        working-directory: ./tests
-        with:
-          directory: ./tests
+      - name: "Upload code coverage stats"
+        run: |
+          pip install codecov
+          pushd tests && codecov && popd
