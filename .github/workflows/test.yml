@@ -114,7 +114,10 @@ jobs:
 
       - name: "Run tests"
         run: |
-          pytest --durations 10 --cov repo2docker -v tests/${{ matrix.repo_type }}
+          cd tests
+          pytest --durations 10 --cov repo2docker -v ${{ matrix.repo_type }}
 
       # Action Repo: https://github.com/codecov/codecov-action
       - uses: codecov/codecov-action@v1
+        with:
+          directory: ./tests
