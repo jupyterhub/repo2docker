@@ -25,8 +25,6 @@ class RBuildPack(PythonBuildPack):
 
     2. A `DESCRIPTION` file signaling an R package
 
-    3. A Stencila document (*.jats.xml) with R code chunks (i.e. language="r")
-
     If there is no `runtime.txt`, then the MRAN snapshot is set to latest
     date that is guaranteed to exist across timezones.
 
@@ -37,8 +35,7 @@ class RBuildPack(PythonBuildPack):
 
     - as dependencies in a `DESCRIPTION` file
 
-    - are needed by a specific tool, for example the package `stencila` is
-      installed and configured if a Stencila document is given.
+    - are needed by a specific tool
 
     The `r-base` package from Ubuntu apt repositories is used to install
     R itself, rather than any of the methods from https://cran.r-project.org/.
@@ -129,9 +126,7 @@ class RBuildPack(PythonBuildPack):
             return True
 
         description_R = "DESCRIPTION"
-        if (
-            not self.binder_dir and os.path.exists(description_R)
-        ) or "r" in self.stencila_contexts:
+        if not self.binder_dir and os.path.exists(description_R):
             if not self.checkpoint_date:
                 # no R snapshot date set through runtime.txt
                 # set the R runtime to the latest date that is guaranteed to
@@ -226,7 +221,6 @@ class RBuildPack(PythonBuildPack):
           (determined by MRAN)
         - IRKernel
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
-        - stencila R package (if Stencila document with R code chunks detected)
 
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt.
@@ -324,34 +318,6 @@ class RBuildPack(PythonBuildPack):
                 ),
             ),
         ]
-
-        if "r" in self.stencila_contexts:
-            # new versions of R require a different way of installing bioconductor
-            if V(self.r_version) <= V("3.5"):
-                scripts += [
-                    (
-                        "${NB_USER}",
-                        # Install and register stencila library
-                        r"""
-                    R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
-                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
-                    R --quiet -e "stencila::register()"
-                    """,
-                    )
-                ]
-
-            else:
-                scripts += [
-                    (
-                        "${NB_USER}",
-                        # Install and register stencila library
-                        r"""
-                    R --quiet -e "install.packages('BiocManager'); BiocManager::install(); BiocManager::install(c('graph'))" && \
-                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
-                    R --quiet -e "stencila::register()"
-                    """,
-                    )
-                ]
 
         return super().get_build_scripts() + scripts
 

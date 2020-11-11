@@ -1,5 +1,0 @@
-#!/bin/sh
-
-jupyter serverextension list 2>&1 | grep nbstencilaproxy
-jupyter nbextension list 2>&1 | grep nbstencilaproxy
-python3 -c "import stencila" 2>&1 | grep ModuleNotFoundError

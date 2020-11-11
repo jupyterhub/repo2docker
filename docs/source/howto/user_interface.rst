@@ -112,18 +112,7 @@ http://mybinder.org/v2/gh/binder-examples/r/master?urlpath=shiny/bus-dashboard/
 Stencila
 ========
 
-The Stencila user interface is automatically enabled if a Stencila document (i.e.
-a file ``manifest.xml``) is detected. Stencila will be accessible by appending
-``/stencila`` to the URL, like so:
+.. note::
 
-.. code-block:: none
-
-   http(s)://<server:port>/stencila
-
-The editor will open the Stencila document corresponding to the last ``manifest.xml``
-found in the file tree. If you want to open a different document, you can configure
-the path in the URL parameter ``archive``:
-
-.. code-block:: none
-
-   http(s)://<server:port>/stencila/?archive=other-dir
+   Stencila support has been removed due to changes in stencila making it incompatible.
+   Please `get in touch <https://discourse.jupyter.org>`__ if you would like to help restore stencila support.
