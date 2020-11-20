@@ -311,70 +311,16 @@ class BuildPack:
         """
         return {}
 
-    @property
-    def stencila_manifest_dir(self):
-        """Find the stencila manifest dir if it exists"""
-        if hasattr(self, "_stencila_manifest_dir"):
-            return self._stencila_manifest_dir
+    def _check_stencila(self):
+        """Find the stencila manifest dir if it exists
 
-        # look for a manifest.xml that suggests stencila could be used
-        # when we find one, stencila should be installed
-        # and set environment variables such that
-        # this file is located at:
-        # ${STENCILA_ARCHIVE_DIR}/${STENCILA_ARCHIVE}/manifest.xml
-
-        self._stencila_manifest_dir = None
-
+        And warn about removed stencila support
+        """
         for root, dirs, files in os.walk("."):
             if "manifest.xml" in files:
-                self.log.debug("Found a manifest.xml at %s", root)
-                self._stencila_manifest_dir = root.split(os.path.sep, 1)[1]
-                self.log.info(
-                    "Using stencila manifest.xml in %s", self._stencila_manifest_dir
+                self.log.error(
+                    f"Found a stencila manifest.xml at {root}. Stencila is no longer supported."
                 )
-                break
-        return self._stencila_manifest_dir
-
-    @property
-    def stencila_contexts(self):
-        """Find the stencila manifest contexts from file path in manifest"""
-        if hasattr(self, "_stencila_contexts"):
-            return self._stencila_contexts
-
-        # look at the content of the documents in the manifest
-        # to extract the required execution contexts
-        self._stencila_contexts = set()
-
-        # get paths to the article files from manifest
-        files = []
-        if self.stencila_manifest_dir:
-            manifest = ET.parse(
-                os.path.join(self.stencila_manifest_dir, "manifest.xml")
-            )
-            documents = manifest.findall("./documents/document")
-            files = [
-                os.path.join(self.stencila_manifest_dir, x.get("path"))
-                for x in documents
-            ]
-
-        else:
-            return self._stencila_contexts
-
-        for filename in files:
-            self.log.debug("Extracting contexts from %s", filename)
-
-            # extract code languages from file
-            document = ET.parse(filename)
-            code_chunks = document.findall('.//code[@specific-use="source"]')
-            languages = [x.get("language") for x in code_chunks]
-            self._stencila_contexts.update(languages)
-
-            self.log.info(
-                "Added executions contexts, now have %s", self._stencila_contexts
-            )
-            break
-
-        return self._stencila_contexts
 
     def get_build_scripts(self):
         """
@@ -553,6 +499,9 @@ class BuildPack:
             for k, v in self.get_build_script_files().items()
         }
 
+        # check if there's a stencila manifest, support for which has been removd
+        self._check_stencila()
+
         return t.render(
             packages=sorted(self.get_packages()),
             path=self.get_path(),
@@ -706,23 +655,7 @@ class BaseImage(BuildPack):
 
     def get_env(self):
         """Return env directives to be set after build"""
-        env = []
-        if self.stencila_manifest_dir:
-            # manifest_dir is the path containing the manifest.xml
-            # archive_dir is the directory containing archive directories
-            # (one level up) default archive is the name of the directory
-            # in the archive_dir such that
-            # ${STENCILA_ARCHIVE_DIR}/${STENCILA_ARCHIVE}/manifest.xml
-            # exists.
-
-            archive_dir, archive = os.path.split(self.stencila_manifest_dir)
-            env.extend(
-                [
-                    ("STENCILA_ARCHIVE_DIR", "${REPO_DIR}/" + archive_dir),
-                    ("STENCILA_ARCHIVE", archive),
-                ]
-            )
-        return env
+        return []
 
     def detect(self):
         return True
@@ -765,32 +698,6 @@ class BaseImage(BuildPack):
         except FileNotFoundError:
             pass
 
-        if "py" in self.stencila_contexts:
-            scripts.extend(
-                [
-                    (
-                        "${NB_USER}",
-                        r"""
-                        ${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache https://github.com/stencila/py/archive/f1260796.tar.gz && \
-                        ${KERNEL_PYTHON_PREFIX}/bin/python -m stencila register
-                        """,
-                    )
-                ]
-            )
-        if self.stencila_manifest_dir:
-            scripts.extend(
-                [
-                    (
-                        "${NB_USER}",
-                        r"""
-                        ${NB_PYTHON_PREFIX}/bin/pip install --no-cache nbstencilaproxy==0.1.1 && \
-                        jupyter serverextension enable --sys-prefix --py nbstencilaproxy && \
-                        jupyter nbextension install    --sys-prefix --py nbstencilaproxy && \
-                        jupyter nbextension enable     --sys-prefix --py nbstencilaproxy
-                        """,
-                    )
-                ]
-            )
         return scripts
 
     def get_assemble_scripts(self):

@@ -74,7 +74,6 @@ jobs:
           - nix
           - pipfile
           - r
-          - stencila-py
           - unit
           - venv
         include:
