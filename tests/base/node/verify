@@ -5,7 +5,7 @@ set -ex
 # check node system package and its version
 which node
 node --version
-node --version | grep v10
+node --version | grep v14
 
 which npm
 npm --version
