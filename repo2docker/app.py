@@ -401,20 +401,19 @@ class Repo2Docker(Application):
             self.log.info(log_line, extra=dict(phase="fetching"))
 
         if not self.output_image_spec:
-            self.output_image_spec = (
-                "r2d" + escapism.escape(self.repo, escape_char="-").lower()
-            )
+            image_spec = "r2d" + self.repo
             # if we are building from a subdirectory include that in the
             # image name so we can tell builds from different sub-directories
             # apart.
             if self.subdir:
-                self.output_image_spec += escapism.escape(
-                    self.subdir, escape_char="-"
-                ).lower()
+                image_spec += self.subdir
             if picked_content_provider.content_id is not None:
-                self.output_image_spec += picked_content_provider.content_id
+                image_spec += picked_content_provider.content_id
             else:
-                self.output_image_spec += str(int(time.time()))
+                image_spec += str(int(time.time()))
+            self.output_image_spec = escapism.escape(
+                image_spec, escape_char="-"
+            ).lower()
 
     def json_excepthook(self, etype, evalue, traceback):
         """Called on an uncaught exception when using json logging
