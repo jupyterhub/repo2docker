@@ -11,6 +11,8 @@ import re
 
 import toml
 
+from pipfile.api import PipfileParser
+
 from ..conda import CondaBuildPack
 
 VERSION_PAT = re.compile(r"\d+(\.\d+)*")
@@ -18,6 +20,10 @@ VERSION_PAT = re.compile(r"\d+(\.\d+)*")
 
 class PipfileBuildPack(CondaBuildPack):
     """Setup Python with pipfile for use with a repository."""
+
+    def __init__(self):
+        super().__init__()
+        self.delegate_run = False
 
     @property
     def python_version(self):
@@ -74,6 +80,20 @@ class PipfileBuildPack(CondaBuildPack):
             self._python_version = self.major_pythons["3"]
             return self._python_version
 
+    def get_cmd(self):
+        """Prefix the base command with `pipenv run` in order to run it within
+        the pipenv virtualenv if jupyter is explicitly listed in `Pipfile`
+        """
+
+        base_cmd = super().get_cmd()
+
+        if self.delegate_run:
+            prefix_cmd = ", ".join([f'"{string}"' for string in ["pipenv", "run"]])
+
+            base_cmd = f"{prefix_cmd}, {base_cmd}"
+
+        return base_cmd
+
     def get_preassemble_script_files(self):
         """Return files needed for preassembly"""
         files = super().get_preassemble_script_files()
@@ -87,9 +107,7 @@ class PipfileBuildPack(CondaBuildPack):
         """scripts to run prior to staging the repo contents"""
         scripts = super().get_preassemble_scripts()
         # install pipenv to install dependencies within Pipfile.lock or Pipfile
-        scripts.append(
-            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv==2018.11.26")
-        )
+        scripts.append(("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv"))
         return scripts
 
     def get_assemble_scripts(self):
@@ -114,9 +132,8 @@ class PipfileBuildPack(CondaBuildPack):
                 assemble_scripts.append(
                     (
                         "${NB_USER}",
-                        '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
-                            nb_requirements_file
-                        ),
+                        "${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir"
+                        ' -r "{}"'.format(nb_requirements_file),
                     )
                 )
 
@@ -154,9 +171,10 @@ class PipfileBuildPack(CondaBuildPack):
                 "${NB_USER}",
                 """(cd {working_directory} && \\
                     PATH="${{KERNEL_PYTHON_PREFIX}}/bin:$PATH" \\
-                        pipenv install {install_option} --system --dev \\
+                        pipenv install {system_install} {install_option} --dev \\
                 )""".format(
                     working_directory=working_directory,
+                    system_install="--system" if not (self.delegate_run) else "",
                     install_option="--ignore-pipfile"
                     if os.path.exists(pipfile_lock)
                     else "--skip-lock",
@@ -178,5 +196,15 @@ class PipfileBuildPack(CondaBuildPack):
 
         pipfile = self.binder_path("Pipfile")
         pipfile_lock = self.binder_path("Pipfile.lock")
+
+        if os.path.exists(pipfile):
+            # Parse pipfile
+            pipfile_data = PipfileParser(pipfile).parse()
+
+            if any(
+                "jupyter" in packages
+                for packages in (pipfile_data["default"], pipfile_data["develop"])
+            ):
+                self.delegate_run = True
 
         return os.path.exists(pipfile) or os.path.exists(pipfile_lock)

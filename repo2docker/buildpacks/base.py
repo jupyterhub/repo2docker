@@ -185,7 +185,7 @@ COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
 # Specify the default command to run
-CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
+CMD [{{ cmd }}]
 
 {% if appendix -%}
 # Appendix:
@@ -292,6 +292,18 @@ class BuildPack:
         """
         return []
 
+    def get_cmd(self):
+        """
+        Returns the command to be executed as default command in the Dockerfile
+        as a list of comma-separated double-quote enclosed strings
+
+        e.g. '"jupyter", "notebook", "--ip", "0.0.0.0"'
+        """
+
+        return ", ".join(
+            [f'"{string}"' for string in ["jupyter", "notebook", "--ip", "0.0.0.0"]]
+        )
+
     def get_labels(self):
         """
         Docker labels to set on the built image.
@@ -319,7 +331,8 @@ class BuildPack:
         for root, dirs, files in os.walk("."):
             if "manifest.xml" in files:
                 self.log.error(
-                    f"Found a stencila manifest.xml at {root}. Stencila is no longer supported."
+                    f"Found a stencila manifest.xml at {root}. Stencila is no"
+                    " longer supported."
                 )
 
     def get_build_scripts(self):
@@ -503,6 +516,7 @@ class BuildPack:
         self._check_stencila()
 
         return t.render(
+            cmd=self.get_cmd(),
             packages=sorted(self.get_packages()),
             path=self.get_path(),
             build_env=self.get_build_env(),
@@ -674,8 +688,7 @@ class BaseImage(BuildPack):
                     # FIXME: Add support for specifying version numbers
                     if not re.match(r"^[a-z0-9.+-]+", package):
                         raise ValueError(
-                            "Found invalid package name {} in "
-                            "apt.txt".format(package)
+                            "Found invalid package name {} in apt.txt".format(package)
                         )
                     extra_apt_packages.append(package)
 
