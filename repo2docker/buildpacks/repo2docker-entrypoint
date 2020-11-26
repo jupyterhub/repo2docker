@@ -19,3 +19,6 @@ if [[ ! -z "${R2D_ENTRYPOINT:-}" ]]; then
 else
     exec "$@" >&"$log_fd" 2>&1
 fi
+
+# Close the loggging output aggain
+exec {log_fd}>&-
