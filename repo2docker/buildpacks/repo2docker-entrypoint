@@ -8,6 +8,7 @@
 # We later use this FD as a place to redirect the output of the actual
 # command to. We can't add `tee` to the command directly as that will prevent
 # the container from exiting when `docker stop` is run.
+# See https://stackoverflow.com/a/55678435
 exec {log_fd}> >(exec tee $REPO_DIR/.jupyter-server-log.txt)
 
 if [[ ! -z "${R2D_ENTRYPOINT:-}" ]]; then
