@@ -6,6 +6,7 @@ set -ex
 
 cd $(dirname $0)
 MINIFORGE_VERSION=4.9.2-2
+MAMBA_VERSION=0.7.4
 # SHA256 for installers can be obtained from https://github.com/conda-forge/miniforge/releases
 SHA256SUM="7a7bfaff87680298304a97ba69bcf92f66c810995a7155a2918b99fafb8ca1dc"
 
@@ -40,6 +41,8 @@ echo 'update_dependencies: false' >> ${CONDA_DIR}/.condarc
 
 # avoid future changes to default channel_priority behavior
 conda config --system --set channel_priority "flexible"
+
+time mamba install -y mamba==${MAMBA_VERSION}
 
 echo "installing notebook env:"
 cat /tmp/environment.yml
