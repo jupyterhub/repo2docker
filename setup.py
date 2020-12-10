@@ -52,6 +52,7 @@ setup(
         "python-json-logger",
         "escapism",
         "jinja2",
+        "requests",
         "ruamel.yaml>=0.15",
         "toml",
         "semver",
