@@ -1,8 +1,10 @@
 """Generates a Dockerfile based on an input matrix for Julia"""
+import functools
 import os
+import requests
 import toml
 from ..python import PythonBuildPack
-from .semver import find_semver_match
+from .semver import find_semver_match, semver
 
 
 class JuliaProjectTomlBuildPack(PythonBuildPack):
@@ -13,32 +15,24 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     # ALL EXISTING JULIA VERSIONS
     # Note that these must remain ordered, in order for the find_semver_match()
     # function to behave correctly.
-    all_julias = [
-        "0.7.0",
-        "1.0.0",
-        "1.0.1",
-        "1.0.2",
-        "1.0.3",
-        "1.0.4",
-        "1.0.5",
-        "1.1.0",
-        "1.1.1",
-        "1.2.0",
-        "1.3.0",
-        "1.3.1",
-        "1.4.0",
-        "1.4.1",
-        "1.4.2",
-        "1.5.0",
-        "1.5.1",
-        "1.5.2",
-        "1.5.3",
-    ]
+    @property
+    @functools.lru_cache(maxsize=1)
+    def all_julias(self):
+        json = requests.get(
+            "https://julialang-s3.julialang.org/bin/versions.json"
+        ).json()
+        vers = [semver.VersionInfo.parse(v) for v in json.keys()]
+        # filter out pre-release versions not supported by find_semver_match()
+        filtered_vers = [v for v in vers if v.prerelease is None]
+        # properly sort list of VersionInfo
+        sorted_vers = sorted(
+            filtered_vers, key=functools.cmp_to_key(semver.VersionInfo.compare)
+        )
+        # return list of semver string
+        return [str(v) for v in sorted_vers]
 
     @property
     def julia_version(self):
-        default_julia_version = self.all_julias[-1]
-
         if os.path.exists(self.binder_path("JuliaProject.toml")):
             project_toml = toml.load(self.binder_path("JuliaProject.toml"))
         else:
@@ -54,6 +48,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 if _julia_version is not None:
                     return _julia_version
 
+        default_julia_version = self.all_julias[-1]
         return default_julia_version
 
     def get_build_env(self):

@@ -113,7 +113,8 @@ class SemverMatcher:
         while len(v) < 3:
             v = v + (0,)
         v_str = ".".join(map(str, v))
-        return semver.match(v_str, self.constraint_str)
+        v_ver = semver.VersionInfo.parse(v_str)
+        return semver.VersionInfo.match(v_ver, self.constraint_str)
 
     def __eq__(self, rhs):
         return self.constraint_str == rhs.constraint_str
