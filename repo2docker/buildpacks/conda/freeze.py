@@ -2,13 +2,19 @@
 """
 Freeze the conda environment.yml
 
+See https://repo2docker.readthedocs.io/en/latest/contributing/tasks.html#update-and-freeze-buildpack-dependencies
+
 It runs the freeze in a continuumio/miniconda3 image to ensure portability
 
 Usage:
 
 python freeze.py [3.8]
+
+If you want to run this with Podman add '--containerrun podman'.
+If you need additional host volume options, e.g. due to SELinux, add '--volopts z'
 """
 
+from argparse import ArgumentParser
 from datetime import datetime
 import os
 import pathlib
@@ -35,7 +41,7 @@ FROZEN_FILE_T = os.path.splitext(ENV_FILE_T)[0] + ".frozen.yml"
 yaml = YAML(typ="rt")
 
 
-def freeze(env_file, frozen_file):
+def freeze(env_file, frozen_file, containerruntime="docker", hostmountopts=""):
     """Freeze a conda environment.yml
 
     By running in docker:
@@ -63,12 +69,14 @@ def freeze(env_file, frozen_file):
         )
         f.write(f"# Frozen on {datetime.utcnow():%Y-%m-%d %H:%M:%S UTC}\n")
 
+    if hostmountopts and hostmountopts[0] != ":":
+        hostmountopts = f":{hostmountopts}"
     check_call(
         [
-            "docker",
+            containerruntime,
             "run",
             "--rm",
-            "-v" f"{HERE}:/r2d",
+            "-v" f"{HERE}:/r2d{hostmountopts}",
             "-it",
             f"continuumio/miniconda3:{MINICONDA_DOCKER_VERSION}",
             "sh",
@@ -118,13 +126,26 @@ def set_python(py_env_file, py):
 
 
 if __name__ == "__main__":
-    # allow specifying which Pythons to update on argv
-    pys = sys.argv[1:] or ("2.7", "3.6", "3.7", "3.8")
+    parser = ArgumentParser()
+    parser.add_argument("--containerrun", default="docker", help="Container runtime")
+    parser.add_argument("--volopts", default="Host volume mount options")
+    parser.add_argument(
+        "pys",
+        nargs="*",
+        default=["2.7", "3.6", "3.7", "3.8"],
+        help="Python versions to update",
+    )
+    args = parser.parse_args()
     default_py = "3.7"
-    for py in pys:
+    for py in args.pys:
         env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
         set_python(env_file, py)
         frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + ".frozen.yml")
-        freeze(env_file, frozen_file)
+        freeze(
+            env_file,
+            frozen_file,
+            containerruntime=args.containerrun,
+            hostmountopts=args.volopts,
+        )
         if py == default_py:
             shutil.copy(frozen_file, FROZEN_FILE)
