@@ -7,10 +7,13 @@
 
 name: Continuous Integration
 
-# Only trigger the workflow when pushing to master
 on:
-  - push
-  - pull_request
+  push:
+  pull_request:
+  schedule:
+    # Weekly test so we know if tests break for external reasons
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
+    - cron: '36 10 * * 0'
 
 # Global environment variables
 env:
