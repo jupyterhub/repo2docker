@@ -128,7 +128,7 @@ def set_python(py_env_file, py):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--containerrun", default="docker", help="Container runtime")
-    parser.add_argument("--volopts", default="Host volume mount options")
+    parser.add_argument("--volopts", help="Host volume mount options")
     parser.add_argument(
         "pys",
         nargs="*",
