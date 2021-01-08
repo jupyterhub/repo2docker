@@ -10,7 +10,7 @@ Usage:
 
 python freeze.py [3.8]
 
-If you want to run this with Podman add '--containerrun podman'.
+If you want to run this with Podman add '--containerruntime podman'.
 If you need additional host volume options, e.g. due to SELinux, add '--volopts z'
 """
 
@@ -41,7 +41,7 @@ FROZEN_FILE_T = os.path.splitext(ENV_FILE_T)[0] + ".frozen.yml"
 yaml = YAML(typ="rt")
 
 
-def freeze(env_file, frozen_file, containerruntime="docker", hostmountopts=""):
+def freeze(env_file, frozen_file, containerruntime="docker", hostmountopts=None):
     """Freeze a conda environment.yml
 
     By running in docker:
@@ -50,6 +50,9 @@ def freeze(env_file, frozen_file, containerruntime="docker", hostmountopts=""):
         conda env export
 
     Result will be stored in frozen_file
+
+    containerruntime is the executable used to run a container,
+    for example docker or podman
     """
     frozen_dest = HERE / frozen_file
 
@@ -71,6 +74,8 @@ def freeze(env_file, frozen_file, containerruntime="docker", hostmountopts=""):
 
     if hostmountopts and hostmountopts[0] != ":":
         hostmountopts = f":{hostmountopts}"
+    else:
+        hostmountopts = ""
     check_call(
         [
             containerruntime,
@@ -127,7 +132,9 @@ def set_python(py_env_file, py):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("--containerrun", default="docker", help="Container runtime")
+    parser.add_argument(
+        "--containerruntime", default="docker", help="Container runtime"
+    )
     parser.add_argument("--volopts", help="Host volume mount options")
     parser.add_argument(
         "pys",
@@ -144,7 +151,7 @@ if __name__ == "__main__":
         freeze(
             env_file,
             frozen_file,
-            containerruntime=args.containerrun,
+            containerruntime=args.containerruntime,
             hostmountopts=args.volopts,
         )
         if py == default_py:
