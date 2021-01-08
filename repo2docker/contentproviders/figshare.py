@@ -39,7 +39,7 @@ class Figshare(DoiProvider):
             }
         ]
 
-    url_regex = re.compile(r"(.*)/articles/([^/]+)/([^/]+)/(\d+)(/)?(\d+)?")
+    url_regex = re.compile(r"(.*)/articles/(code/)?([^/]+)/(\d+)(/)?(\d+)?")
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Figshare article"""
