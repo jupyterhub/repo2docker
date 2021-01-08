@@ -39,7 +39,7 @@ class Figshare(DoiProvider):
             }
         ]
 
-    url_regex = re.compile(r"(.*)/articles/([^/]+)/(\d+)(/)?(\d+)?")
+    url_regex = re.compile(r"(.*)/articles/([^/]+)/([^/]+)/(\d+)(/)?(\d+)?")
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Figshare article"""
@@ -53,8 +53,8 @@ class Figshare(DoiProvider):
             if any([url.startswith(s) for s in host["hostname"]]):
                 match = self.url_regex.match(url)
                 if match:
-                    self.article_id = match.groups()[2]
-                    self.article_version = match.groups()[4]
+                    self.article_id = match.groups()[3]
+                    self.article_version = match.groups()[5]
                     if not self.article_version:
                         self.article_version = "1"
                     return {
