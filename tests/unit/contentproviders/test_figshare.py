@@ -50,10 +50,16 @@ test_dois_links = [
     (
         "https://doi.org/10.6084/m9.figshare.9782777.v1",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
+        # $ curl -sIL https://doi.org/10.6084/m9.figshare.9782777.v1 | grep location
+        # location: https://figshare.com/articles/Binder-ready_openSenseMap_Analysis/9782777/1
+        # location: https://figshare.com/articles/code/Binder-ready_openSenseMap_Analysis/9782777
     ),
     (
         "https://doi.org/10.6084/m9.figshare.9782777.v3",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "3"},
+        # $ curl -sIL https://doi.org/10.6084/m9.figshare.9782777.v3 | grep location
+        # location: https://figshare.com/articles/Binder-ready_openSenseMap_Analysis/9782777/3
+        # location: https://figshare.com/articles/code/Binder-ready_openSenseMap_Analysis/9782777
     ),
     (
         "https://figshare.com/articles/title/97827771234",
