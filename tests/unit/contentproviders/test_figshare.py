@@ -43,9 +43,13 @@ test_dois_links = [
         "10.6084/m9.figshare.9782777.v1",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
     ),
-    (
+    pytest.param(
         "10.6084/m9.figshare.9782777.v2",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "2"},
+        # $ curl -sIL https://dx.doi.org/10.6084/m9.figshare.9782777.v2 | grep location
+        # location: https://figshare.com/articles/Binder-ready_openSenseMap_Analysis/9782777/2
+        # location: https://figshare.com/articles/code/Binder-ready_openSenseMap_Analysis/9782777
+        marks=pytest.mark.xfail(reason="Problem with figshare version redirects"),
     ),
     (
         "https://doi.org/10.6084/m9.figshare.9782777.v1",
@@ -54,12 +58,13 @@ test_dois_links = [
         # location: https://figshare.com/articles/Binder-ready_openSenseMap_Analysis/9782777/1
         # location: https://figshare.com/articles/code/Binder-ready_openSenseMap_Analysis/9782777
     ),
-    (
+    pytest.param(
         "https://doi.org/10.6084/m9.figshare.9782777.v3",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "3"},
         # $ curl -sIL https://doi.org/10.6084/m9.figshare.9782777.v3 | grep location
         # location: https://figshare.com/articles/Binder-ready_openSenseMap_Analysis/9782777/3
         # location: https://figshare.com/articles/code/Binder-ready_openSenseMap_Analysis/9782777
+        marks=pytest.mark.xfail(reason="Problem with figshare version redirects"),
     ),
     (
         "https://figshare.com/articles/title/97827771234",
