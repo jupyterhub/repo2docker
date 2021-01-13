@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2021-01-13 12:02:30 UTC
+# Frozen on 2021-01-13 12:19:21 UTC
 name: r2d
 channels:
   - conda-forge
@@ -52,7 +52,7 @@ dependencies:
   - jupyter_telemetry=0.1.0=pyhd8ed1ab_1
   - jupyterhub-base=1.1.0=py36h9f0ad1d_5
   - jupyterhub-singleuser=1.1.0=py36h9f0ad1d_5
-  - jupyterlab=3.0.0=pyhd8ed1ab_0
+  - jupyterlab=3.0.4=pyhd8ed1ab_0
   - jupyterlab_server=2.1.2=pyhd8ed1ab_0
   - jupyterlab_widgets=1.0.0=pyhd8ed1ab_1
   - krb5=1.17.2=h926e7f8_0
