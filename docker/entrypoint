@@ -1,0 +1,35 @@
+#!/bin/sh
+set -e
+
+function write_config() {
+    # Checks for the environment variables *_PROXY.
+    # If at least one variables is found, it writes all found variables
+    # into a docker config file
+    docker_cfg="$1"
+    httpProxy="${HTTP_PROXY:-$http_proxy}"
+    httpsProxy="${HTTPS_PROXY:-$https_proxy}"
+    noProxy="${NO_PROXY:-$no_proxy}"
+    # If no proxy vars are set, do nothing
+    [ -z "$httpProxy" ] && [ -z "$httpsProxy" ] && [ -z "$noProxy" ] && return
+    [ -f "$1" ] && echo "$1 already exists. Not touching it. You are responsible for setting your proxy vars there yourself" >&2 && return
+    sep=""
+    mkdir -p "$(dirname $docker_cfg)"
+    cat <<EOF > "$docker_cfg"
+{
+"proxies": {
+  "default": {
+EOF
+    [ -n "$httpProxy" ] && echo -ne "$sep"'    "httpProxy": "'"$httpProxy"'"' >> "$docker_cfg" && sep=",\n"
+    [ -n "$httpsProxy" ] && echo -ne "$sep"'    "httpsProxy": "'"$httpsProxy"'"' >> "$docker_cfg" && sep=",\n"
+    [ -n "$noProxy" ] && echo -ne "$sep"'    "noProxy": "'"$noProxy"'"' >> "$docker_cfg" && sep=",\n"
+    cat <<EOF >> "$docker_cfg"
+
+  }
+}
+}
+EOF
+}
+
+write_config /root/.docker/config.json
+
+exec "$@"
