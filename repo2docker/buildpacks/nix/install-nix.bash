@@ -2,8 +2,8 @@
 # This downloads and installs a pinned version of nix
 set -ex
 
-NIX_VERSION="2.3"
-NIX_SHA256="e43f6947d1f302b6193302889e7800f3e3dd4a650b6f929c668c894884a02701"
+NIX_VERSION="2.3.9"
+NIX_SHA256="49763fd7fa06bcb712ced2f3f11afd275e3a4d7bc5ff0d6fd1d50a4c3ce7bbf4"
 
 # Do all our operations in /tmp, since we can't rely on current directory being writeable yet.
 cd /tmp
