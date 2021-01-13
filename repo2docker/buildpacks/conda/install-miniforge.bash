@@ -48,12 +48,6 @@ echo "installing notebook env:"
 cat /tmp/environment.yml
 time mamba env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
 
-# Install jupyter-offline-notebook to allow users to download notebooks
-# after the server connection has been lost
-# This will install and enable the extension for the classic notebook and JupyterLab
-time ${NB_PYTHON_PREFIX}/bin/python -m pip install jupyter-offlinenotebook==0.1.0
-true
-
 # empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
 # which we don't intend.

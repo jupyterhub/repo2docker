@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2021-01-04 20:16:04 UTC
+# Frozen on 2021-01-13 12:02:30 UTC
 name: r2d
 channels:
   - conda-forge
@@ -9,8 +9,8 @@ dependencies:
   - _libgcc_mutex=0.1=conda_forge
   - _openmp_mutex=4.5=1_gnu
   - alembic=1.4.3=pyh9f0ad1d_0
-  - anyio=2.0.2=py36h5fab9bb_3
-  - argon2-cffi=20.1.0=py36h1d69622_2
+  - anyio=2.0.2=py36h5fab9bb_4
+  - argon2-cffi=20.1.0=py36h8f6f2f9_2
   - async_generator=1.10=py_0
   - attrs=20.3.0=pyhd3deb0d_0
   - babel=2.9.0=pyhd3deb0d_0
@@ -22,38 +22,38 @@ dependencies:
   - brotlipy=0.7.0=py36he6145b8_1001
   - c-ares=1.17.1=h36c2ea0_0
   - ca-certificates=2020.12.5=ha878542_0
-  - certifi=2020.12.5=py36h5fab9bb_0
+  - certifi=2020.12.5=py36h5fab9bb_1
   - certipy=0.1.3=py_0
   - cffi=1.14.4=py36hc120d54_1
-  - chardet=4.0.0=py36h5fab9bb_0
+  - chardet=4.0.0=py36h5fab9bb_1
   - contextvars=2.4=py_0
-  - cryptography=3.3.1=py36h0a59100_0
+  - cryptography=3.3.1=py36h0a59100_1
   - dataclasses=0.7=pyhe4b4509_6
   - decorator=4.4.2=py_0
   - defusedxml=0.6.0=py_0
   - entrypoints=0.3=pyhd8ed1ab_1003
   - idna=2.10=pyh9f0ad1d_0
-  - immutables=0.14=py36h8c4c3a4_1
-  - importlib-metadata=3.3.0=py36h5fab9bb_2
-  - importlib_metadata=3.3.0=hd8ed1ab_2
+  - immutables=0.14=py36h8f6f2f9_1
+  - importlib-metadata=3.4.0=py36h5fab9bb_0
+  - importlib_metadata=3.4.0=hd8ed1ab_0
   - ipykernel=5.4.2=py36he448a4c_0
   - ipython=7.16.1=py36h95af2a2_0
   - ipython_genutils=0.2.0=py_1
   - ipywidgets=7.6.0=pyhd3deb0d_0
-  - jedi=0.18.0=py36h5fab9bb_1
+  - jedi=0.18.0=py36h5fab9bb_2
   - jinja2=2.11.2=pyh9f0ad1d_0
   - json5=0.9.5=pyh9f0ad1d_0
   - jsonschema=3.2.0=py_2
-  - jupyter-offlinenotebook=0.1.0=pyh8c360ce_0
+  - jupyter-offlinenotebook=0.2.0=pyhd8ed1ab_0
   - jupyter-resource-usage=0.5.1=pyhd8ed1ab_0
-  - jupyter_client=6.1.7=py_0
+  - jupyter_client=6.1.11=pyhd8ed1ab_1
   - jupyter_core=4.7.0=py36h5fab9bb_0
-  - jupyter_server=1.1.3=py36h5fab9bb_1
+  - jupyter_server=1.2.1=py36h5fab9bb_0
   - jupyter_telemetry=0.1.0=pyhd8ed1ab_1
   - jupyterhub-base=1.1.0=py36h9f0ad1d_5
   - jupyterhub-singleuser=1.1.0=py36h9f0ad1d_5
   - jupyterlab=3.0.0=pyhd8ed1ab_0
-  - jupyterlab_server=2.0.0=pyhd8ed1ab_0
+  - jupyterlab_server=2.1.2=pyhd8ed1ab_0
   - jupyterlab_widgets=1.0.0=pyhd8ed1ab_1
   - krb5=1.17.2=h926e7f8_0
   - ld_impl_linux-64=2.35.1=hea4e1c9_1
@@ -68,9 +68,9 @@ dependencies:
   - libssh2=1.9.0=hab1572f_5
   - libstdcxx-ng=9.3.0=h2ae2ef3_17
   - mako=1.1.3=pyh9f0ad1d_0
-  - markupsafe=1.1.1=py36he6145b8_2
-  - mistune=0.8.4=py36h1d69622_1002
-  - nbclassic=0.2.5=pyhd8ed1ab_0
+  - markupsafe=1.1.1=py36h8f6f2f9_3
+  - mistune=0.8.4=py36h8f6f2f9_1003
+  - nbclassic=0.2.6=pyhd8ed1ab_0
   - nbconvert=5.6.1=py36h9f0ad1d_1
   - nbformat=5.0.8=py_0
   - ncurses=6.2=h58526e2_4
@@ -87,38 +87,38 @@ dependencies:
   - pickleshare=0.7.5=py_1003
   - pip=20.3.3=pyhd8ed1ab_0
   - prometheus_client=0.9.0=pyhd3deb0d_0
-  - prompt-toolkit=3.0.8=pyha770c72_0
-  - psutil=5.8.0=py36h8f6f2f9_0
+  - prompt-toolkit=3.0.10=pyha770c72_0
+  - psutil=5.8.0=py36h8f6f2f9_1
   - ptyprocess=0.7.0=pyhd3deb0d_0
   - pycparser=2.20=pyh9f0ad1d_2
-  - pycurl=7.43.0.6=py36h5be270d_0
+  - pycurl=7.43.0.6=py36h66a4f8d_1
   - pygments=2.7.3=pyhd8ed1ab_0
-  - pyjwt=1.7.1=py_0
+  - pyjwt=2.0.0=pyhd8ed1ab_0
   - pyopenssl=20.0.1=pyhd8ed1ab_0
   - pyparsing=2.4.7=pyh9f0ad1d_0
-  - pyrsistent=0.17.3=py36h1d69622_1
-  - pysocks=1.7.1=py36h9880bd3_2
+  - pyrsistent=0.17.3=py36h8f6f2f9_2
+  - pysocks=1.7.1=py36h5fab9bb_3
   - python=3.6.12=hffdb5ce_0_cpython
   - python-dateutil=2.8.1=py_0
   - python-editor=1.0.4=py_0
   - python-json-logger=2.0.1=pyh9f0ad1d_0
   - python_abi=3.6=1_cp36m
   - pytz=2020.5=pyhd8ed1ab_0
-  - pyzmq=20.0.0=py36h2b1bd32_1
+  - pyzmq=20.0.0=py36h81c33ee_1
   - readline=8.0=he28a2e2_2
   - requests=2.25.1=pyhd3deb0d_0
-  - ruamel.yaml=0.16.12=py36h1d69622_1
-  - ruamel.yaml.clib=0.2.2=py36h1d69622_1
+  - ruamel.yaml=0.16.12=py36h8f6f2f9_2
+  - ruamel.yaml.clib=0.2.2=py36h8f6f2f9_2
   - send2trash=1.5.0=py_0
-  - setuptools=49.6.0=py36h9880bd3_2
+  - setuptools=49.6.0=py36h5fab9bb_3
   - six=1.15.0=pyh9f0ad1d_0
-  - sniffio=1.2.0=py36h5fab9bb_0
-  - sqlalchemy=1.3.22=py36h8f6f2f9_0
+  - sniffio=1.2.0=py36h5fab9bb_1
+  - sqlalchemy=1.3.22=py36h8f6f2f9_1
   - sqlite=3.34.0=h74cdb3f_0
-  - terminado=0.9.1=py36h5fab9bb_1
+  - terminado=0.9.2=py36h5fab9bb_0
   - testpath=0.4.4=py_0
   - tk=8.6.10=h21135ba_1
-  - tornado=6.1=py36h1d69622_0
+  - tornado=6.1=py36h8f6f2f9_1
   - traitlets=4.3.3=py36h9f0ad1d_1
   - typing_extensions=3.7.4.3=py_0
   - urllib3=1.26.2=pyhd8ed1ab_0
