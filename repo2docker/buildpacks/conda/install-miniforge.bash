@@ -51,7 +51,7 @@ time mamba env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
 # Install jupyter-offline-notebook to allow users to download notebooks
 # after the server connection has been lost
 # This will install and enable the extension for jupyter notebook and JupyterLab 3
-time ${NB_PYTHON_PREFIX}/bin/python -m pip install jupyter-offlinenotebook==0.2.0
+time ${NB_PYTHON_PREFIX}/bin/python -m pip install jupyter-offlinenotebook==0.2.1
 # and this installs it for lab 2. Keep going if the lab version is incompatible
 # with the extension.
 # Don't minimize build as it may fail, possibly due to excessive resource usage
