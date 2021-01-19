@@ -5,87 +5,98 @@ from contextlib import contextmanager
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 from unittest.mock import patch
 from zipfile import ZipFile
+import re
 
 from repo2docker.contentproviders import Hydroshare
 from repo2docker.contentproviders.base import ContentProviderException
 
 
-def test_content_id():
-    with patch.object(Hydroshare, "urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = (
+doi_responses = {
+    "https://doi.org/10.4211/hs.b8f6eae9d89241cf8b5904033460af61": (
+        "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
+    ),
+    "https://doi.org/10.21105/joss.01277": (
+        "https://joss.theoj.org/papers/10.21105/joss.01277"
+    ),
+}
+
+
+def doi_resolver(req, context):
+    resp = doi_responses.get(req.url)
+    # doi responses are redirects
+    if resp is not None:
+        context.status_code = 302
+        context.headers["Location"] = resp
+    return resp
+
+
+hydroshare_data = {
+    "dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]
+}
+
+
+def test_content_id(requests_mock):
+
+    requests_mock.get(re.compile("https://"), json=hydroshare_data)
+    requests_mock.get(re.compile("https://doi.org"), json=doi_resolver)
+
+    hydro = Hydroshare()
+
+    hydro.detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61")
+    assert hydro.content_id == "b8f6eae9d89241cf8b5904033460af61.v1569427757"
+
+
+def test_detect_hydroshare(requests_mock):
+    requests_mock.get(re.compile("https://"), json=hydroshare_data)
+    requests_mock.get(re.compile("https://doi.org"), json=doi_resolver)
+
+    # valid Hydroshare DOIs trigger this content provider
+    expected = {
+        "host": {
+            "hostname": [
+                "https://www.hydroshare.org/resource/",
+                "http://www.hydroshare.org/resource/",
+            ],
+            "django_irods": "https://www.hydroshare.org/django_irods/download/bags/",
+            "version": "https://www.hydroshare.org/hsapi/resource/{}/scimeta/elements",
+        },
+        "resource": "b8f6eae9d89241cf8b5904033460af61",
+        "version": "1569427757",
+    }
+
+    assert (
+        Hydroshare().detect(
             "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
         )
+        == expected
+    )
+    # assert a call to urlopen was called to fetch version
+    assert requests_mock.call_count == 1
+    requests_mock.reset_mock()
 
-        def read():
-            return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
+    assert (
+        Hydroshare().detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61") == expected
+    )
+    # assert 3 calls were made, 2 to resolve the DOI (302 + 200) and another to fetch the version
+    assert requests_mock.call_count == 3
+    requests_mock.reset_mock()
 
-        fake_urlopen.return_value.read = read
-        hydro = Hydroshare()
-
-        hydro.detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61")
-        assert hydro.content_id == "b8f6eae9d89241cf8b5904033460af61.v1569427757"
-
-
-def test_detect_hydroshare():
-    with patch.object(Hydroshare, "urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = (
-            "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
+    assert (
+        Hydroshare().detect(
+            "https://doi.org/10.4211/hs.b8f6eae9d89241cf8b5904033460af61"
         )
+        == expected
+    )
+    # assert 3 more calls were made, 2 to resolve the DOI and another to fetch the version
+    assert requests_mock.call_count == 3
+    requests_mock.reset_mock()
 
-        def read():
-            return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
+    # Don't trigger the Hydroshare content provider
+    assert Hydroshare().detect("/some/path/here") is None
+    assert Hydroshare().detect("https://example.com/path/here") is None
 
-        fake_urlopen.return_value.read = read
-        # valid Hydroshare DOIs trigger this content provider
-        expected = {
-            "host": {
-                "hostname": [
-                    "https://www.hydroshare.org/resource/",
-                    "http://www.hydroshare.org/resource/",
-                ],
-                "django_irods": "https://www.hydroshare.org/django_irods/download/bags/",
-                "version": "https://www.hydroshare.org/hsapi/resource/{}/scimeta/elements",
-            },
-            "resource": "b8f6eae9d89241cf8b5904033460af61",
-            "version": "1569427757",
-        }
-        assert (
-            Hydroshare().detect(
-                "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
-            )
-            == expected
-        )
-        # assert a call to urlopen was called to fetch version
-        assert fake_urlopen.call_count == 1
-        assert (
-            Hydroshare().detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61")
-            == expected
-        )
-        # assert 2 more calls were made, one to resolve the DOI and another to fetch the version
-        assert fake_urlopen.call_count == 3
-        assert (
-            Hydroshare().detect(
-                "https://doi.org/10.4211/hs.b8f6eae9d89241cf8b5904033460af61"
-            )
-            == expected
-        )
-        # assert 2 more calls were made, one to resolve the DOI and another to fetch the version
-        assert fake_urlopen.call_count == 5
-
-    with patch.object(Hydroshare, "urlopen") as fake_urlopen:
-        # Don't trigger the Hydroshare content provider
-        assert Hydroshare().detect("/some/path/here") is None
-        assert Hydroshare().detect("https://example.com/path/here") is None
-        # don't handle DOIs that aren't from Hydroshare
-        fake_urlopen.return_value.url = (
-            "http://joss.theoj.org/papers/10.21105/joss.01277"
-        )
-
-        def read():
-            return '{"dates": [{"type": "modified", "start_date": "2019-09-25T16:09:17.006152Z"}]}'
-
-        fake_urlopen.return_value.read = read
-        assert Hydroshare().detect("https://doi.org/10.21105/joss.01277") is None
+    # don't handle DOIs that aren't from Hydroshare
+    assert Hydroshare().detect("https://doi.org/10.21105/joss.01277") is None
 
 
 @contextmanager

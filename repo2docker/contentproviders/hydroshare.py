@@ -16,9 +16,7 @@ class Hydroshare(DoiProvider):
 
     def _fetch_version(self, host):
         """Fetch resource modified date and convert to epoch"""
-        json_response = json.loads(
-            self.urlopen(host["version"].format(self.resource_id)).read()
-        )
+        json_response = self.urlopen(host["version"].format(self.resource_id)).json()
         date = next(
             item for item in json_response["dates"] if item["type"] == "modified"
         )["start_date"]

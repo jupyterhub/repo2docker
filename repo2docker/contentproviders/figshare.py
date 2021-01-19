@@ -25,6 +25,7 @@ class Figshare(DoiProvider):
     """
 
     def __init__(self):
+        super().__init__()
         self.hosts = [
             {
                 "hostname": [
@@ -74,13 +75,12 @@ class Figshare(DoiProvider):
         yield "Fetching Figshare article {} in version {}.\n".format(
             article_id, article_version
         )
-        req = Request(
+        resp = self.urlopen(
             "{}{}/versions/{}".format(host["api"], article_id, article_version),
             headers={"accept": "application/json"},
         )
-        resp = self.urlopen(req)
 
-        article = json.loads(resp.read().decode("utf-8"))
+        article = resp.json()
 
         files = deep_get(article, host["filepath"])
         # only fetch files where is_link_only: False
