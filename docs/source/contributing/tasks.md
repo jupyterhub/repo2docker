@@ -113,33 +113,27 @@ added and why. If you fix a bug or add new functionality consider adding a new
 test to prevent the bug from coming back/the feature breaking in the future.
 
 
-
 ## Creating a Release
 
-We try to make a release of repo2docker every few months if possible.
-
-We follow [semantic versioning](https://semver.org/).
+We make a release of whatever is on `master` every month. We uses "calendar versioning".
+Monthly releases give users a predictable pattern for when releases are going to
+happen and prevents locking up improvements for fixes for long periods of time.
 
 A new release will automatically be created when a new git tag is created
-and pushed to the repository (using
-[Travis CI](https://github.com/jupyterhub/repo2docker/blob/master/.travis.yml#L52)).
+and pushed to the repository.
 
 To create a new release, follow these steps:
-
-### Confirm that the changelog is ready
-
-[The changelog](https://github.com/jupyterhub/repo2docker/blob/master/docs/source/changelog.rst)
-should reflect all significant enhancements and fixes to repo2docker and
-its documentation. In addition, ensure that the correct version is displayed
-at the top, and create a new `dev` section if needed.
 
 ### Create a new tag and push it
 
 First, tag a new release locally:
 
 ```bash
-V=0.7.0; git tag -am "release $V" $V
+V=YYYY.MM.0; git tag -am "release $V" $V
 ```
+
+> If you need to make a second (or third) release in a month increment the
+> trailing 0 of the version to 1 (or 2).
 
 Then push this change up to the master repository
 
@@ -147,7 +141,7 @@ Then push this change up to the master repository
 git push origin --tags
 ```
 
-Travis should automatically run the tests and, if they pass, create a
+GitHub Actions should create a
 new release on the [repo2docker PyPI](https://pypi.org/project/jupyter-repo2docker/).
 Once this has completed, make sure that the new version has been updated.
 
@@ -159,50 +153,9 @@ release on the [GitHub repository releases page](https://github.com/jupyterhub/r
 * Click "Draft a new release"
 * Choose a tag version using the same tag you just created above
 * The release name is simply the tag version
-* The description is [a link to the Changelog](https://github.com/jupyterhub/repo2docker/blob/master/docs/source/changelog.rst),
-  ideally with an anchor to the latest release.
 * Finally, click "Publish release"
 
 That's it!
-
-## Update the change log
-
-To add your change to the change log, find the relevant Feature/Bug
-fix/API change section for the next release near the top of the file;
-then add one or two sentences as a new bullet point about your
-changes. Include the pull request or issue number between square
-brackets at the end.
-
-Some details:
-
-- versioning follows the x.y.z, major.minor.bugfix numbering
-
-- bug fixes go into the next bugfix release. If there isn't any, you
-  can create a new section (see point below). Don't worry if you're
-  not sure about that, and think it should go into a next major or
-  minor release: an admin will let you know, or move the change later
-  to the appropriate section
-
-- API changes should preferably go into the next major release, unless
-  they are backward compatible (for example, a deprecated function
-  keyword): then they can go into the next minor release. For release
-  with major release 0, non-backward compatible breaking changes are
-  also fine for the next minor release.
-
-- new features should go into the next minor release.
-
-- if there is no section for the appropriate release, you can add one:
-
-  follow the versioning scheme, by simply increasing the relevant
-  number for one of the major /minor/bugfix numbers, appropriate for
-  your change (see the above bullet points); add the release
-  section. Then add three subsections: new features, api changes, and
-  bug fixes. Leave out the sections that are not appropriate for the
-  newlye added release section.
-
-Release candidate versions in the change log are only temporary, and
-should be superseded by either a next release candidate, or the final
-release for that version (bugfix version 0).
 
 
 ## Keeping the Pipfile and requirements files up to date
