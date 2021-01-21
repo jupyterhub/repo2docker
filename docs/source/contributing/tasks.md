@@ -115,7 +115,7 @@ test to prevent the bug from coming back/the feature breaking in the future.
 
 ## Creating a Release
 
-We make a release of whatever is on `master` every month. We uses "calendar versioning".
+We make a release of whatever is on `master` every month. We use "calendar versioning".
 Monthly releases give users a predictable pattern for when releases are going to
 happen and prevents locking up improvements for fixes for long periods of time.
 
