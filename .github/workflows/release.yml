@@ -1,6 +1,8 @@
 name: Create a release on pypi.org
 
-on: push
+on:
+  push:
+  pull_request:
 
 jobs:
   build-n-publish:
