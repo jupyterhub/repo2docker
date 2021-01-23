@@ -23,4 +23,4 @@ There are a few other pages to highlight:
     Its a good place to understand _why_ the team have made the decisions that they have along the way!
   * We absolutely encourage discussion around refactoring, updating or extending repo2docker, but please make sure that you've understood this page before opening an issue to discuss the change you'd like to propose.
 * [Common developer tasks and how-tos](https://repo2docker.readthedocs.io/en/latest/contributing/tasks.html)
-  * Some notes on running tests, buildpack dependencies, creating a release, updating the changelog and keeping the pip files up to date.
+  * Some notes on running tests, buildpack dependencies, creating a release, and keeping the pip files up to date.
