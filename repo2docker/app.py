@@ -148,6 +148,7 @@ class Repo2Docker(Application):
             contentproviders.Figshare,
             contentproviders.Dataverse,
             contentproviders.Hydroshare,
+            contentproviders.Swhid,
             contentproviders.Mercurial,
             contentproviders.Git,
         ],
@@ -264,6 +265,18 @@ class Repo2Docker(Application):
 
         If repo is a git repository, this ref is checked out
         in a local clone before repository is built.
+        """,
+        config=True,
+        allow_none=True,
+    )
+
+    swh_token = Unicode(
+        None,
+        help="""
+        Token to use authenticated SWH API access.
+
+        If unset, default to unauthenticated (limited) usage of the Software
+        Heritage API.
         """,
         config=True,
         allow_none=True,
@@ -395,26 +408,29 @@ class Repo2Docker(Application):
                 "No matching content provider found for " "{url}.".format(url=url)
             )
 
+        swh_token = self.config.get("swh_token", self.swh_token)
+        if swh_token and isinstance(picked_content_provider, contentproviders.Swhid):
+            picked_content_provider.set_auth_token(swh_token)
+
         for log_line in picked_content_provider.fetch(
             spec, checkout_path, yield_output=self.json_logs
         ):
             self.log.info(log_line, extra=dict(phase="fetching"))
 
         if not self.output_image_spec:
-            self.output_image_spec = (
-                "r2d" + escapism.escape(self.repo, escape_char="-").lower()
-            )
+            image_spec = "r2d" + self.repo
             # if we are building from a subdirectory include that in the
             # image name so we can tell builds from different sub-directories
             # apart.
             if self.subdir:
-                self.output_image_spec += escapism.escape(
-                    self.subdir, escape_char="-"
-                ).lower()
+                image_spec += self.subdir
             if picked_content_provider.content_id is not None:
-                self.output_image_spec += picked_content_provider.content_id
+                image_spec += picked_content_provider.content_id
             else:
-                self.output_image_spec += str(int(time.time()))
+                image_spec += str(int(time.time()))
+            self.output_image_spec = escapism.escape(
+                image_spec, escape_char="-"
+            ).lower()
 
     def json_excepthook(self, etype, evalue, traceback):
         """Called on an uncaught exception when using json logging
