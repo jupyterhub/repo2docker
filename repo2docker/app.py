@@ -605,12 +605,24 @@ class Repo2Docker(Application):
         try:
             for line in container.logs(stream=True):
                 self.log.info(line.decode("utf-8"), extra=dict(phase="running"))
+
         finally:
             container.reload()
             if container.status == "running":
                 self.log.info("Stopping container...\n", extra=dict(phase="running"))
                 container.kill()
             exit_code = container.attrs["State"]["ExitCode"]
+
+            container.wait()
+
+            self.log.info(
+                "Container finished running.\n".upper(), extra=dict(phase="running")
+            )
+            # are there more logs? Let's send them back too
+            late_logs = container.logs().decode("utf-8")
+            for line in late_logs.split("\n"):
+                self.log.info(line + "\n", extra=dict(phase="running"))
+
             container.remove()
             if exit_code:
                 sys.exit(exit_code)
