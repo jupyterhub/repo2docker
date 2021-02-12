@@ -73,7 +73,7 @@ class Dataverse(DoiProvider):
                 parsed_url._replace(path="/api/search", query=search_query)
             )
             self.log.debug("Querying Dataverse: " + search_url)
-            data = self.urlopen(search_url).json()
+            data = self.urlopen(search_url).json()["data"]
             if data["count_in_response"] != 1:
                 self.log.debug(
                     "Dataverse search query failed!\n - doi: {}\n - url: {}\n - resp: {}\n".format(
@@ -103,7 +103,7 @@ class Dataverse(DoiProvider):
         )
 
         resp = self.urlopen(url, headers={"accept": "application/json"})
-        record = resp.json()
+        record = resp.json()["data"]
 
         for fobj in deep_get(record, "latestVersion.files"):
             file_url = "{}/api/access/datafile/{}".format(

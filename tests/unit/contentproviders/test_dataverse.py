@@ -60,8 +60,10 @@ def test_detect_dataverse(test_input, expected, requests_mock):
     requests_mock.get(
         "https://dataverse.harvard.edu/api/search?q=entityId:3323458&type=file",
         json={
-            "count_in_response": 1,
-            "items": [{"dataset_persistent_id": "doi:10.7910/DVN/6ZXAGT"}],
+            "data": {
+                "count_in_response": 1,
+                "items": [{"dataset_persistent_id": "doi:10.7910/DVN/6ZXAGT"}],
+            }
         },
     )
 
@@ -109,20 +111,22 @@ def dv_files(tmpdir):
 
 def test_dataverse_fetch(dv_files, requests_mock):
     mock_response = {
-        "latestVersion": {
-            "files": [
-                {"dataFile": {"id": 1}, "label": "some-file.txt"},
-                {
-                    "dataFile": {"id": 2},
-                    "label": "some-other-file.txt",
-                    "directoryLabel": "directory",
-                },
-                {
-                    "dataFile": {"id": 3},
-                    "label": "the-other-file.txt",
-                    "directoryLabel": "directory/subdirectory",
-                },
-            ]
+        "data": {
+            "latestVersion": {
+                "files": [
+                    {"dataFile": {"id": 1}, "label": "some-file.txt"},
+                    {
+                        "dataFile": {"id": 2},
+                        "label": "some-other-file.txt",
+                        "directoryLabel": "directory",
+                    },
+                    {
+                        "dataFile": {"id": 3},
+                        "label": "the-other-file.txt",
+                        "directoryLabel": "directory/subdirectory",
+                    },
+                ]
+            }
         }
     }
 
