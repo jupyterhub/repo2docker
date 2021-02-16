@@ -23,17 +23,22 @@ class NixBuildPack(BaseImage):
         """
         Return series of build-steps common to all nix repositories.
         Notice how only root privileges are needed for creating nix
-        directory.
+        directory and a nix.conf file.
 
          - create nix directory for user nix installation
+         - disable sandboxing because its unsupported inside a Docker container
          - install nix package manager for user
+
         """
         return super().get_build_scripts() + [
             (
                 "root",
                 """
             mkdir -m 0755 /nix && \
-            chown -R ${NB_USER}:${NB_USER} /nix /usr/local/bin/nix-shell-wrapper /home/${NB_USER}
+            chown -R ${NB_USER}:${NB_USER} /nix /usr/local/bin/nix-shell-wrapper /home/${NB_USER} && \
+            mkdir -p /etc/nix && \
+            touch /etc/nix/nix.conf && \
+            echo "sandbox = false" >> /etc/nix/nix.conf
             """,
             ),
             (

@@ -58,6 +58,10 @@ def test_env():
 
     # all docker output is returned by repo2docker on stderr
     # extract just the declare for better failure message formatting
+    # stdout should be empty
+    assert not result.stdout
+
+    # stderr should contain lines of output
     declares = [x for x in result.stderr.split("\n") if x.startswith("declare")]
     assert 'declare -x FOO="{}"'.format(ts) in declares
     assert 'declare -x BAR="baz"' in declares

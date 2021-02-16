@@ -1,3 +1,16 @@
 [run]
 # this file comes from versioneer and we don't test it
 omit = */_version.py
+
+[paths]
+# This tells coverage how to combine results together or said differently
+# which files at different paths are actually the same file
+# documented at https://coverage.readthedocs.io/en/latest/config.html#paths
+# Yes, we list repo2docker twice here. This allows you to install repo2docker
+# with `pip install -e.` for local development and from the wheel (as done on
+# CI) and get `repo2docker/foo.py` as paths in the coverage report
+source =
+    repo2docker
+    repo2docker
+    ../repo2docker
+    */site-packages/repo2docker

@@ -15,6 +15,7 @@ class Zenodo(DoiProvider):
     """Provide contents of a Zenodo deposit."""
 
     def __init__(self):
+        super().__init__()
         # We need the hostname (url where records are), api url (for metadata),
         # filepath (path to files in metadata), filename (path to filename in
         # metadata), download (path to file download URL), and type (path to item type in metadata)
@@ -55,13 +56,12 @@ class Zenodo(DoiProvider):
         host = spec["host"]
 
         yield "Fetching Zenodo record {}.\n".format(record_id)
-        req = Request(
+        resp = self.urlopen(
             "{}{}".format(host["api"], record_id),
             headers={"accept": "application/json"},
         )
-        resp = self.urlopen(req)
 
-        record = json.loads(resp.read().decode("utf-8"))
+        record = resp.json()
 
         is_software = deep_get(record, host["type"]).lower() == "software"
         files = deep_get(record, host["filepath"])

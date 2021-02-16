@@ -1,6 +1,7 @@
 import json
 import os
 import pytest
+import re
 
 from io import BytesIO
 from tempfile import TemporaryDirectory
@@ -19,7 +20,7 @@ test_hosts = [
             "doi:10.7910/DVN/6ZXAGT/3YRRYJ",
             "10.7910/DVN/6ZXAGT",
             "https://dataverse.harvard.edu/api/access/datafile/3323458",
-            "hdl:11529/10016",
+            "https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016",
         ],
         [
             {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"},
@@ -27,57 +28,70 @@ test_hosts = [
         ],
     )
 ]
-test_responses = {
-    "doi:10.7910/DVN/6ZXAGT/3YRRYJ": (
+doi_responses = {
+    "https://doi.org/10.7910/DVN/6ZXAGT/3YRRYJ": (
         "https://dataverse.harvard.edu/file.xhtml"
         "?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ"
     ),
-    "doi:10.7910/DVN/6ZXAGT": (
+    "https://doi.org/10.7910/DVN/6ZXAGT": (
         "https://dataverse.harvard.edu/dataset.xhtml"
         "?persistentId=doi:10.7910/DVN/6ZXAGT"
     ),
-    "10.7910/DVN/6ZXAGT": (
-        "https://dataverse.harvard.edu/dataset.xhtml"
-        "?persistentId=doi:10.7910/DVN/6ZXAGT"
+    "https://dataverse.harvard.edu/api/access/datafile/3323458": (
+        "https://dataverse.harvard.edu/api/access/datafile/3323458"
     ),
-    "https://dataverse.harvard.edu/api/access/datafile/3323458": "https://dataverse.harvard.edu/api/access/datafile/3323458",
-    "hdl:11529/10016": "https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016",
-}
-test_search = {
-    "data": {
-        "count_in_response": 1,
-        "items": [{"dataset_persistent_id": "doi:10.7910/DVN/6ZXAGT"}],
-    }
+    "https://doi.org/10.21105/joss.01277": (
+        "https://joss.theoj.org/papers/10.21105/joss.01277"
+    ),
 }
 
 
 @pytest.mark.parametrize("test_input, expected", test_hosts)
-def test_detect_dataverse(test_input, expected):
-    def doi_resolver(url):
-        return test_responses.get(url)
+def test_detect_dataverse(test_input, expected, requests_mock):
+    def doi_resolver(req, context):
+        resp = doi_responses.get(req.url)
+        # doi responses are redirects
+        if resp is not None:
+            context.status_code = 302
+            context.headers["Location"] = resp
+        return resp
 
-    with patch.object(Dataverse, "urlopen") as fake_urlopen, patch.object(
-        Dataverse, "doi2url", side_effect=doi_resolver
-    ) as fake_doi2url:
-        fake_urlopen.return_value.read.return_value = json.dumps(test_search).encode()
-        # valid Dataverse DOIs trigger this content provider
-        assert Dataverse().detect(test_input[0]) == expected[0]
-        assert fake_doi2url.call_count == 2  # File, then dataset
-        assert Dataverse().detect(test_input[1]) == expected[0]
-        assert Dataverse().detect(test_input[2]) == expected[0]
-        # only two of the three calls above have to resolve a DOI
-        assert fake_urlopen.call_count == 1
-        assert Dataverse().detect(test_input[3]) == expected[1]
+    requests_mock.get(re.compile("https://"), json=doi_resolver)
+    requests_mock.get(
+        "https://dataverse.harvard.edu/api/search?q=entityId:3323458&type=file",
+        json={
+            "data": {
+                "count_in_response": 1,
+                "items": [{"dataset_persistent_id": "doi:10.7910/DVN/6ZXAGT"}],
+            }
+        },
+    )
 
-    with patch.object(Dataverse, "urlopen") as fake_urlopen:
-        # Don't trigger the Dataverse content provider
-        assert Dataverse().detect("/some/path/here") is None
-        assert Dataverse().detect("https://example.com/path/here") is None
-        # don't handle DOIs that aren't from Dataverse
-        fake_urlopen.return_value.url = (
-            "http://joss.theoj.org/papers/10.21105/joss.01277"
-        )
-        assert Dataverse().detect("https://doi.org/10.21105/joss.01277") is None
+    assert requests_mock.call_count == 0
+    # valid Dataverse DOIs trigger this content provider
+    assert Dataverse().detect(test_input[0]) == expected[0]
+    # 4: doi resolution (302), File, doi resolution (302), then dataset
+    assert requests_mock.call_count == 4
+    requests_mock.reset_mock()
+
+    assert Dataverse().detect(test_input[1]) == expected[0]
+    # 2: doi (302), dataset
+    assert requests_mock.call_count == 2
+    requests_mock.reset_mock()
+
+    assert Dataverse().detect(test_input[2]) == expected[0]
+    # 1: datafile (search dataverse for the file id)
+    assert requests_mock.call_count == 1
+    requests_mock.reset_mock()
+
+    assert Dataverse().detect(test_input[3]) == expected[1]
+    requests_mock.reset_mock()
+
+    # Don't trigger the Dataverse content provider
+    assert Dataverse().detect("/some/path/here") is None
+    assert Dataverse().detect("https://example.com/path/here") is None
+    # don't handle DOIs that aren't from Dataverse
+    assert Dataverse().detect("https://doi.org/10.21105/joss.01277") is None
 
 
 @pytest.fixture
@@ -95,50 +109,52 @@ def dv_files(tmpdir):
     return [f1, f2, f3]
 
 
-def test_dataverse_fetch(dv_files):
-    mock_response_ds_query = BytesIO(
-        json.dumps(
-            {
-                "data": {
-                    "latestVersion": {
-                        "files": [
-                            {"dataFile": {"id": 1}, "label": "some-file.txt"},
-                            {
-                                "dataFile": {"id": 2},
-                                "label": "some-other-file.txt",
-                                "directoryLabel": "directory",
-                            },
-                            {
-                                "dataFile": {"id": 3},
-                                "label": "the-other-file.txt",
-                                "directoryLabel": "directory/subdirectory",
-                            },
-                        ]
-                    }
-                }
+def test_dataverse_fetch(dv_files, requests_mock):
+    mock_response = {
+        "data": {
+            "latestVersion": {
+                "files": [
+                    {"dataFile": {"id": 1}, "label": "some-file.txt"},
+                    {
+                        "dataFile": {"id": 2},
+                        "label": "some-other-file.txt",
+                        "directoryLabel": "directory",
+                    },
+                    {
+                        "dataFile": {"id": 3},
+                        "label": "the-other-file.txt",
+                        "directoryLabel": "directory/subdirectory",
+                    },
+                ]
             }
-        ).encode("utf-8")
-    )
+        }
+    }
+
     spec = {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"}
+
+    def mock_filecontent(req, context):
+        file_no = int(req.url.split("/")[-1]) - 1
+        return open(dv_files[file_no], "rb").read()
+
+    requests_mock.get(
+        "https://dataverse.harvard.edu/api/datasets/"
+        ":persistentId?persistentId=doi:10.7910/DVN/6ZXAGT",
+        json=mock_response,
+    )
+    requests_mock.get(
+        re.compile("https://dataverse.harvard.edu/api/access/datafile"),
+        content=mock_filecontent,
+    )
 
     dv = Dataverse()
 
-    def mock_urlopen(self, req):
-        if isinstance(req, Request):
-            return mock_response_ds_query
-        else:
-            file_no = int(req.split("/")[-1]) - 1
-            return urlopen("file://{}".format(dv_files[file_no]))
-
-    with patch.object(Dataverse, "urlopen", new=mock_urlopen):
-        with TemporaryDirectory() as d:
-            output = []
-            for l in dv.fetch(spec, d):
-                output.append(l)
-
-            unpacked_files = set(os.listdir(d))
-            expected = set(["directory", "some-file.txt"])
-            assert expected == unpacked_files
-            assert os.path.isfile(
-                os.path.join(d, "directory", "subdirectory", "the-other-file.txt")
-            )
+    with TemporaryDirectory() as d:
+        output = []
+        for l in dv.fetch(spec, d):
+            output.append(l)
+        unpacked_files = set(os.listdir(d))
+        expected = set(["directory", "some-file.txt"])
+        assert expected == unpacked_files
+        assert os.path.isfile(
+            os.path.join(d, "directory", "subdirectory", "the-other-file.txt")
+        )

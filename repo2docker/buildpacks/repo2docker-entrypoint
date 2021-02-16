@@ -2,11 +2,23 @@
 # lightest possible entrypoint that ensures that
 # we use a login shell to get a fully configured shell environment
 # (e.g. sourcing /etc/profile.d, ~/.bashrc, and friends)
+
+# Setup a file descriptor (FD) that is connected to a tee process which
+# writes its input to $REPO_DIR/.jupyter-server-log.txt
+# We later use this FD as a place to redirect the output of the actual
+# command to. We can't add `tee` to the command directly as that will prevent
+# the container from exiting when `docker stop` is run.
+# See https://stackoverflow.com/a/55678435
+exec {log_fd}> >(exec tee $REPO_DIR/.jupyter-server-log.txt)
+
 if [[ ! -z "${R2D_ENTRYPOINT:-}" ]]; then
     if [[ ! -x "$R2D_ENTRYPOINT" ]]; then
         chmod u+x "$R2D_ENTRYPOINT"
     fi
-    exec "$R2D_ENTRYPOINT" "$@"
+    exec "$R2D_ENTRYPOINT" "$@" >&"$log_fd"
 else
-    exec "$@"
+    exec "$@" >&"$log_fd"
 fi
+
+# Close the logging output again
+#exec {log_fd}>&-

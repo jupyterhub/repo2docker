@@ -1,5 +1,7 @@
-# show coverage in CI status, not as a comment. 
+# show coverage in CI status, not as a comment.
 comment: off
+fixes:
+  - "*/site-packages/::"
 coverage:
   status:
     project:
@@ -7,4 +9,4 @@ coverage:
         target: auto
     patch:
       default:
-        target: 20% 
+        target: 20%

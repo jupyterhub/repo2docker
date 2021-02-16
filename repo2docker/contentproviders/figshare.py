@@ -25,6 +25,7 @@ class Figshare(DoiProvider):
     """
 
     def __init__(self):
+        super().__init__()
         self.hosts = [
             {
                 "hostname": [
@@ -39,7 +40,10 @@ class Figshare(DoiProvider):
             }
         ]
 
-    url_regex = re.compile(r"(.*)/articles/([^/]+)/(\d+)(/)?(\d+)?")
+    # We may need to add other item types in future, see
+    # https://github.com/jupyterhub/repo2docker/pull/1001#issuecomment-760107436
+    # for a list
+    url_regex = re.compile(r"(.*)/articles/(code/|dataset/)?([^/]+)/(\d+)(/)?(\d+)?")
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Figshare article"""
@@ -53,8 +57,8 @@ class Figshare(DoiProvider):
             if any([url.startswith(s) for s in host["hostname"]]):
                 match = self.url_regex.match(url)
                 if match:
-                    self.article_id = match.groups()[2]
-                    self.article_version = match.groups()[4]
+                    self.article_id = match.groups()[3]
+                    self.article_version = match.groups()[5]
                     if not self.article_version:
                         self.article_version = "1"
                     return {
@@ -74,13 +78,12 @@ class Figshare(DoiProvider):
         yield "Fetching Figshare article {} in version {}.\n".format(
             article_id, article_version
         )
-        req = Request(
+        resp = self.urlopen(
             "{}{}/versions/{}".format(host["api"], article_id, article_version),
             headers={"accept": "application/json"},
         )
-        resp = self.urlopen(req)
 
-        article = json.loads(resp.read().decode("utf-8"))
+        article = resp.json()
 
         files = deep_get(article, host["filepath"])
         # only fetch files where is_link_only: False

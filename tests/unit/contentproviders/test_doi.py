@@ -11,6 +11,7 @@ from zipfile import ZipFile
 
 from repo2docker.contentproviders.doi import DoiProvider
 from repo2docker.contentproviders.base import ContentProviderException
+from repo2docker import __version__
 
 
 def test_content_id():
@@ -18,20 +19,15 @@ def test_content_id():
     assert doi.content_id is None
 
 
-def fake_urlopen(req):
-    print(req)
-    return req.headers
-
-
-@patch("urllib.request.urlopen", fake_urlopen)
-def test_url_headers():
+def test_url_headers(requests_mock):
+    requests_mock.get("https://mybinder.org", text="resp")
     doi = DoiProvider()
 
     headers = {"test1": "value1", "Test2": "value2"}
     result = doi.urlopen("https://mybinder.org", headers=headers)
-    assert "Test1" in result
-    assert "Test2" in result
-    assert len(result) is 3  # User-agent is also set
+    assert "test1" in result.request.headers
+    assert "Test2" in result.request.headers
+    assert result.request.headers["User-Agent"] == "repo2docker {}".format(__version__)
 
 
 def test_unresolving_doi():
