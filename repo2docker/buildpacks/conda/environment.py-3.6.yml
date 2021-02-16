@@ -1,11 +1,11 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2021-01-13 12:19:21 UTC
+# Generated on 2021-02-16 14:13:18 UTC
 dependencies:
 - python=3.6.*
-- ipywidgets==7.6.0
+- ipywidgets==7.6.3
 - jupyter-offlinenotebook==0.2.0
 - jupyter-resource-usage==0.5.1
-- jupyterlab==3.0.4
+- jupyterlab==3.0.7
 - jupyterhub-singleuser==1.1.0
 - nbconvert==5.6.1
 - notebook==6.1.6

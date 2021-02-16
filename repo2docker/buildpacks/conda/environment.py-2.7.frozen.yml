@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2021-01-13 12:17:48 UTC
+# Frozen on 2021-02-16 14:11:39 UTC
 name: r2d
 channels:
   - conda-forge
@@ -23,12 +23,12 @@ dependencies:
   - ipython_genutils=0.2.0=py_1
   - jupyter_client=5.3.4=py27_1
   - jupyter_core=4.6.3=py27h8c360ce_1
-  - ld_impl_linux-64=2.35.1=hea4e1c9_1
+  - ld_impl_linux-64=2.35.1=hea4e1c9_2
   - libffi=3.2.1=he1b5a44_1007
-  - libgcc-ng=9.3.0=h5dbcf3e_17
-  - libgomp=9.3.0=h5dbcf3e_17
+  - libgcc-ng=9.3.0=h2828fa1_18
+  - libgomp=9.3.0=h2828fa1_18
   - libsodium=1.0.17=h516909a_0
-  - libstdcxx-ng=9.3.0=h2ae2ef3_17
+  - libstdcxx-ng=9.3.0=h6de172a_18
   - ncurses=6.2=h58526e2_4
   - openssl=1.1.1i=h7f98852_0
   - pathlib2=2.3.5=py27h8c360ce_1
