@@ -1,0 +1,56 @@
+# refreeze conda environment
+name: Refreeze
+on:
+  issue_comment:
+    types: [created, edited]
+  # TODO: auto-run on change to freeze files?
+
+jobs:
+  refreeze:
+    # only run on pull-request comments
+    # with `@github-actions refreeze`
+    if: >
+      (
+        github.event.type == 'issue_comment'
+        && contains(github.event.comment.body, '@github-actions refreeze')
+        && contains(github.event.comment.html_url, '/pull/')
+      )
+    strategy:
+      matrix:
+        python:
+          - 2.7
+          - 3.5
+          - 3.6
+          - 3.7
+          - 3.8
+          - 3.9
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Refreze environment
+        run: |
+          python3 repo2docker/buildpacks/conda/freeze.py
+      - name: Check for changes
+        id: git-check
+        run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --
+
+      - name: Show changes
+        run: |
+          git diff
+
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git pull
+          git commit -am "Refreeze py${{ matrix.python }} environment [automated]"
+          git push
