@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2021-02-16 14:16:19 UTC
+# Frozen on 2021-02-16 14:46:08 UTC
 name: r2d
 channels:
   - conda-forge
@@ -41,7 +41,7 @@ dependencies:
   - jinja2=2.11.3=pyh44b312d_0
   - json5=0.9.5=pyh9f0ad1d_0
   - jsonschema=3.2.0=py_2
-  - jupyter-offlinenotebook=0.2.0=pyhd8ed1ab_0
+  - jupyter-offlinenotebook=0.2.1=pyhd8ed1ab_0
   - jupyter-resource-usage=0.5.1=pyhd8ed1ab_0
   - jupyter_client=6.1.11=pyhd8ed1ab_1
   - jupyter_core=4.7.1=py37h89c1867_0
