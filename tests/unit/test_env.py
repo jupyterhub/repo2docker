@@ -42,13 +42,15 @@ def test_env():
                 # value
                 "--env",
                 "SPAM_2=",
-                "--",
+                # "--",
                 tmpdir,
                 "/bin/bash",
                 "-c",
                 # Docker exports all passed env variables, so we can
                 # just look at exported variables.
-                "export",
+                "export; sleep 1",
+                # "export; echo TIMDONE",
+                # "export",
             ],
             universal_newlines=True,
             stdout=subprocess.PIPE,
@@ -60,6 +62,9 @@ def test_env():
     # extract just the declare for better failure message formatting
     # stdout should be empty
     assert not result.stdout
+
+    print(result.stderr.split("\n"))
+    # assert False
 
     # stderr should contain lines of output
     declares = [x for x in result.stderr.split("\n") if x.startswith("declare")]
