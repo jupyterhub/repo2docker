@@ -181,6 +181,7 @@ ENV R2D_ENTRYPOINT "{{ start_script }}"
 {% endif -%}
 
 # Add entrypoint
+ENV PYTHONUNBUFFERED=1
 COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 

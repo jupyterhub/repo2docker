@@ -1,24 +1,150 @@
-#!/bin/bash -l
-# lightest possible entrypoint that ensures that
-# we use a login shell to get a fully configured shell environment
-# (e.g. sourcing /etc/profile.d, ~/.bashrc, and friends)
+#!/usr/bin/env python3
 
-# Setup a file descriptor (FD) that is connected to a tee process which
-# writes its input to $REPO_DIR/.jupyter-server-log.txt
-# We later use this FD as a place to redirect the output of the actual
-# command to. We can't add `tee` to the command directly as that will prevent
-# the container from exiting when `docker stop` is run.
-# See https://stackoverflow.com/a/55678435
-exec {log_fd}> >(exec tee $REPO_DIR/.jupyter-server-log.txt)
+# goals:
+# - load environment variables from a login shell (bash -l)
+# - preserve signal handling of subprocess (kill -TERM and friends)
+# - tee output to a log file
 
-if [[ ! -z "${R2D_ENTRYPOINT:-}" ]]; then
-    if [[ ! -x "$R2D_ENTRYPOINT" ]]; then
-        chmod u+x "$R2D_ENTRYPOINT"
-    fi
-    exec "$R2D_ENTRYPOINT" "$@" 2>&1 >&"$log_fd"
-else
-    exec "$@" 2>&1 >&"$log_fd"
-fi
+import json
+import os
+import signal
+import subprocess
+import sys
+import time
 
-# Close the logging output again
-exec {log_fd}>&-
+
+def get_login_env():
+    """Instantiate a login shell to retrieve environment variables
+
+    Serialize with Python to ensure proper escapes
+    """
+    p = subprocess.run(
+        [
+            "bash",
+            "-l",
+            "-c",
+            "python3 -c 'import os, json; print(json.dumps(dict(os.environ)))'",
+        ],
+        stdout=subprocess.PIPE,
+    )
+    if p.returncode:
+        print("Error getting login env")
+        return {}
+
+    last_line = p.stdout.splitlines()[-1]
+    try:
+        return json.loads(last_line)
+    except Exception as e:
+        print(f"Error getting login env: {e}", file=sys.stderr)
+        return {}
+
+
+def monitor_parent(parent_pid, child_pgid):
+    """Monitor parent_pid and shutdown child_pgid if parent goes away first"""
+    while True:
+        try:
+            os.kill(parent_pid, 0)
+        except ProcessLookupError:
+            # parent is gone, likely by SIGKILL
+            # send SIGKILL to child process group
+            try:
+                os.killpg(child_pgid, signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                # ignore if the child is already gone
+                pass
+            return
+        else:
+            time.sleep(1)
+
+
+# signals to be forwarded to the child
+SIGNALS = [
+    signal.SIGHUP,
+    signal.SIGINT,
+    # signal.SIGKILL,
+    signal.SIGQUIT,
+    signal.SIGTERM,
+    signal.SIGUSR1,
+    signal.SIGUSR2,
+    signal.SIGWINCH,
+]
+
+
+def main():
+
+    # load login shell environment
+    login_env = get_login_env()
+    env = os.environ.copy()
+    env.update(login_env)
+
+    # open log file to send output
+    log_file = open(
+        os.path.join(os.environ.get("REPO_DIR", "."), ".jupyter-server-log.txt"),
+        "a",
+    )
+
+    child = subprocess.Popen(
+        sys.argv[1:],
+        bufsize=1,
+        env=env,
+        start_new_session=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+    )
+    child_pgid = os.getpgid(child.pid)
+
+    # if parent is forcefully shutdown,
+    # make sure child shuts down immediately as well
+    parent_pid = os.getpid()
+
+    monitor_pid = os.fork()
+    if monitor_pid == 0:
+        # child process, sibling of 'real' command
+        # avoid receiving signals sent to parent
+        os.setpgrp()
+        # terminate child if parent goes away,
+        # e.g. in ungraceful KILL not relayed to children
+        monitor_parent(parent_pid, child_pgid)
+        return
+
+    # hook up ~all signals so that every signal the parent gets,
+    # the children also get
+
+    def relay_signal(sig, frame):
+        """Relay a signal to children"""
+        print(f"Forwarding signal {sig} to {child_pgid}")
+        os.killpg(child_pgid, sig)
+
+    # question: maybe use all valid_signals() except a few, e.g. SIGCHLD?
+    # rather than opt-in list
+    for signum in SIGNALS:
+        signal.signal(signum, relay_signal)
+
+    # tee output from child to both our stdout and the log file
+    def tee(chunk):
+        for f in [sys.stdout, log_file]:
+            f.write(chunk)
+            f.flush()
+
+    while child.poll() is None:
+        tee(child.stdout.readline())
+
+    # flush the rest
+    chunk = child.stdout.read()
+    while chunk:
+        tee(chunk)
+        chunk = child.stdout.read()
+
+    # child exited, cleanup monitor
+    try:
+        os.kill(monitor_pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+
+    # preserve returncode
+    sys.exit(child.returncode)
+
+
+if __name__ == "__main__":
+    main()
