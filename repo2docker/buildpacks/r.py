@@ -75,6 +75,8 @@ class RBuildPack(PythonBuildPack):
             "3.6": "3.6.1-3bionic",
             "3.6.0": "3.6.0-2bionic",
             "3.6.1": "3.6.1-3bionic",
+            "4.0": "4.0.2-1.1804.0",
+            "4.0.2": "4.0.2-1.1804.0",
         }
         # the default if nothing is specified
         r_version = "3.6"
@@ -232,13 +234,17 @@ class RBuildPack(PythonBuildPack):
 
         scripts = []
         # For R 3.4 we want to use the default Ubuntu package but otherwise
-        # we use the packages from a PPA
+        # we use the packages from R's own repo
         if V(self.r_version) >= V("3.5"):
+            if V(self.r_version) >= V("4"):
+                vs = "40"
+            else:
+                vs = "35"
             scripts += [
                 (
                     "root",
-                    r"""
-                    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/r3.6-ubuntu.list
+                    rf"""
+                    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran{vs}/" > /etc/apt/sources.list.d/r-ubuntu.list
                     """,
                 ),
                 # Use port 80 to talk to the keyserver to increase the chances
