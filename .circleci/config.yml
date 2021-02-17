@@ -4,7 +4,7 @@ jobs:
   build_docs:
     # This is the base environment that Circle will use
     docker:
-      - image: circleci/python:3.6-stretch
+      - image: circleci/python:3.8-buster
     steps:
       # Get our data and merge with upstream
       - run: sudo apt-get update
