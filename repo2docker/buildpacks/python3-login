@@ -1,0 +1,11 @@
+#!/bin/bash -l
+# This is an executable that launches Python in a login shell
+# to ensure that full profile setup occurs.
+# shebang on linux only allows 1 argument,
+# so we couldn't pick a login shell in one shebang line
+# for a Python script
+
+# -u means unbuffered, which one ~always wants in a container
+# otherwise output can be mysteriously missing
+
+exec python3 -u "$@"
