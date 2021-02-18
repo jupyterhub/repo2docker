@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# note: must run on Python >= 3.5
+# note: must run on Python >= 3.5, which mainly means no f-strings
 
 # goals:
 # - load environment variables from a login shell (bash -l)
@@ -84,8 +84,13 @@ def main():
         "a",
     )
 
+    command = sys.argv[1:]
+    r2d_entrypoint = os.environ.get("R2D_ENTRYPOINT")
+    if r2d_entrypoint:
+        command.insert(0, r2d_entrypoint)
+
     child = subprocess.Popen(
-        sys.argv[1:],
+        command,
         bufsize=1,
         env=env,
         start_new_session=True,
