@@ -18,9 +18,12 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
     @property
     @functools.lru_cache(maxsize=1)
     def all_julias(self):
-        json = requests.get(
-            "https://julialang-s3.julialang.org/bin/versions.json"
-        ).json()
+        try:
+            json = requests.get(
+                "https://julialang-s3.julialang.org/bin/versions.json"
+            ).json()
+        except Exception as e:
+            raise RuntimeError("Failed to fetch available Julia versions: {e}")
         vers = [semver.VersionInfo.parse(v) for v in json.keys()]
         # filter out pre-release versions not supported by find_semver_match()
         filtered_vers = [v for v in vers if v.prerelease is None]
