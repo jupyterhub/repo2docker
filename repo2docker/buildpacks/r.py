@@ -247,12 +247,12 @@ class RBuildPack(PythonBuildPack):
                     echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran{vs}/" > /etc/apt/sources.list.d/r-ubuntu.list
                     """,
                 ),
-                # Use port 80 to talk to the keyserver to increase the chances
+                # Dont use apt-key directly, as gpg does not always respect *_proxy vars. This increase the chances
                 # of being able to reach it from behind a firewall
                 (
                     "root",
                     r"""
-                    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+                    wget --quiet -O - 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xe298a3a825c0d65dfd57cbb651716619e084dab9' | apt-key add -
                     """,
                 ),
                 (
