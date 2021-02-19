@@ -41,18 +41,18 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         else:
             project_toml = toml.load(self.binder_path("Project.toml"))
 
-        if "compat" in project_toml:
-            if "julia" in project_toml["compat"]:
-                julia_version_str = project_toml["compat"]["julia"]
+        try:
+            # For Project.toml files, install the latest julia version that
+            # satisfies the given semver.
+            compat = project_toml["compat"]["julia"]
+        except:
+            # Default version which needs to be manually updated with new major.minor releases
+            compat = "1.5"
 
-                # For Project.toml files, install the latest julia version that
-                # satisfies the given semver.
-                _julia_version = find_semver_match(julia_version_str, self.all_julias)
-                if _julia_version is not None:
-                    return _julia_version
-
-        default_julia_version = self.all_julias[-1]
-        return default_julia_version
+        match = find_semver_match(compat, self.all_julias)
+        if match is None:
+            raise RuntimeError("Failed to find a matching Julia version: {compat}")
+        return match
 
     def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
