@@ -62,6 +62,12 @@ class Container(ABC):
         timeout : If the container doesn't gracefully stop after this timeout kill it
         """
 
+    @abstractmethod
+    def wait(self):
+        """
+        Wait for the container to stop
+        """
+
     @property
     @abstractmethod
     def exitcode(self):
@@ -161,7 +167,7 @@ class ContainerEngine(LoggingConfigurable):
         dockerfile="",
         fileobj=None,
         path="",
-        **kwargs
+        **kwargs,
     ):
         """
         Build a container
@@ -255,7 +261,7 @@ class ContainerEngine(LoggingConfigurable):
         publish_all_ports=False,
         remove=False,
         volumes={},
-        **kwargs
+        **kwargs,
     ):
         """
         Run a container

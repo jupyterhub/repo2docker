@@ -25,6 +25,9 @@ class DockerContainer(Container):
     def stop(self, *, timeout=10):
         return self._c.stop(timeout=timeout)
 
+    def wait(self):
+        return self._c.wait()
+
     @property
     def exitcode(self):
         return self._c.attrs["State"]["ExitCode"]
@@ -61,7 +64,7 @@ class DockerEngine(ContainerEngine):
         dockerfile="",
         fileobj=None,
         path="",
-        **kwargs
+        **kwargs,
     ):
         return self._apiclient.build(
             buildargs=buildargs,
@@ -99,7 +102,7 @@ class DockerEngine(ContainerEngine):
         publish_all_ports=False,
         remove=False,
         volumes=None,
-        **kwargs
+        **kwargs,
     ):
         client = docker.from_env(version="auto")
         container = client.containers.run(
