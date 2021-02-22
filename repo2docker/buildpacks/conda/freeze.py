@@ -77,6 +77,7 @@ def freeze(env_file, frozen_file):
             "; ".join(
                 [
                     "set -ex",
+                    "conda config --set channel_priority strict",
                     "conda config --add channels conda-forge",
                     f"mamba install -yq -S mamba={MAMBA_VERSION}"
                     if MAMBA_VERSION
