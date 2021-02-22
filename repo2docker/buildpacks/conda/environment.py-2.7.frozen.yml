@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2021-02-22 10:00:47 UTC
+# Frozen on 2021-02-22 12:21:22 UTC
 name: r2d
 channels:
   - conda-forge
@@ -11,9 +11,9 @@ dependencies:
   - backports=1.0=py27_1
   - backports.shutil_get_terminal_size=1.0.0=py27_1
   - backports_abc=0.5=py27_0
-  - ca-certificates=2021.1.19=h06a4308_0
-  - certifi=2020.6.20=pyhd3eb1b0_3
-  - configparser=4.0.2=py27_0
+  - ca-certificates=2020.12.5=ha878542_0
+  - certifi=2019.11.28=py27h8c360ce_1
+  - configparser=3.7.3=py27h8c360ce_2
   - decorator=4.4.2=py_0
   - entrypoints=0.3=py27h8c360ce_1001
   - enum34=1.1.10=py27h8c360ce_1
@@ -23,12 +23,14 @@ dependencies:
   - ipython_genutils=0.2.0=py27_0
   - jupyter_client=5.3.4=py27_1
   - jupyter_core=4.6.3=py27h8c360ce_1
-  - libffi=3.3=h58526e2_2
+  - ld_impl_linux-64=2.35.1=hea4e1c9_2
+  - libffi=3.2.1=he1b5a44_1007
   - libgcc-ng=9.3.0=h2828fa1_18
   - libgomp=9.3.0=h2828fa1_18
   - libsodium=1.0.17=h516909a_0
   - libstdcxx-ng=9.3.0=h6de172a_18
   - ncurses=6.2=h58526e2_4
+  - openssl=1.1.1j=h7f98852_0
   - pathlib2=2.3.5=py27h8c360ce_1
   - pexpect=4.8.0=py27h8c360ce_1
   - pickleshare=0.7.5=py27h8c360ce_1001
@@ -36,11 +38,11 @@ dependencies:
   - prompt_toolkit=1.0.15=py27_0
   - ptyprocess=0.7.0=pyhd3deb0d_0
   - pygments=2.5.2=py_0
-  - python=2.7.18=h15b4118_1
+  - python=2.7.15=h5a48372_1011_cpython
   - python-dateutil=2.8.1=py_0
   - python_abi=2.7=1_cp27mu
   - pyzmq=19.0.0=py27h76efe43_1
-  - readline=8.1=h27cfd23_0
+  - readline=8.0=he28a2e2_2
   - scandir=1.10.0=py27hdf8410d_1
   - setuptools=44.0.0=py27_0
   - simplegeneric=0.8.1=py27_0

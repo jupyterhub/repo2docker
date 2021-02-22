@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.py-3.6.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2021-02-22 10:01:26 UTC
+# Frozen on 2021-02-22 12:25:15 UTC
 name: r2d
 channels:
   - conda-forge
@@ -21,7 +21,7 @@ dependencies:
   - blinker=1.4=py_1
   - brotlipy=0.7.0=py36he6145b8_1001
   - c-ares=1.17.1=h36c2ea0_0
-  - ca-certificates=2021.1.19=h06a4308_0
+  - ca-certificates=2020.12.5=ha878542_0
   - certifi=2020.12.5=py36h5fab9bb_1
   - certipy=0.1.3=py_0
   - cffi=1.14.5=py36hc120d54_0
@@ -76,15 +76,15 @@ dependencies:
   - nbconvert=6.0.7=py36h5fab9bb_3
   - nbformat=5.1.2=pyhd8ed1ab_1
   - ncurses=6.2=h58526e2_4
-  - nest-asyncio=1.5.1=pyhd3eb1b0_0
+  - nest-asyncio=1.4.3=pyhd8ed1ab_0
   - notebook=6.2.0=py36h5fab9bb_0
   - nteract_on_jupyter=2.1.3=py_0
-  - oauthlib=3.1.0=py_0
+  - oauthlib=3.0.1=py_0
   - openssl=1.1.1j=h7f98852_0
   - packaging=20.9=pyh44b312d_0
   - pamela=1.0.0=py_0
   - pandoc=2.11.4=h7f98852_0
-  - pandocfilters=1.4.3=py36h06a4308_1
+  - pandocfilters=1.4.2=py36_0
   - parso=0.7.1=pyh9f0ad1d_0
   - pexpect=4.8.0=py36h9f0ad1d_1
   - pickleshare=0.7.5=py36h9f0ad1d_1002
@@ -108,12 +108,12 @@ dependencies:
   - python_abi=3.6=1_cp36m
   - pytz=2021.1=pyhd8ed1ab_0
   - pyzmq=22.0.3=py36h81c33ee_0
-  - readline=8.1=h27cfd23_0
+  - readline=8.0=he28a2e2_2
   - requests=2.25.1=pyhd3deb0d_0
   - ruamel.yaml=0.16.12=py36h8f6f2f9_2
   - ruamel.yaml.clib=0.2.2=py36h8f6f2f9_2
   - send2trash=1.5.0=py_0
-  - setuptools=52.0.0=py36h06a4308_0
+  - setuptools=49.6.0=py36h5fab9bb_3
   - six=1.15.0=pyh9f0ad1d_0
   - sniffio=1.2.0=py36h5fab9bb_1
   - sqlalchemy=1.3.23=py36h8f6f2f9_0
