@@ -2,8 +2,7 @@
 import os
 import toml
 from ..python import PythonBuildPack
-from .semver import find_semver_match
-
+from ..base import BuildPack, BaseImage
 
 class ScalaBuildPack(PythonBuildPack):
     """
@@ -16,8 +15,7 @@ class ScalaBuildPack(PythonBuildPack):
     all_scalas = [
         "2.12.12",
         "2.12.13",
-        "2.13.4",
-        "2.13.5"
+        "2.13.4"
     ]
 
     @property
@@ -48,7 +46,10 @@ class ScalaBuildPack(PythonBuildPack):
             ("SCALA_BIN", "${SCALA_PATH}/bin"),
             ("COURSIER_CACHE", "${SCALA_PATH}/pkg"),
             ("COURSIER_BIN_DIR", "${SCALA_BIN}"),
+            ("ALMOND_VERSION", "0.11.0"),
             ("SCALA_VERSION", self.scala_version),
+            #("SCALA_VERSION_MAJOR_TRIMMED", self.scala_version.split),
+            ("SCALA_MAJOR_VERSION_TRIMMED", "2.13"),
             ("JUPYTER", "${NB_PYTHON_PREFIX}/bin/jupyter"),
             ("JUPYTER_DATA_DIR", "${NB_PYTHON_PREFIX}/share/jupyter"),
         ]
@@ -92,7 +93,15 @@ class ScalaBuildPack(PythonBuildPack):
                     rm -rf /var/lib/apt/lists/* && \
 
                 curl -Lo ${SCALA_BIN}/coursier https://github.com/coursier/coursier/releases/download/v2.0.12/coursier && \
-                chmod +x ${SCALA_BIN}/coursier
+                chmod +x ${SCALA_BIN}/coursier && \
+                curl -Lo ${SCALA_BIN}/install-kernels.sh https://raw.githubusercontent.com/almond-sh/almond/master/scripts/install-kernels.sh && \
+                coursier bootstrap \
+                    -r jitpack \
+                    -i user -I user:sh.almond:scala-kernel-api_${SCALA_VERSION}:${ALMOND_VERSION} \
+                    sh.almond:scala-kernel_${SCALA_VERSION}:${ALMOND_VERSION} \
+                    --default=true --sources \
+                    -o ${SCALA_BIN}/almond && \
+                ${SCALA_BIN}/almond --install --log info --metabrowse --id scala${SCALA_MAJOR_VERSION_TRIMMED} --display-name "Scala ${SCALA_MAJOR_VERSION}" --jupyter-path ${NB_PYTHON_PREFIX}/share/jupyter/kernels/
                 """,
             ),
             (
@@ -122,8 +131,7 @@ class ScalaBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                SCALA_PROJECT="" scala -e "using Pkg; Pkg.add(\"IScala\"); using IScala; installkernel(\"Scala\", \"--project=${REPO_DIR}\");" && \
-                scala --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); pkg"precompile"'
+                echo Implement me
                 """,
             )
         ]
