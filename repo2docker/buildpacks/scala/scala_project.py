@@ -14,7 +14,6 @@ class ScalaBuildPack(PythonBuildPack):
     # function to behave correctly.
     all_scalas = [
         "2.12.12",
-        "2.12.13",
         "2.13.4"
     ]
 
@@ -90,27 +89,25 @@ class ScalaBuildPack(PythonBuildPack):
                     openjdk-8-jre-headless \
                     ca-certificates-java && \
                     apt-get clean && \
-                    rm -rf /var/lib/apt/lists/* && \
-
-                curl -Lo ${SCALA_BIN}/coursier https://github.com/coursier/coursier/releases/download/v2.0.12/coursier && \
-                chmod +x ${SCALA_BIN}/coursier && \
-                curl -Lo ${SCALA_BIN}/install-kernels.sh https://raw.githubusercontent.com/almond-sh/almond/master/scripts/install-kernels.sh && \
-                coursier bootstrap \
-                    -r jitpack \
-                    -i user -I user:sh.almond:scala-kernel-api_${SCALA_VERSION}:${ALMOND_VERSION} \
-                    sh.almond:scala-kernel_${SCALA_VERSION}:${ALMOND_VERSION} \
-                    --default=true --sources \
-                    -o ${SCALA_BIN}/almond && \
-                ${SCALA_BIN}/almond --install --log info --metabrowse --id scala${SCALA_MAJOR_VERSION_TRIMMED} --display-name "Scala ${SCALA_MAJOR_VERSION}" --jupyter-path ${NB_PYTHON_PREFIX}/share/jupyter/kernels/
-                """,
+                    rm -rf /var/lib/apt/lists/*
+                """
             ),
             (
                 "root",
                 r"""
+                curl -Lo ${SCALA_BIN}/coursier https://github.com/coursier/coursier/releases/download/v2.0.12/coursier && \
+                chmod +x ${SCALA_BIN}/coursier && \
                 mkdir -p ${COURSIER_CACHE} && \
                 chown ${NB_USER}:${NB_USER} ${COURSIER_CACHE}
-                """,
+                """
             ),
+            (
+                "${NB_USER}",
+                r"""
+                coursier launch almond --scala 2.13.4 -- --install --log info --metabrowse --id scala213 --display-name "Scala 2.13" --jupyter-path ${NB_PYTHON_PREFIX}/share/jupyter/kernels/ && \
+                coursier launch almond --scala 2.12.12 -- --install --log info --metabrowse --id scala212 --display-name "Scala 2.12" --jupyter-path ${NB_PYTHON_PREFIX}/share/jupyter/kernels/
+                """,
+            )
         ]
 
     def get_assemble_scripts(self):
