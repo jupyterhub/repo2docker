@@ -46,7 +46,7 @@ time mamba install -y mamba==${MAMBA_VERSION}
 
 echo "installing notebook env:"
 cat /tmp/environment.yml
-time mamba env create -p ${NB_PYTHON_PREFIX} -f /tmp/environment.yml
+time mamba create --prefix ${NB_PYTHON_PREFIX} --file /tmp/environment.yml
 
 # empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
@@ -59,7 +59,7 @@ if [[ -f /tmp/kernel-environment.yml ]]; then
     echo "installing kernel env:"
     cat /tmp/kernel-environment.yml
 
-    time mamba env create -p ${KERNEL_PYTHON_PREFIX} -f /tmp/kernel-environment.yml
+    time mamba create --prefix ${KERNEL_PYTHON_PREFIX} --file /tmp/kernel-environment.yml
     ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${NB_PYTHON_PREFIX}"
     echo '' > ${KERNEL_PYTHON_PREFIX}/conda-meta/history
     mamba list -p ${KERNEL_PYTHON_PREFIX}
