@@ -22,18 +22,17 @@ from ruamel.yaml import YAML
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
 ENV_FILE = HERE / "environment.yml"
-FROZEN_FILE = os.path.splitext(ENV_FILE)[0] + ".frozen.yml"
+FROZEN_FILE = os.path.splitext(ENV_FILE)[0] + ".lock"
 
 ENV_FILE_T = HERE / "environment.py-{py}.yml"
-FROZEN_FILE_T = os.path.splitext(ENV_FILE_T)[0] + ".frozen.yml"
 
 yaml = YAML(typ="rt")
 
 
 def freeze(env_file, frozen_file, platform="linux-64"):
-    """Freeze a conda environment.yml
+    """Freeze a conda environment
 
-    By running
+    By running:
 
         conda-lock --mamba --platform=linux-64 -f environment.yml
 
@@ -113,7 +112,7 @@ if __name__ == "__main__":
     for py in pys:
         env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
         set_python(env_file, py)
-        frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + ".frozen.yml")
+        frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + ".lock")
         freeze(env_file, frozen_file)
         if py == default_py:
             shutil.copy(frozen_file, FROZEN_FILE)

@@ -45,8 +45,15 @@ conda config --system --set channel_priority "flexible"
 time mamba install -y mamba==${MAMBA_VERSION}
 
 echo "installing notebook env:"
-cat /tmp/environment.yml
-time mamba create --prefix ${NB_PYTHON_PREFIX} --file /tmp/environment.yml
+cat "${NB_ENVIRONMENT_FILE}"
+
+if [[ "${NB_ENVIRONMENT_FILE: -5}" == ".lock" ]]; then
+    create="mamba create"
+else
+    create="mamba env create"
+fi
+
+time $create -p ${NB_PYTHON_PREFIX} --file "${NB_ENVIRONMENT_FILE}"
 
 # empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
@@ -54,12 +61,17 @@ time mamba create --prefix ${NB_PYTHON_PREFIX} --file /tmp/environment.yml
 # this file must not be *removed*, however
 echo '' > ${NB_PYTHON_PREFIX}/conda-meta/history
 
-if [[ -f /tmp/kernel-environment.yml ]]; then
+if [[ ! -z "${KERNEL_ENVIRONMENT_FILE:-}" && -f "${KERNEL_ENVIRONMENT_FILE}" ]]; then
     # install kernel env and register kernelspec
     echo "installing kernel env:"
-    cat /tmp/kernel-environment.yml
+    cat "${KERNEL_ENVIRONMENT_FILE}"
+    if [[ "${KERNEL_ENVIRONMENT_FILE: -5}" == ".lock" ]]; then
+        create="mamba create"
+    else
+        create="mamba env create"
+    fi
 
-    time mamba create --prefix ${KERNEL_PYTHON_PREFIX} --file /tmp/kernel-environment.yml
+    time $create -p ${KERNEL_PYTHON_PREFIX} --file "${KERNEL_ENVIRONMENT_FILE}"
     ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${NB_PYTHON_PREFIX}"
     echo '' > ${KERNEL_PYTHON_PREFIX}/conda-meta/history
     mamba list -p ${KERNEL_PYTHON_PREFIX}
