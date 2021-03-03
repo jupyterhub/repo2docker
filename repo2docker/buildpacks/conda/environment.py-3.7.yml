@@ -1,5 +1,7 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2021-02-22 12:26:46 UTC
+# Generated on 2021-03-03 10:12:35 UTC
+channels:
+- conda-forge
 dependencies:
 - python=3.7.*
 - ipywidgets==7.6.3
