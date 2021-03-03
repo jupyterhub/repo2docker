@@ -19,10 +19,11 @@ import sys
 from ruamel.yaml import YAML
 
 
-# Docker image version can be different than conda version,
-# since miniconda3 docker images seem to lag conda releases.
-MINICONDA_DOCKER_VERSION = "4.7.12"
-CONDA_VERSION = "4.7.12"
+DOCKER_IMAGE = "condaforge/mambaforge:4.9.2-5"
+# set mamba and/or conda versions
+# if needed to differ from what's in the image
+MAMBA_VERSION = ""
+CONDA_VERSION = ""
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
@@ -40,8 +41,8 @@ def freeze(env_file, frozen_file):
 
     By running in docker:
 
-        conda env create
-        conda env export
+        mamba env create
+        mamba env export
 
     Result will be stored in frozen_file
     """
@@ -70,20 +71,26 @@ def freeze(env_file, frozen_file):
             "--rm",
             "-v" f"{HERE}:/r2d",
             "-it",
-            f"continuumio/miniconda3:{MINICONDA_DOCKER_VERSION}",
+            DOCKER_IMAGE,
             "sh",
             "-c",
             "; ".join(
                 [
                     "set -ex",
-                    f"conda install -yq -S conda={CONDA_VERSION}",
+                    "conda config --set channel_priority strict",
                     "conda config --add channels conda-forge",
+                    f"mamba install -yq -S mamba={MAMBA_VERSION}"
+                    if MAMBA_VERSION
+                    else "true",
+                    f"mamba install -yq -S conda={CONDA_VERSION}"
+                    if CONDA_VERSION
+                    else "true",
                     "conda config --system --set auto_update_conda false",
-                    f"conda env create -v -f /r2d/{env_file.relative_to(HERE)} -n r2d",
+                    f"mamba env create -v -f /r2d/{env_file.relative_to(HERE)} -n r2d",
                     # add conda-forge broken channel as lowest priority in case
                     # any of our frozen packages are marked as broken after freezing
                     "conda config --append channels conda-forge/label/broken",
-                    f"conda env export -n r2d >> /r2d/{frozen_file.relative_to(HERE)}",
+                    f"mamba env export -n r2d >> /r2d/{frozen_file.relative_to(HERE)}",
                 ]
             ),
         ]
@@ -119,7 +126,7 @@ def set_python(py_env_file, py):
 
 if __name__ == "__main__":
     # allow specifying which Pythons to update on argv
-    pys = sys.argv[1:] or ("2.7", "3.6", "3.7", "3.8")
+    pys = sys.argv[1:] or ("2.7", "3.6", "3.7", "3.8", "3.9")
     default_py = "3.7"
     for py in pys:
         env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
