@@ -1,7 +1,7 @@
 # AUTO GENERATED FROM environment.py-2.7.yml, DO NOT MANUALLY MODIFY
-# Frozen on 2021-03-03 10:12:18 UTC
+# Frozen on 2021-03-03 11:08:20 UTC
 # platform: linux-64
-# env_hash: 1e9c09ca594c43a1f5b3a5b3ad169bfcecd1b38149ac1c7d277d117d8b44a6b6
+# env_hash: aa32b5266e821b621a99f599839e0352426077f660b0437604299a2ed808b836
 @EXPLICIT
 https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2#d7c89558ba9fa0495403155b64376d81
 https://conda.anaconda.org/conda-forge/linux-64/ca-certificates-2020.12.5-ha878542_0.tar.bz2#7eb5d4ffeee663caa1635cd67071bc1b
@@ -30,6 +30,7 @@ https://conda.anaconda.org/conda-forge/linux-64/python_abi-2.7-1_cp27mu.tar.bz2#
 https://conda.anaconda.org/conda-forge/linux-64/simplegeneric-0.8.1-py27_0.tar.bz2#f1db3b1ec8ca72f3b1a26331b386aa51
 https://conda.anaconda.org/conda-forge/noarch/six-1.15.0-pyh9f0ad1d_0.tar.bz2#1eec421f0f1f39e579e44e4a5ce646a2
 https://conda.anaconda.org/conda-forge/noarch/wcwidth-0.1.9-pyh9f0ad1d_0.tar.bz2#ef10a99c7570762fa2a69218c171dbc8
+https://conda.anaconda.org/conda-forge/noarch/wheel-0.36.2-pyhd3deb0d_0.tar.bz2#768bfbe026426d0e76b377997d1f2b98
 https://conda.anaconda.org/conda-forge/linux-64/certifi-2019.11.28-py27h8c360ce_1.tar.bz2#a345324a2547908c1f9ca4b65d93f5ba
 https://conda.anaconda.org/conda-forge/linux-64/configparser-3.7.3-py27h8c360ce_2.tar.bz2#fce87da76335c7274cb858745fded401
 https://conda.anaconda.org/conda-forge/linux-64/enum34-1.1.10-py27h8c360ce_1.tar.bz2#0af4ab7b9189611125ba54d99163f58d
@@ -46,6 +47,7 @@ https://conda.anaconda.org/conda-forge/linux-64/tornado-5.1.1-py27h14c3975_1000.
 https://conda.anaconda.org/conda-forge/linux-64/traitlets-4.3.3-py27h8c360ce_1.tar.bz2#1e13e5ecf3cab787df71dc0c77563dce
 https://conda.anaconda.org/conda-forge/linux-64/jupyter_core-4.6.3-py27h8c360ce_1.tar.bz2#1ea743b19d7f4e758b0a385fe9a1ef4b
 https://conda.anaconda.org/conda-forge/linux-64/pickleshare-0.7.5-py27h8c360ce_1001.tar.bz2#93586047c34842372ae2c1ed5fc9edbf
+https://conda.anaconda.org/conda-forge/noarch/pip-20.1.1-pyh9f0ad1d_0.tar.bz2#cd67a20c73ff2514cf5f34cae28fc867
 https://conda.anaconda.org/conda-forge/noarch/pygments-2.5.2-py_0.tar.bz2#c48719b941c60b26add57de2b014ef96
 https://conda.anaconda.org/conda-forge/linux-64/jupyter_client-5.3.4-py27_1.tar.bz2#ec6099141189dfae14367478d3e96fa9
 https://conda.anaconda.org/conda-forge/linux-64/prompt_toolkit-1.0.15-py27_0.tar.bz2#e64d8ff5a16afcea0dff046bc837f6db
