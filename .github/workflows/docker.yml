@@ -15,10 +15,10 @@ jobs:
 
       # https://github.com/docker/build-push-action
       - name: Build Docker image
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v2
         with:
-          repository: jupyter/repo2docker
-          tags: pr
+          context: .
+          tags: jupyter/repo2docker:pr
           push: false
 
       - name: Run repo2docker Docker image
