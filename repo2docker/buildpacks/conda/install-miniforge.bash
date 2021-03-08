@@ -47,31 +47,31 @@ time mamba install -y mamba==${MAMBA_VERSION}
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
 
-if [[ "${NB_ENVIRONMENT_FILE: -5}" == ".lock" ]]; then
-    create="mamba create"
-else
-    create="mamba env create"
+time mamba create -p ${NB_PYTHON_PREFIX} --file "${NB_ENVIRONMENT_FILE}"
+
+if [[ ! -z "${NB_REQUIREMENTS_FILE:-}" ]]; then
+    echo "installing pip requirements"
+    cat "${NB_REQUIREMENTS_FILE}"
+    ${NB_PYTHON_PREFIX}/bin/python -mpip install --no-cache --no-deps -r "${NB_REQUIREMENTS_FILE}"
 fi
-
-time $create -p ${NB_PYTHON_PREFIX} --file "${NB_ENVIRONMENT_FILE}"
-
 # empty conda history file,
 # which seems to result in some effective pinning of packages in the initial env,
 # which we don't intend.
 # this file must not be *removed*, however
 echo '' > ${NB_PYTHON_PREFIX}/conda-meta/history
 
-if [[ ! -z "${KERNEL_ENVIRONMENT_FILE:-}" && -f "${KERNEL_ENVIRONMENT_FILE}" ]]; then
+if [[ ! -z "${KERNEL_ENVIRONMENT_FILE:-}" ]]; then
     # install kernel env and register kernelspec
     echo "installing kernel env:"
     cat "${KERNEL_ENVIRONMENT_FILE}"
-    if [[ "${KERNEL_ENVIRONMENT_FILE: -5}" == ".lock" ]]; then
-        create="mamba create"
-    else
-        create="mamba env create"
+    time mamba create -p ${KERNEL_PYTHON_PREFIX} --file "${KERNEL_ENVIRONMENT_FILE}"
+
+    if [[ ! -z "${KERNEL_REQUIREMENTS_FILE:-}" ]]; then
+        echo "installing pip requirements for kernel"
+        cat "${KERNEL_REQUIREMENTS_FILE}"
+        ${KERNEL_PYTHON_PREFIX}/bin/python -mpip install --no-cache --no-deps -r "${KERNEL_REQUIREMENTS_FILE}"
     fi
 
-    time $create -p ${KERNEL_PYTHON_PREFIX} --file "${KERNEL_ENVIRONMENT_FILE}"
     ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${NB_PYTHON_PREFIX}"
     echo '' > ${KERNEL_PYTHON_PREFIX}/conda-meta/history
     mamba list -p ${KERNEL_PYTHON_PREFIX}
