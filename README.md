@@ -1,4 +1,4 @@
-# <a href="https://github.com/jupyterhub/repo2docker"><img src="https://raw.githubusercontent.com/jupyterhub/repo2docker/3fa7444fca6ae2b51e590cbc9d83baf92738ca2a/docs/source/_static/images/repo2docker.png" height="48px" /> repo2docker</a>
+# <a href="https://github.com/jupyterhub/repo2docker"><img src="https://raw.githubusercontent.com/jupyterhub/repo2docker/8731ecf0967cc5fde028c456f2b92be651ebbc18/docs/source/_static/images/repo2docker.png" height="48px" /> repo2docker</a>
 
 [![Deploy Status](https://travis-ci.org/jupyterhub/repo2docker.svg?branch=master)](https://travis-ci.org/jupyterhub/repo2docker)
 [![Build Status](https://github.com/jupyterhub/repo2docker/workflows/Continuous%20Integration/badge.svg)](https://github.com/jupyterhub/repo2docker/actions)
