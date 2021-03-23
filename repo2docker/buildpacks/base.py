@@ -9,9 +9,6 @@ import string
 import sys
 import hashlib
 import escapism
-import xml.etree.ElementTree as ET
-
-from traitlets import Dict
 
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
@@ -181,6 +178,8 @@ ENV R2D_ENTRYPOINT "{{ start_script }}"
 {% endif -%}
 
 # Add entrypoint
+ENV PYTHONUNBUFFERED=1
+COPY /python3-login /usr/local/bin/python3-login
 COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
@@ -193,9 +192,7 @@ CMD ["jupyter", "notebook", "--ip", "0.0.0.0"]
 {% endif %}
 """
 
-ENTRYPOINT_FILE = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "repo2docker-entrypoint"
-)
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 # Also used for the group
 DEFAULT_NB_UID = 1000
@@ -582,7 +579,8 @@ class BuildPack:
             dest_path, src_path = self.generate_build_context_filename(src)
             tar.add(src_path, dest_path, filter=_filter_tar)
 
-        tar.add(ENTRYPOINT_FILE, "repo2docker-entrypoint", filter=_filter_tar)
+        for fname in ("repo2docker-entrypoint", "python3-login"):
+            tar.add(os.path.join(HERE, fname), fname, filter=_filter_tar)
 
         tar.add(".", "src/", filter=_filter_tar)
 

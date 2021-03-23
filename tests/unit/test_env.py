@@ -3,12 +3,13 @@ Test that environment variables may be defined
 """
 import os
 import subprocess
+import sys
 import tempfile
 import time
 from getpass import getuser
 
 
-def test_env():
+def test_env(capfd):
     """
     Validate that you can define environment variables
 
@@ -42,20 +43,19 @@ def test_env():
                 # value
                 "--env",
                 "SPAM_2=",
-                # "--",
                 tmpdir,
+                "--",
                 "/bin/bash",
                 "-c",
                 # Docker exports all passed env variables, so we can
                 # just look at exported variables.
-                "export; sleep 1",
-                # "export; echo TIMDONE",
-                # "export",
+                "export",
             ],
-            universal_newlines=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
         )
+    captured = capfd.readouterr()
+    print(captured.out, end="")
+    print(captured.err, file=sys.stderr, end="")
+
     assert result.returncode == 0
 
     # all docker output is returned by repo2docker on stderr
@@ -63,11 +63,8 @@ def test_env():
     # stdout should be empty
     assert not result.stdout
 
-    print(result.stderr.split("\n"))
-    # assert False
-
     # stderr should contain lines of output
-    declares = [x for x in result.stderr.split("\n") if x.startswith("declare")]
+    declares = [x for x in captured.err.splitlines() if x.startswith("declare")]
     assert 'declare -x FOO="{}"'.format(ts) in declares
     assert 'declare -x BAR="baz"' in declares
     assert 'declare -x SPAM="eggs"' in declares
