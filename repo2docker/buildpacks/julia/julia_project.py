@@ -47,7 +47,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             compat = project_toml["compat"]["julia"]
         except:
             # Default version which needs to be manually updated with new major.minor releases
-            compat = "1.5"
+            compat = "1.6"
 
         match = find_semver_match(compat, self.all_julias)
         if match is None:
