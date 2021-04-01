@@ -110,7 +110,8 @@ jobs:
           pip freeze
           # hg-evolve pinned to 9.2 because hg-evolve dropped support for
           # hg 4.5, installed with apt in Ubuntu 18.04
-          $(hg debuginstall --template "{pythonexe}") -m pip install hg-evolve==9.2 --user
+          pip install mercurial
+          $(hg debuginstall --template "{pythonexe}") -m pip install hg-evolve --user
 
       - name: "Run tests"
         run: |
