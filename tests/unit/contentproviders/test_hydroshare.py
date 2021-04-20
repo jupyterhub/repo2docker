@@ -109,25 +109,11 @@ def hydroshare_archive(prefix="b8f6eae9d89241cf8b5904033460af61/data/contents"):
         yield zfile
 
 
-class MockInfo:
-    def __init__(self, content_type):
-        self.content_type = content_type
-
-    def get_content_type(self):
-        return self.content_type
-
-
 class MockResponse:
     def __init__(self, content_type, status_code):
-        self.content_type = content_type
         self.status_code = status_code
-        self.mock_info = MockInfo(self.content_type)
-
-    def getcode(self):
-        return self.status_code
-
-    def info(self):
-        return self.mock_info
+        self.headers = dict()
+        self.headers["content-type"] = content_type
 
 
 def test_fetch_bag():
