@@ -33,6 +33,7 @@ class CondaBuildPack(BaseImage):
         env = super().get_build_env() + [
             ("CONDA_DIR", "${APP_BASE}/conda"),
             ("NB_PYTHON_PREFIX", "${CONDA_DIR}/envs/notebook"),
+            ("MAMBA_ROOT_PREFIX", "${CONDA_DIR}"),
         ]
         if self.py2:
             env.append(("KERNEL_PYTHON_PREFIX", "${CONDA_DIR}/envs/kernel"))
