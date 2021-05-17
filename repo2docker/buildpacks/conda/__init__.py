@@ -55,6 +55,7 @@ class CondaBuildPack(BaseImage):
             ("NPM_DIR", "${APP_BASE}/npm"),
             ("NPM_CONFIG_GLOBALCONFIG", "${NPM_DIR}/npmrc"),
             ("NB_ENVIRONMENT_FILE", self._nb_environment_file),
+            ("MAMBA_ROOT_PREFIX", "${CONDA_DIR}"),
         ]
         if self._nb_requirements_file:
             env.append(("NB_REQUIREMENTS_FILE", self._nb_requirements_file))
