@@ -63,12 +63,11 @@ class Zenodo(DoiProvider):
 
         record = resp.json()
 
-        is_software = deep_get(record, host["type"]).lower() == "software"
         files = deep_get(record, host["filepath"])
         only_one_file = len(files) == 1
         for file_ref in files:
             for line in self.fetch_file(
-                file_ref, host, output_dir, is_software and only_one_file
+                file_ref, host, output_dir, unzip=only_one_file
             ):
                 yield line
 

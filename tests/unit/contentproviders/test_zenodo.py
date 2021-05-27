@@ -99,7 +99,7 @@ def test_fetch_software_from_github_archive(requests_mock):
                     "links": {"download": "file://{}".format(zen_path)},
                 }
             ],
-            "metadata": {"upload_type": "software"},
+            "metadata": {"upload_type": "other"},
         }
         requests_mock.get("https://zenodo.org/api/records/1234", json=mock_response)
         requests_mock.get(
