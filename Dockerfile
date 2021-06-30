@@ -1,7 +1,7 @@
 ARG ALPINE_VERSION=3.12.0
 FROM alpine:${ALPINE_VERSION}
 
-RUN apk add --no-cache git python3 python3-dev py-pip
+RUN apk add --no-cache git python3 python3-dev py-pip build-base
 
 # build wheels in first image
 ADD . /tmp/src
