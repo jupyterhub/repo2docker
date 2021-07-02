@@ -22,12 +22,17 @@ test_content_ids = [
 
 
 @pytest.mark.parametrize("link,expected", test_content_ids)
-def test_content_id(link, expected):
-    with patch.object(Figshare, "urlopen") as fake_urlopen:
-        fake_urlopen.return_value.url = link
-        fig = Figshare()
-        fig.detect("10.6084/m9.figshare.9782777")
-        assert fig.content_id == expected
+def test_content_id(link, expected, requests_mock):
+    def mocked_get(req, context):
+        if req.url.startswith("https://doi.org"):
+            context.status_code = 302
+            context.headers["Location"] = link
+        return link
+
+    requests_mock.get(re.compile("https://"), text=mocked_get)
+    fig = Figshare()
+    fig.detect("10.6084/m9.figshare.9782777")
+    assert fig.content_id == expected
 
 
 test_fig = Figshare()
@@ -43,17 +48,28 @@ test_dois_links = [
         "10.6084/m9.figshare.9782777.v1",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
     ),
-    (
+    pytest.param(
         "10.6084/m9.figshare.9782777.v2",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "2"},
+        # $ curl -sIL https://dx.doi.org/10.6084/m9.figshare.9782777.v2 | grep location
+        # location: https://figshare.com/articles/Binder-ready_openSenseMap_Analysis/9782777/2
+        # location: https://figshare.com/articles/code/Binder-ready_openSenseMap_Analysis/9782777
+        marks=pytest.mark.xfail(reason="Problem with figshare version redirects"),
     ),
     (
         "https://doi.org/10.6084/m9.figshare.9782777.v1",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "1"},
+        # $ curl -sIL https://doi.org/10.6084/m9.figshare.9782777.v1 | grep location
+        # location: https://figshare.com/articles/Binder-ready_openSenseMap_Analysis/9782777/1
+        # location: https://figshare.com/articles/code/Binder-ready_openSenseMap_Analysis/9782777
     ),
-    (
+    pytest.param(
         "https://doi.org/10.6084/m9.figshare.9782777.v3",
         {"host": test_fig.hosts[0], "article": "9782777", "version": "3"},
+        # $ curl -sIL https://doi.org/10.6084/m9.figshare.9782777.v3 | grep location
+        # location: https://figshare.com/articles/Binder-ready_openSenseMap_Analysis/9782777/3
+        # location: https://figshare.com/articles/code/Binder-ready_openSenseMap_Analysis/9782777
+        marks=pytest.mark.xfail(reason="Problem with figshare version redirects"),
     ),
     (
         "https://figshare.com/articles/title/97827771234",
@@ -103,76 +119,73 @@ def figshare_archive(prefix="a_directory"):
         yield zfile.name
 
 
-def test_fetch_zip():
+def test_fetch_zip(requests_mock):
     # see test_zenodo.py/test_fetch_software
     with figshare_archive() as fig_path:
-        mock_response = BytesIO(
-            json.dumps(
+        mock_response = {
+            "files": [
                 {
-                    "files": [
-                        {
-                            "name": "afake.zip",
-                            "is_link_only": False,
-                            "download_url": "file://{}".format(fig_path),
-                        }
-                    ]
+                    "name": "afake.zip",
+                    "is_link_only": False,
+                    "download_url": "file://{}".format(fig_path),
                 }
-            ).encode("utf-8")
+            ]
+        }
+        requests_mock.get(
+            "https://api.figshare.com/v2/articles/123456/versions/42",
+            json=mock_response,
+        )
+        requests_mock.get(
+            "file://{}".format(fig_path), content=open(fig_path, "rb").read()
         )
 
-        def mock_urlopen(self, req):
-            if isinstance(req, Request):
-                return mock_response
-            else:
-                return urlopen(req)
+        # with patch.object(Figshare, "urlopen", new=mock_urlopen):
+        with TemporaryDirectory() as d:
+            output = []
+            for l in test_fig.fetch(test_spec, d):
+                output.append(l)
 
-        with patch.object(Figshare, "urlopen", new=mock_urlopen):
+            unpacked_files = set(os.listdir(d))
+            expected = set(["some-other-file.txt", "some-file.txt"])
+            assert expected == unpacked_files
+
+
+def test_fetch_data(requests_mock):
+    with figshare_archive() as a_path:
+        with figshare_archive() as b_path:
+            mock_response = {
+                "files": [
+                    {
+                        "name": "afake.file",
+                        "download_url": "file://{}".format(a_path),
+                        "is_link_only": False,
+                    },
+                    {
+                        "name": "bfake.data",
+                        "download_url": "file://{}".format(b_path),
+                        "is_link_only": False,
+                    },
+                    {"name": "cfake.link", "is_link_only": True},
+                ]
+            }
+
+            requests_mock.get(
+                "https://api.figshare.com/v2/articles/123456/versions/42",
+                json=mock_response,
+            )
+            requests_mock.get(
+                "file://{}".format(a_path), content=open(a_path, "rb").read()
+            )
+            requests_mock.get(
+                "file://{}".format(b_path), content=open(b_path, "rb").read()
+            )
+
             with TemporaryDirectory() as d:
                 output = []
                 for l in test_fig.fetch(test_spec, d):
                     output.append(l)
 
                 unpacked_files = set(os.listdir(d))
-                expected = set(["some-other-file.txt", "some-file.txt"])
+                # ZIP files shouldn't have been unpacked
+                expected = {"bfake.data", "afake.file"}
                 assert expected == unpacked_files
-
-
-def test_fetch_data():
-    with figshare_archive() as a_path:
-        with figshare_archive() as b_path:
-            mock_response = BytesIO(
-                json.dumps(
-                    {
-                        "files": [
-                            {
-                                "name": "afake.file",
-                                "download_url": "file://{}".format(a_path),
-                                "is_link_only": False,
-                            },
-                            {
-                                "name": "bfake.data",
-                                "download_url": "file://{}".format(b_path),
-                                "is_link_only": False,
-                            },
-                            {"name": "cfake.link", "is_link_only": True},
-                        ]
-                    }
-                ).encode("utf-8")
-            )
-
-            def mock_urlopen(self, req):
-                if isinstance(req, Request):
-                    return mock_response
-                else:
-                    return urlopen(req)
-
-            with patch.object(Figshare, "urlopen", new=mock_urlopen):
-                with TemporaryDirectory() as d:
-                    output = []
-                    for l in test_fig.fetch(test_spec, d):
-                        output.append(l)
-
-                    unpacked_files = set(os.listdir(d))
-                    # ZIP files shouldn't have been unpacked
-                    expected = {"bfake.data", "afake.file"}
-                    assert expected == unpacked_files

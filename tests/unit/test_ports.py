@@ -77,7 +77,7 @@ def read_port_mapping_response(
 
     container.reload()
     assert container.status == "running"
-    port_mapping = container.attrs["NetworkSettings"]["Ports"]
+    port_mapping = container._c.attrs["NetworkSettings"]["Ports"]
     if all_ports:
         port = port_mapping["8888/tcp"][0]["HostPort"]
 

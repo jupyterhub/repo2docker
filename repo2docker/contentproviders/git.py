@@ -47,9 +47,18 @@ class Git(ContentProvider):
                 self.log.error(
                     "Failed to check out ref %s", ref, extra=dict(phase="failed")
                 )
-                raise ValueError("Failed to check out ref {}".format(ref))
+                if ref == "master":
+                    msg = (
+                        "Failed to check out the 'master' branch. "
+                        "Maybe the default branch is not named 'master' "
+                        "for this repository.\n\nTry not explicitly "
+                        "specifying `--ref`."
+                    )
+                else:
+                    msg = "Failed to check out ref {}".format(ref)
+                raise ValueError(msg)
             # We don't need to explicitly checkout things as the reset will
-            # take of that. If the hash is resolved above, we should be
+            # take care of that. If the hash is resolved above, we should be
             # able to reset to it
             for line in execute_cmd(
                 ["git", "reset", "--hard", hash], cwd=output_dir, capture=yield_output

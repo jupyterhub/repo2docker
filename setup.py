@@ -48,13 +48,15 @@ setup(
     version=versioneer.get_version(),
     install_requires=[
         "docker",
-        "traitlets",
-        "python-json-logger",
+        "entrypoints",
         "escapism",
         "jinja2",
+        "python-json-logger",
+        "requests",
         "ruamel.yaml>=0.15",
-        "toml",
         "semver",
+        "toml",
+        "traitlets",
     ],
     extras_require={
         "s3log": ["boto3"],
@@ -91,6 +93,7 @@ setup(
         "console_scripts": [
             "jupyter-repo2docker = repo2docker.__main__:main",
             "repo2docker = repo2docker.__main__:main",
-        ]
+        ],
+        "repo2docker.engines": ["docker = repo2docker.docker:DockerEngine"],
     },
 )

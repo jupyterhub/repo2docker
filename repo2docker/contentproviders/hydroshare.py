@@ -16,9 +16,7 @@ class Hydroshare(DoiProvider):
 
     def _fetch_version(self, host):
         """Fetch resource modified date and convert to epoch"""
-        json_response = json.loads(
-            self.urlopen(host["version"].format(self.resource_id)).read()
-        )
+        json_response = self.urlopen(host["version"].format(self.resource_id)).json()
         date = next(
             item for item in json_response["dates"] if item["type"] == "modified"
         )["start_date"]
@@ -69,8 +67,8 @@ class Hydroshare(DoiProvider):
         conn = self.urlopen(bag_url)
         total_wait_time = 0
         while (
-            conn.getcode() == 200
-            and conn.info().get_content_type() != "application/zip"
+            conn.status_code == 200
+            and conn.headers["content-type"] != "application/zip"
         ):
             wait_time = 10
             total_wait_time += wait_time
@@ -83,8 +81,8 @@ class Hydroshare(DoiProvider):
             )
             time.sleep(wait_time)
             conn = self.urlopen(bag_url)
-        if conn.getcode() != 200:
-            msg = "Failed to download bag. status code {}.\n".format(conn.getcode())
+        if conn.status_code != 200:
+            msg = "Failed to download bag. status code {}.\n".format(conn.status_code)
             yield msg
             raise ContentProviderException(msg)
         # Bag creation seems to need a small time buffer after it says it's ready.

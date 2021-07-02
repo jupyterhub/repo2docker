@@ -25,8 +25,6 @@ class RBuildPack(PythonBuildPack):
 
     2. A `DESCRIPTION` file signaling an R package
 
-    3. A Stencila document (*.jats.xml) with R code chunks (i.e. language="r")
-
     If there is no `runtime.txt`, then the MRAN snapshot is set to latest
     date that is guaranteed to exist across timezones.
 
@@ -37,8 +35,7 @@ class RBuildPack(PythonBuildPack):
 
     - as dependencies in a `DESCRIPTION` file
 
-    - are needed by a specific tool, for example the package `stencila` is
-      installed and configured if a Stencila document is given.
+    - are needed by a specific tool
 
     The `r-base` package from Ubuntu apt repositories is used to install
     R itself, rather than any of the methods from https://cran.r-project.org/.
@@ -78,6 +75,8 @@ class RBuildPack(PythonBuildPack):
             "3.6": "3.6.1-3bionic",
             "3.6.0": "3.6.0-2bionic",
             "3.6.1": "3.6.1-3bionic",
+            "4.0": "4.0.2-1.1804.0",
+            "4.0.2": "4.0.2-1.1804.0",
         }
         # the default if nothing is specified
         r_version = "3.6"
@@ -129,9 +128,7 @@ class RBuildPack(PythonBuildPack):
             return True
 
         description_R = "DESCRIPTION"
-        if (
-            not self.binder_dir and os.path.exists(description_R)
-        ) or "r" in self.stencila_contexts:
+        if not self.binder_dir and os.path.exists(description_R):
             if not self.checkpoint_date:
                 # no R snapshot date set through runtime.txt
                 # set the R runtime to the latest date that is guaranteed to
@@ -226,7 +223,6 @@ class RBuildPack(PythonBuildPack):
           (determined by MRAN)
         - IRKernel
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
-        - stencila R package (if Stencila document with R code chunks detected)
 
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt.
@@ -238,21 +234,25 @@ class RBuildPack(PythonBuildPack):
 
         scripts = []
         # For R 3.4 we want to use the default Ubuntu package but otherwise
-        # we use the packages from a PPA
+        # we use the packages from R's own repo
         if V(self.r_version) >= V("3.5"):
+            if V(self.r_version) >= V("4"):
+                vs = "40"
+            else:
+                vs = "35"
             scripts += [
                 (
                     "root",
-                    r"""
-                    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/r3.6-ubuntu.list
+                    rf"""
+                    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran{vs}/" > /etc/apt/sources.list.d/r-ubuntu.list
                     """,
                 ),
-                # Use port 80 to talk to the keyserver to increase the chances
+                # Dont use apt-key directly, as gpg does not always respect *_proxy vars. This increase the chances
                 # of being able to reach it from behind a firewall
                 (
                     "root",
                     r"""
-                    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+                    wget --quiet -O - 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xe298a3a825c0d65dfd57cbb651716619e084dab9' | apt-key add -
                     """,
                 ),
                 (
@@ -324,34 +324,6 @@ class RBuildPack(PythonBuildPack):
                 ),
             ),
         ]
-
-        if "r" in self.stencila_contexts:
-            # new versions of R require a different way of installing bioconductor
-            if V(self.r_version) <= V("3.5"):
-                scripts += [
-                    (
-                        "${NB_USER}",
-                        # Install and register stencila library
-                        r"""
-                    R --quiet -e "source('https://bioconductor.org/biocLite.R'); biocLite('graph')" && \
-                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
-                    R --quiet -e "stencila::register()"
-                    """,
-                    )
-                ]
-
-            else:
-                scripts += [
-                    (
-                        "${NB_USER}",
-                        # Install and register stencila library
-                        r"""
-                    R --quiet -e "install.packages('BiocManager'); BiocManager::install(); BiocManager::install(c('graph'))" && \
-                    R --quiet -e "devtools::install_github('stencila/r', ref = '361bbf560f3f0561a8612349bca66cd8978f4f24')" && \
-                    R --quiet -e "stencila::register()"
-                    """,
-                    )
-                ]
 
         return super().get_build_scripts() + scripts
 

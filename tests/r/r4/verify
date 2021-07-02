@@ -1,0 +1,7 @@
+#!/usr/bin/env Rscript
+library('ggplot2')
+
+print(version)
+if (version$major != "4") {
+  quit("yes", 1)
+}

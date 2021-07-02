@@ -14,6 +14,8 @@ Using ``repo2docker``
 follows :ref:`specification`. repo2docker is called with the URL of a Git repository,
 a `DOI  <https://en.wikipedia.org/wiki/Digital_object_identifier>`_ from Zenodo or Figshare,
 a `Handle <https://en.wikipedia.org/wiki/Handle_System>`_ or DOI from a Dataverse installation,
+a `SWHID`_ of a directory of a revision archived in the
+`Software Heritage Archive <https://archive.softwareheritage.org>`_,
 or a path to a local directory.
 
 It then performs these steps:
@@ -36,7 +38,8 @@ repo2docker is called with this command::
 where ``<source-repository>`` is:
 
   * a URL of a Git repository (``https://github.com/binder-examples/requirements``),
-  * a Zenodo DOI (``10.5281/zenodo.1211089``), or
+  * a Zenodo DOI (``10.5281/zenodo.1211089``),
+  * a SWHID_ (``swh:1:rev:999dd06c7f679a2714dfe5199bdca09522a29649``), or
   * a path to a local directory (``a/local/directory``)
 
 of the source repository you want to build.
@@ -90,8 +93,8 @@ Where to put configuration files
 * A folder named ``.binder/`` in the root of the repository.
 * The root directory of the repository.
 
-`repo2docker` searches for these folders in order (``binder/``, ``.binder/``,
-root). Only configuration files in the first identified folder are considered.
+Having both ``binder/`` and ``.binder/`` folders is not allowed.
+If one of these folders exists, only configuration files in that folder are considered, configuration in the root directory will be ignored.
 
 Check the complete list of :ref:`configuration files <config-files>` supported
 by ``repo2docker`` to see how to configure the build process.
@@ -132,3 +135,4 @@ Command line API
 
 
 .. _Pytudes: https://github.com/norvig/pytudes
+.. _SWHID: https://docs.softwareheritage.org/devel/swh-model/persistent-identifiers.html

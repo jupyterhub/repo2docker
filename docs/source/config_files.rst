@@ -142,30 +142,11 @@ We use ``apt.txt``, for example, to install LaTeX in our
 
 To install your repository like an R package, you may include a
 ``DESCRIPTION`` file. repo2docker installs the package and dependencies
-from the ``DESCRIPTION`` by running ``devtools::install_git(".")``.
+from the ``DESCRIPTION`` by running ``devtools::install_local(getwd())``.
 
 You also need to have a ``runtime.txt`` file that is formatted as
 ``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot of MRAN that will be
 used for your R installation.
-
-
-.. _manifest.xml:
-
-``manifest.xml`` - Install Stencila
-===================================
-
-`Stencila <https://stenci.la/>`_ is an open source office suite for reproducible research.
-It is powered by the open file format `Dar <https://github.com/substance/dar>`_.
-
-If your repository contains a Stencila document, repo2docker detects it based on the file ``manifest.xml``.
-The required `execution contexts <https://stenci.la/learn/intro.html>`_ are extracted from a Dar article (i.e.
-files named ``*.jats.xml``).
-
-You may also have a ``runtime.txt`` and/or an ``install.R`` to manually configure your R installation.
-
-To see example repositories, visit our
-`Stencila with R <https://github.com/binder-examples/stencila-r/>`_ and
-`Stencila with Python <https://github.com/binder-examples/stencila-py>`_ examples.
 
 
 .. _postBuild:

@@ -2,8 +2,8 @@ import argparse
 import sys
 import os
 import logging
-import docker
 from .app import Repo2Docker
+from .engine import BuildError, ImageLoadError
 from . import __version__
 from .utils import validate_and_generate_port_mapping, is_valid_docker_image_name
 
@@ -96,7 +96,8 @@ def get_argparser():
     argparser.add_argument(
         "--ref",
         help=(
-            "If building a git url, which reference to check out. " "E.g., `master`."
+            "Reference to build instead of default reference. For example"
+            " branch name or commit for a Git repository."
         ),
     )
 
@@ -215,6 +216,8 @@ def get_argparser():
     argparser.add_argument(
         "--cache-from", action="append", default=[], help=Repo2Docker.cache_from.help
     )
+
+    argparser.add_argument("--engine", help="Name of the container engine")
 
     return argparser
 
@@ -350,6 +353,9 @@ def make_r2d(argv=None):
     if args.cache_from:
         r2d.cache_from = args.cache_from
 
+    if args.engine:
+        r2d.engine = args.engine
+
     r2d.environment = args.environment
 
     # if the source exists locally we don't want to delete it at the end
@@ -370,12 +376,12 @@ def main():
     r2d.initialize()
     try:
         r2d.start()
-    except docker.errors.BuildError as e:
+    except BuildError as e:
         # This is only raised by us
         if r2d.log_level == logging.DEBUG:
             r2d.log.exception(e)
         sys.exit(1)
-    except docker.errors.ImageLoadError as e:
+    except ImageLoadError as e:
         # This is only raised by us
         if r2d.log_level == logging.DEBUG:
             r2d.log.exception(e)

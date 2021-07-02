@@ -1,4 +1,4 @@
-# <a href="https://github.com/jupyterhub/repo2docker"><img src="https://raw.githubusercontent.com/jupyterhub/repo2docker/3fa7444fca6ae2b51e590cbc9d83baf92738ca2a/docs/source/_static/images/repo2docker.png" height="48px" /> repo2docker</a>
+# <a href="https://github.com/jupyterhub/repo2docker"><img src="https://raw.githubusercontent.com/jupyterhub/repo2docker/8731ecf0967cc5fde028c456f2b92be651ebbc18/docs/source/_static/images/repo2docker.png" height="48px" /> repo2docker</a>
 
 [![Deploy Status](https://travis-ci.org/jupyterhub/repo2docker.svg?branch=master)](https://travis-ci.org/jupyterhub/repo2docker)
 [![Build Status](https://github.com/jupyterhub/repo2docker/workflows/Continuous%20Integration/badge.svg)](https://github.com/jupyterhub/repo2docker/actions)
@@ -16,6 +16,19 @@ For support questions please search or post to https://discourse.jupyter.org/c/b
 See the [contributing guide](CONTRIBUTING.md) for information on contributing to
 repo2docker.
 
+---
+
+Please note that this repository is participating in a study into sustainability
+of open source projects. Data will be gathered about this repository for
+approximately the next 12 months, starting from 2021-06-11.
+
+Data collected will include number of contributors, number of PRs, time taken to
+close/merge these PRs, and issues closed.
+
+For more information, please visit
+[our informational page](https://sustainable-open-science-and-software.github.io/) or download our [participant information sheet](https://sustainable-open-science-and-software.github.io/assets/PIS_sustainable_software.pdf).
+
+---
 
 ## Using repo2docker
 ### Prerequisites

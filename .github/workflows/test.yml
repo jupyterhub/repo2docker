@@ -7,10 +7,13 @@
 
 name: Continuous Integration
 
-# Only trigger the workflow when pushing to master
 on:
-  - push
-  - pull_request
+  push:
+  pull_request:
+  schedule:
+    # Weekly test so we know if tests break for external reasons
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
+    - cron: '36 10 * * 0'
 
 # Global environment variables
 env:
@@ -74,7 +77,6 @@ jobs:
           - nix
           - pipfile
           - r
-          - stencila-py
           - unit
           - venv
         include:
@@ -108,11 +110,16 @@ jobs:
           pip freeze
           # hg-evolve pinned to 9.2 because hg-evolve dropped support for
           # hg 4.5, installed with apt in Ubuntu 18.04
+          $(hg debuginstall --template "{pythonexe}") -m pip install setuptools --user
           $(hg debuginstall --template "{pythonexe}") -m pip install hg-evolve==9.2 --user
 
       - name: "Run tests"
         run: |
-          pytest --durations 10 --cov repo2docker -v tests/${{ matrix.repo_type }}
+          cd tests
+          pytest --durations 10 --cov repo2docker -v ${{ matrix.repo_type }}
 
-      # Action Repo: https://github.com/codecov/codecov-action
-      - uses: codecov/codecov-action@v1
+      - name: "Upload code coverage stats"
+        run: |
+          pip install codecov
+          pushd tests && codecov && cat
+          cat /home/runner/work/repo2docker/repo2docker/tests/coverage.xml

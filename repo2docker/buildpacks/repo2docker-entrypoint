@@ -1,12 +1,97 @@
-#!/bin/bash -l
-# lightest possible entrypoint that ensures that
-# we use a login shell to get a fully configured shell environment
-# (e.g. sourcing /etc/profile.d, ~/.bashrc, and friends)
-if [[ ! -z "${R2D_ENTRYPOINT:-}" ]]; then
-    if [[ ! -x "$R2D_ENTRYPOINT" ]]; then
-        chmod u+x "$R2D_ENTRYPOINT"
-    fi
-    exec "$R2D_ENTRYPOINT" "$@"
-else
-    exec "$@"
-fi
+#!/usr/local/bin/python3-login
+# note: must run on Python >= 3.5, which mainly means no f-strings
+
+# goals:
+# - load environment variables from a login shell (bash -l)
+# - preserve signal handling of subprocess (kill -TERM and friends)
+# - tee output to a log file
+
+import fcntl
+import os
+import select
+import signal
+import subprocess
+import sys
+
+# output chunk size to read
+CHUNK_SIZE = 1024
+
+# signals to be forwarded to the child
+# everything catchable, excluding SIGCHLD
+SIGNALS = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP, signal.SIGCHLD}
+
+
+def main():
+
+    # open log file to send output
+    log_file = open(
+        os.path.join(os.environ.get("REPO_DIR", "."), ".jupyter-server-log.txt"),
+        "ab",
+    )
+
+    # build the command
+    # like `exec "$@"`
+    command = sys.argv[1:]
+    # load entrypoint override from env
+    r2d_entrypoint = os.environ.get("R2D_ENTRYPOINT")
+    if r2d_entrypoint:
+        command.insert(0, r2d_entrypoint)
+
+    # launch the subprocess
+    child = subprocess.Popen(
+        command,
+        bufsize=1,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    # hook up ~all signals so that every signal the parent gets,
+    # the children also get
+
+    def relay_signal(sig, frame):
+        """Relay a signal to children"""
+        # DEBUG: show signal
+        child.send_signal(sig)
+
+    for signum in SIGNALS:
+        signal.signal(signum, relay_signal)
+
+    # tee output from child to both our stdout and the log file
+    def tee(chunk):
+        """Tee output from child to both our stdout and the log file"""
+        for f in [sys.stdout.buffer, log_file]:
+            f.write(chunk)
+            f.flush()
+
+    # make stdout pipe non-blocking
+    # this means child.stdout.read(nbytes)
+    # will always return immediately, even if there's nothing to read
+    flags = fcntl.fcntl(child.stdout, fcntl.F_GETFL)
+    fcntl.fcntl(child.stdout, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+    poller = select.poll()
+    poller.register(child.stdout)
+
+    # while child is running, constantly relay output
+    while child.poll() is None:
+        chunk = child.stdout.read(CHUNK_SIZE)
+        if chunk:
+            tee(chunk)
+        else:
+            # empty chunk means nothing to read
+            # wait for output on the pipe
+            # timeout is in milliseconds
+            poller.poll(1000)
+
+    # child has exited, continue relaying any remaining output
+    # At this point, read() will return an empty string when it's done
+    chunk = child.stdout.read()
+    while chunk:
+        tee(chunk)
+        chunk = child.stdout.read()
+
+    # make our returncode match the child's returncode
+    sys.exit(child.returncode)
+
+
+if __name__ == "__main__":
+    main()
