@@ -48,6 +48,7 @@ setup(
     version=versioneer.get_version(),
     install_requires=[
         "docker",
+        "entrypoints",
         "escapism",
         "jinja2",
         "python-json-logger",
@@ -89,6 +90,7 @@ setup(
         "console_scripts": [
             "jupyter-repo2docker = repo2docker.__main__:main",
             "repo2docker = repo2docker.__main__:main",
-        ]
+        ],
+        "repo2docker.engines": ["docker = repo2docker.docker:DockerEngine"],
     },
 )

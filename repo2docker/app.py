@@ -11,15 +11,14 @@ import json
 import sys
 import logging
 import os
+import entrypoints
 import getpass
 import shutil
 import tempfile
 import time
 
-import docker
+from .engine import BuildError, ContainerEngineException, ImageLoadError
 from urllib.parse import urlparse
-from docker.utils import kwargs_from_env
-from docker.errors import DockerException
 import escapism
 from pythonjsonlogger import jsonlogger
 
@@ -382,6 +381,33 @@ class Repo2Docker(Application):
         config=True,
     )
 
+    engine = Unicode(
+        "docker",
+        config=True,
+        help="""
+        Name of the container engine.
+
+        Defaults to 'docker'.
+        """,
+    )
+
+    def get_engine(self):
+        """Return an instance of the container engine.
+
+        Currently no arguments are passed to the engine constructor.
+        """
+        engines = entrypoints.get_group_named("repo2docker.engines")
+        try:
+            entry = engines[self.engine]
+        except KeyError:
+            raise ContainerEngineException(
+                "Container engine '{}' not found. Available engines: {}".format(
+                    self.engine, ",".join(engines.keys())
+                )
+            )
+        engine_class = entry.load()
+        return engine_class(parent=self)
+
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
 
@@ -474,13 +500,18 @@ class Repo2Docker(Application):
 
     def push_image(self):
         """Push docker image to registry"""
-        client = docker.APIClient(version="auto", **kwargs_from_env())
+        client = self.get_engine()
         # Build a progress setup for each layer, and only emit per-layer
         # info every 1.5s
         progress_layers = {}
         layers = {}
         last_emit_time = time.time()
-        for chunk in client.push(self.output_image_spec, stream=True):
+        for chunk in client.push(self.output_image_spec):
+            if client.string_output:
+                self.log.info(chunk, extra=dict(phase="pushing"))
+                continue
+            # else this is Docker output
+
             # each chunk can be one or more lines of json events
             # split lines here in case multiple are delivered at once
             for line in chunk.splitlines():
@@ -492,7 +523,7 @@ class Repo2Docker(Application):
                     continue
                 if "error" in progress:
                     self.log.error(progress["error"], extra=dict(phase="failed"))
-                    raise docker.errors.ImageLoadError(progress["error"])
+                    raise ImageLoadError(progress["error"])
                 if "id" not in progress:
                     continue
                 # deprecated truncated-progress data
@@ -528,7 +559,7 @@ class Repo2Docker(Application):
 
         Returns running container
         """
-        client = docker.from_env(version="auto")
+        client = self.get_engine()
 
         docker_host = os.environ.get("DOCKER_HOST")
         if docker_host:
@@ -565,11 +596,8 @@ class Repo2Docker(Application):
 
         container_volumes = {}
         if self.volumes:
-            api_client = docker.APIClient(
-                version="auto", **docker.utils.kwargs_from_env()
-            )
-            image = api_client.inspect_image(self.output_image_spec)
-            image_workdir = image["ContainerConfig"]["WorkingDir"]
+            image = client.inspect_image(self.output_image_spec)
+            image_workdir = image.config["WorkingDir"]
 
             for k, v in self.volumes.items():
                 container_volumes[os.path.abspath(k)] = {
@@ -580,7 +608,6 @@ class Repo2Docker(Application):
         run_kwargs = dict(
             publish_all_ports=self.all_ports,
             ports=ports,
-            detach=True,
             command=run_cmd,
             volumes=container_volumes,
             environment=self.environment,
@@ -588,7 +615,7 @@ class Repo2Docker(Application):
 
         run_kwargs.update(self.extra_run_kwargs)
 
-        container = client.containers.run(self.output_image_spec, **run_kwargs)
+        container = client.run(self.output_image_spec, **run_kwargs)
 
         while container.status == "created":
             time.sleep(0.5)
@@ -611,7 +638,7 @@ class Repo2Docker(Application):
             if container.status == "running":
                 self.log.info("Stopping container...\n", extra=dict(phase="running"))
                 container.kill()
-            exit_code = container.attrs["State"]["ExitCode"]
+            exit_code = container.exitcode
 
             container.wait()
 
@@ -645,12 +672,11 @@ class Repo2Docker(Application):
         if self.dry_run:
             return False
         # check if we already have an image for this content
-        client = docker.APIClient(version="auto", **kwargs_from_env())
+        client = self.get_engine()
         for image in client.images():
-            if image["RepoTags"] is not None:
-                for tag in image["RepoTags"]:
-                    if tag == self.output_image_spec + ":latest":
-                        return True
+            for tag in image.tags:
+                if tag == self.output_image_spec + ":latest":
+                    return True
         return False
 
     def build(self):
@@ -660,12 +686,9 @@ class Repo2Docker(Application):
         # Check if r2d can connect to docker daemon
         if not self.dry_run:
             try:
-                docker_client = docker.APIClient(version="auto", **kwargs_from_env())
-            except DockerException as e:
-                self.log.error(
-                    "\nDocker client initialization error: %s.\nCheck if docker is running on the host.\n",
-                    e,
-                )
+                docker_client = self.get_engine()
+            except ContainerEngineException as e:
+                self.log.error("\nContainer engine initialization error: %s\n", e)
                 self.exit(1)
 
         # If the source to be executed is a directory, continue using the
@@ -751,11 +774,14 @@ class Repo2Docker(Application):
                         self.cache_from,
                         self.extra_build_kwargs,
                     ):
-                        if "stream" in l:
+                        if docker_client.string_output:
+                            self.log.info(l, extra=dict(phase="building"))
+                        # else this is Docker output
+                        elif "stream" in l:
                             self.log.info(l["stream"], extra=dict(phase="building"))
                         elif "error" in l:
                             self.log.info(l["error"], extra=dict(phase="failure"))
-                            raise docker.errors.BuildError(l["error"], build_log="")
+                            raise BuildError(l["error"])
                         elif "status" in l:
                             self.log.info(
                                 "Fetching base image...\r", extra=dict(phase="building")
