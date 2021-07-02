@@ -47,7 +47,7 @@ from recommonmark.transform import AutoStructify
 
 
 def setup(app):
-    app.add_stylesheet("custom.css")  # may also be a URL
+    app.add_css_file("custom.css")  # may also be a URL
     app.add_config_value(
         "recommonmark_config", {"auto_toc_tree_section": "Contents"}, True
     )
