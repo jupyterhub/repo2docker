@@ -1,5 +1,6 @@
 # Note that there is also a Pipfile for this project if you are updating this
 # file do not forget to update the Pipfile accordingly
+boto3
 pyyaml
 pytest>=4.6
 wheel

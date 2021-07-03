@@ -3,6 +3,7 @@
 # update these accordingly
 
 [dev-packages]
+boto3 = "*"
 pytest=">=4.6"
 wheel="*"
 pytest-cov="*"

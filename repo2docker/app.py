@@ -22,7 +22,7 @@ from urllib.parse import urlparse
 import escapism
 from pythonjsonlogger import jsonlogger
 
-from traitlets import Any, Dict, Int, List, Unicode, Bool, default
+from traitlets import Any, Dict, Instance, Int, List, Type, Unicode, Bool, default
 from traitlets.config import Application
 
 from . import __version__
@@ -38,6 +38,7 @@ from .buildpacks import (
     RBuildPack,
 )
 from . import contentproviders
+from .logstore import LogStore
 from .utils import ByteSpecification, chdir
 
 
@@ -408,6 +409,14 @@ class Repo2Docker(Application):
         engine_class = entry.load()
         return engine_class(parent=self)
 
+    logstore = Type(LogStore, help="Log store for build logs", config=True)
+
+    _logstore = Instance(LogStore)
+
+    @default("_logstore")
+    def _default_logstore(self):
+        return self.logstore(parent=self)
+
     def fetch(self, url, ref, checkout_path):
         """Fetch the contents of `url` and place it in `checkout_path`.
 
@@ -765,6 +774,7 @@ class Repo2Docker(Application):
                         bp.__class__.__name__,
                         extra=dict(phase="building"),
                     )
+                    self._logstore.write("Using %s builder\n" % bp.__class__.__name__)
 
                     for l in picked_buildpack.build(
                         docker_client,
@@ -779,8 +789,10 @@ class Repo2Docker(Application):
                         # else this is Docker output
                         elif "stream" in l:
                             self.log.info(l["stream"], extra=dict(phase="building"))
+                            self._logstore.write(l["stream"])
                         elif "error" in l:
                             self.log.info(l["error"], extra=dict(phase="failure"))
+                            self._logstore.write(l["error"])
                             raise BuildError(l["error"])
                         elif "status" in l:
                             self.log.info(
@@ -795,7 +807,13 @@ class Repo2Docker(Application):
                 shutil.rmtree(checkout_path, ignore_errors=True)
 
     def start(self):
-        self.build()
+        try:
+            self.build()
+        finally:
+            try:
+                r = self._logstore.close()
+            except Exception as e:
+                self.log.error("Failed to save log: {}".format(e))
 
         if self.push:
             self.push_image()
