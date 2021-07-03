@@ -1,5 +1,3 @@
-# Note that there is also a Pipfile for this project if you are updating this
-# file do not forget to update the Pipfile accordingly
 sphinx==4.0.2
 recommonmark==0.7.1
 sphinxcontrib-autoprogram==0.1.7
