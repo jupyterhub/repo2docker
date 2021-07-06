@@ -43,8 +43,10 @@ class CondaBuildPack(BaseImage):
 
         """
         if not self._nb_environment_file:
-            # get_build_scripts locates requirements/environment files
-            self.get_build_scripts()
+            # get_build_script_files locates requirements/environment files,
+            # populating the _nb_environment_file attribute and others.
+            # FIXME: move file detection and initialization of those attributes to its own step?
+            self.get_build_script_files()
 
         env = super().get_build_env() + [
             ("CONDA_DIR", "${APP_BASE}/conda"),
