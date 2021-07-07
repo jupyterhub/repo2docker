@@ -13,8 +13,8 @@ class DockerContainer(Container):
     def reload(self):
         return self._c.reload()
 
-    def logs(self, *, stream=False):
-        return self._c.logs(stream=stream)
+    def logs(self, *, stream=False, timestamps=False, since=None):
+        return self._c.logs(stream=stream, timestamps=timestamps, since=since)
 
     def kill(self, *, signal="KILL"):
         return self._c.kill(signal=signal)
