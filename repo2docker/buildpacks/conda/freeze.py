@@ -19,7 +19,7 @@ import sys
 from ruamel.yaml import YAML
 
 
-DOCKER_IMAGE = "condaforge/mambaforge:4.9.2-5"
+DOCKER_IMAGE = "condaforge/mambaforge:4.10.3-1"
 # set mamba and/or conda versions
 # if needed to differ from what's in the image
 MAMBA_VERSION = ""

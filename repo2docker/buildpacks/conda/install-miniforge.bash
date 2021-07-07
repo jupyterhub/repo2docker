@@ -5,10 +5,10 @@ set -ex
 
 
 cd $(dirname $0)
-MINIFORGE_VERSION=4.9.2-2
-MAMBA_VERSION=0.7.4
+MINIFORGE_VERSION=4.10.3-1
+MAMBA_VERSION=0.14.1
 # SHA256 for installers can be obtained from https://github.com/conda-forge/miniforge/releases
-SHA256SUM="7a7bfaff87680298304a97ba69bcf92f66c810995a7155a2918b99fafb8ca1dc"
+SHA256SUM="72c623cc9ce300c5ad54e0b383e428b13e5c640e74529295ab61fbbfa1a8acaa"
 
 URL="https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Mambaforge-${MINIFORGE_VERSION}-Linux-x86_64.sh"
 INSTALLER_PATH=/tmp/miniforge-installer.sh
