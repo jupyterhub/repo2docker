@@ -23,6 +23,18 @@ class CondaBuildPack(BaseImage):
 
     """
 
+    # The kernel conda environment file, if any.
+    # As an absolute path within the container.
+    _kernel_environment_file = ""
+    # extra pip requirements.txt for the kernel
+    _kernel_requirements_file = ""
+
+    # The notebook server environment file.
+    # As an absolute path within the container.
+    _nb_environment_file = ""
+    # extra pip requirements.txt for the notebook env
+    _nb_requirements_file = ""
+
     def get_build_env(self):
         """Return environment variables to be set.
 
@@ -30,12 +42,30 @@ class CondaBuildPack(BaseImage):
         the `NB_PYTHON_PREFIX` to the location of the jupyter binary.
 
         """
+        if not self._nb_environment_file:
+            # get_build_script_files locates requirements/environment files,
+            # populating the _nb_environment_file attribute and others.
+            # FIXME: move file detection and initialization of those attributes to its own step?
+            self.get_build_script_files()
+
         env = super().get_build_env() + [
             ("CONDA_DIR", "${APP_BASE}/conda"),
             ("NB_PYTHON_PREFIX", "${CONDA_DIR}/envs/notebook"),
+            ("NB_ENVIRONMENT_FILE", self._nb_environment_file),
         ]
-        if self.py2:
-            env.append(("KERNEL_PYTHON_PREFIX", "${CONDA_DIR}/envs/kernel"))
+        if self._nb_requirements_file:
+            env.append(("NB_REQUIREMENTS_FILE", self._nb_requirements_file))
+
+        if self._kernel_environment_file:
+            # if kernel environment file is separate
+            env.extend(
+                [
+                    ("KERNEL_PYTHON_PREFIX", "${CONDA_DIR}/envs/kernel"),
+                    ("KERNEL_ENVIRONMENT_FILE", self._kernel_environment_file),
+                ]
+            )
+            if self._kernel_requirements_file:
+                env.append(("KERNEL_REQUIREMENTS_FILE", self._kernel_requirements_file))
         else:
             env.append(("KERNEL_PYTHON_PREFIX", "${NB_PYTHON_PREFIX}"))
         return env
@@ -81,7 +111,7 @@ class CondaBuildPack(BaseImage):
                 r"""
                 TIMEFORMAT='time: %3R' \
                 bash -c 'time /tmp/install-miniforge.bash' && \
-                rm /tmp/install-miniforge.bash /tmp/environment.yml
+                rm -rf /tmp/install-miniforge.bash /tmp/env
                 """,
             )
         ]
@@ -114,20 +144,38 @@ class CondaBuildPack(BaseImage):
         # major Python versions during upgrade.
         # If no version is specified or no matching X.Y version is found,
         # the default base environment is used.
-        frozen_name = "environment.frozen.yml"
+        frozen_name = "environment.lock"
+        pip_frozen_name = "requirements.txt"
         if py_version:
             if self.py2:
                 # python 2 goes in a different env
                 files[
-                    "conda/environment.py-2.7.frozen.yml"
-                ] = "/tmp/kernel-environment.yml"
+                    "conda/environment.py-2.7.lock"
+                ] = self._kernel_environment_file = "/tmp/env/kernel-environment.lock"
+                # additional pip requirements for kernel env
+                if os.path.exists(os.path.join(HERE, "requirements.py-2.7.txt")):
+                    files[
+                        "conda/requirements.py-2.7.txt"
+                    ] = (
+                        self._kernel_requirements_file
+                    ) = "/tmp/env/kernel-requirements.txt"
             else:
-                py_frozen_name = "environment.py-{py}.frozen.yml".format(py=py_version)
+                py_frozen_name = f"environment.py-{py_version}.lock"
                 if os.path.exists(os.path.join(HERE, py_frozen_name)):
                     frozen_name = py_frozen_name
-                else:
-                    self.log.warning("No frozen env: %s", py_frozen_name)
-        files["conda/" + frozen_name] = "/tmp/environment.yml"
+                    pip_frozen_name = f"requirements.py-{py_version}.txt"
+                if not frozen_name:
+                    self.log.warning(f"No frozen env for {py_version}")
+        files[
+            "conda/" + frozen_name
+        ] = self._nb_environment_file = "/tmp/env/environment.lock"
+
+        # add requirements.txt, if present
+        if os.path.exists(os.path.join(HERE, pip_frozen_name)):
+            files[
+                "conda/" + pip_frozen_name
+            ] = self._nb_requirements_file = "/tmp/env/requirements.txt"
+
         files.update(super().get_build_script_files())
         return files
 

@@ -1,5 +1,8 @@
+channels:
+  - conda-forge
 dependencies:
   - python=3.7
+  - pip
   - ipywidgets==7.6.3
   - jupyter-offlinenotebook==0.2.1
   - jupyter-resource-usage==0.5.1
