@@ -19,7 +19,6 @@ import time
 from urllib.parse import urlparse
 
 import escapism
-from iso8601 import parse_date
 from pythonjsonlogger import jsonlogger
 
 from traitlets import Any, Dict, Int, List, Unicode, Bool, default
@@ -650,13 +649,6 @@ class Repo2Docker(Application):
                 "Container finished running.\n".upper(), extra=dict(phase="running")
             )
             # are there more logs? Let's send them back too
-            if last_timestamp:
-                # docker only accepts integer timestamps
-                # this means we will usually replay logs from the last second
-                # of the container
-                # we should check if this ever returns anything new,
-                # since we know it ~always returns something redundant
-                last_timestamp = int(parse_date(last_timestamp).timestamp())
             late_logs = container.logs(since=last_timestamp).decode("utf-8")
             for line in late_logs.split("\n"):
                 self.log.debug(line + "\n", extra=dict(phase="running"))

@@ -31,9 +31,11 @@ class Container(ABC):
             If `True` return an iterator over the log lines, otherwise return all logs
         timestamps : bool
             If `True` log lines will be prefixed with iso8601 timestamps followed by space
-        since : int
-            An integer timestamp.
-            Can be constructed by parsing timestamps in prefixed lines issued when `timestamps=True`.
+        since : str
+            A timestamp string
+            Should be in the same format as the timestamp prefix given
+            when `timestamps=True`
+
             If given, start logs from this point,
             instead of from container start.
 

@@ -3,6 +3,8 @@ Docker container engine for repo2docker
 """
 
 import docker
+from iso8601 import parse_date
+
 from .engine import Container, ContainerEngine, ContainerEngineException, Image
 
 
@@ -14,6 +16,13 @@ class DockerContainer(Container):
         return self._c.reload()
 
     def logs(self, *, stream=False, timestamps=False, since=None):
+        if since:
+            # docker only accepts integer timestamps
+            # this means we will usually replay logs from the last second
+            # of the container
+            # we should check if this ever returns anything new,
+            # since we know it ~always returns something redundant
+            since = int(parse_date(since).timestamp())
         return self._c.logs(stream=stream, timestamps=timestamps, since=since)
 
     def kill(self, *, signal="KILL"):
