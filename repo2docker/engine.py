@@ -21,7 +21,7 @@ class Container(ABC):
         """
 
     @abstractmethod
-    def logs(self, *, stream=False):
+    def logs(self, *, stream=False, timestamps=False, since=None):
         """
         Get the container logs.
 
@@ -29,6 +29,15 @@ class Container(ABC):
         ----------
         stream : bool
             If `True` return an iterator over the log lines, otherwise return all logs
+        timestamps : bool
+            If `True` log lines will be prefixed with iso8601 timestamps followed by space
+        since : str
+            A timestamp string
+            Should be in the same format as the timestamp prefix given
+            when `timestamps=True`
+
+            If given, start logs from this point,
+            instead of from container start.
 
         Returns
         -------

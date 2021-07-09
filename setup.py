@@ -50,6 +50,7 @@ setup(
         "docker",
         "entrypoints",
         "escapism",
+        "iso8601",
         "jinja2",
         "python-json-logger",
         "requests",
