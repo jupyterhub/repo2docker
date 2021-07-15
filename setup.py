@@ -57,6 +57,9 @@ setup(
         "requests",
         "ruamel.yaml>=0.15",
         "semver",
+        # six installation is a workaround of https://github.com/docker/docker-py/pull/2844.
+        # When removing this, also remove the "rm /tmp/wheelhouse/six*.whl" line in ./Dockerfile
+        "six",
         "toml",
         "traitlets",
     ],
