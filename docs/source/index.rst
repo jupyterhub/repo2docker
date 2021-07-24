@@ -19,7 +19,7 @@ to build images on demand.
 
 Please report `Bugs <https://github.com/jupyterhub/repo2docker/issues>`_,
 `ask questions <https://gitter.im/jupyterhub/binder>`_ or
-`contribute to the project <https://github.com/jupyterhub/repo2docker/blob/master/CONTRIBUTING.md>`_.
+`contribute to the project <https://github.com/jupyterhub/repo2docker/blob/HEAD/CONTRIBUTING.md>`_.
 
 .. toctree::
    :maxdepth: 2
