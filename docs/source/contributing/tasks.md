@@ -115,7 +115,7 @@ test to prevent the bug from coming back/the feature breaking in the future.
 
 ## Creating a Release
 
-We make a release of whatever is on `master` every month. We use "calendar versioning".
+We make a release of whatever is on `main` every month. We use "calendar versioning".
 Monthly releases give users a predictable pattern for when releases are going to
 happen and prevents locking up improvements for fixes for long periods of time.
 
@@ -135,7 +135,7 @@ V=YYYY.MM.0; git tag -am "release $V" $V
 > If you need to make a second (or third) release in a month increment the
 > trailing 0 of the version to 1 (or 2).
 
-Then push this change up to the master repository
+Then push this change up to the main repository
 
 ```
 git push origin --tags

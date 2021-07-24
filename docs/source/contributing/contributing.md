@@ -64,8 +64,8 @@ Read the [next section](#guidelines-to-getting-a-pull-request-merged) for guidel
 6. Wait for a community member to merge your changes.
   Remember that **someone else must merge your pull request**.
   That goes for new contributors and long term maintainers alike.
-  Because `master` is continuously deployed to mybinder.org it is essential
-  that `master` is always in a deployable state.
+  Because `main` is continuously deployed to mybinder.org it is essential
+  that `main` is always in a deployable state.
 7. (optional) Deploy a new version of repo2docker to mybinder.org by [following these steps](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
 
 ## Guidelines to getting a Pull Request merged

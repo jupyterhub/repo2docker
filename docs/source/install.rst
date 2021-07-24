@@ -48,7 +48,7 @@ We recommend installing ``repo2docker`` with the ``pip`` tool::
 
 for the latest release. To install the most recent code from the upstream repository, run::
 
-    python3 -m pip install https://github.com/jupyterhub/repo2docker/archive/master.zip
+    python3 -m pip install https://github.com/jupyterhub/repo2docker/archive/main.zip
 
 For information on using ``repo2docker``, see :ref:`usage`.
 

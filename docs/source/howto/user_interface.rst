@@ -30,7 +30,7 @@ For example, the following Binder URL will open the
 `pyTudes repository <https://github.com/norvig/pytudes>`_
 and begin a JupyterLab session in the ``ipynb`` folder:
 
-https://mybinder.org/v2/gh/norvig/pytudes/master?urlpath=lab/tree/ipynb
+https://mybinder.org/v2/gh/norvig/pytudes/HEAD?urlpath=lab/tree/ipynb
 
 The ``/tree/ipynb`` above is how JupyterLab directs you to a specific file
 or folder.
@@ -61,7 +61,7 @@ For example, the following Binder URL will open the
 `pyTudes repository <https://github.com/norvig/pytudes>`_
 and begin an nteract session in the ``ipynb`` folder:
 
-https://mybinder.org/v2/gh/norvig/pytudes/master?urlpath=nteract/tree/ipynb
+https://mybinder.org/v2/gh/norvig/pytudes/HEAD?urlpath=nteract/tree/ipynb
 
 The ``/tree/ipynb`` above is how nteract directs you to a specific file
 or folder.
@@ -83,7 +83,7 @@ RStudio will be accessible by appending ``/rstudio`` to the URL, like so:
 For example, the following Binder link will open an RStudio session in
 the `R demo repository <https://github.com/binder-examples/r>`_.
 
-http://mybinder.org/v2/gh/binder-examples/r/master?urlpath=rstudio
+http://mybinder.org/v2/gh/binder-examples/r/HEAD?urlpath=rstudio
 
 
 Shiny
@@ -106,7 +106,7 @@ a Shiny app.
 For example, the following Binder link will open a Shiny session in
 the `R demo repository <https://github.com/binder-examples/r>`_.
 
-http://mybinder.org/v2/gh/binder-examples/r/master?urlpath=shiny/bus-dashboard/
+http://mybinder.org/v2/gh/binder-examples/r/HEAD?urlpath=shiny/bus-dashboard/
 
 
 Stencila
