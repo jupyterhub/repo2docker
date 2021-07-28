@@ -24,6 +24,7 @@ API changes
 Bug fixes
 ---------
 
+- Workaround docker-py dependency's failure to import six :pr:`1066:` by :user:`consideratio`
 - fix: add chardet, a not explicitly declared dependency :pr:`1064` by :user:`johnhoman`
 - Add build-base to build stage of docker image :pr:`1051` by :user:`yuvipanda`
 - Fix regression in hydroshare introduced after moving to requests :pr:`1034` by :user:`MridulS`
@@ -31,6 +32,7 @@ Bug fixes
 Other merged PRs
 ----------------
 
+- Rename master branch to main :pr:`1068` by :user:`manics`
 - Remove Pipfile & Pipfile.lock :pr:`1054` by :user:`yuvipanda`
 - Remove CircleCI docs build :pr:`1053` by :user:`yuvipanda`
 - Pin doc requirements to avoid CI breakages :pr:`1052` by :user:`manics`
