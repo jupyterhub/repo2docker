@@ -60,8 +60,8 @@ def setup(app):
 # source_suffix = ['.rst', '.md']
 source_suffix = [".rst", ".md"]
 
-# The master toctree document.
-master_doc = "index"
+# The root toctree document.
+root_doc = master_doc = "index"
 
 # General information about the project.
 project = "repo2docker"
