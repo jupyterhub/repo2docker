@@ -48,7 +48,7 @@ setup(
     version=versioneer.get_version(),
     install_requires=[
         "chardet",
-        "docker",
+        "docker!=5.0.0",
         "entrypoints",
         "escapism",
         "iso8601",
@@ -57,9 +57,6 @@ setup(
         "requests",
         "ruamel.yaml>=0.15",
         "semver",
-        # six installation is a workaround of https://github.com/docker/docker-py/pull/2844.
-        # When removing this, also remove the "rm /tmp/wheelhouse/six*.whl" line in ./Dockerfile
-        "six",
         "toml",
         "traitlets",
     ],

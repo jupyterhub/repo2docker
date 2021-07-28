@@ -11,7 +11,6 @@ RUN mkdir /tmp/wheelhouse \
  && cd /tmp/wheelhouse \
  && pip3 install wheel \
  && pip3 wheel --no-cache-dir /tmp/src \
- && rm /tmp/wheelhouse/six*.whl \
  && ls -l /tmp/wheelhouse
 
 FROM alpine:${ALPINE_VERSION}
