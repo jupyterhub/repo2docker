@@ -8,6 +8,8 @@ dependencies:
   - jupyter-resource-usage==0.6.0
   - jupyterlab==3.1.0
   - jupyterhub-singleuser==1.4.2
-  - nbconvert==6.1.0
-  - notebook==6.4.0
+  # Newer versions require python 3.7
+  - nbconvert==6.0.7
+  # 6.4.0 conda package requires python 3.7
+  - notebook==6.3.0
   - nteract_on_jupyter==2.1.3
