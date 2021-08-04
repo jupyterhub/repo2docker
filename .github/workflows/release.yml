@@ -92,6 +92,6 @@ jobs:
         uses: docker/build-push-action@e1b7f96249f2e4c8e4ac1519b9608c0d48944a1f
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ${{ env.TAGS }}
