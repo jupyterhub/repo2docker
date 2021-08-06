@@ -52,8 +52,8 @@ To update one of the dependencies shared across all `repo2docker` builds, you
 must follow these steps (with more detailed information in the sections below):
 
 1. Make sure you have [Docker](https://www.docker.com/) running on your computer
-2. Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](https://github.com/jupyterhub/repo2docker/blob/master/CONTRIBUTING.md#conda-dependencies))
-3. Make a pull request with your changes ([link](https://github.com/jupyterhub/repo2docker/blob/master/CONTRIBUTING.md#make-a-pull-request))
+2. Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](https://github.com/jupyterhub/repo2docker/blob/HEAD/CONTRIBUTING.md#conda-dependencies))
+3. Make a pull request with your changes ([link](https://github.com/jupyterhub/repo2docker/blob/HEAD/CONTRIBUTING.md#make-a-pull-request))
 
 See the subsections below for more detailed instructions.
 
@@ -115,7 +115,7 @@ test to prevent the bug from coming back/the feature breaking in the future.
 
 ## Creating a Release
 
-We make a release of whatever is on `master` every month. We use "calendar versioning".
+We make a release of whatever is on `main` every month. We use "calendar versioning".
 Monthly releases give users a predictable pattern for when releases are going to
 happen and prevents locking up improvements for fixes for long periods of time.
 
@@ -135,7 +135,7 @@ V=YYYY.MM.0; git tag -am "release $V" $V
 > If you need to make a second (or third) release in a month increment the
 > trailing 0 of the version to 1 (or 2).
 
-Then push this change up to the master repository
+Then push this change up to the main repository
 
 ```
 git push origin --tags

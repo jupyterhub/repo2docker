@@ -5,7 +5,7 @@ Add a new content provider
 Adding a new content provider allows repo2docker to grab repositories from new
 locations on the internet. To do so, you should take the following steps:
 
-#. Sub-class the `ContentProvider class <https://github.com/jupyterhub/repo2docker/blob/master/repo2docker/contentproviders/base.py#L17>`_.
+#. Sub-class the `ContentProvider class <https://github.com/jupyterhub/repo2docker/blob/HEAD/repo2docker/contentproviders/base.py#L17>`_.
    This will give you a skeleton class you can modify to support your new
    content provider.
 #. Implement a **detect()** method for the class. This takes an input

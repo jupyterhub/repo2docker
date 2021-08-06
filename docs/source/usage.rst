@@ -52,7 +52,7 @@ Pytudes_ repository::
 Building the image may take a few minutes.
 
 Pytudes_
-uses a `requirements.txt file <https://github.com/norvig/pytudes/blob/master/requirements.txt>`_
+uses a `requirements.txt file <https://github.com/norvig/pytudes/blob/HEAD/requirements.txt>`_
 to specify its Python environment. Because of this, ``repo2docker`` will use
 ``pip`` to install dependencies listed in this ``requirement.txt`` file, and
 these will be present in the generated Docker image. To learn more about

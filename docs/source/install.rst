@@ -19,7 +19,7 @@ The latest version of Docker, ``18.03``, successfully builds repositories from
 `binder-examples <https://github.com/binder-examples>`_.
 The `BinderHub <https://binderhub.readthedocs.io/>`_ helm chart uses version
 ``17.11.0-ce-dind``.  See the
-`helm chart <https://github.com/jupyterhub/binderhub/blob/master/helm-chart/binderhub/values.yaml#L167>`_
+`helm chart <https://github.com/jupyterhub/binderhub/blob/HEAD/helm-chart/binderhub/values.yaml#L167>`_
 for more details.
 
 Optional: Mercurial
@@ -48,7 +48,7 @@ We recommend installing ``repo2docker`` with the ``pip`` tool::
 
 for the latest release. To install the most recent code from the upstream repository, run::
 
-    python3 -m pip install https://github.com/jupyterhub/repo2docker/archive/master.zip
+    python3 -m pip install https://github.com/jupyterhub/repo2docker/archive/main.zip
 
 For information on using ``repo2docker``, see :ref:`usage`.
 
