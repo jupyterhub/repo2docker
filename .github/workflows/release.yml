@@ -1,4 +1,4 @@
-name: Create a release on pypi.org
+name: Publish
 
 on:
   push:
