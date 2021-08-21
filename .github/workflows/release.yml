@@ -75,7 +75,7 @@ jobs:
           # Allows pushing to registry on localhost:5000
           driver-opts: network=host
 
-      - name: Setup push rights to Docker Hub
+      - name: Setup push rights to Docker registry
         if: env.REGISTRY != 'localhost:5000'
         run: |
           docker login -u "${{ secrets.DOCKER_REGISTRY_USERNAME }}" -p "${{ secrets.DOCKER_REGISTRY_TOKEN }}" "${{ env.REGISTRY }}"
@@ -89,6 +89,10 @@ jobs:
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
             TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main"
           fi
+          if [ "${{ startsWith(github.ref, 'refs/tags/') }}" = "true" ]; then
+            TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          fi
+
           echo "TAGS=$TAGS"
           echo "TAGS=$TAGS" >> $GITHUB_ENV
 
