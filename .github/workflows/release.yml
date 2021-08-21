@@ -50,10 +50,11 @@ jobs:
       - name: Should we push this image to a public registry?
         run: |
           if [ "${{ startsWith(github.ref, 'refs/tags/') || (github.ref == 'refs/heads/main') }}" = "true" ]; then
-              echo "REGISTRY=$DEFAULT_REGISTRY" >> $GITHUB_ENV
+              REGISTRY=$DEFAULT_REGISTRY
           else
-              echo "REGISTRY=localhost:5000" >> $GITHUB_ENV
+              REGISTRY=localhost:5000
           fi
+          echo "REGISTRY=$REGISTRY" >> $GITHUB_ENV
           echo "Publishing to $REGISTRY"
 
       # versioneer requires the full git history for non-tags
