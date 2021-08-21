@@ -38,8 +38,6 @@ jobs:
     env:
       DEFAULT_REGISTRY: quay.io
       IMAGE_NAME: jupyterhub/repo2docker
-    # Secrets are in a separate GitHub environment so only this job and branch has access
-    environment: quay.io
 
     services:
       # So that we can test this in PRs/branches
