@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/jupyterhub/repo2docker/workflows/Continuous%20Integration/badge.svg)](https://github.com/jupyterhub/repo2docker/actions)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
 [![Contribute](https://img.shields.io/badge/I_want_to_contribute!-grey?logo=jupyter)](https://repo2docker.readthedocs.io/en/latest/contributing/contributing.html)
-[![Docker Repository on Quay](https://quay.io/repository/jupyterhub/repo2docker/status "Docker Repository on Quay")](https://quay.io/repository/jupyterhub/repo2docker)
+[![Docker Repository on Quay](https://quay.io/repository/jupyterhub/repo2docker/status "Docker Repository on Quay")](https://quay.io/repository/jupyterhub/repo2docker?tab=tags)
 
 `repo2docker` fetches a git repository and builds a container image based on
 the configuration files found in the repository.
@@ -100,4 +100,4 @@ The philosophy of repo2docker is inspired by
 
 ## Docker Image
 
-Repo2Docker can be run inside a Docker container if access to the Docker Daemon is provided, for example see [BinderHub](https://github.com/jupyterhub/binderhub). Docker images are [published to quay.io](https://quay.io/repository/jupyterhub/repo2docker). The old [Docker Hub image](https://hub.docker.com/r/jupyter/repo2docker) is no longer supported.
+Repo2Docker can be run inside a Docker container if access to the Docker Daemon is provided, for example see [BinderHub](https://github.com/jupyterhub/binderhub). Docker images are [published to quay.io](https://quay.io/repository/jupyterhub/repo2docker?tab=tags). The old [Docker Hub image](https://hub.docker.com/r/jupyter/repo2docker) is no longer supported.
