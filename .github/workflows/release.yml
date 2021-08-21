@@ -35,6 +35,11 @@ jobs:
 
   publish-docker:
     runs-on: ubuntu-20.04
+    env:
+      DEFAULT_REGISTRY: quay.io
+      IMAGE_NAME: jupyterhub/repo2docker
+    # Secrets are in a separate GitHub environment so only this job and branch has access
+    environment: quay.io
 
     services:
       # So that we can test this in PRs/branches
@@ -47,11 +52,11 @@ jobs:
       - name: Should we push this image to a public registry?
         run: |
           if [ "${{ startsWith(github.ref, 'refs/tags/') || (github.ref == 'refs/heads/main') }}" = "true" ]; then
-              # Empty => Docker Hub
-              echo "REGISTRY=" >> $GITHUB_ENV
+              echo "REGISTRY=$DEFAULT_REGISTRY" >> $GITHUB_ENV
           else
-              echo "REGISTRY=localhost:5000/" >> $GITHUB_ENV
+              echo "REGISTRY=localhost:5000" >> $GITHUB_ENV
           fi
+          echo "Publishing to $REGISTRY"
 
       # versioneer requires the full git history for non-tags
       - uses: actions/checkout@v2
@@ -72,18 +77,18 @@ jobs:
           driver-opts: network=host
 
       - name: Setup push rights to Docker Hub
-        if: env.REGISTRY != 'localhost:5000/'
+        if: env.REGISTRY != 'localhost:5000'
         run: |
-          docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
+          docker login -u "${{ secrets.DOCKER_REGISTRY_USERNAME }}" -p "${{ secrets.DOCKER_REGISTRY_TOKEN }}" "${{ env.REGISTRY }}"
 
       # when building jupyter/repo2docker:master
       # also push jupyter/repo2docker:1.2.3-3.abcd1234 (replace + with -)
       - name: Get list of repo2docker docker tags
         run: |
           VERSION=$(python3 -c 'import versioneer; print(versioneer.get_version().replace("+", "-"))')
-          TAGS="${{ env.REGISTRY }}jupyter/repo2docker:$VERSION"
+          TAGS="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$VERSION"
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            TAGS="$TAGS,${{ env.REGISTRY }}jupyter/repo2docker:main"
+            TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main"
           fi
           echo "TAGS=$TAGS"
           echo "TAGS=$TAGS" >> $GITHUB_ENV
