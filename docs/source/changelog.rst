@@ -8,6 +8,8 @@ Version 2021.08.0
 
 `Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.03.0...2021.08.0>`_
 
+The repo2docker container image has moved to `quay.io/jupyterhub/repo2docker <https://quay.io/repository/jupyterhub/repo2docker?tab=tags>`_
+
 New features
 ------------
 
@@ -32,6 +34,8 @@ Bug fixes
 Other merged PRs
 ----------------
 
+- Update README quay.io URL, Add docker latest tag :pr:`1075` by :user:`manics`
+- GitHub workflow build and push to Docker hub :pr:`1071` by :user:`manics`
 - Rename master branch to main :pr:`1068` by :user:`manics`
 - Remove Pipfile & Pipfile.lock :pr:`1054` by :user:`yuvipanda`
 - Remove CircleCI docs build :pr:`1053` by :user:`yuvipanda`
