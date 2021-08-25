@@ -258,9 +258,9 @@ class CondaBuildPack(BaseImage):
 
     @property
     def r_version(self):
-        """Detect the Python version for a given `environment.yml`
+        """Detect the R version for a given `environment.yml`
 
-        Will return 'x.y' if version is found (e.g '3.6'),
+        Will return 'x.y.z' if version is found (e.g '4.1.1'),
         or a Falsy empty string '' if not found.
 
         """
