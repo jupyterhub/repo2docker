@@ -6,7 +6,7 @@ set -ex
 
 cd $(dirname $0)
 
-URL="https://anaconda.org/conda-forge/micromamba/0.15.0/download/linux-64/micromamba-0.15.0-1.tar.bz2"
+URL="https://anaconda.org/conda-forge/micromamba/0.15.2/download/linux-64/micromamba-0.15.2-1.tar.bz2"
 
 # make sure we don't do anything funky with user's $HOME
 # since this is run as root
