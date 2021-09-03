@@ -62,7 +62,7 @@ def execute_cmd(cmd, capture=False, **kwargs):
 def chdir(path):
     """Change working directory to `path` and restore it again
 
-    This context maanger is useful if `path` stops existing during your
+    This context manager is useful if `path` stops existing during your
     operations.
     """
     old_dir = os.getcwd()
