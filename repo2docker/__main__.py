@@ -219,6 +219,13 @@ def get_argparser():
 
     argparser.add_argument("--engine", help="Name of the container engine")
 
+    argparser.add_argument(
+        "--gpus",
+        dest="gpus",
+        action="store_true",
+        help="Expose the GPU device(s) to the containers",
+    )
+
     return argparser
 
 
@@ -280,6 +287,8 @@ def make_r2d(argv=None):
         # Can't push nor run if we aren't building
         args.run = False
         args.push = False
+
+    r2d.gpus = args.gpus
 
     r2d.run = args.run
     r2d.push = args.push

@@ -381,6 +381,14 @@ class Repo2Docker(Application):
         config=True,
     )
 
+    gpus = Bool(
+        False,
+        help="""
+        Expose GPU device(s) when running a container
+        """,
+        config=False,
+    )
+
     engine = Unicode(
         "docker",
         config=True,
@@ -606,12 +614,33 @@ class Repo2Docker(Application):
                     "mode": "rw",
                 }
 
+        if self.gpus:
+            device_requests = [
+                {
+                    "Driver": "nvidia",
+                    "Capabilities": [
+                        ["gpu"],
+                        ["nvidia"],
+                        ["compute"],
+                        ["compat32"],
+                        ["graphics"],
+                        ["utility"],
+                        ["video"],
+                        ["display"],
+                    ],
+                    "Count": -1,  # enable all gpus
+                }
+            ]
+        else:
+            device_requests = []
+
         run_kwargs = dict(
             publish_all_ports=self.all_ports,
             ports=ports,
             command=run_cmd,
             volumes=container_volumes,
             environment=self.environment,
+            device_requests=device_requests,
         )
 
         run_kwargs.update(self.extra_run_kwargs)
