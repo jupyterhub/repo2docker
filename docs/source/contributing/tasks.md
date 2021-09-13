@@ -4,6 +4,13 @@ These are some common tasks to be done as a part of developing
 and maintaining repo2docker. If you'd like more guidance for how
 to do these things, reach out in the [JupyterHub Gitter channel](https://gitter.im/jupyterhub/jupyterhub).
 
+:::{admonition} Set up your development environment first!
+:class: tip
+Before attempting most tasks, follow the directions to [set up your development environment](contributing:local-dev).
+
+Though note that many of these tasks to **not** require Docker.
+:::
+
 ## Running tests
 
 We have a lot of tests for various cases supported by repo2docker in the `tests/`
@@ -51,13 +58,12 @@ all dependencies will have the exact same version installed at all times.
 To update one of the dependencies shared across all `repo2docker` builds, you
 must follow these steps (with more detailed information in the sections below):
 
-1. Make sure you have [Docker](https://www.docker.com/) running on your computer
-2. Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](https://github.com/jupyterhub/repo2docker/blob/HEAD/CONTRIBUTING.md#conda-dependencies))
-3. Make a pull request with your changes ([link](https://github.com/jupyterhub/repo2docker/blob/HEAD/CONTRIBUTING.md#make-a-pull-request))
+1. Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](tasks:conda-dependencies)) 
+2. Make a pull request with your changes ([link](https://github.com/jupyterhub/repo2docker/blob/HEAD/CONTRIBUTING.md#make-a-pull-request))
 
 See the subsections below for more detailed instructions.
 
-
+(tasks:conda-dependencies)=
 ### Conda dependencies
 
 1. There are two files related to conda dependencies. Edit as needed.
@@ -84,34 +90,25 @@ See the subsections below for more detailed instructions.
    ```
 
    This script will resolve dependencies and write them to the respective `.frozen.yml`
-   files. You will need `docker` installed to run this script.
+   files.
 
-3. After the freeze script finishes, a number of files will have been created.
-   Commit the following subset of files to git:
+3. After the freeze script finishes, a number of files will have been **modified**.
+   They roughly follow this pattern:
 
-    ```
-    repo2docker/buildpacks/conda/environment.yml
-    repo2docker/buildpacks/conda/environment.frozen.yml
-    repo2docker/buildpacks/conda/environment.py-2.7.yml
-    repo2docker/buildpacks/conda/environment.py-2.7.frozen.yml
-    repo2docker/buildpacks/conda/environment.py-3.5.frozen.yml
-    repo2docker/buildpacks/conda/environment.py-3.6.frozen.yml
-    ```
+   ```
+   repo2docker/buildpacks/conda/environment*
+   ```
 
-5. Make a pull request; see details below.
+   You should **commit all modified files** to git.
 
-6. Once the pull request is approved (but not yet merged), Update the
+4. Make a Pull Request to the `jupyterhub/repo2docker` repository, with a description
+   of what versions were bumped / what new packages were added and why. If you fix a
+   bug or add new functionality consider adding a new test to prevent the bug from
+   coming back/the feature breaking in the future.
+
+5. Once the pull request is approved (but not yet merged), Update the
    change log (details below) and commit the change log, then update
    the pull request.
-
-
-### Make a Pull Request
-
-Once you've made the commit, please make a Pull Request to the `jupyterhub/repo2docker`
-repository, with a description of what versions were bumped / what new packages were
-added and why. If you fix a bug or add new functionality consider adding a new
-test to prevent the bug from coming back/the feature breaking in the future.
-
 
 ## Creating a Release
 
