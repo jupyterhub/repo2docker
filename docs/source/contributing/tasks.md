@@ -89,7 +89,7 @@ See the subsections below for more detailed instructions.
    python freeze.py
    ```
 
-   This script will resolve dependencies and write them to the respective `.frozen.yml`
+   This script will resolve dependencies and write them to the respective `.lock`
    files.
 
 3. After the freeze script finishes, a number of files will have been **modified**.
