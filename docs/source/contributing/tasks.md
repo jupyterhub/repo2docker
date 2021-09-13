@@ -8,7 +8,7 @@ to do these things, reach out in the [JupyterHub Gitter channel](https://gitter.
 :class: tip
 Before attempting most tasks, follow the directions to [set up your development environment](contributing:local-dev).
 
-Though note that many of these tasks to **not** require Docker.
+Though note that many of these tasks do **not** require Docker.
 :::
 
 ## Running tests
