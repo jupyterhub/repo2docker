@@ -3,10 +3,7 @@
 This is a living document talking about the architecture of repo2docker
 from various perspectives.
 
-```eval_rst
-.. _buildpacks:
-```
-
+(buildpacks)=
 ## Buildpacks
 
 The **buildpack** concept comes from [Heroku](https://devcenter.heroku.com/articles/buildpacks)

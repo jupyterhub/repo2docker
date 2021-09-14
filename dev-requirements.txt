@@ -4,3 +4,4 @@ wheel
 pytest-cov
 pre-commit
 requests_mock
+conda-lock

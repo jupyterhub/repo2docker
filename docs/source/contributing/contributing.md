@@ -91,6 +91,7 @@ These are not hard rules to be enforced by 🚓 but they are suggestions written
   Wait patiently for a reviewer to merge the PR.
   (Remember that **someone else** must merge your PR, even if you have the admin rights to do so.)
 
+(contributing:local-dev)=
 ## Setting up for Local Development
 
 To develop & test repo2docker locally, you need:
