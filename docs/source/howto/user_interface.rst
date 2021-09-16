@@ -25,8 +25,8 @@ or folder.
 To learn more about URLs in JupyterLab and Jupyter Notebook, visit
 `starting JupyterLab <http://jupyterlab.readthedocs.io/en/latest/getting_started/starting.html>`_.
 
-Classic Notebook
-================
+Classic Notebook Interface
+==========================
 
 The classic notebook is also available without any configuration.
 To switch to the classic notebook,
