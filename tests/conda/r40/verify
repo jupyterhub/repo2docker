@@ -1,0 +1,8 @@
+#!/bin/sh
+
+jupyter serverextension list 2>&1 | grep jupyter_server_proxy
+jupyter nbextension list 2>&1 | grep jupyter_server_proxy
+
+R -e "library('ggplot2')"
+R -e "print(version)"
+R -e 'if (! startsWith(paste(version$major,version$minor,sep="."),"4.0")) quit("yes", 1)'

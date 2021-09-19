@@ -1,0 +1,7 @@
+#!/usr/bin/env Rscript
+library('ggplot2')
+
+print(version)
+if (! startsWith(paste(version$major,version$minor,sep="."),"4.0")) {
+  quit("yes", 1)
+}
