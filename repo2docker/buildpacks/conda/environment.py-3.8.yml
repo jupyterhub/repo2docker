@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2021-09-12 12:42:45 UTC
+# Generated on 2021-10-06 07:33:42 UTC
 channels:
 - conda-forge
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
 - ipywidgets==7.6.3
 - jupyter-offlinenotebook==0.2.1
 - jupyter-resource-usage==0.6.0
-- jupyterlab==3.1.11
+- jupyterlab==3.1.17
 - jupyterhub-singleuser==1.4.2
   # Newer versions require python 3.7
 - nbconvert==6.0.7
