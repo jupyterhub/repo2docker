@@ -6,14 +6,18 @@ set -ex
 
 cd $(dirname $0)
 
-URL="https://anaconda.org/conda-forge/micromamba/0.16.0/download/linux-64/micromamba-0.16.0-0.tar.bz2"
+# URL="https://anaconda.org/conda-forge/micromamba/0.16.0/download/linux-64/micromamba-0.16.0-0.tar.bz2"
+URL="https://github.com/mamba-org/boa-forge/releases/download/micromamba-nightly-21.10.8.959/micromamba-nightly-linux-64"
 
 # make sure we don't do anything funky with user's $HOME
 # since this is run as root
 unset HOME
 mkdir -p ${CONDA_DIR}
 
-time wget -qO- ${URL} | tar -xvj bin/micromamba
+time wget -qO- ${URL}  # | tar -xvj bin/micromamba
+mkdir -p /tmp/bin
+mv micromamba-nightly-linux-64 /tmp/bin/micromamba
+chmod 0755 /tmp/bin/micromamba
 
 export MAMBA_ROOT_PREFIX=${CONDA_DIR}
 export MAMBA_EXE="/tmp/bin/micromamba"
