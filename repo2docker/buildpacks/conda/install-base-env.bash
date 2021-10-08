@@ -14,7 +14,7 @@ URL="https://github.com/mamba-org/boa-forge/releases/download/micromamba-nightly
 unset HOME
 mkdir -p ${CONDA_DIR}
 
-time wget -qO- ${URL}  # | tar -xvj bin/micromamba
+time wget ${URL}
 mkdir -p /tmp/bin
 mv micromamba-nightly-linux-64 /tmp/bin/micromamba
 chmod 0755 /tmp/bin/micromamba
