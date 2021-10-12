@@ -7,7 +7,7 @@ set -ex
 cd $(dirname $0)
 
 # URL="https://anaconda.org/conda-forge/micromamba/0.16.0/download/linux-64/micromamba-0.16.0-0.tar.bz2"
-URL="https://github.com/mamba-org/boa-forge/releases/download/micromamba-nightly-21.10.8.959/micromamba-nightly-linux-64"
+URL="https://github.com/mamba-org/boa-forge/releases/download/micromamba-nightly-21.10.12.1026/micromamba-nightly-linux-64"
 
 # make sure we don't do anything funky with user's $HOME
 # since this is run as root
@@ -36,7 +36,7 @@ channels:
 auto_update_conda: false
 show_channel_urls: true
 update_dependencies: false
-channel_priority: strict
+# channel_priority: flexible
 EOT
 
 echo "installing notebook env:"
