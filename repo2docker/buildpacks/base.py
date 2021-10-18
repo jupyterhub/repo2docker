@@ -37,16 +37,18 @@ ENV SHELL /bin/bash
 # Set up user
 ARG NB_USER
 ARG NB_UID
+ARG NB_GID=${NB_UID}
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
 RUN groupadd \
-        --gid ${NB_UID} \
+        --gid ${NB_GID} \
+        --non-unique \
         ${NB_USER} && \
     useradd \
         --comment "Default user" \
         --create-home \
-        --gid ${NB_UID} \
+        --gid ${NB_GID} \
         --no-log-init \
         --shell /bin/bash \
         --uid ${NB_UID} \
@@ -572,7 +574,7 @@ class BuildPack:
             tar.uname = ""
             tar.gname = ""
             tar.uid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
-            tar.gid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
+            tar.gid = int(build_args.get("NB_GID", DEFAULT_NB_UID))
             return tar
 
         for src in sorted(self.get_build_script_files()):
