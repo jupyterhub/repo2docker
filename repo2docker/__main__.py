@@ -180,6 +180,12 @@ def get_argparser():
         "--user-name", help="Username of the primary user in the image"
     )
 
+    argparser.add_argument(
+        "--group-id",
+        help="Group ID of the primary user in the image, defaults to same as user ID",
+        type=int,
+    )
+
     # Process the environment options the same way that docker does, as
     # they are passed directly to docker as the environment to use. This
     # requires a custom action for argparse.
@@ -334,6 +340,9 @@ def make_r2d(argv=None):
             "Please see repo2docker --help for more details.\n"
         )
         sys.exit(1)
+    # Check group-id not None because gid=0 is a valid value
+    if args.group_id is not None:
+        r2d.group_id = args.group_id
 
     if args.build_memory_limit:
         # if the string only contains numerals we assume it should be an int
