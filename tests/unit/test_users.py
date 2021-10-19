@@ -89,7 +89,7 @@ def test_user_groups():
                 "--",
                 "/bin/bash",
                 "-c",
-                "id -u > id && id -g > grp && pwd > pwd && whoami > name && echo -n $USER > env_user".format(
+                "id -u > id && id -g > grp && stat --format %u:%g grp > id_grp && pwd > pwd && whoami > name && echo -n $USER > env_user".format(
                     ts
                 ),
             ]
@@ -106,3 +106,5 @@ def test_user_groups():
         # When group-id specified, group id in container is same as specified
         with open(os.path.join(tmpdir, "grp")) as f:
             assert f.read().strip() == groupid
+        with open(os.path.join(tmpdir, "id_grp")) as f:
+            assert f.read().strip() == userid + ":" + groupid
