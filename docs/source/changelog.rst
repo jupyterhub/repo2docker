@@ -3,6 +3,179 @@ Changelog
 =========
 
 
+Version 2021.08.0
+=================
+
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.03.0...2021.08.0>`_
+
+The repo2docker container image has moved to `quay.io/jupyterhub/repo2docker <https://quay.io/repository/jupyterhub/repo2docker?tab=tags>`_
+
+New features
+------------
+
+- always unpack a single zenodo zip :pr:`1043` by :user:`akhmerov`
+- Refreeze with conda-lock :pr:`1024` by :user:`minrk`
+- Refine buffered output debugging :pr:`1016` by :user:`minrk`
+- reimplement entrypoint in Python :pr:`1014` by :user:`minrk`
+- Fetch available Julia versions from hosted json :pr:`994` by :user:`tomyun`
+- Define an interface for Container engines :pr:`848` by :user:`manics`
+
+API changes
+-----------
+
+Bug fixes
+---------
+
+- Workaround docker-py dependency's failure to import six :pr:`1066:` by :user:`consideratio`
+- fix: add chardet, a not explicitly declared dependency :pr:`1064` by :user:`johnhoman`
+- Add build-base to build stage of docker image :pr:`1051` by :user:`yuvipanda`
+- Fix regression in hydroshare introduced after moving to requests :pr:`1034` by :user:`MridulS`
+
+Other merged PRs
+----------------
+
+- Update README quay.io URL, Add docker latest tag :pr:`1075` by :user:`manics`
+- GitHub workflow build and push to Docker hub :pr:`1071` by :user:`manics`
+- Rename master branch to main :pr:`1068` by :user:`manics`
+- Remove Pipfile & Pipfile.lock :pr:`1054` by :user:`yuvipanda`
+- Remove CircleCI docs build :pr:`1053` by :user:`yuvipanda`
+- Pin doc requirements to avoid CI breakages :pr:`1052` by :user:`manics`
+- Stop using deprecated add_stylesheet in sphinx :pr:`1050` by :user:`yuvipanda`
+- Add study participation notice to readme :pr:`1046` by :user:`sgibson91`
+- Bump urllib3 from 1.26.4 to 1.26.5 :pr:`1045` by :user:`dependabot`
+- State newly used installation command :pr:`1040` by :user:`fkohrt`
+- Bump pyyaml from 5.1.1 to 5.4 :pr:`1029` by :user:`dependabot`
+- Set default Julia version to 1.6 :pr:`1028` by :user:`tomyun`
+- Fix logo URL in README :pr:`1027` by :user:`betatim`
+
+
+Version 2021.03.0
+=================
+
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.01.0...2021.03.0>`_
+
+New features
+------------
+
+- freeze with mamba, add 3.9 :pr:`1017` by :user:`minrk`
+- Add GH workflow to push releases to PYPi and introduce CalVer :pr:`1004` by :user:`betatim`
+- Add entrypoint script which automatically propagates *_PROXY env vars… :pr:`1003` ([@g-braeunlich](https://github.com/g-braeunlich))
+- Update to JupyterLab 3.0 :pr:`996` by :user:`jtpio`
+- Fetch available Julia versions from hosted json :pr:`994` by :user:`tomyun`
+- Add a contentprovider for Software Heritage persistent ID (SWHID) :pr:`988` by :user:`douardda`
+- Stream jupyter server logs to a file :pr:`987` by :user:`betatim`
+- add 4.0, 4.0.2 to list of supported R versions :pr:`960` by :user:`minrk`
+
+API changes
+-----------
+
+Bug fixes
+---------
+
+- fix dataverse regression introduced in last release :pr:`1011` by :user:`MridulS`
+- buildpacks.r: dont use apt-key directly to respect *_proxy env vars :pr:`1019` ([@g-braeunlich](https://github.com/g-braeunlich))
+
+Other merged PRs
+----------------
+
+- Cleanup install_requires including duplicates :pr:`1020` by :user:`manics`
+- bump docker action version :pr:`1018` by :user:`minrk`
+- bump python in circleci  test :pr:`1013` by :user:`minrk`
+- Investigating the missing logs :pr:`1008` by :user:`betatim`
+- Experiment with different install mechanism to get code coverage stats again :pr:`982` by :user:`betatim`
+
+
+Version 2021.01.0
+=================
+
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/0.11.0...2021.01.0>`_
+
+New features
+------------
+
+- Replace urllib by requests in contentproviders :pr:`993` by :user:`douardda`
+- Use mambaforge instead of miniforge :pr:`992` by :user:`SylvainCorlay`
+- buildpacks/nix: 2.3 -> 2.3.9 :pr:`991` by :user:`FRidh`
+- Drop support for stencila :pr:`985` by :user:`minrk`
+- Add Julia 1.5.3 support :pr:`984` by :user:`tomyun`
+- Update to node 14 :pr:`983` by :user:`jtpio`
+- Mamba 0.6.1 :pr:`979` by :user:`minrk`
+- Ensure REPO_DIR owned by NB_USER :pr:`975` by :user:`tomyun`
+- Add Julia 1.5.2 support :pr:`965` by :user:`tomyun`
+- Mamba number three :pr:`962` by :user:`SylvainCorlay`
+- Add a Mercurial contentprovider :pr:`950` by :user:`paugier`
+- Add Julia 1.5.1 support :pr:`949` by :user:`tomyun`
+- Handle requirements.txt with `--pre` lines :pr:`943` by :user:`betatim`
+- Add Julia 1.5.0 support :pr:`938` by :user:`tomyun`
+- Update JupyterLab to 2.2.0 :pr:`933` by :user:`manics`
+- Bump nix version to 2.3 :pr:`915` by :user:`jboynyc`
+- Add nbresuse==0.3.3 (full freeze.py) :pr:`904` by :user:`manics`
+- Add Julia 1.4.2 support :pr:`899` by :user:`davidanthoff`
+- Bump version of irkernel for R 4.0 :pr:`892` by :user:`betatim`
+- chmod start script from repo2docker-entrypoint :pr:`886` by :user:`danlester`
+- pypi jupyter-offlinenotebook==0.1.0 :pr:`880` by :user:`manics`
+- Add support for Julia 1.4.1 :pr:`878` by :user:`davidanthoff`
+- Change --env option to work like docker's :pr:`874` by :user:`hwine`
+- Add support for Julia 1.4.0 :pr:`870` by :user:`davidanthoff`
+- Update server proxy and rsession proxy :pr:`869` by :user:`betatim`
+- Use miniforge instead of miniconda to get conda :pr:`859` by :user:`yuvipanda`
+- If looking for latest MRAN URL try earlier snapshots too :pr:`851` by :user:`manics`
+- Add jupyter-offlinenotebook extension :pr:`845` by :user:`betatim`
+
+API changes
+-----------
+
+- Bump Python requirement to 3.6 from 3.5 :pr:`951` by :user:`betatim`
+
+Bug fixes
+---------
+
+- buildpacks/nix: disable sandboxing (bugfix) :pr:`990` by :user:`FRidh`
+- avoid deprecated import of collections.abc :pr:`924` by :user:`minrk`
+- Add missing “:” for R code :pr:`900` by :user:`adamhsparks`
+- Fix RShiny proxy :pr:`893` by :user:`betatim`
+- Work around a Julia bug :pr:`879` by :user:`davidanthoff`
+- Fix typo :pr:`862` by :user:`jtpio`
+
+Other merged PRs
+----------------
+
+- Fix figshare test :pr:`1001` by :user:`manics`
+- Weekly test of master to check for external failures :pr:`998` by :user:`manics`
+- Remove reference to `master` branch from CLI doc :pr:`977` by :user:`betatim`
+- add chown to COPY commands to reduce layer count :pr:`969` by :user:`bollwyvl`
+- set TIMEFORMAT for timed bash conda commands :pr:`966` by :user:`manics`
+- Disable jupyterlab extension build minimize :pr:`963` by :user:`manics`
+- Bump Black version to 20.8b1 and use --target-version=py36 :pr:`955` by :user:`paugier`
+- Add workflow to build Docker image :pr:`954` by :user:`manics`
+- Crosslink 'Configuring your repository' with usage :pr:`952` by :user:`manics`
+- Add `www-frame-origin=same` to /etc/rstudio/rserver.conf :pr:`944` ([@rkevin-arch](https://github.com/rkevin-arch))
+- GitHub Actions :pr:`942` by :user:`minrk`
+- stop running tests on travis :pr:`940` by :user:`minrk`
+- update repo URLs for jupyterhub/repo2docker :pr:`939` by :user:`minrk`
+- Upgrade custom test infrastructure for pytest 6.0.0 :pr:`936` by :user:`betatim`
+- validate_image_name: mention lowercase, fix formatting :pr:`934` by :user:`manics`
+- Update snapshot date for simple R test :pr:`930` by :user:`betatim`
+- little improvement for testing binder_dir :pr:`928` by :user:`bitnik`
+- update docs for config dirs :pr:`927` by :user:`bitnik`
+- doc: runtime.txt installs python x.y (& concise rewording) :pr:`914` by :user:`mdeff`
+- doc: environment.yml installs a conda env, not only python :pr:`913` by :user:`mdeff`
+- Make the memory limit test simpler :pr:`912` by :user:`betatim`
+- Add gitpod.io config for docs :pr:`908` by :user:`betatim`
+- fix repo2docker logo in Sphinx docs :pr:`906` by :user:`trallard`
+- Update Dockerfile to add Docker :pr:`896` by :user:`hamelsmu`
+- Document test failure workarounds :pr:`890` by :user:`hwine`
+- Workaround Docker issue impacting some tests on macOS :pr:`882` by :user:`hwine`
+- [docs] fix grammatical error in section title :pr:`872` by :user:`jameslamb`
+- Fix long form args requirements :pr:`866` by :user:`betatim`
+- Adopt new Sphinx theme name :pr:`864` by :user:`xhochy`
+- Document loose conda export with --from-history :pr:`863` by :user:`xhochy`
+- utils.execute_cmd flush buffer if no EOL :pr:`850` by :user:`manics`
+- Update black 19.10b0, target Python 3.5 :pr:`849` by :user:`manics`
+- docs: postBuild warn about shell script errors being ignored :pr:`844` by :user:`manics`
+- Update changelog for 0.11.0 :pr:`842` by :user:`betatim`
+
+
 Version 0.11.0
 ==============
 

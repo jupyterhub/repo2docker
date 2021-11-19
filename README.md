@@ -1,9 +1,9 @@
 # <a href="https://github.com/jupyterhub/repo2docker"><img src="https://raw.githubusercontent.com/jupyterhub/repo2docker/8731ecf0967cc5fde028c456f2b92be651ebbc18/docs/source/_static/images/repo2docker.png" height="48px" /> repo2docker</a>
 
-[![Deploy Status](https://travis-ci.org/jupyterhub/repo2docker.svg?branch=master)](https://travis-ci.org/jupyterhub/repo2docker)
 [![Build Status](https://github.com/jupyterhub/repo2docker/workflows/Continuous%20Integration/badge.svg)](https://github.com/jupyterhub/repo2docker/actions)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
 [![Contribute](https://img.shields.io/badge/I_want_to_contribute!-grey?logo=jupyter)](https://repo2docker.readthedocs.io/en/latest/contributing/contributing.html)
+[![Docker Repository on Quay](https://img.shields.io/badge/quay.io-container-green "Docker Repository on Quay")](https://quay.io/repository/jupyterhub/repo2docker?tab=tags)
 
 `repo2docker` fetches a git repository and builds a container image based on
 the configuration files found in the repository.
@@ -96,3 +96,8 @@ files that ``repo2docker`` can use, see the
 
 The philosophy of repo2docker is inspired by
 [Heroku Build Packs](https://devcenter.heroku.com/articles/buildpacks).
+
+
+## Docker Image
+
+Repo2Docker can be run inside a Docker container if access to the Docker Daemon is provided, for example see [BinderHub](https://github.com/jupyterhub/binderhub). Docker images are [published to quay.io](https://quay.io/repository/jupyterhub/repo2docker?tab=tags). The old [Docker Hub image](https://hub.docker.com/r/jupyter/repo2docker) is no longer supported.

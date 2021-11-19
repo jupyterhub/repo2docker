@@ -64,8 +64,8 @@ Read the [next section](#guidelines-to-getting-a-pull-request-merged) for guidel
 6. Wait for a community member to merge your changes.
   Remember that **someone else must merge your pull request**.
   That goes for new contributors and long term maintainers alike.
-  Because `master` is continuously deployed to mybinder.org it is essential
-  that `master` is always in a deployable state.
+  Because `main` is continuously deployed to mybinder.org it is essential
+  that `main` is always in a deployable state.
 7. (optional) Deploy a new version of repo2docker to mybinder.org by [following these steps](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
 
 ## Guidelines to getting a Pull Request merged
@@ -91,6 +91,7 @@ These are not hard rules to be enforced by 🚓 but they are suggestions written
   Wait patiently for a reviewer to merge the PR.
   (Remember that **someone else** must merge your PR, even if you have the admin rights to do so.)
 
+(contributing:local-dev)=
 ## Setting up for Local Development
 
 To develop & test repo2docker locally, you need:
@@ -120,10 +121,6 @@ After cloning the repository, you should set up an
 isolated environment to install libraries required for running / developing
 repo2docker.
 
-There are many ways to do this but here we present you with two approaches: `virtual environment` or `pipenv`.
-
-- Using `virtual environment`
-
 ```bash
 python3 -m venv .
 source bin/activate
@@ -134,18 +131,6 @@ pip3 install black
 ```
 
 This should install all the libraries required for testing & running repo2docker!
-
-- Using `pipenv`
-
-Note that you will need to install pipenv first using `pip3 install pipenv`.
-Then from the root directory of this project you can use the following commands:
-
-```bash
-pipenv install --dev
-```
-
-This should install both the dev and docs requirements at once!
-
 
 ### Code formatting
 

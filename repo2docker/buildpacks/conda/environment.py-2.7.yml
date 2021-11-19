@@ -1,4 +1,7 @@
+channels:
+- conda-forge
 dependencies:
 - python=2.7.*
+- pip
 - ipykernel==4.8.2
 - wcwidth==0.1.9

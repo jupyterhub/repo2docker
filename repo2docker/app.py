@@ -16,9 +16,8 @@ import getpass
 import shutil
 import tempfile
 import time
-
-from .engine import BuildError, ContainerEngineException, ImageLoadError
 from urllib.parse import urlparse
+
 import escapism
 from pythonjsonlogger import jsonlogger
 
@@ -38,6 +37,7 @@ from .buildpacks import (
     RBuildPack,
 )
 from . import contentproviders
+from .engine import BuildError, ContainerEngineException, ImageLoadError
 from .utils import ByteSpecification, chdir
 
 
@@ -582,6 +582,7 @@ class Repo2Docker(Application):
                 "--port",
                 port,
                 "--NotebookApp.custom_display_url=http://{}:{}".format(host_name, port),
+                "--NotebookApp.default_url=/lab",
             ]
             ports = {"%s/tcp" % port: port}
         else:
@@ -629,9 +630,12 @@ class Repo2Docker(Application):
         Displaying logs while it's running
         """
 
+        last_timestamp = None
         try:
-            for line in container.logs(stream=True):
-                self.log.info(line.decode("utf-8"), extra=dict(phase="running"))
+            for line in container.logs(stream=True, timestamps=True):
+                line = line.decode("utf-8")
+                last_timestamp, line = line.split(" ", maxsplit=1)
+                self.log.info(line, extra=dict(phase="running"))
 
         finally:
             container.reload()
@@ -646,9 +650,9 @@ class Repo2Docker(Application):
                 "Container finished running.\n".upper(), extra=dict(phase="running")
             )
             # are there more logs? Let's send them back too
-            late_logs = container.logs().decode("utf-8")
+            late_logs = container.logs(since=last_timestamp).decode("utf-8")
             for line in late_logs.split("\n"):
-                self.log.info(line + "\n", extra=dict(phase="running"))
+                self.log.debug(line + "\n", extra=dict(phase="running"))
 
             container.remove()
             if exit_code:

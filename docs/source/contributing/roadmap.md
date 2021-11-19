@@ -60,7 +60,7 @@ creating the environment in which a piece of software can be executed.
 
 The "Now" items are being actively worked on by the project:
 * reduce documentation typos and syntax errors
-* increase test coverage to 80% (see https://codecov.io/gh/jupyterhub/repo2docker/tree/master/repo2docker for low coverage files)
+* increase test coverage to 80% (see https://codecov.io/gh/jupyterhub/repo2docker/tree/main/repo2docker for low coverage files)
 * mounting repository contents in locations that is not `/home/jovyan`
 * investigate options for pinning repo2docker versions ([#490](https://github.com/jupyterhub/repo2docker/issues/490))
 

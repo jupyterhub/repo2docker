@@ -47,9 +47,11 @@ setup(
     name="jupyter-repo2docker",
     version=versioneer.get_version(),
     install_requires=[
-        "docker",
+        "chardet",
+        "docker!=5.0.0",
         "entrypoints",
         "escapism",
+        "iso8601",
         "jinja2",
         "python-json-logger",
         "requests",

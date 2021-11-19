@@ -11,32 +11,40 @@ This is controlled with various :ref:`configuration files <config-files>`.
 JupyterLab
 ==========
 
-You do not need any extra configuration in order to allow the use
-of the JupyterLab interface. You can launch JupyterLab from within a user
-session by opening the Jupyter Notebook and appending ``/lab`` to the end of the URL
-like so:
+JupyterLab is the default interface for repo2docker.
 
-.. code-block:: none
-
-   http(s)://<server:port>/lab
-
-To switch back to the classic notebook, add ``/tree`` to the URL like so:
-
-.. code-block:: none
-
-   http(s)://<server:port>/tree
-
-For example, the following Binder URL will open the
+The following Binder URL will open the
 `pyTudes repository <https://github.com/norvig/pytudes>`_
 and begin a JupyterLab session in the ``ipynb`` folder:
 
-https://mybinder.org/v2/gh/norvig/pytudes/master?urlpath=lab/tree/ipynb
+https://mybinder.org/v2/gh/norvig/pytudes/HEAD?urlpath=lab/tree/ipynb
 
 The ``/tree/ipynb`` above is how JupyterLab directs you to a specific file
 or folder.
 
 To learn more about URLs in JupyterLab and Jupyter Notebook, visit
 `starting JupyterLab <http://jupyterlab.readthedocs.io/en/latest/getting_started/starting.html>`_.
+
+Classic Notebook Interface
+==========================
+
+The classic notebook is also available without any configuration.
+To switch to the classic notebook,
+You do not need any extra configuration in order to allow the use
+of the classic notebook interface.
+You can launch the classic notebook interface from within a user
+session by opening JupyterLab and replacing ``/lab/`` with ``/tree/`` in the default juptyerlab URL
+like so:
+
+.. code-block:: none
+
+   http(s)://<server:port>/tree/
+
+And you can switch back to JupyterLab by replacing ``/tree/`` with ``/lab/``:
+
+.. code-block:: none
+
+   http(s)://<server:port>/lab/
 
 
 nteract
@@ -61,7 +69,7 @@ For example, the following Binder URL will open the
 `pyTudes repository <https://github.com/norvig/pytudes>`_
 and begin an nteract session in the ``ipynb`` folder:
 
-https://mybinder.org/v2/gh/norvig/pytudes/master?urlpath=nteract/tree/ipynb
+https://mybinder.org/v2/gh/norvig/pytudes/HEAD?urlpath=nteract/tree/ipynb
 
 The ``/tree/ipynb`` above is how nteract directs you to a specific file
 or folder.
@@ -83,7 +91,7 @@ RStudio will be accessible by appending ``/rstudio`` to the URL, like so:
 For example, the following Binder link will open an RStudio session in
 the `R demo repository <https://github.com/binder-examples/r>`_.
 
-http://mybinder.org/v2/gh/binder-examples/r/master?urlpath=rstudio
+http://mybinder.org/v2/gh/binder-examples/r/HEAD?urlpath=rstudio
 
 
 Shiny
@@ -106,7 +114,7 @@ a Shiny app.
 For example, the following Binder link will open a Shiny session in
 the `R demo repository <https://github.com/binder-examples/r>`_.
 
-http://mybinder.org/v2/gh/binder-examples/r/master?urlpath=shiny/bus-dashboard/
+http://mybinder.org/v2/gh/binder-examples/r/HEAD?urlpath=shiny/bus-dashboard/
 
 
 Stencila

@@ -29,7 +29,7 @@ can be found on this page (and to the right).
 that lets you install any kind of package,
 including Python, R, and C/C++ packages.
 ``repo2docker`` does not use your ``environment.yml`` to create and activate a new conda environment.
-Rather, it updates a base conda environment `defined here <https://github.com/jupyterhub/repo2docker/blob/master/repo2docker/buildpacks/conda/environment.yml>`_ with the packages listed in your ``environment.yml``.
+Rather, it updates a base conda environment `defined here <https://github.com/jupyterhub/repo2docker/blob/HEAD/repo2docker/buildpacks/conda/environment.yml>`_ with the packages listed in your ``environment.yml``.
 This means that the environment will always have the same default name, not the name
 specified in your ``environment.yml``.
 
@@ -37,7 +37,7 @@ specified in your ``environment.yml``.
 
    You can install files from pip in your ``environment.yml`` as well.
    For example, see the `binder-examples environment.yml
-   <https://github.com/binder-examples/python-conda_pip/blob/master/environment.yml>`_
+   <https://github.com/binder-examples/python-conda_pip/blob/HEAD/environment.yml>`_
    file.
 
 You can also specify which Python version to install in your built environment
@@ -73,7 +73,7 @@ both kinds.
 
 This specifies a list of Python packages that should be installed in your
 environment. Our
-`requirements.txt example <https://github.com/binder-examples/requirements/blob/master/requirements.txt>`_
+`requirements.txt example <https://github.com/binder-examples/requirements/blob/HEAD/requirements.txt>`_
 on GitHub shows a typical requirements file.
 
 
@@ -120,7 +120,7 @@ with ``REQUIRE`` and ``environment.yml``, visit
 This is used to install R libraries pinned to a specific snapshot on
 `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
 To set the date of the snapshot add a runtime.txt_.
-For an example ``install.R`` file, visit our `example install.R file <https://github.com/binder-examples/r/blob/master/install.R>`_.
+For an example ``install.R`` file, visit our `example install.R file <https://github.com/binder-examples/r/blob/HEAD/install.R>`_.
 
 
 .. _apt.txt:
@@ -132,7 +132,7 @@ A list of Debian packages that should be installed. The base image used is usual
 version of Ubuntu.
 
 We use ``apt.txt``, for example, to install LaTeX in our
-`example apt.txt for LaTeX <https://github.com/binder-examples/latex/blob/master/apt.txt>`_.
+`example apt.txt for LaTeX <https://github.com/binder-examples/latex/blob/HEAD/apt.txt>`_.
 
 
 .. _DESCRIPTION:
@@ -162,7 +162,7 @@ You should include ``set -e`` or the equivalent at the start of the script to av
 
 An example use-case of ``postBuild`` file is JupyterLab's demo on mybinder.org.
 It uses a ``postBuild`` file in a folder called ``binder`` to `prepare
-their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/master/binder/postBuild>`_.
+their demo for binder <https://github.com/jupyterlab/jupyterlab-demo/blob/HEAD/binder/postBuild>`_.
 
 
 .. _start:
@@ -204,12 +204,12 @@ For these cases, we have a special file, ``runtime.txt``.
    ``runtime.txt`` will be ignored).
 
 Have ``python-x.y`` in ``runtime.txt`` to run the repository with Python version x.y.
-See our `Python2 example repository <https://github.com/binder-examples/python2_runtime/blob/master/runtime.txt>`_.
+See our `Python2 example repository <https://github.com/binder-examples/python2_runtime/blob/HEAD/runtime.txt>`_.
 
 Have ``r-<RVERSION>-<YYYY>-<MM>-<DD>`` in ``runtime.txt`` to run the repository with R version RVERSION and libraries from a YYYY-MM-DD snapshot of `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
 RVERSION can be set to 3.4, 3.5, 3.6, or to patch releases for the 3.5 and 3.6 series.
 If you do not specify a version, the latest release will be used (currently R 3.6).
-See our `R example repository <https://github.com/binder-examples/r/blob/master/runtime.txt>`_.
+See our `R example repository <https://github.com/binder-examples/r/blob/HEAD/runtime.txt>`_.
 
 .. _default.nix:
 
