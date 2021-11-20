@@ -73,6 +73,7 @@ class DockerEngine(ContainerEngine):
         dockerfile="",
         fileobj=None,
         path="",
+        labels=None,
         **kwargs,
     ):
         return self._apiclient.build(
@@ -87,6 +88,7 @@ class DockerEngine(ContainerEngine):
             dockerfile=dockerfile,
             fileobj=fileobj,
             path=path,
+            labels=labels,
             **kwargs,
         )
 
