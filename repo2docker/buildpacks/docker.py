@@ -52,6 +52,7 @@ class DockerBuildPack(BuildPack):
             buildargs=build_args,
             container_limits=limits,
             cache_from=cache_from,
+            labels=self.get_labels(),
         )
 
         build_kwargs.update(extra_build_kwargs)
