@@ -1,25 +1,31 @@
 # py3.5 conda packages are no longer being updated as of 12/2018
+# note: one update 11/2021 to shift nodejs into conda-env
 # this file is hand-maintained now
 # and should only receive security fixes, no new features
 @EXPLICIT
-https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-main.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/ca-certificates-2018.10.15-ha4d7672_0.tar.bz2
-https://repo.anaconda.com/pkgs/main/linux-64/libstdcxx-ng-7.2.0-hdf63c60_3.conda
-https://repo.anaconda.com/pkgs/main/linux-64/libgcc-ng-7.2.0-hdf63c60_3.conda
+https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/ca-certificates-2021.10.8-ha878542_0.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/libstdcxx-ng-11.2.0-he4da1e4_11.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/libgomp-11.2.0-h1d223b6_11.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-1_gnu.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/libgcc-ng-11.2.0-h1d223b6_11.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/bzip2-1.0.6-h470a237_2.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/gmp-6.1.2-hfc679d8_0.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/libffi-3.2.1-hfc679d8_5.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/icu-68.2-h9c3ff4c_0.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/libffi-3.3-h58526e2_2.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/libsodium-1.0.16-h470a237_1.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.1-hfc679d8_1.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/openssl-1.0.2p-h470a237_1.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/xz-5.2.4-h470a237_1.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/libuv-1.42.0-h7f98852_0.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.2-h58526e2_4.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/openssl-1.1.1l-h7f98852_0.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/xz-5.2.5-h516909a_1.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/zlib-1.2.11-h470a237_3.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/nodejs-14.17.4-h92b4a50_0.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/pandoc-1.19.2-0.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/readline-7.0-haf1bffa_1.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.9-ha92aebf_0.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/readline-8.1-h46c0cb4_0.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.11-h27826a3_1.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/zeromq-4.2.5-hfc679d8_6.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/sqlite-3.25.3-hb1c47c0_0.tar.bz2
-https://conda.anaconda.org/conda-forge/linux-64/python-3.5.5-h5001a0f_2.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/sqlite-3.36.0-h9cd32fc_2.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/python-3.5.6-h12debd9_1.conda
 https://conda.anaconda.org/conda-forge/noarch/backcall-0.1.0-py_0.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/certifi-2018.8.24-py35_1001.tar.bz2
 https://conda.anaconda.org/conda-forge/noarch/decorator-4.3.0-py_0.tar.bz2

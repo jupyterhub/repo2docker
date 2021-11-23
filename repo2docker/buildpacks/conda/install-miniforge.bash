@@ -47,6 +47,7 @@ time mamba install -y mamba==${MAMBA_VERSION}
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
 
+
 time mamba create -p ${NB_PYTHON_PREFIX} --file "${NB_ENVIRONMENT_FILE}"
 
 if [[ ! -z "${NB_REQUIREMENTS_FILE:-}" ]]; then
@@ -90,3 +91,6 @@ chown -R $NB_USER:$NB_USER ${CONDA_DIR}
 
 mamba list -n root
 mamba list -p ${NB_PYTHON_PREFIX}
+
+# Set NPM config
+${NB_PYTHON_PREFIX}/bin/npm config --global set prefix ${NPM_DIR}
