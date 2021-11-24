@@ -248,6 +248,15 @@ class Repo2Docker(Application):
         config=True,
     )
 
+    extra_build_args = Dict(
+        {},
+        help="""
+        Extra build args to pass to the image build process.
+        This is pretty much only useful for custom Dockerfile based builds.
+        """,
+        config=True,
+    )
+
     json_logs = Bool(
         False,
         help="""
@@ -777,6 +786,8 @@ class Repo2Docker(Application):
                     }
                     if self.target_repo_dir:
                         build_args["REPO_DIR"] = self.target_repo_dir
+                    build_args.update(self.extra_build_args)
+
                     self.log.info(
                         "Using %s builder\n",
                         bp.__class__.__name__,
