@@ -13,16 +13,13 @@ URL="https://anaconda.org/conda-forge/micromamba/0.17.0/download/linux-64/microm
 unset HOME
 mkdir -p ${CONDA_DIR}
 
-time wget ${URL}
-mkdir -p /tmp/bin
-mv micromamba-nightly-linux-64 /tmp/bin/micromamba
+time wget -qO- ${URL} | tar -xvj bin/micromamba
 chmod 0755 /tmp/bin/micromamba
 
 export MAMBA_ROOT_PREFIX=${CONDA_DIR}
 export MAMBA_EXE="/tmp/bin/micromamba"
 
-eval "$(./bin/micromamba shell hook -p ${CONDA_DIR} -s posix)"
-./bin/micromamba shell init -s bash -p ${CONDA_DIR}
+eval "$(/tmp/bin/micromamba shell hook -p ${CONDA_DIR} -s posix)"
 
 micromamba activate
 
