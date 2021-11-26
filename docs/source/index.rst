@@ -5,7 +5,7 @@ jupyter-repo2docker
 images from source code repositories**.
 
 ``repo2docker`` fetches a repository
-(from GitHub, GitLab, Zenodo, Figshare, Dataverse installations, a Git repository or a local directory)
+(from GitHub, GitLab, Zenodo, Figshare, Dataverse installations, a Git repository, an IPFS CID or a local directory)
 and builds a container image in which the code can be executed.
 The image build process is based on the configuration files found in the repository.
 
