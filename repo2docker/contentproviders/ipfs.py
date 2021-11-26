@@ -60,8 +60,19 @@ class IPFS(ContentProvider):
                 continue
 
             if resp.ok:
+                # this trick is from https://stackoverflow.com/a/43094365
+                # and get's rid of the root folder in the tar which is named
+                # after the requested CID
+                def members(tf):
+                    subfolder = "{}/".format(cid)
+                    subfolder_len = len(subfolder)
+                    for member in tf.getmembers():
+                        if member.path.startswith(subfolder):
+                            member.path = member.path[subfolder_len:]
+                            yield member
+
                 tar = TarFile(fileobj=BytesIO(resp.content))
-                tar.extractall(output_dir)
+                tar.extractall(output_dir, members=members(tar))
                 break
             else:
                 yield "could not get CID via {}: {}\n".format(gateway, resp.status_code)
