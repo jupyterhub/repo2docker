@@ -59,7 +59,6 @@ setup(
         "semver",
         "toml",
         "traitlets",
-        "py-cid",
     ],
     python_requires=">=3.6",
     author="Project Jupyter Contributors",

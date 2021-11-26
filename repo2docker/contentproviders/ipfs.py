@@ -1,10 +1,25 @@
+import re
 from tarfile import TarFile
 from io import BytesIO
 
 import requests
-from cid import is_cid
 
 from .base import ContentProvider, ContentProviderException
+
+# testing well-formedness of CID is not trivial, to do it
+# properly, one should use py-cid, which can decode all CIDS
+# that library however has a bunch of dependencies, so for now
+# we'll go with a reged-based approximation
+# this regex follows https://stackoverflow.com/a/67176726
+RE_CID = re.compile("Qm[1-9A-HJ-NP-Za-km-z]{44,}|"
+                    "b[A-Za-z2-7]{58,}|"
+                    "B[A-Z2-7]{58,}|"
+                    "z[1-9A-HJ-NP-Za-km-z]{48,}|"
+                    "F[0-9A-F]{50,}")
+
+
+def is_cid(s):
+    return bool(RE_CID.match(s))
 
 
 class IPFS(ContentProvider):
