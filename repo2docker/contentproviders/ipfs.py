@@ -11,11 +11,13 @@ from .base import ContentProvider, ContentProviderException
 # that library however has a bunch of dependencies, so for now
 # we'll go with a reged-based approximation
 # this regex follows https://stackoverflow.com/a/67176726
-RE_CID = re.compile("Qm[1-9A-HJ-NP-Za-km-z]{44,}|"
-                    "b[A-Za-z2-7]{58,}|"
-                    "B[A-Z2-7]{58,}|"
-                    "z[1-9A-HJ-NP-Za-km-z]{48,}|"
-                    "F[0-9A-F]{50,}")
+RE_CID = re.compile(
+    "Qm[1-9A-HJ-NP-Za-km-z]{44,}|"
+    "b[A-Za-z2-7]{58,}|"
+    "B[A-Z2-7]{58,}|"
+    "z[1-9A-HJ-NP-Za-km-z]{48,}|"
+    "F[0-9A-F]{50,}"
+)
 
 
 def is_cid(s):
@@ -57,11 +59,9 @@ class IPFS(ContentProvider):
                 tar.extractall(output_dir)
                 break
             else:
-                yield "could not get CID via {}: {}".format(
-                        gateway, resp.status_code)
+                yield "could not get CID via {}: {}".format(gateway, resp.status_code)
         else:
-            raise ContentProviderException(
-                    "could not find any working IPFS gateway")
+            raise ContentProviderException("could not find any working IPFS gateway")
         self._cid = cid
 
     @property
