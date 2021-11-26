@@ -51,15 +51,20 @@ class IPFS(ContentProvider):
             # the following url may change once ?format=tar
             # is implemented on the gateway
             # see also: https://github.com/ipfs/go-ipfs/issues/8234
-            resp = requests.get(
-                "{}/api/v0/get?arg={}".format(gateway, cid),
-            )
+            try:
+                resp = requests.get(
+                    "{}/api/v0/get?arg={}".format(gateway, cid),
+                )
+            except requests.ConnectionError:
+                yield "could not connect to gateway {}\n".format(gateway)
+                continue
+
             if resp.ok:
                 tar = TarFile(fileobj=BytesIO(resp.content))
                 tar.extractall(output_dir)
                 break
             else:
-                yield "could not get CID via {}: {}".format(gateway, resp.status_code)
+                yield "could not get CID via {}: {}\n".format(gateway, resp.status_code)
         else:
             raise ContentProviderException("could not find any working IPFS gateway")
         self._cid = cid
