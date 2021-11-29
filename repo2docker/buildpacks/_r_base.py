@@ -6,7 +6,9 @@ Keeping this in r.py would lead to cyclic imports.
 
 # 1.3.959 is latest version that works with jupyter-rsession-proxy
 # See https://github.com/jupyterhub/jupyter-rsession-proxy/issues/93#issuecomment-725874693
-RSTUDIO_URL = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.3.959-amd64.deb"
+RSTUDIO_URL = (
+    "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.3.959-amd64.deb"
+)
 # This is MD5, because that is what RStudio download page provides!
 RSTUDIO_CHECKSUM = "24c0dd4a9622aa3229ea5006fc83e7bd"
 
