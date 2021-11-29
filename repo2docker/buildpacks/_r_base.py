@@ -4,10 +4,11 @@ Base information for using R in BuildPacks.
 Keeping this in r.py would lead to cyclic imports.
 """
 
-# Via https://rstudio.com/products/rstudio/download-server/debian-ubuntu/
-RSTUDIO_URL = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5001-amd64.deb"
+# 1.3.959 is latest version that works with jupyter-rsession-proxy
+# See https://github.com/jupyterhub/jupyter-rsession-proxy/issues/93#issuecomment-725874693
+RSTUDIO_URL = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.3.959-amd64.deb"
 # This is MD5, because that is what RStudio download page provides!
-RSTUDIO_CHECKSUM = "d33881b9ab786c09556c410e7dc477de"
+RSTUDIO_CHECKSUM = "24c0dd4a9622aa3229ea5006fc83e7bd"
 
 # Via https://www.rstudio.com/products/shiny/download-server/
 SHINY_URL = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
@@ -55,12 +56,8 @@ def rstudio_base_scripts():
             "${NB_USER}",
             # Install nbrsessionproxy
             r"""
-                pip install --no-cache-dir jupyter-server-proxy==1.4.0 && \
-                pip install --no-cache-dir https://github.com/jupyterhub/jupyter-rsession-proxy/archive/d5efed5455870556fc414f30871d0feca675a4b4.zip && \
-                pip install --no-cache-dir https://github.com/ryanlovett/jupyter-shiny-proxy/archive/47557dc47e2aeeab490eb5f3eeae414cdde4a6a9.zip && \
-                jupyter serverextension enable jupyter_server_proxy --sys-prefix && \
-                jupyter nbextension install --py jupyter_server_proxy --sys-prefix && \
-                jupyter nbextension enable --py jupyter_server_proxy --sys-prefix
+                pip install --no-cache-dir jupyter-rsession-proxy==1.4 && \
+                pip install --no-cache-dir https://github.com/ryanlovett/jupyter-shiny-proxy/archive/47557dc47e2aeeab490eb5f3eeae414cdde4a6a9.zip
                 """,
         ),
         (
