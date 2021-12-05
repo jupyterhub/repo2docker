@@ -1,5 +1,5 @@
 # enable conda and activate the notebook environment
-export MAMBA_EXE="/tmp/bin/micromamba"
+/tmp/bin/micromamba shell init -s bash -p ${CONDA_DIR}
 export MAMBA_ROOT_PREFIX="/srv/conda"
 CONDA_PROFILE="${CONDA_DIR}/etc/profile.d/mamba.sh"
 test -f $CONDA_PROFILE && . $CONDA_PROFILE
