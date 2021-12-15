@@ -53,8 +53,9 @@ def rstudio_base_scripts():
             "${NB_USER}",
             # Install nbrsessionproxy
             r"""
-                pip install --no-cache-dir 'jupyter-rsession-proxy>=2.0' && \
-                pip install --no-cache-dir https://github.com/ryanlovett/jupyter-shiny-proxy/archive/47557dc47e2aeeab490eb5f3eeae414cdde4a6a9.zip
+                pip install --no-cache-dir \
+                    'jupyter-rsession-proxy>=2.0' \
+                    https://github.com/ryanlovett/jupyter-shiny-proxy/archive/47557dc47e2aeeab490eb5f3eeae414cdde4a6a9.zip
                 """,
         ),
         (
