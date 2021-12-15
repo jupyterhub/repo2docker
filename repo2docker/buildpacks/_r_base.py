@@ -4,13 +4,8 @@ Base information for using R in BuildPacks.
 Keeping this in r.py would lead to cyclic imports.
 """
 
-# 1.3.959 is latest version that works with jupyter-rsession-proxy
-# See https://github.com/jupyterhub/jupyter-rsession-proxy/issues/93#issuecomment-725874693
-RSTUDIO_URL = (
-    "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.3.959-amd64.deb"
-)
-# This is MD5, because that is what RStudio download page provides!
-RSTUDIO_CHECKSUM = "24c0dd4a9622aa3229ea5006fc83e7bd"
+RSTUDIO_URL = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2021.09.1-372-amd64.deb"
+RSTUDIO_SHA256SUM = "c58df09468870b89f1796445853dce2dacaa0fc5b7bb1f92b036fa8da1d1f8a3"
 
 # Via https://www.rstudio.com/products/shiny/download-server/
 SHINY_URL = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
@@ -31,7 +26,7 @@ def rstudio_base_scripts():
             # Install RStudio!
             r"""
                 curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
-                echo '{rstudio_checksum} /tmp/rstudio.deb' | md5sum -c - && \
+                echo '{rstudio_sha256sum} /tmp/rstudio.deb' | sha256sum -c - && \
                 apt-get update && \
                 apt install -y /tmp/rstudio.deb && \
                 rm /tmp/rstudio.deb && \
@@ -39,7 +34,7 @@ def rstudio_base_scripts():
                 apt-get -qq clean && \
                 rm -rf /var/lib/apt/lists/*
                 """.format(
-                rstudio_url=RSTUDIO_URL, rstudio_checksum=RSTUDIO_CHECKSUM
+                rstudio_url=RSTUDIO_URL, rstudio_sha256sum=RSTUDIO_SHA256SUM
             ),
         ),
         (
@@ -58,7 +53,7 @@ def rstudio_base_scripts():
             "${NB_USER}",
             # Install nbrsessionproxy
             r"""
-                pip install --no-cache-dir jupyter-rsession-proxy==1.4 && \
+                pip install --no-cache-dir jupyter-rsession-proxy>=2.0 && \
                 pip install --no-cache-dir https://github.com/ryanlovett/jupyter-shiny-proxy/archive/47557dc47e2aeeab490eb5f3eeae414cdde4a6a9.zip
                 """,
         ),
