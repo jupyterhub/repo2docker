@@ -176,6 +176,7 @@ class ContainerEngine(LoggingConfigurable):
         dockerfile="",
         fileobj=None,
         path="",
+        labels=None,
         **kwargs,
     ):
         """
@@ -204,6 +205,8 @@ class ContainerEngine(LoggingConfigurable):
             A tar file-like object containing the build context
         path : str
             path to the Dockerfile
+        labels : dict
+            Dictionary of labels to set on the image
 
         Returns
         -------

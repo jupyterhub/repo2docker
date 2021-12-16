@@ -237,6 +237,17 @@ class Repo2Docker(Application):
         """,
     )
 
+    labels = Dict(
+        {},
+        help="""
+        Extra labels to set on the final image.
+
+        Each Label is a key-value pair, with the key being the name of the label
+        and the value its value.
+        """,
+        config=True,
+    )
+
     json_logs = Bool(
         False,
         help="""
@@ -746,6 +757,8 @@ class Repo2Docker(Application):
                 repo_label = "local" if os.path.isdir(self.repo) else self.repo
                 picked_buildpack.labels["repo2docker.repo"] = repo_label
                 picked_buildpack.labels["repo2docker.ref"] = self.ref
+
+                picked_buildpack.labels.update(self.labels)
 
                 if self.dry_run:
                     print(picked_buildpack.render())

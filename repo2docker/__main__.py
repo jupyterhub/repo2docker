@@ -204,6 +204,14 @@ def get_argparser():
 
     argparser.add_argument("--appendix", type=str, help=Repo2Docker.appendix.help)
 
+    argparser.add_argument(
+        "--label",
+        dest="labels",
+        action="append",
+        help="Extra label to set on the image, in form name=value",
+        default=[],
+    )
+
     argparser.add_argument("--subdir", type=str, help=Repo2Docker.subdir.help)
 
     argparser.add_argument(
@@ -245,6 +253,13 @@ def make_r2d(argv=None):
     r2d.load_config_file(args.config)
     if args.appendix:
         r2d.appendix = args.appendix
+
+    for l in args.labels:
+        if "=" in l:
+            key, val = l.split("=", 1)
+            r2d.labels[key] = val
+        else:
+            r2d.labels[l] = ""
 
     r2d.repo = args.repo
     r2d.ref = args.ref
