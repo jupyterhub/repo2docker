@@ -2,6 +2,7 @@
 library('ggplot2')
 
 print(version)
-if (version$major != "4" && as.double(version$minor) >= 1) {
+# Fail if version is not 4.1
+if (!(version$major == "4" && as.double(version$minor) >= 1 && as.double(version$minor) < 2)) {
   quit("yes", 1)
 }
