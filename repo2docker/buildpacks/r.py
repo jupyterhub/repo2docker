@@ -77,6 +77,7 @@ class RBuildPack(PythonBuildPack):
             "3.6.1": "3.6.1-3bionic",
             "4.0": "4.0.2-1.1804.0",
             "4.0.2": "4.0.2-1.1804.0",
+            "4.1": "4.1.2-1.1804.0",
         }
         # the default if nothing is specified
         r_version = "3.6"
