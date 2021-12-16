@@ -258,11 +258,11 @@ class RBuildPack(PythonBuildPack):
                 (
                     "root",
                     r"""
-                    apt-get update && \
+                    apt-get update > /dev/null && \
                     apt-get install --yes r-base={R_version} \
                          r-base-dev={R_version} \
                          r-recommended={R_version} \
-                         libclang-dev && \
+                         libclang-dev > /dev/null && \
                     apt-get -qq purge && \
                     apt-get -qq clean && \
                     rm -rf /var/lib/apt/lists/*

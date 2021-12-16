@@ -29,8 +29,8 @@ def rstudio_base_scripts():
             r"""
                 curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
                 echo '{rstudio_checksum} /tmp/rstudio.deb' | md5sum -c - && \
-                apt-get update && \
-                apt install -y /tmp/rstudio.deb && \
+                apt-get update > /dev/null && \
+                apt install -y /tmp/rstudio.deb  > /dev/null && \
                 rm /tmp/rstudio.deb && \
                 apt-get -qq purge && \
                 apt-get -qq clean && \
@@ -45,7 +45,7 @@ def rstudio_base_scripts():
             r"""
                 curl --silent --location --fail {url} > {deb} && \
                 echo '{checksum} {deb}' | md5sum -c - && \
-                dpkg -i {deb} && \
+                dpkg -i {deb} > /dev/null && \
                 rm {deb}
                 """.format(
                 url=SHINY_URL, checksum=SHINY_CHECKSUM, deb="/tmp/shiny.deb"
