@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from ruamel.yaml import YAML
 
 from ..base import BaseImage
-from .._r_base import rstudio_base_scripts, IRKERNEL_VERSION
+from .._r_base import rstudio_base_scripts
 from ...utils import is_local_pip_requirement
 
 # pattern for parsing conda dependency line
@@ -356,11 +356,11 @@ class CondaBuildPack(BaseImage):
                 (
                     "${NB_USER}",
                     r"""
-                mamba install -p {0} r-base{1} r-irkernel={2} r-devtools -y && \
+                mamba install -p {0} r-base{1} r-irkernel=1.2 r-devtools -y && \
                 mamba clean --all -f -y && \
                 mamba list -p {0}
                 """.format(
-                        env_prefix, r_pin, IRKERNEL_VERSION
+                        env_prefix, r_pin
                     ),
                 )
             )

@@ -6,7 +6,7 @@ import requests
 from distutils.version import LooseVersion as V
 
 from .python import PythonBuildPack
-from ._r_base import rstudio_base_scripts, DEVTOOLS_VERSION, IRKERNEL_VERSION
+from ._r_base import rstudio_base_scripts
 
 
 class RBuildPack(PythonBuildPack):
@@ -186,7 +186,6 @@ class RBuildPack(PythonBuildPack):
         return super().get_packages().union(packages)
 
     def get_cran_mirror_url(self, snapshot_date):
-
         # Call the API to find out if we have a snapshot available for the given date.
         # If so, use the URL for that snapshot. If not, fall back to MRAN.
         snapshots = requests.post(
@@ -208,6 +207,19 @@ class RBuildPack(PythonBuildPack):
         return "https://mran.microsoft.com/snapshot/{}".format(
             snapshot_date.isoformat()
         )
+
+    def get_devtools_snapshot_date(self):
+        """
+        Return date of snapshot to use for getting devtools install
+
+        devtools is part of our 'core' base install, so we should have some
+        control over what version we install here.
+        """
+        if V(self.r_version) <= V('4.0'):
+            # IRKernel gets into CRAN on Nov 16 2018 (https://packagemanager.rstudio.com/client/#/repos/1/packages/IRkernel),
+            # so we try snapshot to just after that.
+            return datetime.date(2018, 12, 1)
+        return datetime.date(2021, 12, 16)
 
     def get_build_scripts(self):
         """
@@ -312,25 +324,16 @@ class RBuildPack(PythonBuildPack):
             ),
             (
                 "${NB_USER}",
-                # Install a pinned version of IRKernel and set it up for use!
+                # Install a pinner version of devtools, IRKernel and shiny
                 r"""
-                R --quiet -e "install.packages('devtools')" && \
-                R --quiet -e "devtools::install_github('IRkernel/IRkernel', ref='{irkernel_version}')" && \
+                R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='{devtools_cran_mirror_url}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """.format(
-                    cran_mirror_url=cran_mirror_url,
-                    devtools_version=DEVTOOLS_VERSION,
-                    irkernel_version=IRKERNEL_VERSION,
+                    devtools_cran_mirror_url=self.get_cran_mirror_url(self.get_devtools_snapshot_date()),
                 ),
-            ),
-            (
-                "${NB_USER}",
-                # Install shiny library
-                r"""
-                R --quiet -e "install.packages('shiny')"
-                """,
-            ),
+            )
         ]
+
 
         return super().get_build_scripts() + scripts
 
