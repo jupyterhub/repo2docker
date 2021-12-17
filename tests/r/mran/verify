@@ -1,0 +1,9 @@
+#!/usr/bin/env Rscript
+library('ggplot2')
+
+print(version)
+
+# Fail if MRAN isn't the configured CRAN mirror
+if (!grepl("https://mran.microsoft.com", options()$CRAN, fixed=TRUE)) {
+  quit("yes", 1)
+}

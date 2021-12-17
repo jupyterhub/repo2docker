@@ -132,11 +132,9 @@ class RBuildPack(PythonBuildPack):
         if not self.binder_dir and os.path.exists(description_R):
             if not self.checkpoint_date:
                 # no R snapshot date set through runtime.txt
-                # set the R runtime to the latest date that is guaranteed to
-                # be on MRAN across timezones
-                two_days_ago = datetime.date.today() - datetime.timedelta(days=2)
-                self._checkpoint_date = self._get_latest_working_mran_date(
-                    two_days_ago, 3
+                # Set it to two days ago from today
+                self._checkpoint_date = datetime.date.today() - datetime.timedelta(
+                    days=2
                 )
                 self._runtime = "r-{}".format(str(self._checkpoint_date))
             return True
@@ -186,28 +184,29 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_packages().union(packages)
 
-    def _get_latest_working_mran_date(self, startdate, max_prior):
-        """
-        Look for a working MRAN snapshot
+    def get_cran_mirror_url(self, snapshot_date):
 
-        Starts from `startdate` and tries up to `max_prior` previous days.
-        Raises `requests.HTTPError` with the last tried URL if no working snapshot found.
-        """
-        for days in range(max_prior + 1):
-            test_date = startdate - datetime.timedelta(days=days)
-            mran_url = "https://mran.microsoft.com/snapshot/{}".format(
-                test_date.isoformat()
+        # Call the API to find out if we have a snapshot available for the given date.
+        # If so, use the URL for that snapshot. If not, fall back to MRAN.
+        snapshots = requests.post(
+            "https://packagemanager.rstudio.com/__api__/url",
+            # Ask for midnight UTC snapshot
+            json={
+                "repo": "all",
+                "snapshot": snapshot_date.strftime("%Y-%m-%dT00:00:00Z"),
+            },
+        ).json()
+        # Construct a snapshot URL that will give us binary packages for Ubuntu Bionic (18.04)
+        if "upsi" in snapshots:
+            return (
+                "https://packagemanager.rstudio.com/all/__linux__/bionic/"
+                + snapshots["upsi"]
             )
-            r = requests.head(mran_url)
-            if r.ok:
-                return test_date
-            self.log.warning(
-                "Failed to get MRAN snapshot URL %s: %s %s",
-                mran_url,
-                r.status_code,
-                r.reason,
-            )
-        r.raise_for_status()
+
+        # Fall back to MRAN if packagemanager.rstudio.com doesn't have it
+        return "https://mran.microsoft.com/snapshot/{}".format(
+            snapshot_date.isoformat()
+        )
 
     def get_build_scripts(self):
         """
@@ -229,9 +228,7 @@ class RBuildPack(PythonBuildPack):
         contents of runtime.txt.
         """
 
-        mran_url = "https://mran.microsoft.com/snapshot/{}".format(
-            self.checkpoint_date.isoformat()
-        )
+        cran_mirror_url = self.get_cran_mirror_url(self.checkpoint_date)
 
         scripts = []
         # For R 3.4 we want to use the default Ubuntu package but otherwise
@@ -263,7 +260,8 @@ class RBuildPack(PythonBuildPack):
                     apt-get install --yes r-base={R_version} \
                          r-base-dev={R_version} \
                          r-recommended={R_version} \
-                         libclang-dev > /dev/null && \
+                         libclang-dev \
+                         libzmq3-dev > /dev/null && \
                     apt-get -qq purge && \
                     apt-get -qq clean && \
                     rm -rf /var/lib/apt/lists/*
@@ -295,34 +293,41 @@ class RBuildPack(PythonBuildPack):
                 """,
             ),
             (
+                "root",
+                # RStudio's CRAN mirror needs this to figure out which binary package to serve.
+                # If not set properly, it will just serve up source packages
+                # Quite hilarious, IMO.
+                # See https://docs.rstudio.com/rspm/admin/binaries.html
+                # Set mirror for RStudio too
+                r"""
+                R RHOME && \
+                mkdir -p /usr/lib/R/etc /etc/rstudio && \
+                echo 'options(repos = c(CRAN = "{cran_mirror_url}"))' > /usr/lib/R/etc/Rprofile.site && \
+                echo 'options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))' >> /usr/lib/R/etc/Rprofile.site && \
+                echo 'r-cran-repos={cran_mirror_url}' > /etc/rstudio/rsession.conf
+                """.format(
+                    cran_mirror_url=cran_mirror_url
+                ),
+            ),
+            (
                 "${NB_USER}",
                 # Install a pinned version of IRKernel and set it up for use!
                 r"""
-                R --quiet -e "install.packages('devtools', repos='https://mran.microsoft.com/snapshot/{devtools_version}', method='libcurl')" && \
+                R --quiet -e "install.packages('devtools')" && \
                 R --quiet -e "devtools::install_github('IRkernel/IRkernel', ref='{irkernel_version}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """.format(
-                    devtools_version=DEVTOOLS_VERSION, irkernel_version=IRKERNEL_VERSION
+                    cran_mirror_url=cran_mirror_url,
+                    devtools_version=DEVTOOLS_VERSION,
+                    irkernel_version=IRKERNEL_VERSION,
                 ),
             ),
             (
                 "${NB_USER}",
                 # Install shiny library
                 r"""
-                R --quiet -e "install.packages('shiny', repos='{}', method='libcurl')"
-                """.format(
-                    mran_url
-                ),
-            ),
-            (
-                "root",
-                # We set the default CRAN repo to the MRAN one at given date
-                # We set download method to be curl so we get HTTPS support
-                r"""
-                echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
-                """.format(
-                    mran_url=mran_url
-                ),
+                R --quiet -e "install.packages('shiny')"
+                """,
             ),
         ]
 
