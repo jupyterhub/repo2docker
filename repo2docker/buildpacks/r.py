@@ -20,18 +20,19 @@ class RBuildPack(PythonBuildPack):
        r-<year>-<month>-<date>
 
        Where 'year', 'month' and 'date' refer to a specific
-       date snapshot of https://mran.microsoft.com/timemachine
-       from which libraries are to be installed.
+       date whose CRAN snapshot we will use to fetch packages.
+       Uses https://packagemanager.rstudio.com, or MRAN if no snapshot
+       is found on packagemanager.rstudio.com
 
     2. A `DESCRIPTION` file signaling an R package
 
-    If there is no `runtime.txt`, then the MRAN snapshot is set to latest
+    If there is no `runtime.txt`, then the CRAN snapshot is set to latest
     date that is guaranteed to exist across timezones.
 
     Additional R packages are installed if specified either
 
     - in a file `install.R`, that will be executed at build time,
-      and can be used for installing packages from both MRAN and GitHub
+      and can be used for installing packages from both CRAN and GitHub
 
     - as dependencies in a `DESCRIPTION` file
 
@@ -99,7 +100,7 @@ class RBuildPack(PythonBuildPack):
     @property
     def checkpoint_date(self):
         """
-        Return the date of MRAN checkpoint to use for this repo
+        Return the date of CRAN checkpoint to use for this repo
 
         Returns '' if no date is specified
         """
@@ -220,7 +221,7 @@ class RBuildPack(PythonBuildPack):
           for installing R packages into
         - RStudio
         - R's devtools package, at a particular frozen version
-          (determined by MRAN)
+          (determined by CRAN)
         - IRKernel
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
 
