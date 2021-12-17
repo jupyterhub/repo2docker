@@ -212,6 +212,14 @@ def get_argparser():
         default=[],
     )
 
+    argparser.add_argument(
+        "--build-arg",
+        dest="build_args",
+        action="append",
+        help="Extra build arg to pass to the build process, in form name=value",
+        default=[],
+    )
+
     argparser.add_argument("--subdir", type=str, help=Repo2Docker.subdir.help)
 
     argparser.add_argument(
@@ -255,11 +263,12 @@ def make_r2d(argv=None):
         r2d.appendix = args.appendix
 
     for l in args.labels:
-        if "=" in l:
-            key, val = l.split("=", 1)
-            r2d.labels[key] = val
-        else:
-            r2d.labels[l] = ""
+        key, _, val = l.partition("=")
+        r2d.labels[key] = val
+
+    for a in args.build_args:
+        key, _, val = a.partition("=")
+        r2d.extra_build_args[key] = val
 
     r2d.repo = args.repo
     r2d.ref = args.ref
