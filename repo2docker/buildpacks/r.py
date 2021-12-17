@@ -215,7 +215,7 @@ class RBuildPack(PythonBuildPack):
         devtools is part of our 'core' base install, so we should have some
         control over what version we install here.
         """
-        if V(self.r_version) <= V('4.0'):
+        if V(self.r_version) <= V("4.0"):
             # IRKernel gets into CRAN on Nov 16 2018 (https://packagemanager.rstudio.com/client/#/repos/1/packages/IRkernel),
             # so we try snapshot to just after that.
             return datetime.date(2018, 12, 1)
@@ -329,11 +329,12 @@ class RBuildPack(PythonBuildPack):
                 R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='{devtools_cran_mirror_url}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """.format(
-                    devtools_cran_mirror_url=self.get_cran_mirror_url(self.get_devtools_snapshot_date()),
+                    devtools_cran_mirror_url=self.get_cran_mirror_url(
+                        self.get_devtools_snapshot_date()
+                    ),
                 ),
-            )
+            ),
         ]
-
 
         return super().get_build_scripts() + scripts
 

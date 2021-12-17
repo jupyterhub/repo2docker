@@ -13,6 +13,7 @@ RSTUDIO_CHECKSUM = "d33881b9ab786c09556c410e7dc477de"
 SHINY_URL = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
 SHINY_CHECKSUM = "9aeef6613e7f58f21c97a4600921340e"
 
+
 def rstudio_base_scripts():
     """Base steps to install RStudio and shiny-server."""
     return [
