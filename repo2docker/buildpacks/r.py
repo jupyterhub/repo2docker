@@ -243,58 +243,56 @@ class RBuildPack(PythonBuildPack):
 
         cran_mirror_url = self.get_cran_mirror_url(self.checkpoint_date)
 
-        scripts = []
-        # For R 3.4 we want to use the default Ubuntu package but otherwise
-        # we use the packages from R's own repo
+        # Determine which R apt repository should be enabled
         if V(self.r_version) >= V("3.5"):
             if V(self.r_version) >= V("4"):
                 vs = "40"
             else:
                 vs = "35"
-            scripts += [
-                (
-                    "root",
-                    rf"""
-                    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran{vs}/" > /etc/apt/sources.list.d/r-ubuntu.list
-                    """,
-                ),
-                # Dont use apt-key directly, as gpg does not always respect *_proxy vars. This increase the chances
-                # of being able to reach it from behind a firewall
-                (
-                    "root",
-                    r"""
-                    wget --quiet -O - 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xe298a3a825c0d65dfd57cbb651716619e084dab9' | apt-key add -
-                    """,
-                ),
-                (
-                    "root",
-                    r"""
-                    apt-get update > /dev/null && \
-                    apt-get install --yes r-base={R_version} \
-                         r-base-dev={R_version} \
-                         r-recommended={R_version} \
-                         libclang-dev \
-                         libzmq3-dev > /dev/null && \
-                    apt-get -qq purge && \
-                    apt-get -qq clean && \
-                    rm -rf /var/lib/apt/lists/*
-                    """.format(
-                        R_version=self.r_version
-                    ),
-                ),
-            ]
 
-        scripts.append(
+        scripts = [
+            (
+                "root",
+                rf"""
+                echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran{vs}/" > /etc/apt/sources.list.d/r-ubuntu.list
+                """,
+            ),
+            # Dont use apt-key directly, as gpg does not always respect *_proxy vars. This increase the chances
+            # of being able to reach it from behind a firewall
+            (
+                "root",
+                r"""
+                wget --quiet -O - 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xe298a3a825c0d65dfd57cbb651716619e084dab9' | apt-key add -
+                """,
+            ),
+            (
+                "root",
+                r"""
+                apt-get update > /dev/null && \
+                apt-get install --yes r-base={R_version} \
+                        r-base-dev={R_version} \
+                        r-recommended={R_version} \
+                        libclang-dev \
+                        libzmq3-dev > /dev/null && \
+                apt-get -qq purge && \
+                apt-get -qq clean && \
+                rm -rf /var/lib/apt/lists/*
+                """.format(
+                    R_version=self.r_version
+                ),
+            ),
+        ]
+
+        scripts += rstudio_base_scripts(self.r_version)
+
+        scripts += [
             (
                 "root",
                 r"""
                 mkdir -p ${R_LIBS_USER} && \
                 chown -R ${NB_USER}:${NB_USER} ${R_LIBS_USER}
                 """,
-            )
-        )
-        scripts += rstudio_base_scripts()
-        scripts += [
+            ),
             (
                 "root",
                 # Set paths so that RStudio shares libraries with base R

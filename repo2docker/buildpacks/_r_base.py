@@ -3,6 +3,7 @@ Base information for using R in BuildPacks.
 
 Keeping this in r.py would lead to cyclic imports.
 """
+from distutils.version import LooseVersion as V
 
 # Via https://rstudio.com/products/rstudio/download-server/debian-ubuntu/
 RSTUDIO_URL = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5001-amd64.deb"
@@ -14,48 +15,60 @@ SHINY_URL = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.
 SHINY_CHECKSUM = "9aeef6613e7f58f21c97a4600921340e"
 
 
-def rstudio_base_scripts():
+def rstudio_base_scripts(r_version):
     """Base steps to install RStudio and shiny-server."""
+
+    # Shiny server (not the package!) seems to be the same version for all R versions
+    shiny_server_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.17.973-amd64.deb"
+    shiny_proxy_version = "1.1"
+    shiny_sha256sum = "80f1e48f6c824be7ef9c843bb7911d4981ac7e8a963e0eff823936a8b28476ee"
+
+    if V(r_version) <= V("4.1"):
+        # Older RStudio and jupyter-rsession-proxy for v4.1 and below
+        rstudio_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.3.959-amd64.deb"
+        rstudio_sha256sum = (
+            "187af05cab1221282487fdc33f4b161484c3228eaade3d6697b1d41c206ee6d9"
+        )
+        rsession_proxy_version = "1.4"
+    else:
+        rstudio_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2021.09.1-372-amd64.deb"
+        rstudio_sha256sum = (
+            "c58df09468870b89f1796445853dce2dacaa0fc5b7bb1f92b036fa8da1d1f8a3"
+        )
+        rsession_proxy_version = "2.0.1"
+
     return [
         (
             "root",
-            # Install RStudio!
             r"""
-                curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
-                echo '{rstudio_checksum} /tmp/rstudio.deb' | md5sum -c - && \
-                apt-get update > /dev/null && \
-                apt install -y /tmp/rstudio.deb  > /dev/null && \
-                rm /tmp/rstudio.deb && \
-                apt-get -qq purge && \
-                apt-get -qq clean && \
-                rm -rf /var/lib/apt/lists/*
-                """.format(
-                rstudio_url=RSTUDIO_URL, rstudio_checksum=RSTUDIO_CHECKSUM
-            ),
-        ),
-        (
-            "root",
-            # Install Shiny Server!
-            r"""
-                curl --silent --location --fail {url} > {deb} && \
-                echo '{checksum} {deb}' | md5sum -c - && \
-                dpkg -i {deb} > /dev/null && \
-                rm {deb}
-                """.format(
-                url=SHINY_URL, checksum=SHINY_CHECKSUM, deb="/tmp/shiny.deb"
+            curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
+            curl --silent --location --fail {shiny_server_url} > /tmp/shiny.deb && \
+            echo '{rstudio_sha256sum} /tmp/rstudio.deb' | sha256sum -c - && \
+            echo '{shiny_sha256sum} /tmp/shiny.deb' | sha256sum -c - && \
+            apt-get update > /dev/null && \
+            apt install -y /tmp/rstudio.deb /tmp/shiny.deb > /dev/null && \
+            rm /tmp/rstudio.deb && \
+            apt-get -qq purge && \
+            apt-get -qq clean && \
+            rm -rf /var/lib/apt/lists/*
+            """.format(
+                rstudio_url=rstudio_url,
+                rstudio_sha256sum=rstudio_sha256sum,
+                shiny_server_url=shiny_server_url,
+                shiny_sha256sum=shiny_sha256sum,
             ),
         ),
         (
             "${NB_USER}",
-            # Install nbrsessionproxy
+            # Install jupyter-rsession-proxy
             r"""
-                pip install --no-cache-dir jupyter-server-proxy==1.4.0 && \
-                pip install --no-cache-dir https://github.com/jupyterhub/jupyter-rsession-proxy/archive/d5efed5455870556fc414f30871d0feca675a4b4.zip && \
-                pip install --no-cache-dir https://github.com/ryanlovett/jupyter-shiny-proxy/archive/47557dc47e2aeeab490eb5f3eeae414cdde4a6a9.zip && \
-                jupyter serverextension enable jupyter_server_proxy --sys-prefix && \
-                jupyter nbextension install --py jupyter_server_proxy --sys-prefix && \
-                jupyter nbextension enable --py jupyter_server_proxy --sys-prefix
-                """,
+                pip install --no-cache \
+                    jupyter-rsession-proxy=={rsession_proxy_version} \
+                    jupyter-shiny-proxy=={shiny_proxy_version}
+                """.format(
+                rsession_proxy_version=rsession_proxy_version,
+                shiny_proxy_version=shiny_proxy_version,
+            ),
         ),
         (
             # Not all of these locations are configurable; so we make sure
