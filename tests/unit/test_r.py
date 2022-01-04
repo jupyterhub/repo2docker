@@ -64,28 +64,46 @@ def test_mran_date(tmpdir, runtime, expected):
     assert r.checkpoint_date == date(*expected)
 
 
-@pytest.mark.parametrize("expected", ["2019-12-29", "2019-12-26"])
-def test_mran_latestdate(tmpdir, expected):
+def test_snapshot_rspm_date():
+    test_dates = {
+        # Even though there is no snapshot specified in the interface at https://packagemanager.rstudio.com/client/#/repos/1/overview
+        # For 2021 Oct 22, the API still returns a valid URL that one can install
+        # packages from - probably some server side magic that repeats our client side logic.
+        # No snapshot for this date from
+        date(2021, 10, 22): date(2021, 10, 22),
+        # Snapshot exists for this date
+        date(2022, 1, 1): date(2022, 1, 1),
+    }
+
+    r = buildpacks.RBuildPack()
+    for requested, expected in test_dates.items():
+        snapshot_url = r.get_rspm_snapshot_url(requested)
+        print(snapshot_url)
+        assert snapshot_url.startswith(
+            "https://packagemanager.rstudio.com/all/__linux__/bionic/" + expected.strftime("%Y-%m-%d")
+        )
+
+    with pytest.raises(ValueError):
+        r.get_rspm_snapshot_url(date(1691, 9, 5))
+
+
+@pytest.mark.parametrize("expected", [date(2019, 12, 29), date(2019, 12, 26)])
+@pytest.mark.parametrize("requested", [date(2019, 12, 31)])
+def test_snapshot_mran_date(requested, expected):
     def mock_request_head(url):
         r = Response()
-        if url == "https://mran.microsoft.com/snapshot/" + expected:
+        if url == "https://mran.microsoft.com/snapshot/" + expected.isoformat():
             r.status_code = 200
         else:
             r.status_code = 404
             r.reason = "Mock MRAN no snapshot"
         return r
 
-    tmpdir.chdir()
-
-    with open("DESCRIPTION", "w") as f:
-        f.write("")
-
     with patch("requests.head", side_effect=mock_request_head):
-        with patch("datetime.date") as mockdate:
-            mockdate.today.return_value = date(2019, 12, 31)
-            r = buildpacks.RBuildPack()
-            r.detect()
-    assert r.checkpoint_date.isoformat() == expected
+        r = buildpacks.RBuildPack()
+        assert r.get_mran_snapshot_url(
+            requested
+        ) == "https://mran.microsoft.com/snapshot/{}".format(expected.isoformat())
 
 
 def test_install_from_base(tmpdir):

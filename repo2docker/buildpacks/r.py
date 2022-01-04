@@ -185,28 +185,50 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_packages().union(packages)
 
-    def get_cran_mirror_url(self, snapshot_date):
-        # Call the API to find out if we have a snapshot available for the given date.
-        # If so, use the URL for that snapshot. If not, fall back to MRAN.
-        snapshots = requests.post(
-            "https://packagemanager.rstudio.com/__api__/url",
-            # Ask for midnight UTC snapshot
-            json={
-                "repo": "all",
-                "snapshot": snapshot_date.strftime("%Y-%m-%dT00:00:00Z"),
-            },
-        ).json()
-        # Construct a snapshot URL that will give us binary packages for Ubuntu Bionic (18.04)
-        if "upsi" in snapshots:
-            return (
-                "https://packagemanager.rstudio.com/all/__linux__/bionic/"
-                + snapshots["upsi"]
-            )
+    def get_rspm_snapshot_url(self, snapshot_date, max_days_prior=7):
+        for i in range(max_days_prior):
+            snapshots = requests.post(
+                "https://packagemanager.rstudio.com/__api__/url",
+                # Ask for midnight UTC snapshot
+                json={
+                    "repo": "all",
+                    "snapshot": (snapshot_date - datetime.timedelta(days=i)).strftime("%Y-%m-%dT00:00:00Z"),
+                },
+            ).json()
+            # Construct a snapshot URL that will give us binary packages for Ubuntu Bionic (18.04)
+            if "upsi" in snapshots:
+                return (
+                    "https://packagemanager.rstudio.com/all/__linux__/bionic/"
+                    + snapshots["upsi"]
+                )
+        raise ValueError('No snapshot found for {} or {} days prior in packagemanager.rstudio.com'.format(
+            snapshot_date.strftime("%Y-%m-%d"), max_days_prior
+        ))
 
-        # Fall back to MRAN if packagemanager.rstudio.com doesn't have it
-        return "https://mran.microsoft.com/snapshot/{}".format(
-            snapshot_date.isoformat()
-        )
+    def get_mran_snapshot_url(self, snapshot_date, max_days_prior=7):
+        for i in range(max_days_prior):
+            try_date = snapshot_date - datetime.timedelta(days=i)
+            # Fall back to MRAN if packagemanager.rstudio.com doesn't have it
+            url = "https://mran.microsoft.com/snapshot/{}".format(
+                try_date.isoformat()
+            )
+            r = requests.head(url)
+            if r.ok:
+                return url
+        else:
+            raise ValueError('No snapshot found for {} or {} days prior in mran.microsoft.com'.format(
+                snapshot_date.strftime("%Y-%m-%d"), max_days_prior
+            ))
+
+    def get_cran_mirror_url(self, snapshot_date):
+        # Date after which we will use rspm + binary packages instead of MRAN + source packages
+        rspm_cutoff_date = datetime.date(2022, 1, 1)
+
+        if snapshot_date >= rspm_cutoff_date or self.r_version >= V('4.1'):
+            return self.get_rspm_snapshot_url(snapshot_date)
+        else:
+            return self.get_mran_snapshot_url(snapshot_date)
+
 
     def get_devtools_snapshot_date(self):
         """
