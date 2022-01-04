@@ -80,7 +80,8 @@ def test_snapshot_rspm_date():
         snapshot_url = r.get_rspm_snapshot_url(requested)
         print(snapshot_url)
         assert snapshot_url.startswith(
-            "https://packagemanager.rstudio.com/all/__linux__/bionic/" + expected.strftime("%Y-%m-%d")
+            "https://packagemanager.rstudio.com/all/__linux__/bionic/"
+            + expected.strftime("%Y-%m-%d")
         )
 
     with pytest.raises(ValueError):
