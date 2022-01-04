@@ -233,18 +233,17 @@ class RBuildPack(PythonBuildPack):
         else:
             return self.get_mran_snapshot_url(snapshot_date)
 
-    def get_devtools_snapshot_date(self):
+    def get_devtools_snapshot_url(self):
         """
-        Return date of snapshot to use for getting devtools install
+        Return url of snapshot to use for getting devtools install
 
         devtools is part of our 'core' base install, so we should have some
         control over what version we install here.
         """
-        if V(self.r_version) <= V("4.0"):
-            # IRKernel gets into CRAN on Nov 16 2018 (https://packagemanager.rstudio.com/client/#/repos/1/packages/IRkernel),
-            # so we try snapshot to just after that.
-            return datetime.date(2018, 12, 1)
-        return datetime.date(2021, 12, 16)
+        # IRKernel gets into CRAN on Nov 16 2018 (https://packagemanager.rstudio.com/client/#/repos/1/packages/IRkernel),
+        # so we try snapshot to just after that. We use rspm as we want binary packages all the time
+        # FIXME: Hardcode this to prevent an extra call to the rspm API
+        return self.get_rspm_snapshot_url(datetime.date(2021, 12, 16))
 
     def get_build_scripts(self):
         """
@@ -352,9 +351,7 @@ class RBuildPack(PythonBuildPack):
                 R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='{devtools_cran_mirror_url}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """.format(
-                    devtools_cran_mirror_url=self.get_cran_mirror_url(
-                        self.get_devtools_snapshot_date()
-                    ),
+                    devtools_cran_mirror_url=self.get_devtools_snapshot_url()
                 ),
             ),
         ]
