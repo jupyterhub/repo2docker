@@ -6,3 +6,8 @@ print(version)
 if (!(version$major == "4" && as.double(version$minor) >= 0 && as.double(version$minor) < 1)) {
   quit("yes", 1)
 }
+
+# The date we have chosen should give us an MRAN mirror
+if (!grepl("https://mran.microsoft.com", options()$CRAN, fixed=TRUE)) {
+  quit("yes", 1)
+}
