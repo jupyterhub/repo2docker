@@ -364,7 +364,7 @@ class CondaBuildPack(BaseImage):
                     ),
                 )
             )
-            scripts += rstudio_base_scripts()
+            scripts += rstudio_base_scripts(self.r_version)
             scripts += [
                 (
                     "root",
