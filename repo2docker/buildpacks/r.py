@@ -76,7 +76,7 @@ class RBuildPack(PythonBuildPack):
             "3.6": "3.6.1-3bionic",
             "3.6.0": "3.6.0-2bionic",
             "3.6.1": "3.6.1-3bionic",
-            "4.0": "4.0.2-1.1804.0",
+            "4.0": "4.0.5-1.1804.0",
             "4.0.2": "4.0.2-1.1804.0",
             "4.1": "4.1.2-1.1804.0",
         }
@@ -294,7 +294,7 @@ class RBuildPack(PythonBuildPack):
                 "root",
                 r"""
                 apt-get update > /dev/null && \
-                apt-get install --yes r-base={R_version} \
+                apt-get install --yes r-base={R_version} r-base-core={R_version} \
                         r-base-dev={R_version} \
                         r-recommended={R_version} \
                         libclang-dev \
