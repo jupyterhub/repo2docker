@@ -80,7 +80,7 @@ class RBuildPack(PythonBuildPack):
             "4.1": "4.1.2-1.1804.0",
         }
         # the default if nothing is specified
-        r_version = "3.6"
+        r_version = "4.1"
 
         if not hasattr(self, "_r_version"):
             parts = self.runtime.split("-")
