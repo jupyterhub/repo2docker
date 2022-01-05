@@ -5,15 +5,6 @@ Keeping this in r.py would lead to cyclic imports.
 """
 from distutils.version import LooseVersion as V
 
-# Via https://rstudio.com/products/rstudio/download-server/debian-ubuntu/
-RSTUDIO_URL = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5001-amd64.deb"
-# This is MD5, because that is what RStudio download page provides!
-RSTUDIO_CHECKSUM = "d33881b9ab786c09556c410e7dc477de"
-
-# Via https://www.rstudio.com/products/shiny/download-server/
-SHINY_URL = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.12.933-amd64.deb"
-SHINY_CHECKSUM = "9aeef6613e7f58f21c97a4600921340e"
-
 
 def rstudio_base_scripts(r_version):
     """Base steps to install RStudio and shiny-server."""
