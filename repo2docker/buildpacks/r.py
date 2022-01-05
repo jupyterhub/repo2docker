@@ -217,12 +217,11 @@ class RBuildPack(PythonBuildPack):
             r = requests.head(url)
             if r.ok:
                 return url
-        else:
-            raise ValueError(
-                "No snapshot found for {} or {} days prior in mran.microsoft.com".format(
-                    snapshot_date.strftime("%Y-%m-%d"), max_days_prior
-                )
+        raise ValueError(
+            "No snapshot found for {} or {} days prior in mran.microsoft.com".format(
+                snapshot_date.strftime("%Y-%m-%d"), max_days_prior
             )
+        )
 
     def get_cran_mirror_url(self, snapshot_date):
         # Date after which we will use rspm + binary packages instead of MRAN + source packages
