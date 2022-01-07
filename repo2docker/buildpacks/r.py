@@ -332,8 +332,8 @@ class RBuildPack(PythonBuildPack):
                 # RStudio's CRAN mirror needs this to figure out which binary package to serve.
                 # If not set properly, it will just serve up source packages
                 # Quite hilarious, IMO.
-                # See https://docs.rstudio.com/rspm/admin/binaries.html
-                # Set mirror for RStudio too
+                # See https://docs.rstudio.com/rspm/1.0.12/admin/binaries.html
+                # Set mirror for RStudio too, by modifying rsession.conf
                 r"""
                 R RHOME && \
                 mkdir -p /usr/lib/R/etc /etc/rstudio && \
@@ -346,7 +346,7 @@ class RBuildPack(PythonBuildPack):
             ),
             (
                 "${NB_USER}",
-                # Install a pinner version of devtools, IRKernel and shiny
+                # Install a pinned version of devtools, IRKernel and shiny
                 r"""
                 R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='{devtools_cran_mirror_url}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
