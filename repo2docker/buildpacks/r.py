@@ -239,10 +239,11 @@ class RBuildPack(PythonBuildPack):
         devtools is part of our 'core' base install, so we should have some
         control over what version we install here.
         """
-        # IRKernel gets into CRAN on Nov 16 2018 (https://packagemanager.rstudio.com/client/#/repos/1/packages/IRkernel),
-        # so we try snapshot to just after that. We use rspm as we want binary packages all the time
-        # FIXME: Hardcode this to prevent an extra call to the rspm API
-        return self.get_rspm_snapshot_url(datetime.date(2021, 12, 16))
+        # Picked from https://packagemanager.rstudio.com/client/#/repos/1/overview
+        # Hardcoded rather than dynamically determined from a date to avoid extra API calls
+        # Plus, we can always use packagemanager.rstudio.com here as we always install the
+        # necessary apt packages.
+        return "https://packagemanager.rstudio.com/all/__linux__/bionic/2022-01-04+Y3JhbiwyOjQ1MjYyMTU7NzlBRkJEMzg"
 
     def get_build_scripts(self):
         """
