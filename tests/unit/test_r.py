@@ -78,7 +78,6 @@ def test_snapshot_rspm_date():
     r = buildpacks.RBuildPack()
     for requested, expected in test_dates.items():
         snapshot_url = r.get_rspm_snapshot_url(requested)
-        print(snapshot_url)
         assert snapshot_url.startswith(
             "https://packagemanager.rstudio.com/all/__linux__/bionic/"
             + expected.strftime("%Y-%m-%d")
