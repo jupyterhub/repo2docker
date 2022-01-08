@@ -6,7 +6,7 @@ import requests
 from distutils.version import LooseVersion as V
 
 from .python import PythonBuildPack
-from ._r_base import rstudio_base_scripts, DEVTOOLS_VERSION, IRKERNEL_VERSION
+from ._r_base import rstudio_base_scripts
 
 
 class RBuildPack(PythonBuildPack):
@@ -20,18 +20,19 @@ class RBuildPack(PythonBuildPack):
        r-<year>-<month>-<date>
 
        Where 'year', 'month' and 'date' refer to a specific
-       date snapshot of https://mran.microsoft.com/timemachine
-       from which libraries are to be installed.
+       date whose CRAN snapshot we will use to fetch packages.
+       Uses https://packagemanager.rstudio.com, or MRAN if no snapshot
+       is found on packagemanager.rstudio.com
 
     2. A `DESCRIPTION` file signaling an R package
 
-    If there is no `runtime.txt`, then the MRAN snapshot is set to latest
+    If there is no `runtime.txt`, then the CRAN snapshot is set to latest
     date that is guaranteed to exist across timezones.
 
     Additional R packages are installed if specified either
 
     - in a file `install.R`, that will be executed at build time,
-      and can be used for installing packages from both MRAN and GitHub
+      and can be used for installing packages from both CRAN and GitHub
 
     - as dependencies in a `DESCRIPTION` file
 
@@ -72,15 +73,15 @@ class RBuildPack(PythonBuildPack):
             "3.5.1": "3.5.1-2bionic",
             "3.5.2": "3.5.2-1bionic",
             "3.5.3": "3.5.3-1bionic",
-            "3.6": "3.6.1-3bionic",
+            "3.6": "3.6.3-1bionic",
             "3.6.0": "3.6.0-2bionic",
             "3.6.1": "3.6.1-3bionic",
-            "4.0": "4.0.2-1.1804.0",
+            "4.0": "4.0.5-1.1804.0",
             "4.0.2": "4.0.2-1.1804.0",
             "4.1": "4.1.2-1.1804.0",
         }
         # the default if nothing is specified
-        r_version = "3.6"
+        r_version = "4.1"
 
         if not hasattr(self, "_r_version"):
             parts = self.runtime.split("-")
@@ -99,7 +100,7 @@ class RBuildPack(PythonBuildPack):
     @property
     def checkpoint_date(self):
         """
-        Return the date of MRAN checkpoint to use for this repo
+        Return the date of CRAN checkpoint to use for this repo
 
         Returns '' if no date is specified
         """
@@ -132,11 +133,9 @@ class RBuildPack(PythonBuildPack):
         if not self.binder_dir and os.path.exists(description_R):
             if not self.checkpoint_date:
                 # no R snapshot date set through runtime.txt
-                # set the R runtime to the latest date that is guaranteed to
-                # be on MRAN across timezones
-                two_days_ago = datetime.date.today() - datetime.timedelta(days=2)
-                self._checkpoint_date = self._get_latest_working_mran_date(
-                    two_days_ago, 3
+                # Set it to two days ago from today
+                self._checkpoint_date = datetime.date.today() - datetime.timedelta(
+                    days=2
                 )
                 self._runtime = "r-{}".format(str(self._checkpoint_date))
             return True
@@ -186,28 +185,65 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_packages().union(packages)
 
-    def _get_latest_working_mran_date(self, startdate, max_prior):
-        """
-        Look for a working MRAN snapshot
+    def get_rspm_snapshot_url(self, snapshot_date, max_days_prior=7):
+        for i in range(max_days_prior):
+            snapshots = requests.post(
+                "https://packagemanager.rstudio.com/__api__/url",
+                # Ask for midnight UTC snapshot
+                json={
+                    "repo": "all",
+                    "snapshot": (snapshot_date - datetime.timedelta(days=i)).strftime(
+                        "%Y-%m-%dT00:00:00Z"
+                    ),
+                },
+            ).json()
+            # Construct a snapshot URL that will give us binary packages for Ubuntu Bionic (18.04)
+            if "upsi" in snapshots:
+                return (
+                    "https://packagemanager.rstudio.com/all/__linux__/bionic/"
+                    + snapshots["upsi"]
+                )
+        raise ValueError(
+            "No snapshot found for {} or {} days prior in packagemanager.rstudio.com".format(
+                snapshot_date.strftime("%Y-%m-%d"), max_days_prior
+            )
+        )
 
-        Starts from `startdate` and tries up to `max_prior` previous days.
-        Raises `requests.HTTPError` with the last tried URL if no working snapshot found.
-        """
-        for days in range(max_prior + 1):
-            test_date = startdate - datetime.timedelta(days=days)
-            mran_url = "https://mran.microsoft.com/snapshot/{}".format(
-                test_date.isoformat()
-            )
-            r = requests.head(mran_url)
+    def get_mran_snapshot_url(self, snapshot_date, max_days_prior=7):
+        for i in range(max_days_prior):
+            try_date = snapshot_date - datetime.timedelta(days=i)
+            # Fall back to MRAN if packagemanager.rstudio.com doesn't have it
+            url = "https://mran.microsoft.com/snapshot/{}".format(try_date.isoformat())
+            r = requests.head(url)
             if r.ok:
-                return test_date
-            self.log.warning(
-                "Failed to get MRAN snapshot URL %s: %s %s",
-                mran_url,
-                r.status_code,
-                r.reason,
+                return url
+        raise ValueError(
+            "No snapshot found for {} or {} days prior in mran.microsoft.com".format(
+                snapshot_date.strftime("%Y-%m-%d"), max_days_prior
             )
-        r.raise_for_status()
+        )
+
+    def get_cran_mirror_url(self, snapshot_date):
+        # Date after which we will use rspm + binary packages instead of MRAN + source packages
+        rspm_cutoff_date = datetime.date(2022, 1, 1)
+
+        if snapshot_date >= rspm_cutoff_date or self.r_version >= V("4.1"):
+            return self.get_rspm_snapshot_url(snapshot_date)
+        else:
+            return self.get_mran_snapshot_url(snapshot_date)
+
+    def get_devtools_snapshot_url(self):
+        """
+        Return url of snapshot to use for getting devtools install
+
+        devtools is part of our 'core' base install, so we should have some
+        control over what version we install here.
+        """
+        # Picked from https://packagemanager.rstudio.com/client/#/repos/1/overview
+        # Hardcoded rather than dynamically determined from a date to avoid extra API calls
+        # Plus, we can always use packagemanager.rstudio.com here as we always install the
+        # necessary apt packages.
+        return "https://packagemanager.rstudio.com/all/__linux__/bionic/2022-01-04+Y3JhbiwyOjQ1MjYyMTU7NzlBRkJEMzg"
 
     def get_build_scripts(self):
         """
@@ -221,7 +257,7 @@ class RBuildPack(PythonBuildPack):
           for installing R packages into
         - RStudio
         - R's devtools package, at a particular frozen version
-          (determined by MRAN)
+          (determined by CRAN)
         - IRKernel
         - nbrsessionproxy (to access RStudio via Jupyter Notebook)
 
@@ -229,61 +265,58 @@ class RBuildPack(PythonBuildPack):
         contents of runtime.txt.
         """
 
-        mran_url = "https://mran.microsoft.com/snapshot/{}".format(
-            self.checkpoint_date.isoformat()
-        )
+        cran_mirror_url = self.get_cran_mirror_url(self.checkpoint_date)
 
-        scripts = []
-        # For R 3.4 we want to use the default Ubuntu package but otherwise
-        # we use the packages from R's own repo
+        # Determine which R apt repository should be enabled
         if V(self.r_version) >= V("3.5"):
             if V(self.r_version) >= V("4"):
                 vs = "40"
             else:
                 vs = "35"
-            scripts += [
-                (
-                    "root",
-                    rf"""
-                    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran{vs}/" > /etc/apt/sources.list.d/r-ubuntu.list
-                    """,
-                ),
-                # Dont use apt-key directly, as gpg does not always respect *_proxy vars. This increase the chances
-                # of being able to reach it from behind a firewall
-                (
-                    "root",
-                    r"""
-                    wget --quiet -O - 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xe298a3a825c0d65dfd57cbb651716619e084dab9' | apt-key add -
-                    """,
-                ),
-                (
-                    "root",
-                    r"""
-                    apt-get update > /dev/null && \
-                    apt-get install --yes r-base={R_version} \
-                         r-base-dev={R_version} \
-                         r-recommended={R_version} \
-                         libclang-dev > /dev/null && \
-                    apt-get -qq purge && \
-                    apt-get -qq clean && \
-                    rm -rf /var/lib/apt/lists/*
-                    """.format(
-                        R_version=self.r_version
-                    ),
-                ),
-            ]
 
-        scripts.append(
+        scripts = [
+            (
+                "root",
+                rf"""
+                echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran{vs}/" > /etc/apt/sources.list.d/r-ubuntu.list
+                """,
+            ),
+            # Dont use apt-key directly, as gpg does not always respect *_proxy vars. This increase the chances
+            # of being able to reach it from behind a firewall
+            (
+                "root",
+                r"""
+                wget --quiet -O - 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xe298a3a825c0d65dfd57cbb651716619e084dab9' | apt-key add -
+                """,
+            ),
+            (
+                "root",
+                r"""
+                apt-get update > /dev/null && \
+                apt-get install --yes r-base={R_version} r-base-core={R_version} \
+                        r-base-dev={R_version} \
+                        r-recommended={R_version} \
+                        libclang-dev \
+                        libzmq3-dev > /dev/null && \
+                apt-get -qq purge && \
+                apt-get -qq clean && \
+                rm -rf /var/lib/apt/lists/*
+                """.format(
+                    R_version=self.r_version
+                ),
+            ),
+        ]
+
+        scripts += rstudio_base_scripts(self.r_version)
+
+        scripts += [
             (
                 "root",
                 r"""
                 mkdir -p ${R_LIBS_USER} && \
                 chown -R ${NB_USER}:${NB_USER} ${R_LIBS_USER}
                 """,
-            )
-        )
-        scripts += rstudio_base_scripts()
-        scripts += [
+            ),
             (
                 "root",
                 # Set paths so that RStudio shares libraries with base R
@@ -295,33 +328,30 @@ class RBuildPack(PythonBuildPack):
                 """,
             ),
             (
-                "${NB_USER}",
-                # Install a pinned version of IRKernel and set it up for use!
+                "root",
+                # RStudio's CRAN mirror needs this to figure out which binary package to serve.
+                # If not set properly, it will just serve up source packages
+                # Quite hilarious, IMO.
+                # See https://docs.rstudio.com/rspm/1.0.12/admin/binaries.html
+                # Set mirror for RStudio too, by modifying rsession.conf
                 r"""
-                R --quiet -e "install.packages('devtools', repos='https://mran.microsoft.com/snapshot/{devtools_version}', method='libcurl')" && \
-                R --quiet -e "devtools::install_github('IRkernel/IRkernel', ref='{irkernel_version}')" && \
+                R RHOME && \
+                mkdir -p /usr/lib/R/etc /etc/rstudio && \
+                echo 'options(repos = c(CRAN = "{cran_mirror_url}"))' > /usr/lib/R/etc/Rprofile.site && \
+                echo 'options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))' >> /usr/lib/R/etc/Rprofile.site && \
+                echo 'r-cran-repos={cran_mirror_url}' > /etc/rstudio/rsession.conf
+                """.format(
+                    cran_mirror_url=cran_mirror_url
+                ),
+            ),
+            (
+                "${NB_USER}",
+                # Install a pinned version of devtools, IRKernel and shiny
+                r"""
+                R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='{devtools_cran_mirror_url}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """.format(
-                    devtools_version=DEVTOOLS_VERSION, irkernel_version=IRKERNEL_VERSION
-                ),
-            ),
-            (
-                "${NB_USER}",
-                # Install shiny library
-                r"""
-                R --quiet -e "install.packages('shiny', repos='{}', method='libcurl')"
-                """.format(
-                    mran_url
-                ),
-            ),
-            (
-                "root",
-                # We set the default CRAN repo to the MRAN one at given date
-                # We set download method to be curl so we get HTTPS support
-                r"""
-                echo "options(repos = c(CRAN='{mran_url}'), download.file.method = 'libcurl')" > /etc/R/Rprofile.site
-                """.format(
-                    mran_url=mran_url
+                    devtools_cran_mirror_url=self.get_devtools_snapshot_url()
                 ),
             ),
         ]
