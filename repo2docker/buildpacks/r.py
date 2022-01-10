@@ -177,7 +177,7 @@ class RBuildPack(PythonBuildPack):
             "lsb-release",
         ]
         # For R 3.4 we use the default Ubuntu package, for other versions we
-        # install from a different PPA
+        # install from a different apt repository
         if V(self.r_version) < V("3.5"):
             packages.append("r-base")
             packages.append("r-base-dev")
