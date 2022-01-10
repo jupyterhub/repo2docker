@@ -117,7 +117,7 @@ def test_install_from_base(tmpdir):
     assert "r-base" in r.get_packages()
 
 
-def test_install_from_ppa(tmpdir):
+def test_install_from_cran_apt_repo(tmpdir):
     # check that for R>3.4 we don't install r-base from Ubuntu
     tmpdir.chdir()
 
@@ -128,7 +128,7 @@ def test_install_from_ppa(tmpdir):
     assert "r-base" not in r.get_packages()
 
 
-def test_custom_ppa(tmpdir):
+def test_custom_cran_apt_repo(tmpdir):
     tmpdir.chdir()
 
     with open("runtime.txt", "w") as f:
@@ -138,12 +138,12 @@ def test_custom_ppa(tmpdir):
 
     scripts = r.get_build_scripts()
 
-    # check that at least one of the build scripts adds this new PPA
+    # check that at least one of the build scripts adds this new apt repository
     for user, script in scripts:
         if "https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" in script:
             break
     else:
-        assert False, "Should have added a new PPA"
+        assert False, "Should have added a new apt repository"
 
     # check that we install the right package
     for user, script in scripts:
