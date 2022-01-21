@@ -3,10 +3,12 @@
 # and sets up the base environment
 set -ex
 
-
 cd $(dirname $0)
 
-URL="https://anaconda.org/conda-forge/micromamba/0.17.0/download/linux-64/micromamba-0.17.0-0.tar.bz2"
+export MAMBA_VERSION=0.19.1
+export CONDA_VERSION=4.11.0
+
+URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/linux-64/micromamba-${MAMBA_VERSION}-0.tar.bz2"
 
 # make sure we don't do anything funky with user's $HOME
 # since this is run as root
@@ -35,7 +37,7 @@ update_dependencies: false
 # channel_priority: flexible
 EOT
 
-micromamba install conda mamba -y
+micromamba install conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
 
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
