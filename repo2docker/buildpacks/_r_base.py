@@ -31,6 +31,9 @@ def rstudio_base_scripts(r_version):
     return [
         (
             "root",
+            # we should have --no-install-recommends on all our apt-get install commands,
+            # but here it's important because these recommend r-base,
+            # which will upgrade the installed version of R, undoing our pinned version
             r"""
             curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
             curl --silent --location --fail {shiny_server_url} > /tmp/shiny.deb && \

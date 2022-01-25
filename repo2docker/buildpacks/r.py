@@ -292,6 +292,9 @@ class RBuildPack(PythonBuildPack):
             ),
             (
                 "root",
+                # we should have --no-install-recommends on all our apt-get install commands,
+                # but here it's important because it will pull in CRAN packages
+                # via r-recommends, which is only guaranteed to be compatible with the latest r-base-core
                 r"""
                 apt-get update > /dev/null && \
                 apt-get install --yes --no-install-recommends \
