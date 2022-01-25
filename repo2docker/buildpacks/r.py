@@ -387,7 +387,10 @@ class RBuildPack(PythonBuildPack):
             scripts += [
                 (
                     "${NB_USER}",
-                    "Rscript %s && touch /tmp/.preassembled || true" % installR_path,
+                    # Delete /tmp/downloaded_packages only if install.R fails, as the second
+                    # invocation of install.R might be able to reuse them
+                    "Rscript %s && touch /tmp/.preassembled || true && rm -rf /tmp/downloaded_packages"
+                    % installR_path,
                 )
             ]
 
@@ -403,7 +406,8 @@ class RBuildPack(PythonBuildPack):
                 (
                     "${NB_USER}",
                     # only run install.R if the pre-assembly failed
-                    "if [ ! -f /tmp/.preassembled ]; then Rscript {}; fi".format(
+                    # Delete any downloaded packages in /tmp, as they aren't reused by R
+                    """if [ ! -f /tmp/.preassembled ]; then Rscript {}; rm -rf /tmp/downloaded_packages; fi""".format(
                         installR_path
                     ),
                 )
