@@ -38,8 +38,9 @@ class RBuildPack(PythonBuildPack):
 
     - are needed by a specific tool
 
-    The `r-base` package from Ubuntu apt repositories is used to install
-    R itself, rather than any of the methods from https://cran.r-project.org/.
+    The `r-base-core` package from Ubuntu or "Ubuntu packages for R"
+    apt repositories is used to install R itself,
+    rather than any of the methods from https://cran.r-project.org/.
 
     The `r-base-dev` package is installed as advised in RStudio instructions.
     """
@@ -293,9 +294,9 @@ class RBuildPack(PythonBuildPack):
                 "root",
                 r"""
                 apt-get update > /dev/null && \
-                apt-get install --yes r-base={R_version} r-base-core={R_version} \
+                apt-get install --yes --no-install-recommends \
+                        r-base-core={R_version} \
                         r-base-dev={R_version} \
-                        r-recommended={R_version} \
                         libclang-dev \
                         libzmq3-dev > /dev/null && \
                 apt-get -qq purge && \
