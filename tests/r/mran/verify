@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-library('tinytest')
+library('testthat')
 
 print(version)
 

@@ -1,1 +1,1 @@
-install.packages("tinytest")
+install.packages("testthat")
