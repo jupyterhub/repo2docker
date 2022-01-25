@@ -100,6 +100,8 @@ COPY --chown={{ user }}:{{ user }} {{ src }} {{ dst }}
 {% for sd in build_script_directives -%}
 {{ sd }}
 {% endfor %}
+# ensure root user after build scripts
+USER root
 
 # Allow target path repo is cloned to be configurable
 ARG REPO_DIR=${HOME}
@@ -138,6 +140,8 @@ COPY --chown={{ user }}:{{ user }} src/{{ src }} ${REPO_DIR}/{{ dst }}
 {% for sd in preassemble_script_directives -%}
 {{ sd }}
 {% endfor %}
+# ensure root user after preassemble scripts
+USER root
 
 # Copy stuff.
 COPY --chown={{ user }}:{{ user }} src/ ${REPO_DIR}
