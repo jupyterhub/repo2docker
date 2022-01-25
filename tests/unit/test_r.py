@@ -147,7 +147,7 @@ def test_custom_cran_apt_repo(tmpdir):
 
     # check that we install the right package
     for user, script in scripts:
-        if "r-base=3.5" in script:
+        if "r-base-core=3.5" in script:
             break
     else:
         assert False, "Should have installed base R"
