@@ -73,7 +73,8 @@ class DockerEngine(ContainerEngine):
         try:
             kwargs = docker.utils.kwargs_from_env()
             kwargs.update(self.extra_init_args)
-            self._apiclient = docker.APIClient(version="auto", **kwargs)
+            kwargs.setdefault("version", "auto")
+            self._apiclient = docker.APIClient(**kwargs)
         except docker.errors.DockerException as e:
             raise ContainerEngineException("Check if docker is running on the host.", e)
 
