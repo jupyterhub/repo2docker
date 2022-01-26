@@ -12,11 +12,13 @@ constraints.
 
 
 import re
+from functools import lru_cache
 
 import semver
 
 
 def find_semver_match(constraint, versions_list):
+    """Find first version in a list of versions that matches a constraint"""
     matcher = create_semver_matcher(constraint)
     for vstr in reversed(versions_list):
         if matcher.match(str_to_version(vstr)):
@@ -25,7 +27,27 @@ def find_semver_match(constraint, versions_list):
 
 
 def str_to_version(vstr):
+    """Convert a simple x[.y[.z]] version string to a tuple of ints"""
     return tuple([int(n) for n in vstr.split(".")])
+
+
+@lru_cache()
+def parse_version(vstr):
+    """Convert a simple 'x[.y[.z]]' version string to a comparable VersionInfo
+
+    Wraps semver.VersionInfo.parse with zero-padding,
+    so it can accept '1.0', where upstream only accepts exactly 3 version fields.
+    """
+    try:
+        return semver.VersionInfo.parse(vstr)
+    except ValueError:
+        # may fail for e.g. short 1.0 versions
+        n_fields = vstr.count(".")
+        if n_fields < 2:
+            vstr = vstr + (".0" * (2 - n_fields))
+            return semver.VersionInfo.parse(vstr)
+        else:
+            raise
 
 
 # Helpers
@@ -41,6 +63,7 @@ def patch(v):
     return v[2] if len(v) >= 3 else 0
 
 
+@lru_cache()
 def create_semver_matcher(constraint_str):
     """Create a matcher that can be used to match version tuples
 

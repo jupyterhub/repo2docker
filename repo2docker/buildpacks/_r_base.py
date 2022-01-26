@@ -3,7 +3,7 @@ Base information for using R in BuildPacks.
 
 Keeping this in r.py would lead to cyclic imports.
 """
-from distutils.version import LooseVersion as V
+from ..semver import parse_version as V
 
 
 def rstudio_base_scripts(r_version):

@@ -1,15 +1,20 @@
-from pathlib import Path
-import subprocess
-from tempfile import TemporaryDirectory
 import os
-from distutils.util import strtobool
+import subprocess
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import pytest
 
 from repo2docker.contentproviders import Mercurial
 from repo2docker.contentproviders.mercurial import args_enabling_topic
 
-SKIP_HG = strtobool(os.environ.get("REPO2DOCKER_SKIP_HG_TESTS", "False"))
+
+SKIP_HG = os.environ.get("REPO2DOCKER_SKIP_HG_TESTS", "").lower() not in {
+    "",
+    "0",
+    "false",
+    "no",
+}
 
 skip_if_no_hg_tests = pytest.mark.skipif(
     SKIP_HG,

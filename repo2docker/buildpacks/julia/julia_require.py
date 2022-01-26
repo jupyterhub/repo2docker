@@ -1,9 +1,9 @@
 """Generates a Dockerfile based on an input matrix with REQUIRE for legacy Julia"""
 
-from distutils.version import LooseVersion as V
 import os
 
 from ..python import PythonBuildPack
+from ...semver import parse_version as V
 
 
 class JuliaRequireBuildPack(PythonBuildPack):
