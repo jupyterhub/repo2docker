@@ -22,13 +22,16 @@ import shlex
 import requests
 import subprocess
 import time
-
 from tempfile import TemporaryDirectory
 
+
+import escapism
 import pytest
 import yaml
 
 from repo2docker.__main__ import make_r2d
+
+TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 def pytest_collect_file(parent, path):
@@ -38,12 +41,18 @@ def pytest_collect_file(parent, path):
         return RemoteRepoList.from_parent(parent, fspath=path)
 
 
-def make_test_func(args):
+def make_test_func(args, skip_build=False):
     """Generate a test function that runs repo2docker"""
 
     def test():
         app = make_r2d(args)
         app.initialize()
+        if skip_build:
+
+            def build_noop():
+                print("Skipping build")
+
+            app.skip_build = build_noop
         if app.run_cmd:
             # verify test, run it
             app.start()
@@ -184,14 +193,14 @@ def repo_with_submodule():
 class Repo2DockerTest(pytest.Function):
     """A pytest.Item for running repo2docker"""
 
-    def __init__(self, name, parent, args=None):
+    def __init__(self, name, parent, args=None, skip_build=False):
         self.args = args
         self.save_cwd = os.getcwd()
-        f = parent.obj = make_test_func(args)
+        f = parent.obj = make_test_func(args, skip_build=skip_build)
         super().__init__(name, parent, callobj=f)
 
     def reportinfo(self):
-        return self.parent.fspath, None, ""
+        return (self.parent.fspath, None, "")
 
     def repr_failure(self, excinfo):
         err = excinfo.value
@@ -217,11 +226,34 @@ class LocalRepo(pytest.File):
                 extra_args = yaml.safe_load(f)
             args += extra_args
 
+        print(self.fspath.basename, self.fspath.dirname, str(self.fspath))
+        # re-use image name for multiple tests of the same image
+        # so we don't run through the build twice
+        rel_repo_dir = os.path.relpath(self.fspath.dirname, TESTS_DIR)
+        image_name = f"r2d-tests-{escapism.escape(rel_repo_dir, escape_char='-').lower()}-{int(time.time())}"
+        args.append(f"--image-name={image_name}")
         args.append(self.fspath.dirname)
-
         yield Repo2DockerTest.from_parent(self, name="build", args=args)
+
         yield Repo2DockerTest.from_parent(
-            self, name=self.fspath.basename, args=args + ["./verify"]
+            self,
+            name=self.fspath.basename,
+            args=args + ["./verify"],
+            skip_build=True,
+        )
+
+        # mount the tests dir as a volume
+        check_tmp_args = (
+            args[:-1]
+            + ["--volume", f"{TESTS_DIR}:/io/tests"]
+            + [args[-1], "/io/tests/check-tmp"]
+        )
+
+        yield Repo2DockerTest.from_parent(
+            self,
+            name="check-tmp",
+            args=check_tmp_args,
+            skip_build=True,
         )
 
 
