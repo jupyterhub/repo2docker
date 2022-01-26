@@ -1,10 +1,13 @@
 """Generates a Dockerfile based on an input matrix for Julia"""
 import functools
 import os
+
 import requests
+import semver
 import toml
+
 from ..python import PythonBuildPack
-from .semver import find_semver_match, semver
+from ...semver import find_semver_match
 
 
 class JuliaProjectTomlBuildPack(PythonBuildPack):

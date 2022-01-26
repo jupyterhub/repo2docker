@@ -3,8 +3,8 @@ import os
 import datetime
 import requests
 
-from distutils.version import LooseVersion as V
 
+from ..semver import parse_version as V
 from .python import PythonBuildPack
 from ._r_base import rstudio_base_scripts
 

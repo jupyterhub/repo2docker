@@ -1,5 +1,6 @@
 import pytest
-from repo2docker.buildpacks.julia import semver
+from semver import VersionInfo
+from repo2docker import semver
 
 
 @pytest.mark.parametrize("test_input, expected", [("1.5.2", (1, 5, 2)), ("1", (1,))])
@@ -145,3 +146,20 @@ def test_largerthan_equal():
         semver.create_semver_matcher(">=1.2.3").match(semver.str_to_version("1.2.2"))
         == False
     )
+
+
+@pytest.mark.parametrize(
+    "vstr, expected",
+    [
+        ("1.2.3", "1.2.3"),
+        ("1.2", "1.2.0"),
+        ("1", "1.0.0"),
+    ],
+)
+def test_parse_version(vstr, expected):
+    version_info = semver.parse_version(vstr)
+    assert isinstance(version_info, semver.semver.VersionInfo)
+    assert str(version_info) == expected
+    # satisfies itself, since this is how we use it
+    assert semver.parse_version(expected) <= version_info
+    assert semver.parse_version(expected) >= version_info
