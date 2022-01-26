@@ -490,7 +490,7 @@ class Repo2Docker(Application):
             extra=dict(phase="failed"),
         )
 
-    def initialize(self):
+    def initialize(self, *args, **kwargs):
         """Init repo2docker configuration before start"""
         # FIXME: Remove this function, move it to setters / traitlet reactors
         if self.json_logs:

@@ -251,9 +251,10 @@ def make_r2d(argv=None):
         print(__version__)
         sys.exit(0)
 
-    args = get_argparser().parse_args(argv)
+    args, traitlet_args = get_argparser().parse_known_args(argv)
 
     r2d = Repo2Docker()
+    r2d.parse_command_line(traitlet_args)
 
     if args.debug:
         r2d.log_level = logging.DEBUG
