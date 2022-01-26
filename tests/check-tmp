@@ -50,11 +50,11 @@ def check_dir_size(path):
     path = os.path.expanduser(path)
 
     if not os.path.exists(path):
-        print(f"{path}: missing OK")
+        print("{path}: missing OK".format(**locals()))
         return True
 
     size_mb = du(path)
-    print(f"{path}: {size_mb:.1f} MB", end=" ")
+    print("{path}: {size_mb:.1f} MB".format(**locals()), end=" ")
     if size_mb <= THRESHOLD:
         print("OK")
         return True
@@ -66,7 +66,7 @@ def check_dir_size(path):
             if os.path.isfile(subpath):
                 file_sz = os.stat(subpath).st_size / MB
                 if file_sz > 0.1:
-                    print(f"  {file_sz:.1f}M {subpath}")
+                    print("  {file_sz:.1f}M {subpath}".format(**locals()))
         # get report on all subdirs that are at least 100k
         print(
             indent(
