@@ -3,6 +3,7 @@ Docker container engine for repo2docker
 """
 
 import docker
+from traitlets import Dict
 from iso8601 import parse_date
 
 from .engine import Container, ContainerEngine, ContainerEngineException, Image
@@ -53,12 +54,27 @@ class DockerEngine(ContainerEngine):
 
     string_output = False
 
+    extra_init_args = Dict(
+        {},
+        help="""
+        Extra kwargs to pass to docker client when initializing it.
+
+        Dictionary that allows users to specify extra parameters to pass
+        to APIClient, parameters listed in https://docker-py.readthedocs.io/en/stable/api.html#docker.api.client.APIClient.
+
+        Parameters here are merged with whatever is picked up from the
+        environment.
+        """,
+        config=True,
+    )
+
     def __init__(self, *, parent):
         super().__init__(parent=parent)
         try:
-            self._apiclient = docker.APIClient(
-                version="auto", **docker.utils.kwargs_from_env()
-            )
+            kwargs = docker.utils.kwargs_from_env()
+            kwargs.update(self.extra_init_args)
+            kwargs.setdefault("version", "auto")
+            self._apiclient = docker.APIClient(**kwargs)
         except docker.errors.DockerException as e:
             raise ContainerEngineException("Check if docker is running on the host.", e)
 
