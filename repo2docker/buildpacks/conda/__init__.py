@@ -359,7 +359,7 @@ class CondaBuildPack(BaseImage):
                     "${NB_USER}",
                     r"""
                 ${{MAMBA_EXE}} install -p {0} r-base{1} r-irkernel=1.2 r-devtools -y && \
-                ${{MAMBA_EXE}} clean --all -f -y && \
+                ${{MAMBA_EXE}} clean --all -y && \
                 ${{MAMBA_EXE}} list -p {0}
                 """.format(
                         env_prefix, r_pin
