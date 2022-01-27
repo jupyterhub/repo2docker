@@ -41,12 +41,14 @@ def pytest_collect_file(parent, path):
         return RemoteRepoList.from_parent(parent, fspath=path)
 
 
-def make_test_func(args, skip_build=False):
+def make_test_func(args, skip_build=False, extra_run_kwargs=None):
     """Generate a test function that runs repo2docker"""
 
     def test():
         app = make_r2d(args)
         app.initialize()
+        if extra_run_kwargs:
+            app.extra_run_kwargs.update(extra_run_kwargs)
         if skip_build:
 
             def build_noop():
@@ -193,10 +195,14 @@ def repo_with_submodule():
 class Repo2DockerTest(pytest.Function):
     """A pytest.Item for running repo2docker"""
 
-    def __init__(self, name, parent, args=None, skip_build=False):
+    def __init__(
+        self, name, parent, args=None, skip_build=False, extra_run_kwargs=None
+    ):
         self.args = args
         self.save_cwd = os.getcwd()
-        f = parent.obj = make_test_func(args, skip_build=skip_build)
+        f = parent.obj = make_test_func(
+            args, skip_build=skip_build, extra_run_kwargs=extra_run_kwargs
+        )
         super().__init__(name, parent, callobj=f)
 
     def reportinfo(self):
@@ -254,6 +260,7 @@ class LocalRepo(pytest.File):
             name="check-tmp",
             args=check_tmp_args,
             skip_build=True,
+            extra_run_kwargs={"user": "root"},
         )
 
 

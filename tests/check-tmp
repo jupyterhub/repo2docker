@@ -25,10 +25,12 @@ MB = 1024 * 1024
 # missing is okay
 PATHS = [
     "/tmp/",
+    # check whole home?
+    # this shouldn't be empty, but  for our tests (so far) it should be very small
+    # This is the easiest way to ensure we aren't leaving any unexpected files
+    # without knowing ahead of time where all possible caches might be (.npm, .cache, etc.)
     "~/",
-    "~/.cache/",
-    # not running with read permissions on root
-    # "/root/",
+    "/root/",
 ]
 
 
