@@ -88,7 +88,10 @@ class PipfileBuildPack(CondaBuildPack):
         scripts = super().get_preassemble_scripts()
         # install pipenv to install dependencies within Pipfile.lock or Pipfile
         scripts.append(
-            ("${NB_USER}", "${KERNEL_PYTHON_PREFIX}/bin/pip install pipenv==2018.11.26")
+            (
+                "${NB_USER}",
+                "${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache-dir pipenv==2018.11.26",
+            )
         )
         return scripts
 
