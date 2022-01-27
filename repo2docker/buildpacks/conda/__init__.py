@@ -56,7 +56,7 @@ class CondaBuildPack(BaseImage):
             ("NPM_CONFIG_GLOBALCONFIG", "${NPM_DIR}/npmrc"),
             ("NB_ENVIRONMENT_FILE", self._nb_environment_file),
             ("MAMBA_ROOT_PREFIX", "${CONDA_DIR}"),
-            ("MAMBA_EXE", "/tmp/bin/micromamba"),
+            ("MAMBA_EXE", "/usr/local/bin/micromamba"),
         ]
         if self._nb_requirements_file:
             env.append(("NB_REQUIREMENTS_FILE", self._nb_requirements_file))
