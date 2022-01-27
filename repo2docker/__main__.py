@@ -67,6 +67,20 @@ def get_argparser():
     )
 
     argparser.add_argument(
+        "--help-all",
+        dest="help_all",
+        action="store_true",
+        help="Display all configurable options and exit.",
+    )
+
+    argparser.add_argument(
+        "--version",
+        dest="version",
+        action="store_true",
+        help="Print the repo2docker version and exit.",
+    )
+
+    argparser.add_argument(
         "--config",
         default="repo2docker_config.py",
         help="Path to config file for repo2docker",
@@ -223,13 +237,6 @@ def get_argparser():
     argparser.add_argument("--subdir", type=str, help=Repo2Docker.subdir.help)
 
     argparser.add_argument(
-        "--version",
-        dest="version",
-        action="store_true",
-        help="Print the repo2docker version and exit.",
-    )
-
-    argparser.add_argument(
         "--cache-from", action="append", default=[], help=Repo2Docker.cache_from.help
     )
 
@@ -245,13 +252,21 @@ def make_r2d(argv=None):
     if argv is None:
         argv = sys.argv[1:]
 
+    argparser = get_argparser()
+
     # version must be checked before parse, as repo/cmd are required and
     # will spit out an error if allowed to be parsed first.
     if "--version" in argv:
         print(__version__)
         sys.exit(0)
 
-    args, traitlet_args = get_argparser().parse_known_args(argv)
+    if "--help-all" in argv:
+        argparser.print_help()
+        print("\nAll configurable options:\n")
+        Repo2Docker().print_help(classes=True)
+        sys.exit(0)
+
+    args, traitlet_args = argparser.parse_known_args(argv)
 
     r2d = Repo2Docker()
     r2d.parse_command_line(traitlet_args)

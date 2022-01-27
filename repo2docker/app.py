@@ -47,6 +47,10 @@ class Repo2Docker(Application):
     name = "jupyter-repo2docker"
     version = __version__
     description = __doc__
+    # disable aliases/flags because we don't use the traitlets for CLI parsing
+    # other than --Class.trait=value
+    aliases = {}
+    flags = {}
 
     @default("log_level")
     def _default_log_level(self):
