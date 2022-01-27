@@ -47,6 +47,10 @@ class Repo2Docker(Application):
     name = "jupyter-repo2docker"
     version = __version__
     description = __doc__
+    # disable aliases/flags because we don't use the traitlets for CLI parsing
+    # other than --Class.trait=value
+    aliases = {}
+    flags = {}
 
     @default("log_level")
     def _default_log_level(self):
@@ -490,7 +494,7 @@ class Repo2Docker(Application):
             extra=dict(phase="failed"),
         )
 
-    def initialize(self):
+    def initialize(self, *args, **kwargs):
         """Init repo2docker configuration before start"""
         # FIXME: Remove this function, move it to setters / traitlet reactors
         if self.json_logs:
