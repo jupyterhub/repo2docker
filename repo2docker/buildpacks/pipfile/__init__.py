@@ -11,6 +11,7 @@ import re
 
 import toml
 
+from ...semver import parse_version as V
 from ..conda import CondaBuildPack
 
 VERSION_PAT = re.compile(r"\d+(\.\d+)*")
@@ -87,10 +88,15 @@ class PipfileBuildPack(CondaBuildPack):
         """scripts to run prior to staging the repo contents"""
         scripts = super().get_preassemble_scripts()
         # install pipenv to install dependencies within Pipfile.lock or Pipfile
+        if V(self.python_version) < V("3.6"):
+            # last pipenv version to support 2.7, 3.5
+            pipenv_version = "2021.5.29"
+        else:
+            pipenv_version = "2022.1.8"
         scripts.append(
             (
                 "${NB_USER}",
-                "${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache-dir pipenv==2018.11.26",
+                f"${{KERNEL_PYTHON_PREFIX}}/bin/pip install --no-cache-dir pipenv=={pipenv_version}",
             )
         )
         return scripts
