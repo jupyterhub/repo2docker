@@ -1,13 +1,14 @@
 # enable conda and activate the notebook environment
-/tmp/bin/micromamba shell init -s bash -p ${CONDA_DIR}
-export MAMBA_ROOT_PREFIX="/srv/conda"
-CONDA_PROFILE="${CONDA_DIR}/etc/profile.d/mamba.sh"
-test -f $CONDA_PROFILE && . $CONDA_PROFILE
+eval $(micromamba shell hook -s posix -p ${CONDA_DIR})
+for name in conda mamba; do
+    CONDA_PROFILE="${CONDA_DIR}/etc/profile.d/${name}.sh"
+    test -f $CONDA_PROFILE && . $CONDA_PROFILE
+done
 if [[ "${KERNEL_PYTHON_PREFIX}" != "${NB_PYTHON_PREFIX}" ]]; then
     # if the kernel is a separate env, stack them
     # so both are on PATH, notebook first
-    micromamba activate ${KERNEL_PYTHON_PREFIX}
-    micromamba activate --stack ${NB_PYTHON_PREFIX}
+    mamba activate ${KERNEL_PYTHON_PREFIX}
+    mamba activate --stack ${NB_PYTHON_PREFIX}
 
     # even though it's second on $PATH
     # make sure CONDA_DEFAULT_ENV is the *kernel* env
@@ -16,5 +17,5 @@ if [[ "${KERNEL_PYTHON_PREFIX}" != "${NB_PYTHON_PREFIX}" ]]; then
     # which only contains UI when the two are different
     export CONDA_DEFAULT_ENV="${KERNEL_PYTHON_PREFIX}"
 else
-    micromamba activate ${NB_PYTHON_PREFIX}
+    mamba activate ${NB_PYTHON_PREFIX}
 fi

@@ -56,7 +56,9 @@ class CondaBuildPack(BaseImage):
             ("NPM_CONFIG_GLOBALCONFIG", "${NPM_DIR}/npmrc"),
             ("NB_ENVIRONMENT_FILE", self._nb_environment_file),
             ("MAMBA_ROOT_PREFIX", "${CONDA_DIR}"),
-            ("MAMBA_EXE", "/tmp/bin/micromamba"),
+            # this exe should be used for installs after bootstrap with micromamba
+            # switch this to /usr/local/bin/micromamba to use it for all installs
+            ("MAMBA_EXE", "${CONDA_DIR}/bin/mamba"),
         ]
         if self._nb_requirements_file:
             env.append(("NB_REQUIREMENTS_FILE", self._nb_requirements_file))
@@ -334,13 +336,15 @@ class CondaBuildPack(BaseImage):
         environment_yml = self.binder_path("environment.yml")
         env_prefix = "${KERNEL_PYTHON_PREFIX}" if self.py2 else "${NB_PYTHON_PREFIX}"
         if os.path.exists(environment_yml):
+            # TODO: when using micromamba, we call $MAMBA_EXE install -p ...
+            # whereas mamba/conda need `env update -p ...` when it's an env.yaml file
             scripts.append(
                 (
                     "${NB_USER}",
                     r"""
                 TIMEFORMAT='time: %3R' \
-                bash -c 'time ${{MAMBA_EXE}} install -p {0} -f "{1}" && \
-                time ${{MAMBA_EXE}} clean --all -y && \
+                bash -c 'time ${{MAMBA_EXE}} env update -p {0} --file "{1}" && \
+                time ${{MAMBA_EXE}} clean --all -f -y && \
                 ${{MAMBA_EXE}} list -p {0} \
                 '
                 """.format(
@@ -359,7 +363,7 @@ class CondaBuildPack(BaseImage):
                     "${NB_USER}",
                     r"""
                 ${{MAMBA_EXE}} install -p {0} r-base{1} r-irkernel=1.2 r-devtools -y && \
-                ${{MAMBA_EXE}} clean --all -y && \
+                ${{MAMBA_EXE}} clean --all -f -y && \
                 ${{MAMBA_EXE}} list -p {0}
                 """.format(
                         env_prefix, r_pin
