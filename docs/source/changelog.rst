@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-Version 2022.01.0
+Version 2022.02.0
 =================
 
 `Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.08.0...2022.01.0>`_
@@ -22,6 +22,7 @@ New features
 - Set labels when building image from Dockerfile :pr:`1097` by :user:`TimoRoth`
 - jupyterlab 3.1.17 :pr:`1092` by :user:`minrk`
 - Bump JupyterLab to 3.1.11 :pr:`1081` by :user:`choldgraf`
+- Bootstrap base env with micromamba :pr:`1062` by :user:`wolfv ` 
 - Default UI to JupyterLab :pr:`1035` by :user:`SylvainCorlay`
 
 API changes
@@ -33,11 +34,12 @@ Bug fixes
 Other merged PRs
 ----------------
 
-- Remove deprecated calls to distutils :pr:1122 by :user:minrk
-- Delete /tmp/downloaded_packages after running install.R :pr:1119 by :user:yuvipanda
-- Use a smaller R library in our tests :pr:1118 by :user:yuvipanda
-- Only get R itself (r-base-core) from apt, not CRAN packages :pr:1117 by :user:minrk
-- set USER root after each directive block :pr:1115 by :user:minrk
+- Put micromamba in /usr/local/bin and use mamba for installs :pr:`1128` by :user:`minrk`
+- Remove deprecated calls to distutils :pr:`1122` by :user:`minrk`
+- Delete /tmp/downloaded_packages after running install.R :pr:`1119` by :user:`yuvipanda`
+- Use a smaller R library in our tests :pr:`1118` by :user:`yuvipanda`
+- Only get R itself (r-base-core) from apt, not CRAN packages :pr:`1117` by :user:`minrk`
+- set USER root after each directive block :pr:`1115` by :user:`minrk`
 - Say 'apt repository' rather than PPA :pr:`1111` by :user:`yuvipanda`
 - add tests for R conda :pr:`1108` by :user:`aplamada`
 - Add help message to freeze.py :pr:`1106` by :user:`manics`
