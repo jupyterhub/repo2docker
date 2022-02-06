@@ -3,6 +3,56 @@ Changelog
 =========
 
 
+Version 2022.02.0
+=================
+
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.08.0...2022.01.0>`_
+
+New features
+------------
+
+- Update ipywidgets jupyter-offlinenotebook jupyterlab :pr:`1127` by :user:`manics`
+- Allow passing in extra args to Docker initialization :pr:`1124` by :user:`yuvipanda`
+- Allow passing in traitlets via commandline :pr:`1123` by :user:`yuvipanda`
+- Bump default R version to 4.1 :pr:`1107` by :user:`yuvipanda`
+- Update jupyterlab 3.2.5 jupyter-resource-usage 0.6.1 :pr:`1105` by :user:`manics`
+- Get binary R packages from packagemanager.rstudio.com :pr:`1104` by :user:`yuvipanda`
+- Support R 4.1 :pr:`1102` by :user:`yuvipanda`
+- Add command line option to pass extra build args :pr:`1100` by :user:`TimoRoth`
+- Set labels when building image from Dockerfile :pr:`1097` by :user:`TimoRoth`
+- jupyterlab 3.1.17 :pr:`1092` by :user:`minrk`
+- Bump JupyterLab to 3.1.11 :pr:`1081` by :user:`choldgraf`
+- Bootstrap base env with micromamba :pr:`1062` by :user:`wolfv ` 
+- Default UI to JupyterLab :pr:`1035` by :user:`SylvainCorlay`
+
+API changes
+-----------
+
+Bug fixes
+---------
+
+Other merged PRs
+----------------
+
+- Put micromamba in /usr/local/bin and use mamba for installs :pr:`1128` by :user:`minrk`
+- Remove deprecated calls to distutils :pr:`1122` by :user:`minrk`
+- Delete /tmp/downloaded_packages after running install.R :pr:`1119` by :user:`yuvipanda`
+- Use a smaller R library in our tests :pr:`1118` by :user:`yuvipanda`
+- Only get R itself (r-base-core) from apt, not CRAN packages :pr:`1117` by :user:`minrk`
+- set USER root after each directive block :pr:`1115` by :user:`minrk`
+- Say 'apt repository' rather than PPA :pr:`1111` by :user:`yuvipanda`
+- add tests for R conda :pr:`1108` by :user:`aplamada`
+- Add help message to freeze.py :pr:`1106` by :user:`manics`
+- Quieter R builds :pr:`1103` by :user:`yuvipanda`
+- update user_interface doc to reflect that lab is default :pr:`1085` by :user:`minrk`
+- Updates to dev docs + Recommonmark -> MyST Parser :pr:`1082` by :user:`choldgraf`
+- Fix Docker build (again) :pr:`1078` by :user:`manics`
+- [mrg] __init__.py: r_version: fixed description :pr:`1074` by :user:`magnush0lm`
+- Typo fix in utils docstring :pr:`1072` by :user:`jgarte`
+- Rename requirements.py-3.5.txt to requirements.py-3.5.pip :pr:`1061` by :user:`manics`
+- Remove nodesource' nodejs :pr:`847` by :user:`yuvipanda`
+
+
 Version 2021.08.0
 =================
 
