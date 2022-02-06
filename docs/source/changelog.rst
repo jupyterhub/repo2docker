@@ -6,7 +6,7 @@ Changelog
 Version 2022.02.0
 =================
 
-`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.08.0...2022.01.0>`_
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.08.0...2022.02.0>`_
 
 New features
 ------------
