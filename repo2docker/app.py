@@ -231,6 +231,25 @@ class Repo2Docker(Application):
         """
         return getpass.getuser()
 
+    group_id = Int(
+        help="""
+        GID of the user to create inside the built image.
+
+        Defaults to gid of currently running user, since that is the most
+        common case when running r2d manually.
+
+        Might not affect Dockerfile builds.
+        """,
+        config=True,
+    )
+
+    @default("group_id")
+    def _group_id_default(self):
+        """
+        Default group_id to same as user id.
+        """
+        return self._user_id_default()
+
     appendix = Unicode(
         config=True,
         help="""
@@ -787,6 +806,7 @@ class Repo2Docker(Application):
                     build_args = {
                         "NB_USER": self.user_name,
                         "NB_UID": str(self.user_id),
+                        "NB_GID": str(self.group_id),
                     }
                     if self.target_repo_dir:
                         build_args["REPO_DIR"] = self.target_repo_dir
