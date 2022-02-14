@@ -773,24 +773,25 @@ class Repo2Docker(Application):
 
                 picked_buildpack.labels.update(self.labels)
 
+                build_args = {
+                    "NB_USER": self.user_name,
+                    "NB_UID": str(self.user_id),
+                }
+                if self.target_repo_dir:
+                    build_args["REPO_DIR"] = self.target_repo_dir
+                build_args.update(self.extra_build_args)
+
                 if self.dry_run:
-                    print(picked_buildpack.render())
+                    print(picked_buildpack.render(build_args))
                 else:
                     self.log.debug(
-                        picked_buildpack.render(), extra=dict(phase="building")
+                        picked_buildpack.render(build_args),
+                        extra=dict(phase="building"),
                     )
                     if self.user_id == 0:
                         raise ValueError(
                             "Root as the primary user in the image is not permitted."
                         )
-
-                    build_args = {
-                        "NB_USER": self.user_name,
-                        "NB_UID": str(self.user_id),
-                    }
-                    if self.target_repo_dir:
-                        build_args["REPO_DIR"] = self.target_repo_dir
-                    build_args.update(self.extra_build_args)
 
                     self.log.info(
                         "Using %s builder\n",
