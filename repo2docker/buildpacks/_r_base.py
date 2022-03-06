@@ -14,7 +14,7 @@ def rstudio_base_scripts(r_version):
     shiny_proxy_version = "1.1"
     shiny_sha256sum = "80f1e48f6c824be7ef9c843bb7911d4981ac7e8a963e0eff823936a8b28476ee"
 
-    if V(r_version) <= V("4.1"):
+    if r_version and V(r_version) <= V("4.1"):
         # Older RStudio and jupyter-rsession-proxy for v4.1 and below
         rstudio_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.3.959-amd64.deb"
         rstudio_sha256sum = (
