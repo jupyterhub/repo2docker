@@ -9,8 +9,6 @@ from .base import BuildPack
 class DockerBuildPack(BuildPack):
     """Docker BuildPack"""
 
-    dockerfile = "Dockerfile"
-
     def detect(self):
         """Check if current repo should be built with the Docker BuildPack"""
         return os.path.exists(self.binder_path("Dockerfile"))
