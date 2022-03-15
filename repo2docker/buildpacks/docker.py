@@ -1,6 +1,7 @@
 """Generates a variety of Dockerfiles based on an input matrix
 """
 import os
+import tempfile
 import docker
 from .base import BuildPack
 
@@ -15,10 +16,21 @@ class DockerBuildPack(BuildPack):
         return os.path.exists(self.binder_path("Dockerfile"))
 
     def render(self, build_args=None):
-        """Render the Dockerfile using by reading it from the source repo"""
+        """
+        Render the Dockerfile used by reading it from the source repo
+
+        If an appendix is configured, it will be appended to the Dockerfile
+        found in the source repo.
+        """
         Dockerfile = self.binder_path("Dockerfile")
         with open(Dockerfile) as f:
-            return f.read()
+            content = f.read()
+
+        if self.appendix:
+            content += "\n"
+            content += self.appendix
+
+        return content
 
     def build(
         self,
@@ -45,17 +57,20 @@ class DockerBuildPack(BuildPack):
             # we use no swap.
             limits = {"memory": memory_limit, "memswap": memory_limit}
 
-        build_kwargs = dict(
-            path=os.getcwd(),
-            dockerfile=self.binder_path(self.dockerfile),
-            tag=image_spec,
-            buildargs=build_args,
-            container_limits=limits,
-            cache_from=cache_from,
-            labels=self.get_labels(),
-        )
+        with tempfile.NamedTemporaryFile(mode="w") as f:
+            f.write(self.render())
+            f.flush()
+            build_kwargs = dict(
+                path=os.getcwd(),
+                dockerfile=f.name,
+                tag=image_spec,
+                buildargs=build_args,
+                container_limits=limits,
+                cache_from=cache_from,
+                labels=self.get_labels(),
+            )
 
-        build_kwargs.update(extra_build_kwargs)
+            build_kwargs.update(extra_build_kwargs)
 
-        for line in client.build(**build_kwargs):
-            yield line
+            for line in client.build(**build_kwargs):
+                yield line

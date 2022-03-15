@@ -1,3 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 /usr/local/bin/sayhi.sh
+
+# Test that the appendix worked, even though this is a custom Dockerfile
+test $(cat /tmp/appendix) == "appendix"
