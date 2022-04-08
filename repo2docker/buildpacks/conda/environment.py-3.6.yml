@@ -1,19 +1,2 @@
-# AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2022-01-26 18:33:44 UTC
-channels:
-- conda-forge
-dependencies:
-- python=3.6.*
-- nodejs=14
-- pip
-- ipywidgets==7.6.5
-- jupyter-offlinenotebook==0.2.2
-- jupyter-resource-usage==0.6.1
-- jupyterlab==3.2.8
-  # jupyterhub-singleuser==1.5.0 won't install with python 3.6 (but 2.0.1 does!)
-- jupyterhub-singleuser==1.4.2
-  # Newer versions require python 3.7
-- nbconvert==6.0.7
-  # 6.4.0 conda package requires python 3.7
-- notebook==6.3.0
-- nteract_on_jupyter==2.1.3
+# py3.6 is not being auto-generated from this file anymore
+# update environment.py-3.6.frozen.yml directly
