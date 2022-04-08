@@ -1,19 +1,15 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2022-01-26 18:35:40 UTC
+# Generated on 2022-04-08 20:32:01 UTC
 channels:
 - conda-forge
 dependencies:
 - python=3.8.*
 - nodejs=14
 - pip
-- ipywidgets==7.6.5
+- ipywidgets==7.7.0
 - jupyter-offlinenotebook==0.2.2
 - jupyter-resource-usage==0.6.1
-- jupyterlab==3.2.8
-  # jupyterhub-singleuser==1.5.0 won't install with python 3.6 (but 2.0.1 does!)
-- jupyterhub-singleuser==1.4.2
-  # Newer versions require python 3.7
-- nbconvert==6.0.7
-  # 6.4.0 conda package requires python 3.7
-- notebook==6.3.0
+- jupyterlab==3.3.3
+- jupyterhub-singleuser==1.5.0
+- notebook==6.4.10
 - nteract_on_jupyter==2.1.3
