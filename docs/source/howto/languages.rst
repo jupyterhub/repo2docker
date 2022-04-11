@@ -54,19 +54,29 @@ To specify a specific version of Python, you have two options:
 The R Language
 ==============
 
-To ensure that R is installed, you must specify a version of R in a ``runtime.txt``
-file. This takes the following form::
+repo2docker supports  R, the open source `RStudio IDE <https://www.rstudio.com/>`_ as well
+as Jupyter support for R with the `IRKernel <https://irkernel.github.io/>`_. To set it up,
+you need to create a ``runtime.txt`` file with the following format:
 
-  r-YYYY-MM-DD
+  r-<version>-<YYYY>-<MM>-<DD>
 
-The date corresponds to the state of the MRAN repository at this day. Make sure
-that you choose a day with the desired version of your packages. For example,
-to use the MRAN repository on January 1st, 2018, add this line to ``runtime.txt``::
+This will provide you R of given version (such as 4.1, 3.6, etc), and a CRAN snapshot
+to install libraries from on the given date. You can install more R packages from CRAN
+by adding a :ref:`install.R<install.R>` file to your repo. RStudio and IRKernel are
+installed by default for all R versions.
 
-  r-2018-01-01
+If you request R 4.1 or later, or specify a snapshot date newer than
+``2022-01-01``, `packagemanager.rstudio.com <https://packagemanager.rstudio.com/client/#/>`_
+will be used to provide much faster installations via `binary packages <https://www.rstudio.com/blog/package-manager-v1-1-no-interruptions/>`_.
+For *some* packages, this might require you install underlying system libraries
+using :ref:`apt.txt` - look at the page for the CRAN package you are interested in at
+`packagemanager.rstudio.com <https://packagemanager.rstudio.com/client/#/>`_ to find
+a list.
 
-Note that to install specific packages with the R environment, you should
-use the ``install.R`` configuration file.
+For older R versions with an older snapshot date, `MRAN <https://mran.microsoft.com/>`_
+is used as source of packages. This purely provides source packages, and you should
+migrate away from this if possible.
+
 
 Julia
 =====
