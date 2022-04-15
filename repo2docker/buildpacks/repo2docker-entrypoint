@@ -23,11 +23,13 @@ SIGNALS = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP, signal.SIGCHLD}
 
 def main():
 
-    # open log file to send output
-    log_file = open(
-        os.path.join(os.environ.get("REPO_DIR", "."), ".jupyter-server-log.txt"),
-        "ab",
-    )
+    # open log file to send output; fall back to writing it in
+    # the current working directory
+    if "REPO_DIR" in os.environ and os.access(os.environ["REPO_DIR"], 7):
+        log_path = os.path.join(os.environ["REPO_DIR"], ".jupyter-server-log.txt")
+    else:
+        log_path = os.path.join(".", ".jupyter-server-log.txt")
+    log_file = open(log_path, "ab")
 
     # build the command
     # like `exec "$@"`
