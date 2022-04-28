@@ -33,7 +33,7 @@ def main():
     if "REPO_DIR" in os.environ:
         log_dirs.insert(0, os.environ["REPO_DIR"])
     for d in log_dirs:
-        log_path = os.path.join(d, 'log.txt')
+        log_path = os.path.join(d, ".jupyter-server-log.txt")
         try:
             log_file = open(log_path, "ab")
         except PermissionError:
