@@ -12,6 +12,7 @@ import select
 import signal
 import subprocess
 import sys
+import tempfile
 
 # output chunk size to read
 CHUNK_SIZE = 1024
@@ -23,11 +24,23 @@ SIGNALS = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP, signal.SIGCHLD}
 
 def main():
 
-    # open log file to send output
-    log_file = open(
-        os.path.join(os.environ.get("REPO_DIR", "."), ".jupyter-server-log.txt"),
-        "ab",
-    )
+    # open log file to send output to;
+    # preferred location of log file is:
+    #  1. REPO_DIR env variable
+    #  2. current working directory: "."
+    #  3. default temp directory for the OS (e.g. /tmp for linux)
+    log_dirs = [".", tempfile.gettempdir()]
+    if "REPO_DIR" in os.environ:
+        log_dirs.insert(0, os.environ["REPO_DIR"])
+    for d in log_dirs:
+        log_path = os.path.join(d, ".jupyter-server-log.txt")
+        try:
+            log_file = open(log_path, "ab")
+        except PermissionError:
+            continue
+        else:
+            # success
+            break
 
     # build the command
     # like `exec "$@"`
