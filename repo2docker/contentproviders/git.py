@@ -1,5 +1,4 @@
 import subprocess
-import sys
 
 from .base import ContentProvider, ContentProviderException
 from ..utils import execute_cmd, check_ref
