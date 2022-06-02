@@ -17,12 +17,12 @@ class Git(ContentProvider):
 
     def fetch(self, spec, output_dir, yield_output=False):
         repo = spec["repo"]
-        ref = spec.get("ref", None)
+        ref = spec.get("ref") or "HEAD"
 
         # make a, possibly shallow, clone of the remote repository
         try:
             cmd = ["git", "clone"]
-            if ref is None:
+            if ref == "HEAD":
                 # check out of HEAD is performed after the clone is complete
                 cmd.extend(["--depth", "1"])
             else:
@@ -35,13 +35,13 @@ class Git(ContentProvider):
 
         except subprocess.CalledProcessError as e:
             msg = "Failed to clone repository from {repo}".format(repo=repo)
-            if ref is not None:
+            if ref != "HEAD":
                 msg += " (ref {ref})".format(ref=ref)
             msg += "."
             raise ContentProviderException(msg) from e
 
         # check out the specific ref given by the user
-        if ref is not None:
+        if ref != "HEAD":
             hash = check_ref(ref, output_dir)
             if hash is None:
                 self.log.error(
