@@ -29,7 +29,7 @@ def test_version_completion(tmpdir):
         f.write(f"r-3.6-2019-01-01")
 
     r = buildpacks.RBuildPack()
-    assert r.r_version == "3.6.3-1bionic"
+    assert r.r_version == "3.6.3"
 
 
 @pytest.mark.parametrize(
