@@ -314,13 +314,12 @@ class RBuildPack(PythonBuildPack):
                 # Quite hilarious, IMO.
                 # See https://docs.rstudio.com/rspm/1.0.12/admin/binaries.html
                 # Set mirror for RStudio too, by modifying rsession.conf
-                r"""
+                rf"""
                 R RHOME && \
-                mkdir -p /usr/lib/R/etc /etc/rstudio && \
+                mkdir -p /etc/rstudio && \
+                echo 'options(repos = c(CRAN = "{cran_mirror_url}"))' > /opt/R/{self.r_version}/lib/R/etc/Rprofile.site && \
                 echo 'r-cran-repos={cran_mirror_url}' > /etc/rstudio/rsession.conf
-                """.format(
-                    cran_mirror_url=cran_mirror_url
-                ),
+                """,
             ),
             (
                 "${NB_USER}",
