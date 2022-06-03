@@ -261,13 +261,10 @@ class RBuildPack(PythonBuildPack):
         scripts = [
             (
                 "root",
-                # gdebi is required to install dependencies of the deb packages from rstudio
-                # dpkg is built in, but doesn't allow us to fetch & install dependencies in one go
                 r"""
                 apt-get update > /dev/null && \
                 apt-get install --yes --no-install-recommends \
                         libclang-dev \
-                        gdebi \
                         libzmq3-dev > /dev/null
                 """,
                 # apt-get -qq purge && \
@@ -278,7 +275,7 @@ class RBuildPack(PythonBuildPack):
                 "root",
                 rf"""
                 wget --quiet -O /tmp/r-{self.r_version}.deb https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-{self.r_version}_1_amd64.deb && \
-                gdebi --quiet --non-interactive /tmp/r-{self.r_version}.deb && \
+                apt install --yes --no-install-recommends /tmp/r-{self.r_version}.deb && \
                 rm /tmp/r-{self.r_version}.deb && \
                 ln -s /opt/R/{self.r_version}/bin/R /usr/local/bin/R && \
                 ln -s /opt/R/{self.r_version}/bin/Rscript /usr/local/bin/Rscript && \
