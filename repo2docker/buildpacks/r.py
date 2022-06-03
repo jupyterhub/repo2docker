@@ -210,7 +210,7 @@ class RBuildPack(PythonBuildPack):
             # Construct a snapshot URL that will give us binary packages for Ubuntu Bionic (18.04)
             if "upsi" in snapshots:
                 return (
-                    "https://packagemanager.rstudio.com/all/__linux__/bionic/"
+                    "https://packagemanager.rstudio.com/all/__linux__/focal/"
                     + snapshots["upsi"]
                 )
         raise ValueError(
@@ -253,7 +253,7 @@ class RBuildPack(PythonBuildPack):
         # Hardcoded rather than dynamically determined from a date to avoid extra API calls
         # Plus, we can always use packagemanager.rstudio.com here as we always install the
         # necessary apt packages.
-        return "https://packagemanager.rstudio.com/all/__linux__/bionic/2022-01-04+Y3JhbiwyOjQ1MjYyMTU7NzlBRkJEMzg"
+        return "https://packagemanager.rstudio.com/all/__linux__/focal/2022-06-03+Y3JhbiwyOjQ1MjYyMTU7RkM5ODcwN0M"
 
     def get_build_scripts(self):
         """

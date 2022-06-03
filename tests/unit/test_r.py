@@ -65,7 +65,7 @@ def test_snapshot_rspm_date():
     for requested, expected in test_dates.items():
         snapshot_url = r.get_rspm_snapshot_url(requested)
         assert snapshot_url.startswith(
-            "https://packagemanager.rstudio.com/all/__linux__/bionic/"
+            "https://packagemanager.rstudio.com/all/__linux__/focal/"
             + expected.strftime("%Y-%m-%d")
         )
 
