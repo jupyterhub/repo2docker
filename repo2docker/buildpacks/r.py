@@ -262,7 +262,8 @@ class RBuildPack(PythonBuildPack):
                 apt-get install --yes --no-install-recommends \
                         libclang-dev \
                         libzmq3-dev > /dev/null && \
-                wget --quiet -O /tmp/r-{self.r_version}.deb https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-{self.r_version}_1_amd64.deb && \
+                wget --quiet -O /tmp/r-{self.r_version}.deb \
+                    https://cdn.rstudio.com/r/ubuntu-$(source /etc/os-release && echo $VERSION_ID | sed 's/\.//')/pkgs/r-{self.r_version}_1_amd64.deb && \
                 apt install --yes --no-install-recommends /tmp/r-{self.r_version}.deb > /dev/null && \
                 rm /tmp/r-{self.r_version}.deb && \
                 apt-get -qq purge && \
