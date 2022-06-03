@@ -67,34 +67,16 @@ class RBuildPack(PythonBuildPack):
         Will return the version specified by the user or the current default
         version.
         """
-        version_map = {
-            "3.4": "3.4",
-            "3.5": "3.5.3-1bionic",
-            "3.5.0": "3.5.0-1bionic",
-            "3.5.1": "3.5.1-2bionic",
-            "3.5.2": "3.5.2-1bionic",
-            "3.5.3": "3.5.3-1bionic",
-            "3.6": "3.6.3-1bionic",
-            "3.6.0": "3.6.0-2bionic",
-            "3.6.1": "3.6.1-3bionic",
-            "4.0": "4.0.5-1.1804.0",
-            "4.0.2": "4.0.2-1.1804.0",
-            "4.1": "4.1.2-1.1804.0",
-        }
         # the default if nothing is specified
-        r_version = "4.1"
+        r_version = "4.1.0"
 
         if not hasattr(self, "_r_version"):
             parts = self.runtime.split("-")
             if len(parts) == 5:
                 r_version = parts[1]
-                if r_version not in version_map:
-                    raise ValueError(
-                        "Version '{}' of R is not supported.".format(r_version)
-                    )
 
             # translate to the full version string
-            self._r_version = version_map.get(r_version)
+            self._r_version = r_version
 
         return self._r_version
 
@@ -177,12 +159,6 @@ class RBuildPack(PythonBuildPack):
             "sudo",
             "lsb-release",
         ]
-        # For R 3.4 we use the default Ubuntu package, for other versions we
-        # install from a different apt repository
-        if V(self.r_version) < V("3.5"):
-            packages.append("r-base")
-            packages.append("r-base-dev")
-            packages.append("libclang-dev")
 
         return super().get_packages().union(packages)
 
@@ -279,15 +255,7 @@ class RBuildPack(PythonBuildPack):
             (
                 "root",
                 rf"""
-                echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran{vs}/" > /etc/apt/sources.list.d/r-ubuntu.list
-                """,
-            ),
-            # Dont use apt-key directly, as gpg does not always respect *_proxy vars. This increase the chances
-            # of being able to reach it from behind a firewall
-            (
-                "root",
-                r"""
-                wget --quiet -O - 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xe298a3a825c0d65dfd57cbb651716619e084dab9' | apt-key add -
+                wget --quiet -o /tmp/r-{self.r_version} https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-{self.r_version}_1_amd64.deb
                 """,
             ),
             (
@@ -298,16 +266,12 @@ class RBuildPack(PythonBuildPack):
                 r"""
                 apt-get update > /dev/null && \
                 apt-get install --yes --no-install-recommends \
-                        r-base-core={R_version} \
-                        r-base-dev={R_version} \
                         libclang-dev \
                         libzmq3-dev > /dev/null && \
                 apt-get -qq purge && \
                 apt-get -qq clean && \
                 rm -rf /var/lib/apt/lists/*
-                """.format(
-                    R_version=self.r_version
-                ),
+                """,
             ),
         ]
 
