@@ -7,20 +7,6 @@ from unittest.mock import patch
 from repo2docker import buildpacks
 
 
-def test_unsupported_version(tmpdir):
-    tmpdir.chdir()
-
-    with open("runtime.txt", "w") as f:
-        f.write("r-3.8-2019-01-01")
-
-    r = buildpacks.RBuildPack()
-    with pytest.raises(ValueError) as excinfo:
-        # access the property to trigger the exception
-        _ = r.r_version
-        # check the version is mentioned in the exception
-        assert "'3.8'" in str(excinfo.value)
-
-
 @pytest.mark.parametrize(
     "runtime_version, expected", [("", "4.1"), ("3.6", "3.6"), ("3.5.1", "3.5")]
 )
