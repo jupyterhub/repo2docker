@@ -302,9 +302,9 @@ class RBuildPack(PythonBuildPack):
                 # Set paths so that RStudio shares libraries with base R
                 # install. This first comments out any R_LIBS_USER that
                 # might be set in /etc/R/Renviron and then sets it.
-                r"""
-                sed -i -e '/^R_LIBS_USER=/s/^/#/' /etc/R/Renviron && \
-                echo "R_LIBS_USER=${R_LIBS_USER}" >> /etc/R/Renviron
+                rf"""
+                sed -i -e '/^R_LIBS_USER=/s/^/#/' /opt/R/{self.r_version}/lib/R/etc/Renviron && \
+                echo "R_LIBS_USER=${{R_LIBS_USER}}" >> /opt/R/{self.r_version}/lib/R/etc/Renviron
                 """,
             ),
             (
@@ -317,8 +317,6 @@ class RBuildPack(PythonBuildPack):
                 r"""
                 R RHOME && \
                 mkdir -p /usr/lib/R/etc /etc/rstudio && \
-                echo 'options(repos = c(CRAN = "{cran_mirror_url}"))' > /usr/lib/R/etc/Rprofile.site && \
-                echo 'options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version$platform, R.version$arch, R.version$os)))' >> /usr/lib/R/etc/Rprofile.site && \
                 echo 'r-cran-repos={cran_mirror_url}' > /etc/rstudio/rsession.conf
                 """.format(
                     cran_mirror_url=cran_mirror_url
