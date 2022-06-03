@@ -255,7 +255,8 @@ class RBuildPack(PythonBuildPack):
             (
                 "root",
                 rf"""
-                wget --quiet -o /tmp/r-{self.r_version} https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-{self.r_version}_1_amd64.deb
+                wget --quiet -o /tmp/r-{self.r_version}.deb https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-{self.r_version}_1_amd64.deb && \
+                dpkg -i /tmp/r-{self.r_version}.deb
                 """,
             ),
             (
