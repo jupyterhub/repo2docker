@@ -38,11 +38,7 @@ class RBuildPack(PythonBuildPack):
 
     - are needed by a specific tool
 
-    The `r-base-core` package from Ubuntu or "Ubuntu packages for R"
-    apt repositories is used to install R itself,
-    rather than any of the methods from https://cran.r-project.org/.
-
-    The `r-base-dev` package is installed as advised in RStudio instructions.
+    R is installed from https://docs.rstudio.com/resources/install-r/
     """
 
     @property
