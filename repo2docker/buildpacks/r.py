@@ -67,6 +67,16 @@ class RBuildPack(PythonBuildPack):
         Will return the version specified by the user or the current default
         version.
         """
+        version_map = {
+            "4.2": "4.2.0",
+            "4.1": "4.1.3",
+            "4.0": "4.0.5",
+            "3.6": "3.6.3",
+            "3.5": "3.5.3",
+            "3.4": "3.4.0",
+            "3.3": "3.3.3",
+        }
+
         # the default if nothing is specified
         r_version = "4.1.0"
 
@@ -74,6 +84,10 @@ class RBuildPack(PythonBuildPack):
             parts = self.runtime.split("-")
             if len(parts) == 5:
                 r_version = parts[1]
+                # For versions of form x.y, we want to explicitly provide x.y.z - latest patchlevel
+                # available. Users can howver explicitly specify the full version to get something specific
+                if r_version in version_map:
+                    r_version = version_map[r_version]
 
             # translate to the full version string
             self._r_version = r_version
