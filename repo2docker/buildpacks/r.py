@@ -258,34 +258,31 @@ class RBuildPack(PythonBuildPack):
 
         cran_mirror_url = self.get_cran_mirror_url(self.checkpoint_date)
 
-        # Determine which R apt repository should be enabled
-        if V(self.r_version) >= V("3.5"):
-            if V(self.r_version) >= V("4"):
-                vs = "40"
-            else:
-                vs = "35"
-
         scripts = [
             (
                 "root",
-                rf"""
-                wget --quiet -o /tmp/r-{self.r_version}.deb https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-{self.r_version}_1_amd64.deb && \
-                dpkg -i /tmp/r-{self.r_version}.deb
-                """,
-            ),
-            (
-                "root",
-                # we should have --no-install-recommends on all our apt-get install commands,
-                # but here it's important because it will pull in CRAN packages
-                # via r-recommends, which is only guaranteed to be compatible with the latest r-base-core
+                # gdebi is required to install dependencies of the deb packages from rstudio
+                # dpkg is built in, but doesn't allow us to fetch & install dependencies in one go
                 r"""
                 apt-get update > /dev/null && \
                 apt-get install --yes --no-install-recommends \
                         libclang-dev \
-                        libzmq3-dev > /dev/null && \
-                apt-get -qq purge && \
-                apt-get -qq clean && \
-                rm -rf /var/lib/apt/lists/*
+                        gdebi \
+                        libzmq3-dev > /dev/null
+                """,
+                # apt-get -qq purge && \
+                # apt-get -qq clean && \
+                # rm -rf /var/lib/apt/lists/*
+            ),
+            (
+                "root",
+                rf"""
+                wget --quiet -O /tmp/r-{self.r_version}.deb https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-{self.r_version}_1_amd64.deb && \
+                gdebi --quiet --non-interactive /tmp/r-{self.r_version}.deb && \
+                rm /tmp/r-{self.r_version}.deb && \
+                ln -s /opt/R/{self.r_version}/bin/R /usr/local/bin/R && \
+                ln -s /opt/R/{self.r_version}/bin/Rscript /usr/local/bin/Rscript && \
+                R --version
                 """,
             ),
         ]
