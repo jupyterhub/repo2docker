@@ -81,7 +81,7 @@ class RBuildPack(PythonBuildPack):
             if len(parts) == 5:
                 r_version = parts[1]
                 # For versions of form x.y, we want to explicitly provide x.y.z - latest patchlevel
-                # available. Users can howver explicitly specify the full version to get something specific
+                # available. Users can however explicitly specify the full version to get something specific
                 if r_version in version_map:
                     r_version = version_map[r_version]
 
