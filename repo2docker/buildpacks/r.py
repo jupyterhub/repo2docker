@@ -210,7 +210,10 @@ class RBuildPack(PythonBuildPack):
             # Construct a snapshot URL that will give us binary packages for Ubuntu Bionic (18.04)
             if "upsi" in snapshots:
                 return (
-                    "https://packagemanager.rstudio.com/all/__linux__/focal/"
+                    # Env variables here are expanded by envsubst in the Dockerfile, after sourcing
+                    # /etc/os-release. This allows us to use distro specific variables here to get
+                    # appropriate binary packages without having to hard code version names here.
+                    "https://packagemanager.rstudio.com/all/__linux__/${VERSION_CODENAME}/"
                     + snapshots["upsi"]
                 )
         raise ValueError(
@@ -253,7 +256,10 @@ class RBuildPack(PythonBuildPack):
         # Hardcoded rather than dynamically determined from a date to avoid extra API calls
         # Plus, we can always use packagemanager.rstudio.com here as we always install the
         # necessary apt packages.
-        return "https://packagemanager.rstudio.com/all/__linux__/focal/2022-06-03+Y3JhbiwyOjQ1MjYyMTU7RkM5ODcwN0M"
+        # Env variables here are expanded by envsubst in the Dockerfile, after sourcing
+        # /etc/os-release. This allows us to use distro specific variables here to get
+        # appropriate binary packages without having to hard code version names here.
+        return "https://packagemanager.rstudio.com/all/__linux__/${VERSION_CODENAME}/2022-06-03+Y3JhbiwyOjQ1MjYyMTU7RkM5ODcwN0M"
 
     def get_build_scripts(self):
         """
@@ -329,15 +335,17 @@ class RBuildPack(PythonBuildPack):
                 rf"""
                 R RHOME && \
                 mkdir -p /etc/rstudio && \
-                echo 'options(repos = c(CRAN = "{cran_mirror_url}"))' > /opt/R/{self.r_version}/lib/R/etc/Rprofile.site && \
-                echo 'r-cran-repos={cran_mirror_url}' > /etc/rstudio/rsession.conf
+                EXPANDED_CRAN_MIRROR_URL="$(. /etc/os-release && echo {cran_mirror_url} | envsubst)" && \
+                echo "options(repos = c(CRAN = \"${{EXPANDED_CRAN_MIRROR_URL}}\"))" > /opt/R/{self.r_version}/lib/R/etc/Rprofile.site && \
+                echo "r-cran-repos=${{EXPANDED_CRAN_MIRROR_URL}}" > /etc/rstudio/rsession.conf
                 """,
             ),
             (
                 "${NB_USER}",
                 # Install a pinned version of devtools, IRKernel and shiny
-                rf"""
-                R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='{self.get_devtools_snapshot_url()}')" && \
+                r"""
+                EXPANDED_CRAN_MIRROR_URL="$(. /etc/os-release && echo {self.devtools_cran_mirror_url()} | envsubst)" && \
+                R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='${{EXPANDED_CRAN_MIRROR_URL}}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """,
             ),
