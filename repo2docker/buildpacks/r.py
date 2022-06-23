@@ -79,6 +79,8 @@ class RBuildPack(PythonBuildPack):
 
         if not hasattr(self, "_r_version"):
             parts = self.runtime.split("-")
+            # If runtime.txt is not set, or if it isn't of the form r-<version>-<yyyy>-<mm>-<dd>,
+            # we don't use any of it in determining r version and just use the default
             if len(parts) == 5:
                 r_version = parts[1]
                 # For versions of form x.y, we want to explicitly provide x.y.z - latest patchlevel
