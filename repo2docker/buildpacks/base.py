@@ -10,7 +10,6 @@ import sys
 import hashlib
 import escapism
 
-# Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
 FROM buildpack-deps:bionic
 
