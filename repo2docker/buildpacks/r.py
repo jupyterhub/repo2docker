@@ -140,7 +140,8 @@ class RBuildPack(PythonBuildPack):
         return super().get_env() + [
             # rstudio (rsession) can't seem to find R unless we explicitly tell it where
             # it is - just $PATH isn't enough. I discovered these are the env vars it
-            # looks for by digging through RStudio source and finding https://github.com/rstudio/rstudio/blob/main/src/cpp/r/session/RDiscovery.cpp
+            # looks for by digging through RStudio source and finding
+            # https://github.com/rstudio/rstudio/blob/v2022.02.3+492/src/cpp/r/session/RDiscovery.cpp
             ("R_HOME", f"/opt/R/{self.r_version}/lib/R"),
             ("R_DOC_DIR", "${R_HOME}/doc"),
             ("LD_LIBRARY_PATH", "${R_HOME}/lib:${LD_LIBRARY_PATH}"),
