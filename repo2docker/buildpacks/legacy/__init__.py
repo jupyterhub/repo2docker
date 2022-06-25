@@ -16,6 +16,9 @@ class LegacyBinderDockerBuildPack:
     This buildpack has been deprecated.
     """
 
+    def __init__(self, *args, **kwargs):
+        pass
+
     def detect(self):
         """Check if current repo should be built with the Legacy BuildPack."""
         log = logging.getLogger("repo2docker")

@@ -425,6 +425,16 @@ class Repo2Docker(Application):
         """,
     )
 
+    base_image = Unicode(
+        "buildpack-deps:bionic",
+        config=True,
+        help="""
+        Base image to use when building docker images.
+
+        Should be an ubuntu derivative, minimum 18.04.
+        """,
+    )
+
     def get_engine(self):
         """Return an instance of the container engine.
 
@@ -771,7 +781,7 @@ class Repo2Docker(Application):
 
             with chdir(checkout_path):
                 for BP in self.buildpacks:
-                    bp = BP()
+                    bp = BP(base_image=self.base_image)
                     if bp.detect():
                         picked_buildpack = bp
                         break
