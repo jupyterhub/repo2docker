@@ -623,6 +623,19 @@
             "slug": "pontificia-universidad-catolica-del-peru",
             "url": "http://datos.pucp.edu.pe",
             "version": "4.13"
-        }
+        },
+        {
+            "description": "The Jet Propulsion Laboratory is a federally funded research and development center and NASA field center.",
+            "full_name": "NASA/Caltech Jet Propulsion Laboratory",
+            "id": 1794,
+            "is_active": true,
+            "lat": 34.201694,
+            "lng": -118.171667,
+            "logo": "https://www.jpl.nasa.gov/assets/images/logo_nasa_trio_black@2x.png",
+            "name": "Jet Propulsion Laboratory",
+            "slug": "jpl",
+            "url": "https://dataverse.jpl.nasa.gov",
+            "version": "5.9"
+        }        
     ]
 }
