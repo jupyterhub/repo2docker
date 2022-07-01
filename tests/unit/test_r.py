@@ -7,20 +7,6 @@ from unittest.mock import patch
 from repo2docker import buildpacks
 
 
-def test_unsupported_version(tmpdir):
-    tmpdir.chdir()
-
-    with open("runtime.txt", "w") as f:
-        f.write("r-3.8-2019-01-01")
-
-    r = buildpacks.RBuildPack()
-    with pytest.raises(ValueError) as excinfo:
-        # access the property to trigger the exception
-        _ = r.r_version
-        # check the version is mentioned in the exception
-        assert "'3.8'" in str(excinfo.value)
-
-
 @pytest.mark.parametrize(
     "runtime_version, expected", [("", "4.1"), ("3.6", "3.6"), ("3.5.1", "3.5")]
 )
@@ -43,7 +29,7 @@ def test_version_completion(tmpdir):
         f.write(f"r-3.6-2019-01-01")
 
     r = buildpacks.RBuildPack()
-    assert r.r_version == "3.6.3-1bionic"
+    assert r.r_version == "3.6.3"
 
 
 @pytest.mark.parametrize(
@@ -104,50 +90,3 @@ def test_snapshot_mran_date(requested, expected):
         assert r.get_mran_snapshot_url(
             requested
         ) == "https://mran.microsoft.com/snapshot/{}".format(expected.isoformat())
-
-
-def test_install_from_base(tmpdir):
-    # check that for R==3.4 we install from ubuntu
-    tmpdir.chdir()
-
-    with open("runtime.txt", "w") as f:
-        f.write("r-3.4-2019-01-02")
-
-    r = buildpacks.RBuildPack()
-    assert "r-base" in r.get_packages()
-
-
-def test_install_from_cran_apt_repo(tmpdir):
-    # check that for R>3.4 we don't install r-base from Ubuntu
-    tmpdir.chdir()
-
-    with open("runtime.txt", "w") as f:
-        f.write("r-3.5-2019-01-02")
-
-    r = buildpacks.RBuildPack()
-    assert "r-base" not in r.get_packages()
-
-
-def test_custom_cran_apt_repo(tmpdir):
-    tmpdir.chdir()
-
-    with open("runtime.txt", "w") as f:
-        f.write("r-3.5-2019-01-02")
-
-    r = buildpacks.RBuildPack()
-
-    scripts = r.get_build_scripts()
-
-    # check that at least one of the build scripts adds this new apt repository
-    for user, script in scripts:
-        if "https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" in script:
-            break
-    else:
-        assert False, "Should have added a new apt repository"
-
-    # check that we install the right package
-    for user, script in scripts:
-        if "r-base-core=3.5" in script:
-            break
-    else:
-        assert False, "Should have installed base R"
