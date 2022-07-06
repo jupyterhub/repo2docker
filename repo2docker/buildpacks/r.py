@@ -75,7 +75,7 @@ class RBuildPack(PythonBuildPack):
 
         # the default if nothing is specified
         # Use full version is needed here, so it a valid semver
-        r_version = version_map["4.1"]
+        r_version = version_map["4.2"]
 
         if not hasattr(self, "_r_version"):
             parts = self.runtime.split("-")
