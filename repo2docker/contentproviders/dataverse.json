@@ -636,6 +636,19 @@
             "slug": "jpl",
             "url": "https://dataverse.jpl.nasa.gov",
             "version": "5.9"
+        },
+        {
+            "description": "The Research Data Repository for the Max Planck Society.",
+            "full_name": "Edmond - Research Data Repository for the Max Planck Society",
+            "id": 1795,
+            "is_active": true,
+            "lat": 48.1366,
+            "lng": 11.5771,
+            "logo": "https://edmond.mpdl.mpg.de/logos/navbar/logo_for_bright.png",
+            "name": "Edmond",
+            "slug": "",
+            "url": "https://edmond.mpdl.mpg.de",
+            "version": "5.10"
         }        
     ]
 }
