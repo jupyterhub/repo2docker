@@ -6,7 +6,7 @@ from repo2docker import buildpacks
 
 
 @pytest.mark.parametrize("binder_dir", ["", ".binder", "binder"])
-def test_combine_preassemble_steps(tmpdir, binder_dir):
+def test_combine_preassemble_steps(tmpdir, binder_dir, base_image):
     tmpdir.chdir()
     if binder_dir:
         os.mkdir(binder_dir)
@@ -19,7 +19,7 @@ def test_combine_preassemble_steps(tmpdir, binder_dir):
     with open(os.path.join(binder_dir, "runtime.txt"), "w") as f:
         f.write("r-2019-01-30")
 
-    bp = buildpacks.RBuildPack()
+    bp = buildpacks.RBuildPack(base_image)
     files = bp.get_preassemble_script_files()
 
     assert len(files) == 2

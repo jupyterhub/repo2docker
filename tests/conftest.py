@@ -100,6 +100,14 @@ def run_repo2docker():
     return run_test
 
 
+@pytest.fixture()
+def base_image():
+    """
+    Base ubuntu image to use when testing specific BuildPacks
+    """
+    return "buildpack-deps:bionic"
+
+
 def _add_content_to_git(repo_dir):
     """Add content to file 'test' in git repository and commit."""
     # use append mode so this can be called multiple times

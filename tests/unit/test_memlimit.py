@@ -48,14 +48,16 @@ def test_memory_limit_enforced(tmpdir):
 
 
 @pytest.mark.parametrize("BuildPack", [BaseImage, DockerBuildPack])
-def test_memlimit_argument_type(BuildPack):
+def test_memlimit_argument_type(BuildPack, base_image):
     # check that an exception is raised when the memory limit isn't an int
     fake_log_value = {"stream": "fake"}
     fake_client = MagicMock(spec=docker.APIClient)
     fake_client.build.return_value = iter([fake_log_value])
 
     with pytest.raises(ValueError) as exc_info:
-        for line in BuildPack().build(fake_client, "image-2", "10Gi", {}, [], {}):
+        for line in BuildPack(base_image).build(
+            fake_client, "image-2", "10Gi", {}, [], {}
+        ):
             pass
 
         assert "The memory limit has to be specified as an" in str(exc_info.value)
