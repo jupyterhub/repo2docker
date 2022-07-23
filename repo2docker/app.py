@@ -786,7 +786,9 @@ class Repo2Docker(Application):
                         picked_buildpack = bp
                         break
                 else:
-                    picked_buildpack = self.default_buildpack()
+                    picked_buildpack = self.default_buildpack(
+                        base_image=self.base_image
+                    )
 
                 picked_buildpack.appendix = self.appendix
                 # Add metadata labels
