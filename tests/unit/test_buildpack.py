@@ -5,7 +5,6 @@ import pytest
 
 from repo2docker.buildpacks import LegacyBinderDockerBuildPack, PythonBuildPack
 from repo2docker.utils import chdir
-from tests.conftest import base_image
 
 
 def test_legacy_raises(base_image):
