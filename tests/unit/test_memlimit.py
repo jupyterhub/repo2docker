@@ -13,7 +13,7 @@ from repo2docker.buildpacks import BaseImage, DockerBuildPack
 basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def test_memory_limit_enforced(tmpdir):
+def test_memory_limit_enforced(tmpdir, base_image):
     fake_cache_from = ["image-1:latest"]
     fake_log_value = {"stream": "fake"}
     fake_client = MagicMock(spec=docker.APIClient)
@@ -27,7 +27,7 @@ def test_memory_limit_enforced(tmpdir):
     # Test that the buildpack passes the right arguments to the docker
     # client in order to enforce the memory limit
     tmpdir.chdir()
-    for line in BaseImage().build(
+    for line in BaseImage(base_image).build(
         fake_client,
         "image-2",
         memory_limit,

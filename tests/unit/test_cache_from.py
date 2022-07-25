@@ -12,7 +12,7 @@ from repo2docker.buildpacks import (
 )
 
 
-def test_cache_from_base(tmpdir):
+def test_cache_from_base(tmpdir, base_image):
     cache_from = ["image-1:latest"]
     fake_log_value = {"stream": "fake"}
     fake_client = MagicMock(spec=docker.APIClient)
@@ -21,7 +21,7 @@ def test_cache_from_base(tmpdir):
 
     # Test base image build pack
     tmpdir.chdir()
-    for line in BaseImage().build(
+    for line in BaseImage(base_image).build(
         fake_client, "image-2", 100, {}, cache_from, extra_build_kwargs
     ):
         assert line == fake_log_value
