@@ -65,7 +65,8 @@ def test_snapshot_rspm_date(base_image):
     for requested, expected in test_dates.items():
         snapshot_url = r.get_rspm_snapshot_url(requested)
         assert snapshot_url.startswith(
-            "https://packagemanager.rstudio.com/all/__linux__/focal/"
+            # VERSION_CODENAME is handled at runtime during the build
+            "https://packagemanager.rstudio.com/all/__linux__/${VERSION_CODENAME}/"
             + expected.strftime("%Y-%m-%d")
         )
 
