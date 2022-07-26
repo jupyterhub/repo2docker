@@ -426,7 +426,7 @@ class Repo2Docker(Application):
     )
 
     base_image = Unicode(
-        "buildpack-deps:bionic",
+        "docker.io/library/buildpack-deps:bionic",
         config=True,
         help="""
         Base image to use when building docker images.
