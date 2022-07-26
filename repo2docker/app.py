@@ -431,7 +431,12 @@ class Repo2Docker(Application):
         help="""
         Base image to use when building docker images.
 
-        Should be an Ubuntu derivative, minimum 18.04.
+        Only images that match the following criteria are supported:
+        - Ubuntu based distributions, minimum 18.04
+        - Contains set of base packages installed with the buildpack-deps
+          image family: https://hub.docker.com/_/buildpack-deps
+
+        Other images *may* work, but are not officially supported.
         """,
     )
 
