@@ -46,7 +46,7 @@ test_hosts = [
             "10.5281/zenodo.3232985",
             "https://doi.org/10.5281/zenodo.3232985",
         ],
-        {"host": test_zen.hosts[0], "record": "3232985"},
+        {"host": test_zen.hosts[1], "record": "3232985"},
     ),
     (
         [
@@ -54,7 +54,7 @@ test_hosts = [
             "10.22002/d1.1235",
             "https://doi.org/10.22002/d1.1235",
         ],
-        {"host": test_zen.hosts[1], "record": "1235"},
+        {"host": test_zen.hosts[2], "record": "1235"},
     ),
 ]
 
@@ -107,7 +107,7 @@ def test_fetch_software_from_github_archive(requests_mock):
         )
 
         zen = Zenodo()
-        spec = {"host": test_zen.hosts[0], "record": "1234"}
+        spec = {"host": test_zen.hosts[1], "record": "1234"}
 
         with TemporaryDirectory() as d:
             output = []
@@ -141,7 +141,7 @@ def test_fetch_software(requests_mock):
 
         with TemporaryDirectory() as d:
             zen = Zenodo()
-            spec = spec = {"host": test_zen.hosts[0], "record": "1234"}
+            spec = spec = {"host": test_zen.hosts[1], "record": "1234"}
             output = []
             for l in zen.fetch(spec, d):
                 output.append(l)
@@ -178,7 +178,7 @@ def test_fetch_data(requests_mock):
 
             with TemporaryDirectory() as d:
                 zen = Zenodo()
-                spec = {"host": test_zen.hosts[0], "record": "1234"}
+                spec = {"host": test_zen.hosts[1], "record": "1234"}
                 output = []
                 for l in zen.fetch(spec, d):
                     output.append(l)
