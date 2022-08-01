@@ -62,6 +62,7 @@ def freeze(env_file, frozen_file, platform="linux-64"):
             # FIXME: adopt micromamba after ordering is fixed
             # https://github.com/conda-incubator/conda-lock/issues/79
             "--mamba",
+            "--kind=explicit",
             f"--platform={platform}",
             f"--filename-template={frozen_template}",
             f"--file={env_file}",
