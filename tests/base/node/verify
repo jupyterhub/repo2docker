@@ -9,4 +9,4 @@ node --version | grep v16
 
 which npm
 npm --version
-npm --version | grep 6.
+npm --version | grep 8.
