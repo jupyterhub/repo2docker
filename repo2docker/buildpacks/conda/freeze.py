@@ -62,6 +62,7 @@ def freeze(env_file, frozen_file, platform="linux-64"):
             # FIXME: adopt micromamba after ordering is fixed
             # https://github.com/conda-incubator/conda-lock/issues/79
             "--mamba",
+            "--kind=explicit",
             f"--platform={platform}",
             f"--filename-template={frozen_template}",
             f"--file={env_file}",
@@ -117,7 +118,7 @@ if __name__ == "__main__":
         "py",
         nargs="*",
         help="Python version(s) to update and freeze",
-        default=("2.7", "3.6", "3.7", "3.8", "3.9"),
+        default=("2.7", "3.7", "3.8", "3.9"),
     )
     args = parser.parse_args()
     default_py = "3.7"
