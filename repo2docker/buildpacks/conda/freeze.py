@@ -118,7 +118,7 @@ if __name__ == "__main__":
         "py",
         nargs="*",
         help="Python version(s) to update and freeze",
-        default=("2.7", "3.6", "3.7", "3.8", "3.9"),
+        default=("2.7", "3.7", "3.8", "3.9"),
     )
     args = parser.parse_args()
     default_py = "3.7"
