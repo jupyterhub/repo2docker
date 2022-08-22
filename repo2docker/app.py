@@ -497,17 +497,17 @@ class Repo2Docker(Application):
     def initialize(self, *args, **kwargs):
         """Init repo2docker configuration before start"""
         # FIXME: Remove this function, move it to setters / traitlet reactors
+        self.log = logging.getLogger("repo2docker")
+        self.log.setLevel(self.log_level)
+        logHandler = logging.StreamHandler()
+        self.log.handlers = []
+        self.log.addHandler(logHandler)
         if self.json_logs:
             # register JSON excepthook to avoid non-JSON output on errors
             sys.excepthook = self.json_excepthook
             # Need to reset existing handlers, or we repeat messages
-            logHandler = logging.StreamHandler()
             formatter = jsonlogger.JsonFormatter()
             logHandler.setFormatter(formatter)
-            self.log = logging.getLogger("repo2docker")
-            self.log.handlers = []
-            self.log.addHandler(logHandler)
-            self.log.setLevel(self.log_level)
         else:
             # due to json logger stuff above,
             # our log messages include carriage returns, newlines, etc.
