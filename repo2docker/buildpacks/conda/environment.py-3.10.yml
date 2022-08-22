@@ -1,0 +1,15 @@
+# AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
+# Generated on 2022-08-22 13:06:41 UTC
+channels:
+- conda-forge
+dependencies:
+- python=3.10.*
+- nodejs=16
+- pip
+- ipywidgets==7.7.0
+- jupyter-offlinenotebook==0.2.2
+- jupyter-resource-usage==0.6.1
+- jupyterlab==3.3.3
+- jupyterhub-singleuser==1.5.0
+- notebook==6.4.10
+- nteract_on_jupyter==2.1.3
