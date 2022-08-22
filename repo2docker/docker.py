@@ -105,6 +105,7 @@ class DockerEngine(ContainerEngine):
             fileobj=fileobj,
             path=path,
             labels=labels,
+            platform="linux/amd64",
             **kwargs,
         )
 
