@@ -25,7 +25,7 @@ env:
 jobs:
   # Job to run linter / autoformat
   lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       # Action Repo: https://github.com/actions/checkout
       - name: "Checkout repo"
@@ -62,7 +62,7 @@ jobs:
     # Previous job must have successfully completed for this job to execute
     # - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idneeds
     needs: lint
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     # - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategy
     strategy:
       fail-fast: false  # Do not cancel all jobs if one fails
