@@ -154,7 +154,7 @@ class CondaBuildPack(BaseImage):
             "conda/activate-conda.sh": "/etc/profile.d/activate-conda.sh",
         }
         py_version = self.python_version
-        self.log.info("Building conda environment for python=%s" % py_version)
+        self.log.info(f"Building conda environment for python={py_version}\n")
         # Select the frozen base environment based on Python version.
         # avoids expensive and possibly conflicting upgrades when changing
         # major Python versions during upgrade.
@@ -181,7 +181,7 @@ class CondaBuildPack(BaseImage):
                     frozen_name = py_frozen_name
                     pip_frozen_name = f"requirements.py-{py_version}.pip"
                 if not frozen_name:
-                    self.log.warning(f"No frozen env for {py_version}")
+                    self.log.warning(f"No frozen env for {py_version}\n")
         files[
             "conda/" + frozen_name
         ] = self._nb_environment_file = "/tmp/env/environment.lock"
