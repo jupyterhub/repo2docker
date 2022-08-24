@@ -154,7 +154,7 @@ class CondaBuildPack(BaseImage):
             "conda/activate-conda.sh": "/etc/profile.d/activate-conda.sh",
         }
         py_version = self.python_version
-        self.log.info("Building conda environment for python={py_version}\n")
+        self.log.info(f"Building conda environment for python={py_version}\n")
         # Select the frozen base environment based on Python version.
         # avoids expensive and possibly conflicting upgrades when changing
         # major Python versions during upgrade.
