@@ -101,6 +101,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      # Temporarily setup QEMU so we can run aarch64 build tests
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'arm64,arm'
+
       - name: "Install"
         run: |
           pip install --upgrade setuptools pip wheel
