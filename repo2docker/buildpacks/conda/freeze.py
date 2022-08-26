@@ -30,7 +30,7 @@ ENV_FILE_T = HERE / "environment.py-{py}.yml"
 yaml = YAML(typ="rt")
 
 
-def freeze(env_file, frozen_file, platform="linux-64"):
+def freeze(env_file, frozen_file, platform="linux-aarch64"):
     """Freeze a conda environment
 
     By running:
