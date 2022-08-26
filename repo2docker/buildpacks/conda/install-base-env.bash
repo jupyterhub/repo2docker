@@ -8,7 +8,20 @@ cd $(dirname $0)
 export MAMBA_VERSION=0.25.0
 export CONDA_VERSION=4.13.0
 
-URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/linux-64/micromamba-${MAMBA_VERSION}-0.tar.bz2"
+# Support ARM too
+ARCH=$(uname -m)
+if [ "${ARCH}" = "x86_64" ] ; then
+    ARCH_LABEL="linux-64"
+elif [ "${ARCH}" = "aarch64" ] ; then
+    ARCH_LABEL="linux-aarch64"
+else
+    echo "Unknown architecture ${ARCH}"
+    exit 1
+fi
+
+echo "Building for ${ARCH_LABEL}"
+
+URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/${ARCH_LABEL}/micromamba-${MAMBA_VERSION}-0.tar.bz2"
 
 # make sure we don't do anything funky with user's $HOME
 # since this is run as root
