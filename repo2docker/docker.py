@@ -105,7 +105,8 @@ class DockerEngine(ContainerEngine):
             fileobj=fileobj,
             path=path,
             labels=labels,
-            platform="linux/amd64",
+            # Temporarily set this to arm64 to see what breaks
+            platform="linux/arm64",
             **kwargs,
         )
 
