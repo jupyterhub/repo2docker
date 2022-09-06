@@ -163,7 +163,7 @@ class CondaBuildPack(BaseImage):
         frozen_name = "environment.lock"
         pip_frozen_name = "requirements.txt"
         if py_version:
-            if self.py2:
+            if self.python_version == "2.7":
                 # python 2 goes in a different env
                 files[
                     "conda/environment.py-2.7.lock"
@@ -180,8 +180,8 @@ class CondaBuildPack(BaseImage):
                 if os.path.exists(os.path.join(HERE, py_frozen_name)):
                     frozen_name = py_frozen_name
                     pip_frozen_name = f"requirements.py-{py_version}.pip"
-                if not frozen_name:
-                    self.log.warning(f"No frozen env for {py_version}\n")
+                else:
+                    raise ValueError(f"Python version {py_version} is not supported!")
         files[
             "conda/" + frozen_name
         ] = self._nb_environment_file = "/tmp/env/environment.lock"
