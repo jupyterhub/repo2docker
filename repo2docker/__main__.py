@@ -5,7 +5,11 @@ import logging
 from .app import Repo2Docker
 from .engine import BuildError, ImageLoadError
 from . import __version__
-from .utils import validate_and_generate_port_mapping, is_valid_docker_image_name
+from .utils import (
+    validate_and_generate_port_mapping,
+    is_valid_docker_image_name,
+    R2dState,
+)
 
 
 def validate_image_name(image_name):
@@ -302,7 +306,7 @@ def make_r2d(argv=None):
             r2d.log.error(
                 'Cannot mount "{}" in editable mode '
                 "as it is not a directory".format(args.repo),
-                extra=dict(phase="failed"),
+                extra=dict(phase=R2dState.FAILED),
             )
             sys.exit(1)
 

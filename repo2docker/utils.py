@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from enum import Enum
 from functools import partial
 import os
 import re
@@ -8,6 +9,21 @@ import chardet
 from shutil import copystat, copy2
 
 from traitlets import Integer, TraitError
+
+
+class R2dState(Enum):
+    """
+    The current state of repo2docker
+    """
+
+    FETCHING = "fetching"
+    BUILDING = "building"
+    PUSHING = "pushing"
+    RUNNING = "running"
+    FAILED = "failed"
+
+    def __str__(self):
+        return self.value
 
 
 def execute_cmd(cmd, capture=False, **kwargs):
