@@ -62,10 +62,9 @@ jobs:
           path: ~/.cache/pip
           key: "${{ github.run_id }}-${{ matrix.python_version }}"
 
-      - name: "Install dependencies"
+      - name: Install dependencies
         run: |
-          pip install --upgrade setuptools pip
-          pip install --upgrade -r dev-requirements.txt
+          pip install -r dev-requirements.txt
           pip freeze
 
       - run: pre-commit run --all-files
@@ -110,22 +109,27 @@ jobs:
           path: ~/.cache/pip
           key: "${{ github.run_id }}-${{ matrix.python_version }}"
 
-      - name: "Install"
+      - name: Install dependencies
         run: |
-          pip install --upgrade setuptools pip wheel
-          pip install --upgrade -r dev-requirements.txt
-          python setup.py bdist_wheel
-          pip install dist/*.whl
-          # add for mercurial tests
-          pip install mercurial hg-evolve
+          pip install -r dev-requirements.txt
           pip freeze
 
-      - name: "Run tests"
+      - name: Install repo2docker
+        run: |
+          python setup.py bdist_wheel
+          pip install dist/*.whl
+
+          # add for mercurial tests
+          pip install mercurial hg-evolve
+
+          pip freeze
+
+      - name: Run tests
         run: |
           cd tests
           pytest --verbose --color=yes --durations=10 --cov=repo2docker ./${{ matrix.repo_type }}
 
-      - name: "Upload code coverage stats"
+      - name: Upload code coverage stats
         run: |
           pip install codecov
           pushd tests && codecov && cat

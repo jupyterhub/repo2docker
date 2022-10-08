@@ -34,13 +34,12 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: "Install dependencies"
+      - name: Install dependencies
         run: |
-          pip install --upgrade setuptools pip
-          pip install --upgrade -r dev-requirements.txt
+          pip install -r dev-requirements.txt
           pip freeze
 
-      - name: "Build distribution archives"
+      - name: Build distribution archives
         run: |
           python setup.py sdist bdist_wheel
 
