@@ -124,13 +124,10 @@ jobs:
 
           pip freeze
 
-      - name: Run tests
+      - name: Run pytest
         run: |
-          cd tests
-          pytest --verbose --color=yes --durations=10 --cov=repo2docker ./${{ matrix.repo_type }}
+          pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
 
-      - name: Upload code coverage stats
+      - name: Submit codecov report
         run: |
-          pip install codecov
-          pushd tests && codecov && cat
-          cat /home/runner/work/repo2docker/repo2docker/tests/coverage.xml
+          codecov
