@@ -1,3 +1,4 @@
+codecov
 conda-lock
 pre-commit
 pytest-cov
