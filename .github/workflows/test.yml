@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
+          python-version: "3.9"
 
       # There will almost never be a cache hit on the cache key when this job is
       # run, as it is the first of all jobs in this workflow. The subsequent
@@ -72,7 +72,7 @@ jobs:
       fail-fast: false  # Do not cancel all jobs if one fails
       matrix:
         ubuntu_version: ["22.04"]
-        python_version: ["3.8"]
+        python_version: ["3.9"]
         repo_type:
           - base
           - conda
