@@ -40,7 +40,7 @@ env:
 
 jobs:
   pre-commit:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -66,11 +66,12 @@ jobs:
 
   test:
     needs: pre-commit
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-${{ matrix.ubuntu_version }}"
 
     strategy:
       fail-fast: false  # Do not cancel all jobs if one fails
       matrix:
+        ubuntu_version: ["22.04"]
         python_version: ["3.8"]
         repo_type:
           - base
@@ -84,7 +85,11 @@ jobs:
           - unit
           - venv
         include:
-          - python_version: "3.6"
+          # The actions/setup-python action with Python version 3.6 isn't
+          # possible to use with the ubuntu-22.04 runner, so we use ubuntu-20.04
+          # for this test where Python 3.6 remain available.
+          - ubuntu_version: "20.04"
+            python_version: "3.6"
             repo_type: venv
 
     steps:
