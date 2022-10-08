@@ -1,7 +1,7 @@
 import subprocess
 
 from .base import ContentProvider, ContentProviderException
-from ..utils import execute_cmd, check_ref
+from ..utils import execute_cmd, check_ref, R2dState
 
 
 class Git(ContentProvider):
@@ -44,7 +44,7 @@ class Git(ContentProvider):
             hash = check_ref(ref, output_dir)
             if hash is None:
                 self.log.error(
-                    "Failed to check out ref %s", ref, extra=dict(phase="failed")
+                    "Failed to check out ref %s", ref, extra=dict(phase=R2dState.FAILED)
                 )
                 if ref == "master":
                     msg = (

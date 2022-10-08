@@ -38,7 +38,7 @@ from .buildpacks import (
 )
 from . import contentproviders
 from .engine import BuildError, ContainerEngineException, ImageLoadError
-from .utils import ByteSpecification, chdir
+from .utils import ByteSpecification, chdir, R2dState
 
 
 class Repo2Docker(Application):
@@ -465,7 +465,7 @@ class Repo2Docker(Application):
         for log_line in picked_content_provider.fetch(
             spec, checkout_path, yield_output=self.json_logs
         ):
-            self.log.info(log_line, extra=dict(phase="fetching"))
+            self.log.info(log_line, extra=dict(phase=R2dState.FETCHING))
 
         if not self.output_image_spec:
             image_spec = "r2d" + self.repo
@@ -491,7 +491,7 @@ class Repo2Docker(Application):
             "Error during build: %s",
             evalue,
             exc_info=(etype, evalue, traceback),
-            extra=dict(phase="failed"),
+            extra=dict(phase=R2dState.FAILED),
         )
 
     def initialize(self, *args, **kwargs):
@@ -532,7 +532,7 @@ class Repo2Docker(Application):
         last_emit_time = time.time()
         for chunk in client.push(self.output_image_spec):
             if client.string_output:
-                self.log.info(chunk, extra=dict(phase="pushing"))
+                self.log.info(chunk, extra=dict(phase=R2dState.PUSHING))
                 continue
             # else this is Docker output
 
@@ -546,7 +546,7 @@ class Repo2Docker(Application):
                     self.log.warning("Not a JSON progress line: %r", line)
                     continue
                 if "error" in progress:
-                    self.log.error(progress["error"], extra=dict(phase="failed"))
+                    self.log.error(progress["error"], extra=dict(phase=R2dState.FAILED))
                     raise ImageLoadError(progress["error"])
                 if "id" not in progress:
                     continue
@@ -561,13 +561,15 @@ class Repo2Docker(Application):
                     self.log.info(
                         "Pushing image\n",
                         extra=dict(
-                            progress=progress_layers, layers=layers, phase="pushing"
+                            progress=progress_layers,
+                            layers=layers,
+                            phase=R2dState.PUSHING,
                         ),
                     )
                     last_emit_time = time.time()
         self.log.info(
             "Successfully pushed {}".format(self.output_image_spec),
-            extra=dict(phase="pushing"),
+            extra=dict(phase=R2dState.PUSHING),
         )
 
     def run_image(self):
@@ -659,24 +661,27 @@ class Repo2Docker(Application):
             for line in container.logs(stream=True, timestamps=True):
                 line = line.decode("utf-8")
                 last_timestamp, line = line.split(" ", maxsplit=1)
-                self.log.info(line, extra=dict(phase="running"))
+                self.log.info(line, extra=dict(phase=R2dState.RUNNING))
 
         finally:
             container.reload()
             if container.status == "running":
-                self.log.info("Stopping container...\n", extra=dict(phase="running"))
+                self.log.info(
+                    "Stopping container...\n", extra=dict(phase=R2dState.RUNNING)
+                )
                 container.kill()
             exit_code = container.exitcode
 
             container.wait()
 
             self.log.info(
-                "Container finished running.\n".upper(), extra=dict(phase="running")
+                "Container finished running.\n".upper(),
+                extra=dict(phase=R2dState.RUNNING),
             )
             # are there more logs? Let's send them back too
             late_logs = container.logs(since=last_timestamp).decode("utf-8")
             for line in late_logs.split("\n"):
-                self.log.debug(line + "\n", extra=dict(phase="running"))
+                self.log.debug(line + "\n", extra=dict(phase=R2dState.RUNNING))
 
             container.remove()
             if exit_code:
@@ -751,7 +756,7 @@ class Repo2Docker(Application):
                     self.log.error(
                         "Subdirectory %s does not exist",
                         self.subdir,
-                        extra=dict(phase="failure"),
+                        extra=dict(phase=R2dState.FAILED),
                     )
                     raise FileNotFoundError("Could not find {}".format(checkout_path))
 
@@ -786,7 +791,7 @@ class Repo2Docker(Application):
                 else:
                     self.log.debug(
                         picked_buildpack.render(build_args),
-                        extra=dict(phase="building"),
+                        extra=dict(phase=R2dState.BUILDING),
                     )
                     if self.user_id == 0:
                         raise ValueError(
@@ -796,7 +801,7 @@ class Repo2Docker(Application):
                     self.log.info(
                         "Using %s builder\n",
                         bp.__class__.__name__,
-                        extra=dict(phase="building"),
+                        extra=dict(phase=R2dState.BUILDING),
                     )
 
                     for l in picked_buildpack.build(
@@ -808,19 +813,24 @@ class Repo2Docker(Application):
                         self.extra_build_kwargs,
                     ):
                         if docker_client.string_output:
-                            self.log.info(l, extra=dict(phase="building"))
+                            self.log.info(l, extra=dict(phase=R2dState.BUILDING))
                         # else this is Docker output
                         elif "stream" in l:
-                            self.log.info(l["stream"], extra=dict(phase="building"))
+                            self.log.info(
+                                l["stream"], extra=dict(phase=R2dState.BUILDING)
+                            )
                         elif "error" in l:
-                            self.log.info(l["error"], extra=dict(phase="failure"))
+                            self.log.info(l["error"], extra=dict(phase=R2dState.FAILED))
                             raise BuildError(l["error"])
                         elif "status" in l:
                             self.log.info(
-                                "Fetching base image...\r", extra=dict(phase="building")
+                                "Fetching base image...\r",
+                                extra=dict(phase=R2dState.BUILDING),
                             )
                         else:
-                            self.log.info(json.dumps(l), extra=dict(phase="building"))
+                            self.log.info(
+                                json.dumps(l), extra=dict(phase=R2dState.BUILDING)
+                            )
 
         finally:
             # Cleanup checkout if necessary
