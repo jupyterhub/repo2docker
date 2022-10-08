@@ -41,11 +41,17 @@ env:
 jobs:
   pre-commit:
     runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version: ["3.9"]
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "${{ matrix.python_version }}"
 
       # There will almost never be a cache hit on the cache key when this job is
       # run, as it is the first of all jobs in this workflow. The subsequent
@@ -54,7 +60,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: "${{ github.run_id }}"
+          key: "${{ github.run_id }}-${{ matrix.python_version }}"
 
       - name: "Install dependencies"
         run: |
@@ -69,7 +75,7 @@ jobs:
     runs-on: ubuntu-${{ matrix.ubuntu_version }}"
 
     strategy:
-      fail-fast: false  # Do not cancel all jobs if one fails
+      fail-fast: false
       matrix:
         ubuntu_version: ["22.04"]
         python_version: ["3.9"]
@@ -102,7 +108,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: "${{ github.run_id }}"
+          key: "${{ github.run_id }}-${{ matrix.python_version }}"
 
       - name: "Install"
         run: |
