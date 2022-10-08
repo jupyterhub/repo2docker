@@ -30,7 +30,6 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-
       - uses: actions/setup-python@v4
         with:
           python-version: "3.8"
@@ -85,7 +84,6 @@ jobs:
       # Setup docker to build for multiple platforms, see:
       # https://github.com/docker/build-push-action/tree/v2.4.0#usage
       # https://github.com/docker/build-push-action/blob/v2.4.0/docs/advanced/multi-platform.md
-
       - name: Set up QEMU (for docker buildx)
         uses: docker/setup-qemu-action@v2
 

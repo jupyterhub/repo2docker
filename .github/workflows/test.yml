@@ -39,12 +39,10 @@ env:
   GIT_AUTHOR_NAME: CI User
 
 jobs:
-  # Job to run linter / autoformat
-  lint:
+  pre-commit:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-
       - uses: actions/setup-python@v4
         with:
           python-version: "3.8"
@@ -64,16 +62,12 @@ jobs:
           pip install --upgrade -r dev-requirements.txt
           pip freeze
 
-      - name: "Run linter"
-        run: |
-          pre-commit run --all-files
+      - run: pre-commit run --all-files
 
   test:
-    # Previous job must have successfully completed for this job to execute
-    # - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idneeds
-    needs: lint
+    needs: pre-commit
     runs-on: ubuntu-20.04
-    # - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategy
+
     strategy:
       fail-fast: false  # Do not cancel all jobs if one fails
       matrix:
@@ -95,7 +89,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
       - uses: actions/setup-python@v4
         with:
           python-version: "${{ matrix.python_version }}"
