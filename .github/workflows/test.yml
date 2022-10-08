@@ -123,7 +123,7 @@ jobs:
       - name: "Run tests"
         run: |
           cd tests
-          pytest --durations 10 --cov repo2docker -v ${{ matrix.repo_type }}
+          pytest --verbose --color=yes --durations=10 --cov=repo2docker ./${{ matrix.repo_type }}
 
       - name: "Upload code coverage stats"
         run: |
