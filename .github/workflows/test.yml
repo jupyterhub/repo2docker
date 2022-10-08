@@ -43,21 +43,15 @@ jobs:
   lint:
     runs-on: ubuntu-20.04
     steps:
-      # Action Repo: https://github.com/actions/checkout
-      - name: "Checkout repo"
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v3
 
-      # Action Repo: https://github.com/actions/setup-python
-      - name: "Setup Python"
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.8"
 
       # Action Repo: https://github.com/actions/cache
       - name: "Cache pip dependencies"
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('dev-requirements.txt') }}
@@ -100,17 +94,15 @@ jobs:
             repo_type: venv
 
     steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: "Setup Python"
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python_version }}
+          python-version: "${{ matrix.python_version }}"
 
       # Action Repo: https://github.com/actions/cache
       - name: "Cache pip dependencies"
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('dev-requirements.txt') }}
