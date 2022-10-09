@@ -1,8 +1,13 @@
 #!/usr/bin/env julia
-# Verify the version:
-if VERSION < v"1.1.0"
-    exit(1)
-end
+
+# FIXME: The default version set by repo2docker is in practice the latest
+#        available, but from the julia_project.py file that doesn't seem
+#        intented.
+#
+# if ! (VERSION >= v"1.6" && VERSION < v"1.7")
+#     println("Default Julia version should be at 1.6.x")
+#     exit(1)
+# end
 
 try
     # Test that the package was installed.

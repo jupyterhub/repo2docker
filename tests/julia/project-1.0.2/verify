@@ -1,6 +1,7 @@
 #!/usr/bin/env julia
-# Verify the version:
+
 if VERSION != v"1.0.2"
+    println("Julia version should be 1.0.2")
     exit(1)
 end
 
