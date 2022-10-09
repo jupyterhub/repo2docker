@@ -4,14 +4,12 @@ import sys
 
 
 def test_sys_version():
+    """The default python version should be 3.7"""
     assert sys.version_info[:2] == (3, 7)
 
 
-def test_numpy():
-    import numpy
-
-
 def test_there():
+    """there is to be installed via postBuild"""
     import there
 
 

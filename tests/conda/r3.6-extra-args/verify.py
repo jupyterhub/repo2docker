@@ -10,8 +10,8 @@ assert sys.executable == os.path.join(
 assert sys.executable.startswith("/srv/conda/"), sys.executable
 
 # Repo should be in /srv/repo
-assert os.path.exists("/srv/repo/verify")
-assert os.path.abspath(__file__) == "/srv/repo/verify"
+assert os.path.exists("/srv/repo/verify.py")
+assert os.path.abspath(__file__) == "/srv/repo/verify.py"
 
 # Repo should be writable
 assert os.access("/srv/repo", os.W_OK)
