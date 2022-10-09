@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 apt list
 apt list | grep libsodium-dev
-# make sure we got R
-which R

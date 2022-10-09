@@ -1,8 +1,0 @@
-#!/usr/bin/env Rscript
-library('testthat')
-
-print(version)
-# Fail if version is not 3.6
-if (!(version$major == "3" && as.double(version$minor) >= 6 && as.double(version$minor) < 7)) {
-  quit("yes", 1)
-}

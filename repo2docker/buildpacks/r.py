@@ -79,7 +79,7 @@ class RBuildPack(PythonBuildPack):
         #
         # NOTE: When updating this version, also update
         #       - tests/unit/test_r.py -> test_version_specification
-        #       - tests/r/simple/verify
+        #       - tests/r/r-rspm-apt/verify
         #
         r_version = version_map["4.2"]
 
