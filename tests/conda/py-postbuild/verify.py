@@ -11,6 +11,10 @@ def test_numpy():
     import numpy
 
 
+def test_there():
+    import there
+
+
 def test_conda_activated():
     assert os.environ.get("CONDA_PREFIX") == os.environ["NB_PYTHON_PREFIX"], dict(
         os.environ

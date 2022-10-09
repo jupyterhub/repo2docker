@@ -15,6 +15,3 @@ assert os.path.abspath(__file__) == "/srv/repo/verify"
 
 # Repo should be writable
 assert os.access("/srv/repo", os.W_OK)
-
-# We should be able to import the package in environment.yml
-import numpy
