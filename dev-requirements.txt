@@ -1,7 +1,8 @@
-pyyaml
-pytest>=4.6
-wheel
-pytest-cov
-pre-commit
-requests_mock
+codecov
 conda-lock
+pre-commit
+pytest-cov
+pytest>=4.6
+pyyaml
+requests_mock
+wheel

@@ -1,19 +1,35 @@
-# Useful GitHub Actions docs:
+# This is a GitHub workflow defining a set of jobs with a set of steps.
+# ref: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 #
-# - https://help.github.com/en/actions
-# - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
-# - https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow
-# - https://help.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
-
-name: Continuous Integration
+name: Test
 
 on:
-  push:
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+      - "**.rst"
+      - ".github/workflows/*"
+      - "!.github/workflows/test.yml"
+  push:
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+      - "**.rst"
+      - ".github/workflows/*"
+      - "!.github/workflows/test.yml"
+    branches-ignore:
+      - "dependabot/**"
+      - "pre-commit-ci-update-config"
+    tags:
+      - "**"
   schedule:
-    # Weekly test so we know if tests break for external reasons
-    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
+    # Run weekly test so we know if tests break for external reasons
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#scheduled-events
+    #
+    # At 10:36 on Sunday (https://crontab.guru)
     - cron: '36 10 * * 0'
+  workflow_dispatch:
 
 # Global environment variables
 env:
@@ -23,51 +39,45 @@ env:
   GIT_AUTHOR_NAME: CI User
 
 jobs:
-  # Job to run linter / autoformat
-  lint:
-    runs-on: ubuntu-20.04
+  pre-commit:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version: ["3.9"]
+
     steps:
-      # Action Repo: https://github.com/actions/checkout
-      - name: "Checkout repo"
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          fetch-depth: 0
+          python-version: "${{ matrix.python_version }}"
 
-      # Action Repo: https://github.com/actions/setup-python
-      - name: "Setup Python"
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-
-      # Action Repo: https://github.com/actions/cache
-      - name: "Cache pip dependencies"
-        uses: actions/cache@v2
+      # There will almost never be a cache hit on the cache key when this job is
+      # run, as it is the first of all jobs in this workflow. The subsequent
+      # jobs in this workflow can rely on this cache though.
+      - name: Save pip's install cache on job completion
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('dev-requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          key: "${{ github.run_id }}-${{ matrix.python_version }}"
 
-      - name: "Install dependencies"
+      - name: Install dependencies
         run: |
-          pip install --upgrade setuptools pip
-          pip install --upgrade -r dev-requirements.txt
+          pip install -r dev-requirements.txt
           pip freeze
 
-      - name: "Run linter"
-        run: |
-          pre-commit run --all-files
+      - run: pre-commit run --all-files
 
   test:
-    # Previous job must have successfully completed for this job to execute
-    # - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idneeds
-    needs: lint
-    runs-on: ubuntu-20.04
-    # - https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategy
+    needs: pre-commit
+    runs-on: ubuntu-${{ matrix.ubuntu_version }}
+
     strategy:
-      fail-fast: false  # Do not cancel all jobs if one fails
+      fail-fast: false
       matrix:
-        python_version: ["3.8"]
+        ubuntu_version: ["22.04"]
+        python_version: ["3.9"]
         repo_type:
           - base
           - conda
@@ -80,44 +90,44 @@ jobs:
           - unit
           - venv
         include:
-          - python_version: "3.6"
+          # The actions/setup-python action with Python version 3.6 isn't
+          # possible to use with the ubuntu-22.04 runner, so we use ubuntu-20.04
+          # for this test where Python 3.6 remain available.
+          - ubuntu_version: "20.04"
+            python_version: "3.6"
             repo_type: venv
 
     steps:
-      - name: "Checkout repo"
-        uses: actions/checkout@v2
-
-      - name: "Setup Python"
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python_version }}
+          python-version: "${{ matrix.python_version }}"
 
-      # Action Repo: https://github.com/actions/cache
-      - name: "Cache pip dependencies"
-        uses: actions/cache@v2
+      - name: Restore pip's install cache from previous job
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('dev-requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          key: "${{ github.run_id }}-${{ matrix.python_version }}"
 
-      - name: "Install"
+      - name: Install dependencies
         run: |
-          pip install --upgrade setuptools pip wheel
-          pip install --upgrade -r dev-requirements.txt
-          python setup.py bdist_wheel
-          pip install dist/*.whl
-          # add for mercurial tests
-          pip install mercurial hg-evolve
+          pip install -r dev-requirements.txt
           pip freeze
 
-      - name: "Run tests"
+      - name: Install repo2docker
         run: |
-          cd tests
-          pytest --durations 10 --cov repo2docker -v ${{ matrix.repo_type }}
+          python setup.py bdist_wheel
+          pip install dist/*.whl
 
-      - name: "Upload code coverage stats"
+          # add for mercurial tests
+          pip install mercurial hg-evolve
+
+          pip freeze
+
+      - name: Run pytest
         run: |
-          pip install codecov
-          pushd tests && codecov && cat
-          cat /home/runner/work/repo2docker/repo2docker/tests/coverage.xml
+          pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
+
+      - name: Submit codecov report
+        run: |
+          codecov
