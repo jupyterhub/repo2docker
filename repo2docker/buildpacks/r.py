@@ -63,19 +63,25 @@ class RBuildPack(PythonBuildPack):
         Will return the version specified by the user or the current default
         version.
         """
+        # Available versions at https://cran.r-project.org/src/base/
         version_map = {
-            "4.2": "4.2.0",
+            "4.2": "4.2.1",
             "4.1": "4.1.3",
             "4.0": "4.0.5",
             "3.6": "3.6.3",
             "3.5": "3.5.3",
-            "3.4": "3.4.0",
+            "3.4": "3.4.4",
             "3.3": "3.3.3",
         }
 
         # the default if nothing is specified
         # Use full version is needed here, so it a valid semver
-        r_version = version_map["4.1"]
+        #
+        # NOTE: When updating this version, also update
+        #       - tests/unit/test_r.py -> test_version_specification
+        #       - tests/r/simple/verify
+        #
+        r_version = version_map["4.2"]
 
         if not hasattr(self, "_r_version"):
             parts = self.runtime.split("-")

@@ -8,7 +8,7 @@ from repo2docker import buildpacks
 
 
 @pytest.mark.parametrize(
-    "runtime_version, expected", [("", "4.1"), ("3.6", "3.6"), ("3.5.1", "3.5")]
+    "runtime_version, expected", [("", "4.2"), ("3.6", "3.6"), ("3.5.1", "3.5")]
 )
 def test_version_specification(tmpdir, runtime_version, expected):
     tmpdir.chdir()
