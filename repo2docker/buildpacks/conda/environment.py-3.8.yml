@@ -1,15 +1,10 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2022-10-13 14:39:03 UTC
+# Generated on 2022-10-19 21:47:52 UTC
 channels:
 - conda-forge
 dependencies:
 - python=3.8.*
-- nodejs=16
+  # Use upper bounds so that older Python versions can install the most recent compatible version
+- ipykernel<7
+- nodejs<17
 - pip
-- ipywidgets==8.0.2
-- jupyter-offlinenotebook==0.2.2
-- jupyter-resource-usage==0.6.3
-- jupyterlab==3.4.8
-- jupyterhub-singleuser==1.5.0
-- notebook==6.4.12
-- nteract_on_jupyter==2.1.3

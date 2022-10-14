@@ -2,5 +2,7 @@ channels:
   - conda-forge
 dependencies:
   - python
-  - nodejs=16
+  # Use upper bounds so that older Python versions can install the most recent compatible version
+  - ipykernel<7
+  - nodejs<17
   - pip
