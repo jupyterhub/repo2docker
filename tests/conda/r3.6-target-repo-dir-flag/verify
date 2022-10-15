@@ -5,7 +5,7 @@ jupyter nbextension list 2>&1 | grep jupyter_server_proxy
 
 R -e "library('digest')"
 
-# Fail if version is not 3.6
+# Fail if R version is not 3.6
 R --version
 R -e 'if (!(version$major == "3" && as.double(version$minor) >= 6 && as.double(version$minor) < 7)) quit("yes", 1)'
 

@@ -198,7 +198,7 @@ class LocalRepo(pytest.File):
         args = ["--appendix", 'RUN echo "appendix" > /tmp/appendix']
         # If there's an extra-args.yaml file in a test dir, assume it contains
         # a yaml list with extra arguments to be passed to repo2docker
-        extra_args_path = os.path.join(self.fspath.dirname, "extra-args.yaml")
+        extra_args_path = os.path.join(self.fspath.dirname, "test-extra-args.yaml")
         if os.path.exists(extra_args_path):
             with open(extra_args_path) as f:
                 extra_args = yaml.safe_load(f)
