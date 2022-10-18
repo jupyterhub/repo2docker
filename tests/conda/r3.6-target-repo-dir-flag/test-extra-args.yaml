@@ -1,0 +1,4 @@
+# This file is respected by repo2docker's test suite, but not repo2docker
+# itself. It is used solely to help us test repo2docker's command line flags.
+#
+- --target-repo-dir=/srv/repo

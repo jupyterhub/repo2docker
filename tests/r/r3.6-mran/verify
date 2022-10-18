@@ -1,0 +1,13 @@
+#!/usr/bin/env Rscript
+library('digest')
+
+# Fail if version is not 3.6
+print(version)
+if (!(version$major == "3" && as.double(version$minor) >= 6 && as.double(version$minor) < 7)) {
+  quit("yes", 1)
+}
+
+# Fail if MRAN isn't the configured CRAN mirror
+if (!(startsWith(options()$repos["CRAN"], "https://mran.microsoft.com"))) {
+  quit("yes", 1)
+}

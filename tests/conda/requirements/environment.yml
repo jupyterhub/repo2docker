@@ -1,4 +1,0 @@
-dependencies:
-  - numpy
-  - pip:
-    - simplejson

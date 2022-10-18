@@ -1,0 +1,30 @@
+#!/usr/bin/env julia
+
+# FIXME: The default version set by repo2docker is in practice the latest
+#        available, but from the julia_project.py file that doesn't seem
+#        intented.
+#
+# if ! (VERSION >= v"1.6" && VERSION < v"1.7")
+#     println("Default Julia version should be at 1.6.x")
+#     exit(1)
+# end
+
+try
+    # Test that the package was installed.
+    using IteratorInterfaceExtensions
+
+    # Verify that the environment variables are set correctly for julia 1.0+
+    @assert "julia" ∈ readdir(Sys.BINDIR)
+catch
+    exit(1)
+end
+
+# Verify that kernels are not installed in home directory (issue #620)
+try
+    using IJulia
+    @assert IJulia.kerneldir() == ENV["NB_PYTHON_PREFIX"] * "/share/jupyter/kernels"
+catch
+    exit(1)
+end
+
+exit(0)

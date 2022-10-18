@@ -7,7 +7,7 @@ if (!(version$major == "4" && as.double(version$minor) >= 0 && as.double(version
   quit("yes", 1)
 }
 
-# The date we have chosen should give us an rspm mirror
-if (!(startsWith(options()$repos["CRAN"], "https://packagemanager.rstudio.com"))) {
+# The date we have chosen should give us an MRAN mirror
+if (!(startsWith(options()$repos["CRAN"], "https://mran.microsoft.com"))) {
   quit("yes", 1)
 }

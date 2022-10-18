@@ -50,6 +50,16 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             compat = project_toml["compat"]["julia"]
         except:
             # Default version which needs to be manually updated with new major.minor releases
+            #
+            # NOTE: Updates to the default version should go hand in hand with
+            #       updates to tests/julia/project/verify where is intent to
+            #       test the version.
+            #
+            # FIXME: When compat = "1.6" is set below and passed to
+            #        find_semver_match, we get 1.8.2 as of 2022-10-09. We should
+            #        clarify the desired behavior and have a unit test of
+            #        find_semver_match to validate it.
+            #
             compat = "1.6"
 
         match = find_semver_match(compat, self.all_julias)

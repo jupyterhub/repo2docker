@@ -1,7 +1,0 @@
-Package: binderdescription
-Version: 0.1
-Date: 2018-09-18
-Title: Binder R DESCRIPTION support
-Description: Test that automatically building R packages works
-Author: Bastian Greshake Tzovaras <bgreshake@googlemail.com>
-Maintainer: Bastian Greshake Tzovaras <bgreshake@googlemail.com>

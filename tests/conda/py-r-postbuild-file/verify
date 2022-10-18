@@ -1,0 +1,12 @@
+#!/bin/sh
+
+jupyter serverextension list 2>&1 | grep jupyter_server_proxy
+jupyter nbextension list 2>&1 | grep jupyter_server_proxy
+
+R -e "library('digest')"
+
+# Fail if version is not at least 4.2
+R --version
+R -e 'if (!(version$major == "4" && as.double(version$minor) >= 2)) quit("yes", 1)'
+
+pytest --verbose --color=yes ./verify.py

@@ -144,9 +144,10 @@ To install your repository like an R package, you may include a
 ``DESCRIPTION`` file. repo2docker installs the package and dependencies
 from the ``DESCRIPTION`` by running ``devtools::install_local(getwd())``.
 
-You also need to have a ``runtime.txt`` file that is formatted as
-``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot of MRAN that will be
-used for your R installation.
+You can also have have a ``runtime.txt`` file that is formatted as
+``r-<YYYY>-<MM>-<DD>``, where YYYY-MM-DD is a snapshot of CRAN that will be used
+for your R installation. If ``runtime.txt`` isn't provided in this case, a
+recent date will be used.
 
 
 .. _postBuild:
