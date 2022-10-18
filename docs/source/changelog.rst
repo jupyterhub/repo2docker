@@ -2,6 +2,61 @@
 Changelog
 =========
 
+Version 2022.10.0
+=================
+
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2022.02.0...2022.10.0>`_
+
+New features
+------------
+
+- Update Jupyter dependencies :pr:`1193` by :user:`jtpio`
+- add Python 3.10 base environment :pr:`1175` by :user:`minrk`
+- Bump default R version to 4.2 from 4.1, and let R 3.4 go from 3.4.0 to 3.4.4 :pr:`1165` by :user:`yuvipanda`
+- Support pulling from zenodo sandbox too :pr:`1169` by :user:`yuvipanda`
+- Add MPDL Dataverse :pr:`1167` by :user:`wilhelmfrank`
+- Add JPL Dataverse :pr:`1163` by :user:`foobarbecue`
+- upgrade RStudio Server to v2022.02.1 :pr:`1148` by :user:`aplamada`
+- Pass build_args to `render()` during `--no-build` for consistency with regular builds :pr:`1135` by :user:`yoogottamk`
+
+Documentation improvements
+--------------------------
+
+- Update 'how to get R' section :pr:`1147` by :user:`yuvipanda`
+- Post release fixes :pr:`1133` by :user:`manics`
+
+API changes
+-----------
+
+Bug fixes
+---------
+- consistent log handling when not using JSON loggers :pr:`1177` by :user:`minrk`
+- Fix Read-Only filesystem permission issue for log file :pr:`1156` by :user:`timeu`
+- handle permission issue writing .jupyter-server-log.txt in REPO_DIR :pr:`1151` by :user:`pymonger`
+- handle r version being unspecified in environment.yml :pr:`1141` by :user:`minrk`
+
+Other merged PRs
+----------------
+
+- Remove conda buildpacks pin of r-irkernel to 1.2 :pr:`1191` by :user:`consideRatio`
+- ci: refactor julia/r/conda tests - now ~25 min instead of ~50 min :pr:`1188` by :user:`consideRatio`
+- ci: general refresh of github workflows, update gha versions and let dependabot do it, etc. :pr:`1186` by :user:`consideRatio`
+- Use enum to standardise `phase` :pr:`1185` by :user:`manics`
+- fail on unsupported Python :pr:`1184` by :user:`minrk`
+- mount wheels from build stage instead of copying them :pr:`1182` by :user:`minrk`
+- get CI working again :pr:`1178` by :user:`minrk`
+- explicitly build linux/amd64 images :pr:`1176` by :user:`minrk`
+- Freeze.py update :pr:`1173` by :user:`manics`
+- Bump version of nodejs :pr:`1172` by :user:`yuvipanda`
+- Update mamba :pr:`1171` by :user:`SylvainCorlay`
+- ci: switch to using a 2fa enabled accounts pypi api-token :pr:`1166` by :user:`consideRatio`
+- Get R from RStudio provided apt packages (.deb files) :pr:`1161` by :user:`yuvipanda`
+- Shallow clone HEAD :pr:`1160` by :user:`daradib`
+- Update black version :pr:`1150` by :user:`yuvipanda`
+- Update base notebook packages :pr:`1149` by :user:`yuvipanda`
+- Update Dockerfile to current Alpine (ALPINE_VERSION=3.15.0) :pr:`1136` by :user:`holzman`
+- update Python in some dockerfile tests :pr:`1130` by :user:`minrk`
+
 
 Version 2022.02.0
 =================
