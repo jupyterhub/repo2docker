@@ -39,6 +39,7 @@ Other merged PRs
 ----------------
 
 - Remove conda buildpacks pin of r-irkernel to 1.2 :pr:`1191` by :user:`consideRatio`
+- ci: refactor julia/r/conda tests - now ~25 min instead of ~50 min :pr:`1188` by :user:`consideRatio`
 - ci: general refresh of github workflows, update gha versions and let dependabot do it, etc. :pr:`1186` by :user:`consideRatio`
 - Use enum to standardise `phase` :pr:`1185` by :user:`manics`
 - fail on unsupported Python :pr:`1184` by :user:`minrk`
