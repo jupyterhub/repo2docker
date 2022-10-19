@@ -1,7 +1,10 @@
+# AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
+# Generated on 2022-10-19 22:01:25 UTC
 channels:
 - conda-forge
 dependencies:
 - python=2.7.*
+  # Use upper bounds so that older Python versions can install the most recent compatible version
+- ipykernel<7
+- nodejs<17
 - pip
-- ipykernel==4.8.2
-- wcwidth==0.1.9

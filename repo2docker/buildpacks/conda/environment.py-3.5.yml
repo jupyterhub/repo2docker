@@ -1,2 +1,10 @@
-# py3.5 is not being auto-generated from this file anymore
-# update environment.py-3.5.frozen.yml directly
+# AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
+# Generated on 2022-10-19 21:47:04 UTC
+channels:
+- conda-forge
+dependencies:
+- python=3.5.*
+  # Use upper bounds so that older Python versions can install the most recent compatible version
+- ipykernel<7
+- nodejs<17
+- pip
