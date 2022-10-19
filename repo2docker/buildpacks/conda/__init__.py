@@ -9,6 +9,8 @@ from ..base import BaseImage
 from .._r_base import rstudio_base_scripts
 from ...utils import is_local_pip_requirement
 
+DEFAULT_PYTHON_VERSION = "3.7"
+
 # pattern for parsing conda dependency line
 PYTHON_REGEX = re.compile(r"python\s*=+\s*([\d\.]*)")
 R_REGEX = re.compile(r"r-base\s*=+\s*([\d\.]*)")
@@ -160,31 +162,30 @@ class CondaBuildPack(BaseImage):
         # major Python versions during upgrade.
         # If no version is specified or no matching X.Y version is found,
         # the default base environment is used.
-        frozen_name = "environment.lock"
+        frozen_notebook = "notebook.lock"
         pip_frozen_name = "requirements.txt"
-        if py_version:
-            if self.python_version == "2.7":
-                # python 2 goes in a different env
-                files[
-                    "conda/environment.py-2.7.lock"
-                ] = self._kernel_environment_file = "/tmp/env/kernel-environment.lock"
-                # additional pip requirements for kernel env
-                if os.path.exists(os.path.join(HERE, "requirements.py-2.7.txt")):
-                    files[
-                        "conda/requirements.py-2.7.txt"
-                    ] = (
-                        self._kernel_requirements_file
-                    ) = "/tmp/env/kernel-requirements.txt"
-            else:
-                py_frozen_name = f"environment.py-{py_version}.lock"
-                if os.path.exists(os.path.join(HERE, py_frozen_name)):
-                    frozen_name = py_frozen_name
-                    pip_frozen_name = f"requirements.py-{py_version}.pip"
-                else:
-                    raise ValueError(f"Python version {py_version} is not supported!")
+        if not py_version:
+            py_version = DEFAULT_PYTHON_VERSION
+
+        py_frozen_name = f"environment.py-{py_version}.lock"
+        if os.path.exists(os.path.join(HERE, py_frozen_name)):
+            pip_frozen_name = f"requirements.py-{py_version}.pip"
+        else:
+            raise ValueError(f"Python version {py_version} is not supported!")
+
         files[
-            "conda/" + frozen_name
-        ] = self._nb_environment_file = "/tmp/env/environment.lock"
+            f"conda/{py_frozen_name}"
+        ] = self._kernel_environment_file = "/tmp/env/kernel-environment.lock"
+        # additional pip requirements for kernel env
+        # Not currently used, if needed create a requirements.py-{py_version}.pip file
+        if os.path.exists(os.path.join(HERE, "requirements.py-{py_version}.pip")):
+            files[
+                "conda/requirements.py-{py_version}.pip"
+            ] = self._kernel_requirements_file = "/tmp/env/kernel-requirements.txt"
+
+        files[
+            "conda/" + frozen_notebook
+        ] = self._nb_environment_file = "/tmp/env/notebook.lock"
 
         # add requirements.txt, if present
         if os.path.exists(os.path.join(HERE, pip_frozen_name)):
@@ -334,7 +335,7 @@ class CondaBuildPack(BaseImage):
         """Return series of build-steps specific to this source repository."""
         scripts = []
         environment_yml = self.binder_path("environment.yml")
-        env_prefix = "${KERNEL_PYTHON_PREFIX}" if self.py2 else "${NB_PYTHON_PREFIX}"
+        env_prefix = "${KERNEL_PYTHON_PREFIX}"
         if os.path.exists(environment_yml):
             # TODO: when using micromamba, we call $MAMBA_EXE install -p ...
             # whereas mamba/conda need `env update -p ...` when it's an env.yaml file
