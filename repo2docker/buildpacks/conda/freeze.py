@@ -22,9 +22,9 @@ from ruamel.yaml import YAML
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
-ENV_FILE = HERE / "environment.yml"
-FROZEN_FILE = os.path.splitext(ENV_FILE)[0] + ".lock"
+NOTEBOOK_ENV_FILE = HERE / "notebook.yml"
 
+ENV_FILE = HERE / "environment.yml"
 ENV_FILE_T = HERE / "environment.py-{py}.yml"
 
 yaml = YAML(typ="rt")
@@ -93,7 +93,7 @@ def set_python(py_env_file, py):
     with open(ENV_FILE) as f:
         env = yaml.load(f)
     for idx, dep in enumerate(env["dependencies"]):
-        if dep.split("=")[0] == "python":
+        if dep == "python":
             env["dependencies"][idx] = f"python={py}.*"
             break
     else:
@@ -117,15 +117,18 @@ if __name__ == "__main__":
     parser.add_argument(
         "py",
         nargs="*",
-        help="Python version(s) to update and freeze",
-        default=("3.7", "3.8", "3.9", "3.10"),
+        help=(
+            "Python version(s) to update and freeze. "
+            "Use `notebook` to update the notebook environment"
+        ),
+        default=("3.7", "3.8", "3.9", "3.10", "notebook"),
     )
     args = parser.parse_args()
-    default_py = "3.7"
     for py in args.py:
-        env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
-        set_python(env_file, py)
+        if py == "notebook":
+            env_file = NOTEBOOK_ENV_FILE
+        else:
+            env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
+            set_python(env_file, py)
         frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + ".lock")
         freeze(env_file, frozen_file)
-        if py == default_py:
-            shutil.copy(frozen_file, FROZEN_FILE)
