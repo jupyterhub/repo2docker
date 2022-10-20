@@ -126,7 +126,7 @@ python3 -m venv .
 source bin/activate
 pip3 install -e .
 pip3 install -r dev-requirements.txt
-pip3 install -r docs/doc-requirements.txt
+pip3 install -r docs/requirements.txt
 pip3 install black
 ```
 
@@ -187,7 +187,7 @@ Then you are good to go!
 If you only changed the documentation, you can also build the documentation locally using `sphinx` .
 
 ```bash
-pip install -r docs/doc-requirements.txt
+pip install -r docs/requirements.txt
 
 cd docs/
 make html
