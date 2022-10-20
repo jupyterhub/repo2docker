@@ -91,8 +91,7 @@ class CondaBuildPack(BaseImage):
         """
         path = super().get_path()
         path.insert(0, "${CONDA_DIR}/bin")
-        if self.py2:
-            path.insert(0, "${KERNEL_PYTHON_PREFIX}/bin")
+        path.insert(0, "${KERNEL_PYTHON_PREFIX}/bin")
         path.insert(0, "${NB_PYTHON_PREFIX}/bin")
         # This is at the end of $PATH, for backwards compat reasons
         path.append("${NPM_DIR}/bin")
@@ -100,7 +99,7 @@ class CondaBuildPack(BaseImage):
 
     def get_build_scripts(self):
         """
-        Return series of build-steps common to all Python 3 repositories.
+        Return series of build-steps common to all Python repositories.
 
         All scripts here should be independent of contents of the repository.
 
@@ -108,13 +107,12 @@ class CondaBuildPack(BaseImage):
 
         - a directory for the conda environment and its ownership by the
           notebook user
-        - a Python 3 interpreter for the conda environment
-        - a Python 3 jupyter kernel
-        - a frozen base set of requirements, including:
+        - a Python 3 interpreter for the notebook (JupyterLab) conda environment
+          with a frozen base set of requirements, including:
             - support for Jupyter widgets
             - support for JupyterLab
             - support for nteract
-
+        - a Python (default 3) jupyter kernel
         """
         return super().get_build_scripts() + [
             (
@@ -312,11 +310,6 @@ class CondaBuildPack(BaseImage):
                     break
 
         return self._uses_r
-
-    @property
-    def py2(self):
-        """Am I building a Python 2 kernel environment?"""
-        return self.python_version and self.python_version.split(".")[0] == "2"
 
     def get_preassemble_script_files(self):
         """preassembly only requires environment.yml

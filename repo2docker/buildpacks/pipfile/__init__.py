@@ -104,21 +104,24 @@ class PipfileBuildPack(CondaBuildPack):
         # environment.
         assemble_scripts = super().get_assemble_scripts()
 
-        if self.py2:
-            # using Python 2 as a kernel, but Python 3 for the notebook server
-
-            # requirements3.txt allows for packages to be installed to the
-            # notebook servers Python environment
-            nb_requirements_file = self.binder_path("requirements3.txt")
-            if os.path.exists(nb_requirements_file):
-                assemble_scripts.append(
-                    (
-                        "${NB_USER}",
-                        '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
-                            nb_requirements_file
-                        ),
-                    )
+        # TODO: requirements3.txt is named because originally only python 2 was in a
+        # separate environment, whereas the notebook was run with Python 3.
+        # Now the kernel and notebook environments are always separate, so the only
+        # way to update the notebook/JupyterLab environment is with this file
+        # However it's not documented!
+        #
+        # requirements3.txt allows for packages to be installed to the
+        # notebook servers Python environment
+        nb_requirements_file = self.binder_path("requirements3.txt")
+        if os.path.exists(nb_requirements_file):
+            assemble_scripts.append(
+                (
+                    "${NB_USER}",
+                    '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
+                        nb_requirements_file
+                    ),
                 )
+            )
 
         pipfile = self.binder_path("Pipfile")
         pipfile_lock = self.binder_path("Pipfile.lock")

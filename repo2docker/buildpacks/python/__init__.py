@@ -45,21 +45,26 @@ class PythonBuildPack(CondaBuildPack):
         # whether it's distinct from the notebook or the same.
         pip = "${KERNEL_PYTHON_PREFIX}/bin/pip"
         scripts = []
-        if self.py2:
-            # using python 2 kernel,
-            # requirements3.txt allows installation in the notebook server env
-            nb_requirements_file = self.binder_path("requirements3.txt")
-            if os.path.exists(nb_requirements_file):
-                scripts.append(
-                    (
-                        "${NB_USER}",
-                        # want the $NB_PYHTON_PREFIX environment variable, not for
-                        # Python's string formatting to try and replace this
-                        '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
-                            nb_requirements_file
-                        ),
-                    )
+
+        # TODO: requirements3.txt is named because originally only python 2 was in a
+        # separate environment, whereas the notebook was run with Python 3.
+        # Now the kernel and notebook environments are always separate, so the only
+        # way to update the notebook/JupyterLab environment is with this file
+        # However it's not documented!
+        #
+        # requirements3.txt allows installation in the notebook server env
+        nb_requirements_file = self.binder_path("requirements3.txt")
+        if os.path.exists(nb_requirements_file):
+            scripts.append(
+                (
+                    "${NB_USER}",
+                    # want the $NB_PYTHON_PREFIX environment variable, not for
+                    # Python's string formatting to try and replace this
+                    '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
+                        nb_requirements_file
+                    ),
                 )
+            )
 
         # install requirements.txt in the kernel env
         requirements_file = self.binder_path("requirements.txt")
@@ -112,7 +117,6 @@ class PythonBuildPack(CondaBuildPack):
 
     def get_assemble_scripts(self):
         """Return series of build steps that require the full repository"""
-        # If we have a runtime.txt & that's set to python-2.7,
         # requirements.txt will be installed in the *kernel* env
         # and requirements3.txt (if it exists)
         # will be installed in the python 3 notebook server env.
