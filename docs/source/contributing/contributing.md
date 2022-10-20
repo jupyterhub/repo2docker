@@ -187,6 +187,7 @@ Then you are good to go!
 You can build and inspect the result of documentation changes locally.
 
 ```bash
+pip install -e .
 pip install -r docs/requirements.txt
 
 cd docs/
