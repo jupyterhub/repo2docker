@@ -184,13 +184,11 @@ Then you are good to go!
 
 ## Building the documentation locally
 
-If you only changed the documentation, you can also build the documentation locally using `sphinx` .
+You can build and inspect the result of documentation changes locally.
 
 ```bash
 pip install -r docs/requirements.txt
 
 cd docs/
-make html
+make devenv
 ```
-
-Then open the file `docs/build/html/index.html` in your browser.
