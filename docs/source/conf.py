@@ -18,8 +18,11 @@ author = "Project Jupyter Contributors"
 #
 extensions = [
     "myst_parser",
+    "sphinx_copybutton",
     "sphinx.ext.extlinks",
     "sphinxcontrib.autoprogram",
+    "sphinxext.opengraph",
+    "sphinxext.rediraffe",
 ]
 root_doc = "index"
 source_suffix = [".md", ".rst"]
@@ -86,4 +89,44 @@ html_context = {
     "github_repo": "repo2docker",
     "github_version": "main",
     "doc_path": "docs/source",
+}
+
+
+# -- Options for linkcheck builder -------------------------------------------
+# ref: https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder
+#
+linkcheck_ignore = [
+    r"(.*)github\.com(.*)#",  # javascript based anchors
+    r"(.*)/#%21(.*)/(.*)",  # /#!forum/jupyter - encoded anchor edge case
+    r"https://github.com/[^/]*$",  # too many github usernames / searches in changelog
+    "https://github.com/jupyterhub/repo2docker/pull/",  # too many PRs in changelog
+    "https://github.com/jupyterhub/repo2docker/compare/",  # too many comparisons in changelog
+]
+linkcheck_anchors_ignore = [
+    "/#!",
+    "/#%21",
+]
+
+
+# -- Options for the opengraph extension -------------------------------------
+# ref: https://github.com/wpilibsuite/sphinxext-opengraph#options
+#
+# This extension help others provide better thumbnails and link descriptions
+# when they link to this documentation from other websites, such as
+# https://discourse.jupyter.org.
+#
+# ogp_site_url is set automatically by RTD
+ogp_image = "_static/images/logo.png"
+ogp_use_first_image = True
+
+
+# -- Options for the rediraffe extension -------------------------------------
+# ref: https://github.com/wpilibsuite/sphinxext-rediraffe#readme
+#
+# This extensions help us relocated content without breaking links. If a
+# document is moved internally, we should configure a redirect like below.
+#
+rediraffe_branch = "main"
+rediraffe_redirects = {
+    # "old-file": "new-folder/new-file-name",
 }
