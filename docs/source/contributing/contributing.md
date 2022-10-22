@@ -60,13 +60,15 @@ This outlines the process for getting changes to the repo2docker project merged.
   Getting consensus with the community is a great way to save time later.
 3. Make edits in [your fork](https://help.github.com/en/articles/fork-a-repo) of the [repo2docker repository](https://github.com/jupyterhub/repo2docker).
 4. Make a [pull request](https://help.github.com/en/articles/about-pull-requests).
-Read the [next section](#guidelines-to-getting-a-pull-request-merged) for guidelines for both reviewers and contributors on merging a PR.
+Read the [next section](guidelines-to-getting-a-pull-request-merged) for guidelines for both reviewers and contributors on merging a PR.
 6. Wait for a community member to merge your changes.
   Remember that **someone else must merge your pull request**.
   That goes for new contributors and long term maintainers alike.
   Because `main` is continuously deployed to mybinder.org it is essential
   that `main` is always in a deployable state.
 7. (optional) Deploy a new version of repo2docker to mybinder.org by [following these steps](http://mybinder-sre.readthedocs.io/en/latest/deployment/how.html)
+
+(guidelines-to-getting-a-pull-request-merged)=
 
 ## Guidelines to getting a Pull Request merged
 
