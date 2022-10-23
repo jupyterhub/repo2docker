@@ -9,13 +9,17 @@
 # - Register git hooks: pre-commit install --install-hooks
 #
 repos:
-  # # Autoformat: Python code, syntax patterns are modernized
-  # - repo: https://github.com/asottile/pyupgrade
-  #   rev: v3.0.0
-  #   hooks:
-  #     - id: pyupgrade
-  #       args:
-  #         - --py38-plus
+  # Autoformat: Python code, syntax patterns are modernized
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.2.0
+    hooks:
+      - id: pyupgrade
+        args:
+          - --py36-plus
+        # check-tmp is a Python based test script run in created environments
+        # that can be at least Python 3.5 even though we require Python 3.6 for
+        # repo2docker itself.
+        exclude: check-tmp
 
   # Autoformat: Python code
   - repo: https://github.com/psf/black
