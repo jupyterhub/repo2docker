@@ -34,19 +34,14 @@ def test_user():
         subprocess.check_call(
             [
                 "repo2docker",
-                "-v",
-                f"{tmpdir}:/home/{username}",
-                "--user-id",
-                userid,
-                "--user-name",
-                username,
+                f"--volume={tmpdir}:/home/{username}",
+                f"--user-id={userid}",
+                f"--user-name={username}",
                 tmpdir,
                 "--",
                 "/bin/bash",
                 "-c",
-                "id -u > id && pwd > pwd && whoami > name && echo -n $USER > env_user".format(
-                    ts
-                ),
+                "id -u > id && pwd > pwd && whoami > name && echo -n $USER > env_user",
             ]
         )
 

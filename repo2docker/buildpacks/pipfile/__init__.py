@@ -123,9 +123,7 @@ class PipfileBuildPack(CondaBuildPack):
                 assemble_scripts.append(
                     (
                         "${NB_USER}",
-                        '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
-                            nb_requirements_file
-                        ),
+                        f'${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{nb_requirements_file}"',
                     )
                 )
 

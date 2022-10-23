@@ -43,7 +43,7 @@ class Git(ContentProvider):
             hash = check_ref(ref, output_dir)
             if hash is None:
                 self.log.error(
-                    "Failed to check out ref %s", ref, extra=dict(phase=R2dState.FAILED)
+                    f"Failed to check out ref {ref}", extra=dict(phase=R2dState.FAILED)
                 )
                 if ref == "master":
                     msg = (

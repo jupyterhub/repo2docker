@@ -30,4 +30,4 @@ for pkg in pkgs:
         assert pkg["version"].startswith("2.7.")
         break
 else:
-    assert False, "python not found in %s" % pkg_names
+    assert False, f"python not found in {pkg_names}"

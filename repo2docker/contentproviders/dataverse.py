@@ -76,9 +76,7 @@ class Dataverse(DoiProvider):
             data = self.urlopen(search_url).json()["data"]
             if data["count_in_response"] != 1:
                 self.log.debug(
-                    "Dataverse search query failed!\n - doi: {}\n - url: {}\n - resp: {}\n".format(
-                        doi, url, json.dump(data)
-                    )
+                    f"Dataverse search query failed!\n - doi: {doi}\n - url: {url}\n - resp: {json.dump(data)}\n"
                 )
                 return
 
@@ -98,16 +96,14 @@ class Dataverse(DoiProvider):
         host = spec["host"]
 
         yield f"Fetching Dataverse record {record_id}.\n"
-        url = "{}/api/datasets/:persistentId?persistentId={}".format(
-            host["url"], record_id
-        )
+        url = f'{host["url"]}/api/datasets/:persistentId?persistentId={record_id}'
 
         resp = self.urlopen(url, headers={"accept": "application/json"})
         record = resp.json()["data"]
 
         for fobj in deep_get(record, "latestVersion.files"):
-            file_url = "{}/api/access/datafile/{}".format(
-                host["url"], deep_get(fobj, "dataFile.id")
+            file_url = (
+                f'{host["url"]}/api/access/datafile/{deep_get(fobj, "dataFile.id")}'
             )
             filename = os.path.join(fobj.get("directoryLabel", ""), fobj["label"])
 

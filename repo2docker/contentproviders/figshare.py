@@ -75,11 +75,9 @@ class Figshare(DoiProvider):
         article_version = spec["version"]
         host = spec["host"]
 
-        yield "Fetching Figshare article {} in version {}.\n".format(
-            article_id, article_version
-        )
+        yield f"Fetching Figshare article {article_id} in version {article_version}.\n"
         resp = self.urlopen(
-            "{}{}/versions/{}".format(host["api"], article_id, article_version),
+            f'{host["api"]}{article_id}/versions/{article_version}',
             headers={"accept": "application/json"},
         )
 

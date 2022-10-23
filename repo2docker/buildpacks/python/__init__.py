@@ -55,9 +55,7 @@ class PythonBuildPack(CondaBuildPack):
                         "${NB_USER}",
                         # want the $NB_PYHTON_PREFIX environment variable, not for
                         # Python's string formatting to try and replace this
-                        '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
-                            nb_requirements_file
-                        ),
+                        f'${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{nb_requirements_file}"',
                     )
                 )
 

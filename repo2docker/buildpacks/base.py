@@ -594,8 +594,8 @@ class BuildPack:
         # buildpacks/docker.py where it is duplicated
         if not isinstance(memory_limit, int):
             raise ValueError(
-                "The memory limit has to be specified as an"
-                "integer but is '{}'".format(type(memory_limit))
+                "The memory limit has to be specified as an "
+                f"integer but is '{type(memory_limit)}'"
             )
         limits = {}
         if memory_limit:
@@ -647,8 +647,7 @@ class BaseImage(BuildPack):
                     # FIXME: Add support for specifying version numbers
                     if not re.match(r"^[a-z0-9.+-]+", package):
                         raise ValueError(
-                            "Found invalid package name {} in "
-                            "apt.txt".format(package)
+                            f"Found invalid package name {package} in apt.txt"
                         )
                     extra_apt_packages.append(package)
 

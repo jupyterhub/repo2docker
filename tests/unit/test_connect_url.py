@@ -59,13 +59,13 @@ def test_connect_url(tmpdir):
             try:
                 info = requests.get(container_url).json()
             except Exception as e:
-                print("Error: %s" % e)
+                print(f"Error: {e}")
                 time.sleep(i * 3)
             else:
                 print(info)
                 success = True
                 break
-        assert success, "Notebook never started in %s" % container
+        assert success, f"Notebook never started in {container}"
     finally:
         # stop the container
         container.stop()

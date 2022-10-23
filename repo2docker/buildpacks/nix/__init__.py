@@ -62,13 +62,11 @@ class NixBuildPack(BaseImage):
         return super().get_assemble_scripts() + [
             (
                 "${NB_USER}",
-                """
+                f"""
             nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && \
             nix-channel --update && \
-            nix-shell {}
-            """.format(
-                    self.binder_path("default.nix")
-                ),
+            nix-shell {self.binder_path("default.nix")}
+            """,
             )
         ]
 

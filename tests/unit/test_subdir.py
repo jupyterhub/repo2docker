@@ -21,7 +21,7 @@ def test_subdir(run_repo2docker):
     run_repo2docker(argv)
 
     # check that we restored the current working directory
-    assert cwd == os.getcwd(), "We should be back in %s" % cwd
+    assert cwd == os.getcwd(), f"We should be back in {cwd}"
 
 
 def test_subdir_in_image_name():

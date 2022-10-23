@@ -68,7 +68,7 @@ class Zenodo(DoiProvider):
 
         yield f"Fetching Zenodo record {record_id}.\n"
         resp = self.urlopen(
-            "{}{}".format(host["api"], record_id),
+            f'{host["api"]}{record_id}',
             headers={"accept": "application/json"},
         )
 

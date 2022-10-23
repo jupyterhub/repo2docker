@@ -304,8 +304,8 @@ def make_r2d(argv=None):
             r2d.volumes[os.path.abspath(args.repo)] = "."
         else:
             r2d.log.error(
-                'Cannot mount "{}" in editable mode '
-                "as it is not a directory".format(args.repo),
+                f'Cannot mount "{args.repo}" in editable mode '
+                "as it is not a directory",
                 extra=dict(phase=R2dState.FAILED),
             )
             sys.exit(1)

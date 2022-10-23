@@ -65,7 +65,7 @@ def make_test_func(args, skip_build=False, extra_run_kwargs=None):
         container = app.start_container()
         port = app.port
         # wait a bit for the container to be ready
-        container_url = "http://localhost:%s/api" % port
+        container_url = f"http://localhost:{port}/api"
         # give the container a chance to start
         time.sleep(1)
         try:
@@ -77,13 +77,13 @@ def make_test_func(args, skip_build=False, extra_run_kwargs=None):
                 try:
                     info = requests.get(container_url).json()
                 except Exception as e:
-                    print("Error: %s" % e)
+                    print(f"Error: {e}")
                     time.sleep(i * 3)
                 else:
                     print(info)
                     success = True
                     break
-            assert success, "Notebook never started in %s" % container
+            assert success, f"Notebook never started in {container}"
         finally:
             # stop the container
             container.stop()
@@ -211,7 +211,7 @@ class Repo2DockerTest(pytest.Function):
     def repr_failure(self, excinfo):
         err = excinfo.value
         if isinstance(err, SystemExit):
-            cmd = "jupyter-repo2docker %s" % " ".join(map(pipes.quote, self.args))
+            cmd = f'jupyter-repo2docker {" ".join(map(pipes.quote, self.args))}'
             return f"{cmd} | exited with status={err.code}"
         else:
             return super().repr_failure(excinfo)

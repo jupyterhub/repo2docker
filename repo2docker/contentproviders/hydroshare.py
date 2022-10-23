@@ -59,7 +59,7 @@ class Hydroshare(DoiProvider):
         resource_id = spec["resource"]
         host = spec["host"]
 
-        bag_url = "{}{}".format(host["django_irods"], resource_id)
+        bag_url = f'{host["django_irods"]}{resource_id}'
 
         yield f"Downloading {bag_url}.\n"
 
@@ -76,9 +76,7 @@ class Hydroshare(DoiProvider):
                 msg = "Bag taking too long to prepare, exiting now, try again later."
                 yield msg
                 raise ContentProviderException(msg)
-            yield "Bag is being prepared, requesting again in {} seconds.\n".format(
-                wait_time
-            )
+            yield f"Bag is being prepared, requesting again in {wait_time} seconds.\n"
             time.sleep(wait_time)
             conn = self.urlopen(bag_url)
         if conn.status_code != 200:

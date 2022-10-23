@@ -60,7 +60,7 @@ class Mercurial(ContentProvider):
                 )
             except subprocess.CalledProcessError:
                 self.log.error(
-                    "Failed to update to ref %s", ref, extra=dict(phase=R2dState.FAILED)
+                    f"Failed to update to ref {ref}", extra=dict(phase=R2dState.FAILED)
                 )
                 raise ValueError(f"Failed to update to ref {ref}")
 

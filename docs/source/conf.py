@@ -61,12 +61,10 @@ from repo2docker.buildpacks.conda import CondaBuildPack
 
 default_python = CondaBuildPack.major_pythons["3"]
 
-rst_prolog = """
+rst_prolog = f"""
 .. |default_python| replace:: **Python {default_python}**
 .. |default_python_version| replace:: {default_python}
-""".format(
-    default_python=default_python
-)
+"""
 
 
 # -- Options for HTML output -------------------------------------------------
