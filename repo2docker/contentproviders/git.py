@@ -65,8 +65,25 @@ class Git(ContentProvider):
                 yield line
 
         # ensure that git submodules are initialised and updated
+        #
+        # WARNING: To pass `-c protocol.file.allow=always` is a workaround to a
+        #          security patch and can have real implications, we must
+        #          evaluate if we can do this or if we can handle this another
+        #          way instead.
+        #
+        #          https://github.com/jupyterhub/repo2docker/issues/1198#issuecomment-1288114992
+        #          https://bugs.launchpad.net/ubuntu/+source/git/+bug/1993586
+        #
         for line in execute_cmd(
-            ["git", "submodule", "update", "--init", "--recursive"],
+            [
+                "git",
+                "-c",
+                "protocol.file.allow=always",
+                "submodule",
+                "update",
+                "--init",
+                "--recursive",
+            ],
             cwd=output_dir,
             capture=yield_output,
         ):
