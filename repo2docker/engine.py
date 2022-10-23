@@ -131,7 +131,7 @@ class Image:
         return self._config
 
     def __repr__(self):
-        return "Image(tags={},config={})".format(self.tags, self.config)
+        return f"Image(tags={self.tags},config={self.config})"
 
 
 class ContainerEngine(LoggingConfigurable):

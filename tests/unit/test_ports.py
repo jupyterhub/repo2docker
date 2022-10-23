@@ -82,13 +82,13 @@ def read_port_mapping_response(
     if all_ports:
         port = port_mapping["8888/tcp"][0]["HostPort"]
 
-    url = "http://{}:{}".format(host, port)
+    url = f"http://{host}:{port}"
     for i in range(5):
         try:
             r = requests.get(url)
             r.raise_for_status()
         except Exception as e:
-            print("No response from {}: {}".format(url, e))
+            print(f"No response from {url}: {e}")
             container.reload()
             assert container.status == "running"
             time.sleep(3)

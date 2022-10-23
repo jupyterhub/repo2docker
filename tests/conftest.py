@@ -212,7 +212,7 @@ class Repo2DockerTest(pytest.Function):
         err = excinfo.value
         if isinstance(err, SystemExit):
             cmd = "jupyter-repo2docker %s" % " ".join(map(pipes.quote, self.args))
-            return "%s | exited with status=%s" % (cmd, err.code)
+            return f"{cmd} | exited with status={err.code}"
         else:
             return super().repr_failure(excinfo)
 

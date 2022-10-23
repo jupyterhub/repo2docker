@@ -462,7 +462,7 @@ class BuildPack:
         last_user = "root"
         for user, script in self.get_build_scripts():
             if last_user != user:
-                build_script_directives.append("USER {}".format(user))
+                build_script_directives.append(f"USER {user}")
                 last_user = user
             build_script_directives.append(
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
@@ -472,7 +472,7 @@ class BuildPack:
         last_user = "root"
         for user, script in self.get_assemble_scripts():
             if last_user != user:
-                assemble_script_directives.append("USER {}".format(user))
+                assemble_script_directives.append(f"USER {user}")
                 last_user = user
             assemble_script_directives.append(
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
@@ -482,7 +482,7 @@ class BuildPack:
         last_user = "root"
         for user, script in self.get_preassemble_scripts():
             if last_user != user:
-                preassemble_script_directives.append("USER {}".format(user))
+                preassemble_script_directives.append(f"USER {user}")
                 last_user = user
             preassemble_script_directives.append(
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
@@ -616,8 +616,7 @@ class BuildPack:
 
         build_kwargs.update(extra_build_kwargs)
 
-        for line in client.build(**build_kwargs):
-            yield line
+        yield from client.build(**build_kwargs)
 
 
 class BaseImage(BuildPack):

@@ -57,5 +57,4 @@ class DockerBuildPack(BuildPack):
 
         build_kwargs.update(extra_build_kwargs)
 
-        for line in client.build(**build_kwargs):
-            yield line
+        yield from client.build(**build_kwargs)

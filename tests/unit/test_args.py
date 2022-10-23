@@ -13,7 +13,7 @@ def test_version(capsys):
     """
     with pytest.raises(SystemExit):
         make_r2d(["--version"])
-    assert capsys.readouterr().out == "{}\n".format(__version__)
+    assert capsys.readouterr().out == f"{__version__}\n"
 
 
 def test_simple():

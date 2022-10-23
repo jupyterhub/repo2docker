@@ -20,7 +20,7 @@ with open("mem_allocate_mb") as f:
     mem_allocate_mb = int(f.read().strip())
 
 size = 1024 * 1024 * mem_allocate_mb
-print("trying to allocate {}MB".format(mem_allocate_mb))
+print(f"trying to allocate {mem_allocate_mb}MB")
 
 ret = libc.malloc(size)
 

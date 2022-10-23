@@ -377,7 +377,7 @@ class CondaBuildPack(BaseImage):
                     r"""
                     echo auth-none=1 >> /etc/rstudio/rserver.conf && \
                     echo auth-minimum-user-id=0 >> /etc/rstudio/rserver.conf && \
-                    echo "rsession-which-r={0}/bin/R" >> /etc/rstudio/rserver.conf && \
+                    echo "rsession-which-r={}/bin/R" >> /etc/rstudio/rserver.conf && \
                     echo www-frame-origin=same >> /etc/rstudio/rserver.conf
                     """.format(
                         env_prefix
@@ -387,7 +387,7 @@ class CondaBuildPack(BaseImage):
                     "${NB_USER}",
                     # Register the jupyter kernel
                     r"""
-                 R --quiet -e "IRkernel::installspec(prefix='{0}')"
+                 R --quiet -e "IRkernel::installspec(prefix='{}')"
                  """.format(
                         env_prefix
                     ),

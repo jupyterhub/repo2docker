@@ -52,7 +52,7 @@ class MimicDockerEnvHandling(argparse.Action):
         #  key          pass using current value, or don't pass
         if "=" not in values:
             try:
-                value_to_append = "{}={}".format(values, os.environ[values])
+                value_to_append = f"{values}={os.environ[values]}"
             except KeyError:
                 # no local def, so don't pass
                 return

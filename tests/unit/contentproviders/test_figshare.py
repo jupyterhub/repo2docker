@@ -113,8 +113,8 @@ def test_detect_not_figshare():
 def figshare_archive(prefix="a_directory"):
     with NamedTemporaryFile(suffix=".zip") as zfile:
         with ZipFile(zfile.name, mode="w") as zip:
-            zip.writestr("{}/some-file.txt".format(prefix), "some content")
-            zip.writestr("{}/some-other-file.txt".format(prefix), "some more content")
+            zip.writestr(f"{prefix}/some-file.txt", "some content")
+            zip.writestr(f"{prefix}/some-other-file.txt", "some more content")
 
         yield zfile.name
 
@@ -127,7 +127,7 @@ def test_fetch_zip(requests_mock):
                 {
                     "name": "afake.zip",
                     "is_link_only": False,
-                    "download_url": "file://{}".format(fig_path),
+                    "download_url": f"file://{fig_path}",
                 }
             ]
         }
@@ -135,9 +135,7 @@ def test_fetch_zip(requests_mock):
             "https://api.figshare.com/v2/articles/123456/versions/42",
             json=mock_response,
         )
-        requests_mock.get(
-            "file://{}".format(fig_path), content=open(fig_path, "rb").read()
-        )
+        requests_mock.get(f"file://{fig_path}", content=open(fig_path, "rb").read())
 
         # with patch.object(Figshare, "urlopen", new=mock_urlopen):
         with TemporaryDirectory() as d:
@@ -146,7 +144,7 @@ def test_fetch_zip(requests_mock):
                 output.append(l)
 
             unpacked_files = set(os.listdir(d))
-            expected = set(["some-other-file.txt", "some-file.txt"])
+            expected = {"some-other-file.txt", "some-file.txt"}
             assert expected == unpacked_files
 
 
@@ -157,12 +155,12 @@ def test_fetch_data(requests_mock):
                 "files": [
                     {
                         "name": "afake.file",
-                        "download_url": "file://{}".format(a_path),
+                        "download_url": f"file://{a_path}",
                         "is_link_only": False,
                     },
                     {
                         "name": "bfake.data",
-                        "download_url": "file://{}".format(b_path),
+                        "download_url": f"file://{b_path}",
                         "is_link_only": False,
                     },
                     {"name": "cfake.link", "is_link_only": True},
@@ -173,12 +171,8 @@ def test_fetch_data(requests_mock):
                 "https://api.figshare.com/v2/articles/123456/versions/42",
                 json=mock_response,
             )
-            requests_mock.get(
-                "file://{}".format(a_path), content=open(a_path, "rb").read()
-            )
-            requests_mock.get(
-                "file://{}".format(b_path), content=open(b_path, "rb").read()
-            )
+            requests_mock.get(f"file://{a_path}", content=open(a_path, "rb").read())
+            requests_mock.get(f"file://{b_path}", content=open(b_path, "rb").read())
 
             with TemporaryDirectory() as d:
                 output = []

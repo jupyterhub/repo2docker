@@ -27,7 +27,7 @@ def test_url_headers(requests_mock):
     result = doi.urlopen("https://mybinder.org", headers=headers)
     assert "test1" in result.request.headers
     assert "Test2" in result.request.headers
-    assert result.request.headers["User-Agent"] == "repo2docker {}".format(__version__)
+    assert result.request.headers["User-Agent"] == f"repo2docker {__version__}"
 
 
 def test_unresolving_doi():

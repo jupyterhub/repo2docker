@@ -99,7 +99,7 @@ def mocked_provider(tmpdir, dirhash, tarfile_buf):
 
     adapter.register_uri(
         "GET",
-        "mock://api/1/revision/{}/".format(NULLID),
+        f"mock://api/1/revision/{NULLID}/",
         json={
             "author": {"fullname": "John Doe <jdoe@example.com>"},
             "directory": dirhash,
@@ -107,25 +107,25 @@ def mocked_provider(tmpdir, dirhash, tarfile_buf):
     )
     adapter.register_uri(
         "POST",
-        "mock://api/1/vault/directory/{}/".format(dirhash),
+        f"mock://api/1/vault/directory/{dirhash}/",
         json={
-            "fetch_url": "mock://api/1/vault/directory/{}/raw/".format(dirhash),
+            "fetch_url": f"mock://api/1/vault/directory/{dirhash}/raw/",
             "status": "new",
         },
     )
     adapter.register_uri(
         "GET",
-        "mock://api/1/vault/directory/{}/".format(dirhash),
+        f"mock://api/1/vault/directory/{dirhash}/",
         [
             {
                 "json": {
-                    "fetch_url": "mock://api/1/vault/directory/{}/raw/".format(dirhash),
+                    "fetch_url": f"mock://api/1/vault/directory/{dirhash}/raw/",
                     "status": "pending",
                 }
             },
             {
                 "json": {
-                    "fetch_url": "mock://api/1/vault/directory/{}/raw/".format(dirhash),
+                    "fetch_url": f"mock://api/1/vault/directory/{dirhash}/raw/",
                     "status": "done",
                 }
             },
@@ -133,7 +133,7 @@ def mocked_provider(tmpdir, dirhash, tarfile_buf):
     )
     adapter.register_uri(
         "GET",
-        "mock://api/1/vault/directory/{}/raw/".format(dirhash),
+        f"mock://api/1/vault/directory/{dirhash}/raw/",
         content=tarfile_buf,
     )
     return provider

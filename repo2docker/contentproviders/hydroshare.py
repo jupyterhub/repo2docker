@@ -61,7 +61,7 @@ class Hydroshare(DoiProvider):
 
         bag_url = "{}{}".format(host["django_irods"], resource_id)
 
-        yield "Downloading {}.\n".format(bag_url)
+        yield f"Downloading {bag_url}.\n"
 
         # bag downloads are prepared on demand and may need some time
         conn = self.urlopen(bag_url)
@@ -82,7 +82,7 @@ class Hydroshare(DoiProvider):
             time.sleep(wait_time)
             conn = self.urlopen(bag_url)
         if conn.status_code != 200:
-            msg = "Failed to download bag. status code {}.\n".format(conn.status_code)
+            msg = f"Failed to download bag. status code {conn.status_code}.\n"
             yield msg
             raise ContentProviderException(msg)
         # Bag creation seems to need a small time buffer after it says it's ready.
@@ -102,4 +102,4 @@ class Hydroshare(DoiProvider):
     @property
     def content_id(self):
         """The HydroShare resource ID"""
-        return "{}.v{}".format(self.resource_id, self.version)
+        return f"{self.resource_id}.v{self.version}"

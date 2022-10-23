@@ -35,7 +35,7 @@ def test_user():
             [
                 "repo2docker",
                 "-v",
-                "{}:/home/{}".format(tmpdir, username),
+                f"{tmpdir}:/home/{username}",
                 "--user-id",
                 userid,
                 "--user-name",
@@ -53,7 +53,7 @@ def test_user():
         with open(os.path.join(tmpdir, "id")) as f:
             assert f.read().strip() == userid
         with open(os.path.join(tmpdir, "pwd")) as f:
-            assert f.read().strip() == "/home/{}".format(username)
+            assert f.read().strip() == f"/home/{username}"
         with open(os.path.join(tmpdir, "name")) as f:
             assert f.read().strip() == username
         with open(os.path.join(tmpdir, "name")) as f:

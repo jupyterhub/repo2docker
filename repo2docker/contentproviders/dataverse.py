@@ -20,7 +20,7 @@ class Dataverse(DoiProvider):
 
     def __init__(self):
         data_file = os.path.join(os.path.dirname(__file__), "dataverse.json")
-        with open(data_file, "r") as fp:
+        with open(data_file) as fp:
             self.hosts = json.load(fp)["installations"]
         super().__init__()
 
@@ -97,7 +97,7 @@ class Dataverse(DoiProvider):
         record_id = spec["record"]
         host = spec["host"]
 
-        yield "Fetching Dataverse record {}.\n".format(record_id)
+        yield f"Fetching Dataverse record {record_id}.\n"
         url = "{}/api/datasets/:persistentId?persistentId={}".format(
             host["url"], record_id
         )
@@ -114,8 +114,7 @@ class Dataverse(DoiProvider):
             file_ref = {"download": file_url, "filename": filename}
             fetch_map = {key: key for key in file_ref.keys()}
 
-            for line in self.fetch_file(file_ref, fetch_map, output_dir):
-                yield line
+            yield from self.fetch_file(file_ref, fetch_map, output_dir)
 
         new_subdirs = os.listdir(output_dir)
         # if there is only one new subdirectory move its contents

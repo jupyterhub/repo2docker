@@ -40,8 +40,8 @@ def test_connect_url(tmpdir):
     app.start()
     container = app.start_container()
 
-    container_url = "http://{}:{}/api".format(app.hostname, app.port)
-    expected_url = "http://{}:{}".format(app.hostname, app.port)
+    container_url = f"http://{app.hostname}:{app.port}/api"
+    expected_url = f"http://{app.hostname}:{app.port}"
 
     # wait a bit for the container to be ready
     # give the container a chance to start

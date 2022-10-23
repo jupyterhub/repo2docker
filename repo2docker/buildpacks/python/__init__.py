@@ -67,7 +67,7 @@ class PythonBuildPack(CondaBuildPack):
             scripts.append(
                 (
                     "${NB_USER}",
-                    '{} install --no-cache-dir -r "{}"'.format(pip, requirements_file),
+                    f'{pip} install --no-cache-dir -r "{requirements_file}"',
                 )
             )
         return scripts
@@ -126,9 +126,7 @@ class PythonBuildPack(CondaBuildPack):
 
         # setup.py exists *and* binder dir is not used
         if not self.binder_dir and os.path.exists(setup_py):
-            assemble_scripts.append(
-                ("${NB_USER}", "{} install --no-cache-dir .".format(pip))
-            )
+            assemble_scripts.append(("${NB_USER}", f"{pip} install --no-cache-dir ."))
         return assemble_scripts
 
     def detect(self):

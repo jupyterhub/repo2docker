@@ -91,10 +91,9 @@ class Figshare(DoiProvider):
         only_one_file = len(files) == 1
         for file_ref in files:
             unzip = file_ref["name"].endswith(".zip") and only_one_file
-            for line in self.fetch_file(file_ref, host, output_dir, unzip):
-                yield line
+            yield from self.fetch_file(file_ref, host, output_dir, unzip)
 
     @property
     def content_id(self):
         """The Figshare article ID"""
-        return "{}.v{}".format(self.article_id, self.article_version)
+        return f"{self.article_id}.v{self.article_version}"

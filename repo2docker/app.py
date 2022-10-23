@@ -568,7 +568,7 @@ class Repo2Docker(Application):
                     )
                     last_emit_time = time.time()
         self.log.info(
-            "Successfully pushed {}".format(self.output_image_spec),
+            f"Successfully pushed {self.output_image_spec}",
             extra=dict(phase=R2dState.PUSHING),
         )
 
@@ -767,7 +767,7 @@ class Repo2Docker(Application):
                         self.subdir,
                         extra=dict(phase=R2dState.FAILED),
                     )
-                    raise FileNotFoundError("Could not find {}".format(checkout_path))
+                    raise FileNotFoundError(f"Could not find {checkout_path}")
 
             with chdir(checkout_path):
                 for BP in self.buildpacks:

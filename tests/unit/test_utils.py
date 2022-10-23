@@ -90,7 +90,7 @@ def test_invalid_port_mapping(port_spec):
     with pytest.raises(ValueError) as e:
         utils.validate_and_generate_port_mapping([port_spec])
 
-    assert 'Port specification "{}"'.format(port_spec) in str(e.value)
+    assert f'Port specification "{port_spec}"' in str(e.value)
 
 
 def test_deep_get():

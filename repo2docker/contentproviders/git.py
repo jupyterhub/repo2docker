@@ -29,13 +29,12 @@ class Git(ContentProvider):
                 # this prevents HEAD's submodules to be cloned if ref doesn't have them
                 cmd.extend(["--no-checkout"])
             cmd.extend([repo, output_dir])
-            for line in execute_cmd(cmd, capture=yield_output):
-                yield line
+            yield from execute_cmd(cmd, capture=yield_output)
 
         except subprocess.CalledProcessError as e:
-            msg = "Failed to clone repository from {repo}".format(repo=repo)
+            msg = f"Failed to clone repository from {repo}"
             if ref != "HEAD":
-                msg += " (ref {ref})".format(ref=ref)
+                msg += f" (ref {ref})"
             msg += "."
             raise ContentProviderException(msg) from e
 
@@ -54,23 +53,21 @@ class Git(ContentProvider):
                         "specifying `--ref`."
                     )
                 else:
-                    msg = "Failed to check out ref {}".format(ref)
+                    msg = f"Failed to check out ref {ref}"
                 raise ValueError(msg)
             # We don't need to explicitly checkout things as the reset will
             # take care of that. If the hash is resolved above, we should be
             # able to reset to it
-            for line in execute_cmd(
+            yield from execute_cmd(
                 ["git", "reset", "--hard", hash], cwd=output_dir, capture=yield_output
-            ):
-                yield line
+            )
 
         # ensure that git submodules are initialised and updated
-        for line in execute_cmd(
+        yield from execute_cmd(
             ["git", "submodule", "update", "--init", "--recursive"],
             cwd=output_dir,
             capture=yield_output,
-        ):
-            yield line
+        )
 
         cmd = ["git", "rev-parse", "HEAD"]
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)

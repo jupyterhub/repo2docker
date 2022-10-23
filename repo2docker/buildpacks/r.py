@@ -139,7 +139,7 @@ class RBuildPack(PythonBuildPack):
                 self._checkpoint_date = datetime.date.today() - datetime.timedelta(
                     days=2
                 )
-                self._runtime = "r-{}".format(str(self._checkpoint_date))
+                self._runtime = f"r-{str(self._checkpoint_date)}"
             return True
 
     def get_env(self):
@@ -223,7 +223,7 @@ class RBuildPack(PythonBuildPack):
         for i in range(max_days_prior):
             try_date = snapshot_date - datetime.timedelta(days=i)
             # Fall back to MRAN if packagemanager.rstudio.com doesn't have it
-            url = "https://mran.microsoft.com/snapshot/{}".format(try_date.isoformat())
+            url = f"https://mran.microsoft.com/snapshot/{try_date.isoformat()}"
             r = requests.head(url)
             if r.ok:
                 return url
