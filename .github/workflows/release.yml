@@ -44,6 +44,13 @@ jobs:
           python -m build --sdist --wheel .
           ls -l dist
 
+      # ref: https://github.com/actions/upload-artifact#readme
+      - uses: actions/upload-artifact@v3
+        with:
+          name: repo2docker_service-${{ github.sha }}
+          path: "dist/*"
+          if-no-files-found: error
+
       # This step is only run when a new tag is pushed
       # all previous steps always run in order to exercise them
       - name: Publish distribution to PyPI
