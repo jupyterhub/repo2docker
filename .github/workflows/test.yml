@@ -39,7 +39,7 @@ env:
   GIT_AUTHOR_NAME: CI User
 
 jobs:
-  pre-commit:
+  populate-pip-cache:
     runs-on: ubuntu-22.04
 
     strategy:
@@ -65,12 +65,21 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r dev-requirements.txt
+
+          # add for mercurial tests
+          pip install mercurial hg-evolve
+
           pip freeze
 
-      - run: pre-commit run --all-files
+      - name: Install repo2docker
+        run: |
+          python -m build --wheel .
+          pip install dist/*.whl
+
+          pip freeze
 
   test:
-    needs: pre-commit
+    needs: populate-pip-cache
     runs-on: ubuntu-${{ matrix.ubuntu_version }}
 
     strategy:
