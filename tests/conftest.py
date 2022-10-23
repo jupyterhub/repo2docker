@@ -134,6 +134,25 @@ def repo_with_submodule():
     the submodule yet.
 
     """
+    # This fixture relies on "git submodule" referencing local submodules, but
+    # that is considered unsafe and must be explicitly allowed. To run this
+    # test, it must be explicitly allowed. In CI environment this is
+    # automatically configured.
+    #
+    # https://github.com/jupyterhub/repo2docker/issues/1198#issuecomment-1288128616
+    #
+    if os.environ.get("CI"):
+        subprocess.check_call(
+            ["git", "config", "--global", "--add", "protocol.file.allow", "always"]
+        )
+    else:
+        try:
+            subprocess.check_call(
+                ["git", "config", "--get", "protocol.file.allow", "always"]
+            )
+        except subprocess.SubprocessError:
+            pytest.skip("unsupported git configuration")
+
     with TemporaryDirectory() as git_a_dir, TemporaryDirectory() as git_b_dir:
         # create "parent" repository
         subprocess.check_call(["git", "init"], cwd=git_a_dir)
