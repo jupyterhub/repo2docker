@@ -34,14 +34,15 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install dependencies
+      - name: install build requirements
         run: |
-          pip install -r dev-requirements.txt
+          pip install build
           pip freeze
 
-      - name: Build distribution archives
+      - name: build release
         run: |
-          python setup.py sdist bdist_wheel
+          python -m build --sdist --wheel .
+          ls -l dist
 
       # This step is only run when a new tag is pushed
       # all previous steps always run in order to exercise them

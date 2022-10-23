@@ -116,7 +116,7 @@ jobs:
 
       - name: Install repo2docker
         run: |
-          python setup.py bdist_wheel
+          python -m build --wheel .
           pip install dist/*.whl
 
           # add for mercurial tests
