@@ -152,8 +152,24 @@ def repo_with_submodule():
         subprocess.check_call(
             ["git", "checkout", "-b", "branch-with-submod"], cwd=git_a_dir
         )
+        # NOTE: -c protocol.file.allow=always was added as a quick workaround
+        #       with possible security impacts. Since this is a test suite, its
+        #       naively assumed to be acceptable.
+        #
+        #       https://github.com/jupyterhub/repo2docker/issues/1198#issuecomment-1288114992
+        #       https://bugs.launchpad.net/ubuntu/+source/git/+bug/1993586/comments/3
+        #
         subprocess.check_call(
-            ["git", "submodule", "add", git_b_dir, "submod"], cwd=git_a_dir
+            [
+                "git",
+                "-c",
+                "protocol.file.allow=always",
+                "submodule",
+                "add",
+                git_b_dir,
+                "submod",
+            ],
+            cwd=git_a_dir,
         )
         # checkout the first commit for the submod, not the latest
         subprocess.check_call(
