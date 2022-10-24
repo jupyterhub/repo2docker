@@ -121,7 +121,7 @@ def repo_with_content(git_repo):
     yield git_repo, sha1
 
 
-@pytest.fixture()
+@pytest.fixture
 def repo_with_submodule():
     """Create a git repository with a git submodule in a non-master branch.
 
@@ -134,15 +134,13 @@ def repo_with_submodule():
     the submodule yet.
 
     """
-    with TemporaryDirectory() as git_a_dir, TemporaryDirectory() as git_b_dir:
+    submodule_repo = "https://github.com/binderhub-ci-repos/requirements"
+    submod_sha1_b = "20c4fe55a9b2c5011d228545e821b1c7b1723652"
+
+    with TemporaryDirectory() as git_a_dir:
         # create "parent" repository
         subprocess.check_call(["git", "init"], cwd=git_a_dir)
         _add_content_to_git(git_a_dir)
-        # create repository with 2 commits that will be the submodule
-        subprocess.check_call(["git", "init"], cwd=git_b_dir)
-        _add_content_to_git(git_b_dir)
-        submod_sha1_b = _get_sha1(git_b_dir)
-        _add_content_to_git(git_b_dir)
 
         # create a new branch in the parent without any submodule
         subprocess.check_call(
@@ -153,7 +151,14 @@ def repo_with_submodule():
             ["git", "checkout", "-b", "branch-with-submod"], cwd=git_a_dir
         )
         subprocess.check_call(
-            ["git", "submodule", "add", git_b_dir, "submod"], cwd=git_a_dir
+            [
+                "git",
+                "submodule",
+                "add",
+                submodule_repo,
+                "submod",
+            ],
+            cwd=git_a_dir,
         )
         # checkout the first commit for the submod, not the latest
         subprocess.check_call(
