@@ -8,7 +8,7 @@ import datetime
 # -- Project information -----------------------------------------------------
 # ref: https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 #
-project = "BinderHub"
+project = "repo2docker"
 copyright = f"{datetime.date.today().year}, Project Jupyter Contributors"
 author = "Project Jupyter Contributors"
 
@@ -82,7 +82,6 @@ html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "use_edit_page_button": True,
     "github_url": "https://github.com/jupyterhub/repo2docker",
-    "twitter_url": "https://twitter.com/mybinderteam",
 }
 html_context = {
     "github_user": "jupyterhub",
