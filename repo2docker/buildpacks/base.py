@@ -12,6 +12,8 @@ from functools import lru_cache
 import escapism
 import jinja2
 
+from docker.utils.build import exclude_paths
+
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
 FROM {{base_image}}
@@ -590,16 +592,16 @@ class BuildPack:
 
         tar.addfile(dockerfile_tarinfo, io.BytesIO(dockerfile))
 
-        def _filter_tar(tar):
+        def _filter_tar(tarinfo):
             # We need to unset these for build_script_files we copy into tar
             # Otherwise they seem to vary each time, preventing effective use
             # of the cache!
             # https://github.com/docker/docker-py/pull/1582 is related
-            tar.uname = ""
-            tar.gname = ""
-            tar.uid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
-            tar.gid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
-            return tar
+            tarinfo.uname = ""
+            tarinfo.gname = ""
+            tarinfo.uid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
+            tarinfo.gid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
+            return tarinfo
 
         for src in sorted(self.get_build_script_files()):
             dest_path, src_path = self.generate_build_context_filename(src)
@@ -608,7 +610,25 @@ class BuildPack:
         for fname in ("repo2docker-entrypoint", "python3-login"):
             tar.add(os.path.join(HERE, fname), fname, filter=_filter_tar)
 
-        tar.add(".", "src/", filter=_filter_tar)
+        exclude = []
+
+        for ignore_file in [".dockerignore", ".containerignore"]:
+            if os.path.exists(ignore_file):
+                with open(ignore_file, "r") as f:
+                    exclude.extend(
+                        list(
+                            filter(
+                                lambda x: x != "" and x[0] != "#",
+                                [l.strip() for l in f.read().splitlines()],
+                            )
+                        )
+                    )
+
+        if not exclude:
+            exclude = ["**/.git"]
+
+        for item in exclude_paths(".", exclude):
+            tar.add(item, f"src/{item}", filter=_filter_tar)
 
         tar.close()
         tarf.seek(0)
