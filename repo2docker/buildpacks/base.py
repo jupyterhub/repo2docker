@@ -612,16 +612,18 @@ class BuildPack:
 
         exclude = []
 
-        for ignore_file in [".dockerignore", ".containerignore"]:
-            if os.path.exists(ignore_file):
-                with open(ignore_file, "r") as f:
+        for ignore_file_name in [".dockerignore", ".containerignore"]:
+            if os.path.exists(ignore_file_name):
+                with open(ignore_file_name, "r") as ignore_file:
+                    cleaned_lines = [
+                        line.strip() for line in ignore_file.read().splitlines()
+                    ]
                     exclude.extend(
-                        list(
-                            filter(
-                                lambda x: x != "" and x[0] != "#",
-                                [l.strip() for l in f.read().splitlines()],
-                            )
-                        )
+                        [
+                            line
+                            for line in cleaned_lines
+                            if line != "" and line[0] != "#"
+                        ]
                     )
 
         if not exclude:
