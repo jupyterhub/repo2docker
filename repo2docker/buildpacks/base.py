@@ -627,8 +627,17 @@ class BuildPack:
         if not exclude:
             exclude = ["**/.git"]
 
-        for item in exclude_paths(".", exclude):
-            tar.add(item, f"src/{item}", filter=_filter_tar)
+        files_to_add = exclude_paths(".", exclude)
+
+        if files_to_add:
+            for item in files_to_add:
+                tar.add(item, f"src/{item}", filter=_filter_tar)
+        else:
+            # Either the source was empty or everything was filtered out.
+            # In any case, create an src dir so the build can proceed.
+            src = tarfile.TarInfo("src")
+            src.type = tarfile.DIRTYPE
+            tar.addfile(src)
 
         tar.close()
         tarf.seek(0)
