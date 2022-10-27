@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+import cowsay
+import dummy
+
+# This package should be available, as it was a dependency for dummy
+import pypi_pkg_test

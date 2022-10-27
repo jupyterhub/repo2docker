@@ -1,0 +1,52 @@
+[[package]]
+name = "cowsay"
+version = "2.0.3"
+description = "The famous cowsay for GNU/Linux is now available for python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "peppercorn"
+version = "0.6"
+description = "A library for converting a token stream into a data structure for use in web form posts"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+docs = ["Sphinx (>=1.7.6)", "pylons-sphinx-themes"]
+
+[[package]]
+name = "sampleproject"
+version = "2.0.0"
+description = "A sample Python project"
+category = "main"
+optional = false
+python-versions = ">=3.5, <4"
+
+[package.extras]
+dev = ["check-manifest"]
+test = ["coverage"]
+
+[package.dependencies]
+peppercorn = "*"
+
+[metadata]
+lock-version = "1.0"
+python-versions = "^3.8"
+content-hash = "25023cf820511aeb49a277da60d606aabda3df500c7fb22c76398047c1b4af6b"
+
+[metadata.files]
+cowsay = [
+    {file = "cowsay-2.0.3-py2.py3-none-any.whl", hash = "sha256:7ec3ec1bb085cbb788b0de1e762941b4469faf41c6cdbec08a7ac072a7d1d6eb"},
+    {file = "cowsay-2.0.3.tar.gz", hash = "sha256:debde99bae664bd91487613223c1cb291170d8703bf7d524c3a4877ad37b4dad"},
+]
+peppercorn = [
+    {file = "peppercorn-0.6-py3-none-any.whl", hash = "sha256:46125cad688a9cf3b08e463bcb797891ee73ece93602a8ea6f14e40d1042d454"},
+    {file = "peppercorn-0.6.tar.gz", hash = "sha256:96d7681d7a04545cfbaf2c6fb66de67b29cfc42421aa263e4c78f2cbb85be4c6"},
+]
+sampleproject = [
+    {file = "sampleproject-2.0.0-py3-none-any.whl", hash = "sha256:2b0c55537193b792098977fdb62f0acbaeb2c3cfc56d0e24ccab775201462e04"},
+    {file = "sampleproject-2.0.0.tar.gz", hash = "sha256:d99de34ffae5515db43916ec47380d3c603e9dead526f96581b48c070cc816d3"},
+]

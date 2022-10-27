@@ -1,0 +1,48 @@
+#!/usr/bin/env python2
+import os
+import sys
+
+
+# Verify - kernel's Python: use Python 2
+print(sys.version_info)
+assert sys.version_info[:2] == (2, 7)
+
+
+# Verify - notebook server's Python: 'cowsay' isn't installed
+status_code = os.system("python3 -c 'import cowsay'")
+if status_code == 0:
+    raise Exception("notebook server's Python: 'cowsay' IS installed")
+
+# Verify - notebook server's Python: 'sampleproject' isn't installed
+status_code = os.system("python3 -c 'import sample'")
+if status_code == 0:
+    raise Exception("notebook server's Python: 'sampleproject' IS installed")
+
+# Verify - notebook server's Python: 'nbgitpuller' is installed
+status_code = os.system("python3 -c 'import nbgitpuller'")
+if not status_code == 0:
+    raise Exception("notebook server's Python: 'nbgitpuller' ISN'T installed")
+
+
+# Verify - kernel's Python: 'nbgitpuller' isn't installed
+try:
+    import nbgitpuller
+except ImportError:
+    pass
+else:
+    raise Exception("kernel's Python: 'nbgitpuller' IS installed")
+
+# Verify - kernel's Python: 'cowsay' is installed
+try:
+    import cowsay
+except ImportError:
+    raise Exception(
+        "kernel's Python: 'cowsay' ISN'T installed --- We probably setup a "
+        "virtual env through pipenv but failed to enter it."
+    )
+
+# Verify - kernel's Python: 'sampleproject' is installed
+try:
+    import sample
+except ImportError:
+    raise Exception("kernel's Python: 'sampleproject' ISN'T installed")

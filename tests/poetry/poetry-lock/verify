@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+import sample
+import cowsay
+
+#  The pyproject.toml asks for any version of cowsay, and will by default pick
+#  the highest compatible version, but the lockfile specifically requests
+#  version 1.0, so we check that the lockfile-requested version is installed
+if cowsay.main.__version__ == 1.0:
+    pass
+else:
+    raise Exception(
+        f"Installed `cowsay` version is {cowsay.main.__version__}, not 1.0 as "
+        "requested by the lockfile, is the lockfile being used?"
+    )

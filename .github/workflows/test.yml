@@ -86,6 +86,7 @@ jobs:
           - julia
           - nix
           - pipfile
+          - poetry
           - r
           - unit
           - venv
