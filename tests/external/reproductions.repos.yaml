@@ -39,3 +39,6 @@
   url: https://github.com/binderhub-ci-repos/lfs
   ref: 9abf54a
   verify: grep "I am stored in git lfs" in-lfs.dat
+- name: Binder Examples - Requirements on IPFS
+  url: QmPjPUTcXeiEdNUMEPusP4rnJNz2YPw1XrYQkp43C96DyS
+  verify: python -c 'import matplotlib'

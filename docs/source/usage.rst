@@ -16,6 +16,7 @@ a `DOI  <https://en.wikipedia.org/wiki/Digital_object_identifier>`_ from Zenodo 
 a `Handle <https://en.wikipedia.org/wiki/Handle_System>`_ or DOI from a Dataverse installation,
 a `SWHID`_ of a directory of a revision archived in the
 `Software Heritage Archive <https://archive.softwareheritage.org>`_,
+a `CID`_ from a folder on `IPFS <https://ipfs.io>`_
 or a path to a local directory.
 
 It then performs these steps:
@@ -40,6 +41,7 @@ where ``<source-repository>`` is:
   * a URL of a Git repository (``https://github.com/binder-examples/requirements``),
   * a Zenodo DOI (``10.5281/zenodo.1211089``),
   * a SWHID_ (``swh:1:rev:999dd06c7f679a2714dfe5199bdca09522a29649``), or
+  * a CID_ (``QmPjPUTcXeiEdNUMEPusP4rnJNz2YPw1XrYQkp43C96DyS``), or
   * a path to a local directory (``a/local/directory``)
 
 of the source repository you want to build.
@@ -136,3 +138,4 @@ Command line API
 
 .. _Pytudes: https://github.com/norvig/pytudes
 .. _SWHID: https://docs.softwareheritage.org/devel/swh-model/persistent-identifiers.html
+.. _CID: https://docs.ipfs.io/concepts/content-addressing/

@@ -6,3 +6,4 @@ from .dataverse import Dataverse
 from .hydroshare import Hydroshare
 from .mercurial import Mercurial
 from .swhid import Swhid
+from .ipfs import IPFS
