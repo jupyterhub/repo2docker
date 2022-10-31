@@ -47,7 +47,7 @@ jobs:
       # ref: https://github.com/actions/upload-artifact#readme
       - uses: actions/upload-artifact@v3
         with:
-          name: repo2docker_service-${{ github.sha }}
+          name: repo2docker-${{ github.sha }}
           path: "dist/*"
           if-no-files-found: error
 
