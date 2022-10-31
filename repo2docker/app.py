@@ -7,24 +7,23 @@ Usage:
 
     python -m repo2docker https://github.com/you/your-repo
 """
+import getpass
 import json
-import sys
 import logging
 import os
-import entrypoints
-import getpass
 import shutil
+import sys
 import tempfile
 import time
 from urllib.parse import urlparse
 
+import entrypoints
 import escapism
 from pythonjsonlogger import jsonlogger
-
-from traitlets import Any, Dict, Int, List, Unicode, Bool, default
+from traitlets import Any, Bool, Dict, Int, List, Unicode, default
 from traitlets.config import Application
 
-from . import __version__
+from . import __version__, contentproviders
 from .buildpacks import (
     CondaBuildPack,
     DockerBuildPack,
@@ -36,9 +35,8 @@ from .buildpacks import (
     PythonBuildPack,
     RBuildPack,
 )
-from . import contentproviders
 from .engine import BuildError, ContainerEngineException, ImageLoadError
-from .utils import ByteSpecification, chdir, R2dState
+from .utils import ByteSpecification, R2dState, chdir
 
 
 class Repo2Docker(Application):

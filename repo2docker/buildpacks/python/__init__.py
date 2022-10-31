@@ -1,8 +1,8 @@
 """Generates Dockerfiles based on an input matrix based on Python."""
 import os
 
-from ..conda import CondaBuildPack
 from ...utils import is_local_pip_requirement, open_guess_encoding
+from ..conda import CondaBuildPack
 
 
 class PythonBuildPack(CondaBuildPack):

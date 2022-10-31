@@ -5,9 +5,9 @@ from collections.abc import Mapping
 
 from ruamel.yaml import YAML
 
-from ..base import BaseImage
-from .._r_base import rstudio_base_scripts
 from ...utils import is_local_pip_requirement
+from .._r_base import rstudio_base_scripts
+from ..base import BaseImage
 
 # pattern for parsing conda dependency line
 PYTHON_REGEX = re.compile(r"python\s*=+\s*([\d\.]*)")

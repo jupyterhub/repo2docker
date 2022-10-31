@@ -1,15 +1,14 @@
 import json
 import os
-import pytest
 import re
-
 from io import BytesIO
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
-from urllib.request import urlopen, Request
+from urllib.request import Request, urlopen
+
+import pytest
 
 from repo2docker.contentproviders import Dataverse
-
 
 test_dv = Dataverse()
 harvard_dv = next(_ for _ in test_dv.hosts if _["name"] == "Harvard Dataverse")

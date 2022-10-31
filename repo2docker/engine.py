@@ -3,8 +3,8 @@ Interface for a repo2docker container engine
 """
 
 from abc import ABC, abstractmethod
-from traitlets.config import LoggingConfigurable
 
+from traitlets.config import LoggingConfigurable
 
 # Based on https://docker-py.readthedocs.io/en/4.2.0/containers.html
 

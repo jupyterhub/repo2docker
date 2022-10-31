@@ -1,18 +1,15 @@
-import os
 import json
-import shutil
 import logging
-
-from os import makedirs
-from os import path
-from requests import Session, HTTPError
-
+import os
+import shutil
+from os import makedirs, path
 from zipfile import ZipFile, is_zipfile
 
-from .base import ContentProvider
-from ..utils import copytree, deep_get
-from ..utils import normalize_doi, is_doi
+from requests import HTTPError, Session
+
 from .. import __version__
+from ..utils import copytree, deep_get, is_doi, normalize_doi
+from .base import ContentProvider
 
 
 class DoiProvider(ContentProvider):

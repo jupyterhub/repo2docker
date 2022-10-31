@@ -1,14 +1,13 @@
-import zipfile
+import json
 import os
 import shutil
 import time
-import json
-from datetime import datetime, timezone, timedelta
-
+import zipfile
+from datetime import datetime, timedelta, timezone
 from urllib.request import urlretrieve
 
-from .doi import DoiProvider
 from .base import ContentProviderException
+from .doi import DoiProvider
 
 
 class Hydroshare(DoiProvider):

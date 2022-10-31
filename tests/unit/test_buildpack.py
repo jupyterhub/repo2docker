@@ -1,7 +1,8 @@
 from os.path import join as pjoin
+from tempfile import TemporaryDirectory
 
 import pytest
-from tempfile import TemporaryDirectory
+
 from repo2docker.buildpacks import LegacyBinderDockerBuildPack, PythonBuildPack
 from repo2docker.utils import chdir
 

@@ -1,14 +1,15 @@
 import argparse
-import sys
-import os
 import logging
+import os
+import sys
+
+from . import __version__
 from .app import Repo2Docker
 from .engine import BuildError, ImageLoadError
-from . import __version__
 from .utils import (
-    validate_and_generate_port_mapping,
-    is_valid_docker_image_name,
     R2dState,
+    is_valid_docker_image_name,
+    validate_and_generate_port_mapping,
 )
 
 

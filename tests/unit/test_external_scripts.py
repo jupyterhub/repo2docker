@@ -1,5 +1,6 @@
 """Test if assemble scripts from outside of r2d repo are accepted."""
 import time
+
 from repo2docker.app import Repo2Docker
 from repo2docker.buildpacks import PythonBuildPack
 

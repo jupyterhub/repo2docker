@@ -1,7 +1,7 @@
 import subprocess
 
+from ..utils import R2dState, check_ref, execute_cmd
 from .base import ContentProvider, ContentProviderException
-from ..utils import execute_cmd, check_ref, R2dState
 
 
 class Git(ContentProvider):

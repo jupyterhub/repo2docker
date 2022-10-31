@@ -2,7 +2,6 @@
 import os
 import sys
 
-
 # Verify - kernel's Python: use Python 2
 print(sys.version_info)
 assert sys.version_info[:2] == (2, 7)

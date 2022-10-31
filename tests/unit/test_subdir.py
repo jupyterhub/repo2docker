@@ -4,8 +4,8 @@ Test if the subdirectory is correctly navigated to
 import os
 
 import escapism
-
 import pytest
+
 from repo2docker.app import Repo2Docker
 
 TEST_REPO = "https://github.com/binderhub-ci-repos/repo2docker-subdir-support"

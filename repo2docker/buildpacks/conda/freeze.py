@@ -9,16 +9,15 @@ Usage:
 python freeze.py [3.8]
 """
 
-from argparse import ArgumentParser
-from datetime import datetime
 import os
 import pathlib
 import shutil
-from subprocess import check_call
 import sys
+from argparse import ArgumentParser
+from datetime import datetime
+from subprocess import check_call
 
 from ruamel.yaml import YAML
-
 
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 

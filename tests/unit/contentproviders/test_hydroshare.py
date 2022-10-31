@@ -1,15 +1,14 @@
 import os
-import pytest
-
+import re
 from contextlib import contextmanager
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest.mock import patch
 from zipfile import ZipFile
-import re
+
+import pytest
 
 from repo2docker.contentproviders import Hydroshare
 from repo2docker.contentproviders.base import ContentProviderException
-
 
 doi_responses = {
     "https://doi.org/10.4211/hs.b8f6eae9d89241cf8b5904033460af61": (

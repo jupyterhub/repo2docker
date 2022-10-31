@@ -1,22 +1,22 @@
-import json
-import os
 import io
-import tarfile
-import shutil
-import re
-import urllib
-import pytest
-import tempfile
+import json
 import logging
-import requests_mock
-
+import os
+import re
+import shutil
+import tarfile
+import tempfile
+import urllib
 from os import makedirs
 from os.path import join
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import MagicMock, mock_open, patch
 from zipfile import ZipFile
 
-from repo2docker.contentproviders.swhid import Swhid, parse_swhid
+import pytest
+import requests_mock
+
 from repo2docker.contentproviders.base import ContentProviderException
+from repo2docker.contentproviders.swhid import Swhid, parse_swhid
 
 
 # this is a slightly stripped down copy of swh.model.cli.swhid_of_dir().

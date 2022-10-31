@@ -1,14 +1,14 @@
 import json
 import os
-import pytest
 import re
-
 from contextlib import contextmanager
 from io import BytesIO
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest.mock import patch
-from urllib.request import urlopen, Request
+from urllib.request import Request, urlopen
 from zipfile import ZipFile
+
+import pytest
 
 from repo2docker.contentproviders import Zenodo
 

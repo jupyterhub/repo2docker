@@ -1,17 +1,17 @@
 import json
+import logging
 import os
 import re
-import urllib
-import pytest
 import tempfile
-import logging
-
-from unittest.mock import patch, MagicMock, mock_open
+import urllib
+from unittest.mock import MagicMock, mock_open, patch
 from zipfile import ZipFile
 
-from repo2docker.contentproviders.doi import DoiProvider
-from repo2docker.contentproviders.base import ContentProviderException
+import pytest
+
 from repo2docker import __version__
+from repo2docker.contentproviders.base import ContentProviderException
+from repo2docker.contentproviders.doi import DoiProvider
 
 
 def test_content_id():

@@ -1,18 +1,17 @@
 import json
 import os
 import re
-import pytest
-
 from contextlib import contextmanager
 from io import BytesIO
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest.mock import patch
-from urllib.request import urlopen, Request
+from urllib.request import Request, urlopen
 from zipfile import ZipFile
 
-from repo2docker.contentproviders import Figshare
-from repo2docker.__main__ import make_r2d
+import pytest
 
+from repo2docker.__main__ import make_r2d
+from repo2docker.contentproviders import Figshare
 
 test_content_ids = [
     ("https://figshare.com/articles/title/9782777", "9782777.v1"),

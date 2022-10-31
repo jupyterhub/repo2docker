@@ -1,7 +1,7 @@
 """BuildPack for nixpkgs environments"""
 import os
 
-from ..base import BuildPack, BaseImage
+from ..base import BaseImage, BuildPack
 
 
 class NixBuildPack(BaseImage):

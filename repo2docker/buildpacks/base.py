@@ -1,14 +1,15 @@
-import textwrap
-import jinja2
-import tarfile
+import hashlib
 import io
+import logging
 import os
 import re
-import logging
 import string
 import sys
-import hashlib
+import tarfile
+import textwrap
+
 import escapism
+import jinja2
 
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""

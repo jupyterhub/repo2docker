@@ -1,12 +1,14 @@
 """
 Tests for repo2docker/utils.py
 """
-import traitlets
 import os
-from repo2docker import utils
-import pytest
 import subprocess
 import tempfile
+
+import pytest
+import traitlets
+
+from repo2docker import utils
 
 
 def test_capture_cmd_no_capture_success():

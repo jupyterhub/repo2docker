@@ -2,18 +2,18 @@
 Test Port mappings work on running non-jupyter workflows
 """
 
-import requests
-import time
 import os
-import tempfile
 import random
+import tempfile
+import time
 from getpass import getuser
 
-import docker
 import pytest
+import requests
 
-from repo2docker.app import Repo2Docker
+import docker
 from repo2docker.__main__ import make_r2d
+from repo2docker.app import Repo2Docker
 
 
 def read_port_mapping_response(

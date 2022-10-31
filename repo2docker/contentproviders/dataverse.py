@@ -1,11 +1,10 @@
-import os
 import json
+import os
 import shutil
+from urllib.parse import parse_qs, urlparse, urlunparse
 
-from urllib.parse import urlparse, urlunparse, parse_qs
-
-from .doi import DoiProvider
 from ..utils import copytree, deep_get
+from .doi import DoiProvider
 
 
 class Dataverse(DoiProvider):

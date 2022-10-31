@@ -1,17 +1,16 @@
 import io
 import os
+import re
 import shutil
 import tarfile
 import time
-import re
-
 from os import path
 
 import requests
 
-from .base import ContentProvider
-from ..utils import copytree
 from .. import __version__
+from ..utils import copytree
+from .base import ContentProvider
 
 
 def parse_swhid(swhid):

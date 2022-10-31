@@ -1,7 +1,7 @@
 import subprocess
 
+from ..utils import R2dState, execute_cmd
 from .base import ContentProvider, ContentProviderException
-from ..utils import execute_cmd, R2dState
 
 args_enabling_topic = ["--config", "extensions.topic="]
 

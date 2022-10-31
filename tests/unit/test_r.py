@@ -1,8 +1,8 @@
 from datetime import date
+from unittest.mock import patch
 
 import pytest
 from requests.models import Response
-from unittest.mock import patch
 
 from repo2docker import buildpacks
 

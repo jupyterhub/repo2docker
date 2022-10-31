@@ -3,15 +3,12 @@ Test that build time memory limits are enforced
 """
 
 import os
-
 from unittest.mock import MagicMock
-
-import docker
 
 import pytest
 
+import docker
 from repo2docker.buildpacks import BaseImage, DockerBuildPack
-
 
 basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

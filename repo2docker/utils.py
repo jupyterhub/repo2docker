@@ -1,13 +1,12 @@
-from contextlib import contextmanager
-from enum import Enum
-from functools import partial
 import os
 import re
 import subprocess
+from contextlib import contextmanager
+from enum import Enum
+from functools import partial
+from shutil import copy2, copystat
+
 import chardet
-
-from shutil import copystat, copy2
-
 from traitlets import Integer, TraitError
 
 

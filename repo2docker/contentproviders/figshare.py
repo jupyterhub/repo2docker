@@ -1,16 +1,14 @@
+import json
 import os
 import re
-import json
 import shutil
-
-from os import makedirs
-from os import path
-from urllib.request import Request
+from os import makedirs, path
 from urllib.error import HTTPError
+from urllib.request import Request
 from zipfile import is_zipfile
 
-from .doi import DoiProvider
 from ..utils import copytree, deep_get
+from .doi import DoiProvider
 
 
 class Figshare(DoiProvider):

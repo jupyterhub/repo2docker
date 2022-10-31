@@ -10,8 +10,8 @@ NOTE: This file has to be duplicated & present in all the following locations:
  - tests/memlimit/dockerfile/postBuild
 See https://github.com/jupyterhub/repo2docker/issues/160 for reason
 """
-from ctypes import cdll, c_void_p, memset
 import os
+from ctypes import c_void_p, cdll, memset
 
 libc = cdll.LoadLibrary("libc.so.6")
 libc.malloc.restype = c_void_p

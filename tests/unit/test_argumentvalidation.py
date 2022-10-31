@@ -7,7 +7,6 @@ import subprocess
 
 import pytest
 
-
 here = os.path.dirname(os.path.abspath(__file__))
 test_dir = os.path.dirname(here)
 docker_simple = os.path.join(test_dir, "dockerfile", "simple")

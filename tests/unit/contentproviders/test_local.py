@@ -1,5 +1,5 @@
 import os
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 from repo2docker.contentproviders import Local
 

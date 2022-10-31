@@ -19,14 +19,13 @@ Test lifecycle:
 import os
 import pipes
 import shlex
-import requests
 import subprocess
 import time
 from tempfile import TemporaryDirectory
 
-
 import escapism
 import pytest
+import requests
 import yaml
 
 from repo2docker.__main__ import make_r2d

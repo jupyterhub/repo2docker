@@ -1,14 +1,12 @@
-import os
 import json
+import os
 import shutil
-
-from os import makedirs
-from os import path
-from urllib.request import Request
+from os import makedirs, path
 from urllib.error import HTTPError
+from urllib.request import Request
 
-from .doi import DoiProvider
 from ..utils import copytree, deep_get
+from .doi import DoiProvider
 
 
 class Zenodo(DoiProvider):
