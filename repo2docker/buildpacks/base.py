@@ -106,13 +106,10 @@ USER root
 # Allow target path repo is cloned to be configurable
 ARG REPO_DIR=${HOME}
 ENV REPO_DIR=${REPO_DIR}
-RUN if [ ! -d "${REPO_DIR}" ] \
-    ; then \
-        mkdir -p "${REPO_DIR}" \
-        && chown -R ${NB_USER}:${NB_USER} "${REPO_DIR}" \
-    ; else \
-        echo "${REPO_DIR} already exists..." \
-    ; fi
+# Create a folder and grant the user permissions if it doesn't exist
+RUN if [ ! -d "${REPO_DIR}" ]; then \
+        /usr/bin/install -o ${NB_USER} -g ${NB_USER} -d "${REPO_DIR}"; \
+    fi
 
 WORKDIR ${REPO_DIR}
 RUN chown ${NB_USER}:${NB_USER} ${REPO_DIR}
