@@ -39,47 +39,7 @@ env:
   GIT_AUTHOR_NAME: CI User
 
 jobs:
-  populate-pip-cache:
-    runs-on: ubuntu-22.04
-
-    strategy:
-      fail-fast: false
-      matrix:
-        python_version: ["3.9"]
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "${{ matrix.python_version }}"
-
-      # There will almost never be a cache hit on the cache key when this job is
-      # run, as it is the first of all jobs in this workflow. The subsequent
-      # jobs in this workflow can rely on this cache though.
-      - name: Save pip's install cache on job completion
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: "${{ github.run_id }}-${{ matrix.python_version }}"
-
-      - name: Install dependencies
-        run: |
-          pip install -r dev-requirements.txt
-
-          # add for mercurial tests
-          pip install mercurial hg-evolve
-
-          pip freeze
-
-      - name: Install repo2docker
-        run: |
-          python -m build --wheel .
-          pip install dist/*.whl
-
-          pip freeze
-
   test:
-    needs: populate-pip-cache
     runs-on: ubuntu-${{ matrix.ubuntu_version }}
 
     strategy:
@@ -111,12 +71,6 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: "${{ matrix.python_version }}"
-
-      - name: Restore pip's install cache from previous job
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: "${{ github.run_id }}-${{ matrix.python_version }}"
 
       - name: Install dependencies
         run: |
