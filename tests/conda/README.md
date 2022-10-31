@@ -57,7 +57,7 @@
 
   `--target-repo-dir` is meant to support custom paths where repositories can be
   copied to besides `${HOME}`.
-  
+
   This test makes use of the `test-extra-args.yaml` file to influence additional
   arguments passed to `repo2docker` during the test. In this test, specify
   `--target-repo-dir=/srv/repo`.

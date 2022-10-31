@@ -4,6 +4,7 @@ This is a living document talking about the architecture of repo2docker
 from various perspectives.
 
 (buildpacks)=
+
 ## Buildpacks
 
 The **buildpack** concept comes from [Heroku](https://devcenter.heroku.com/articles/buildpacks)
@@ -57,7 +58,7 @@ and basic notebook packages (from `repo2docker/buildpacks/conda/environment.yml`
 to be the same for most repositories built with `CondaBuildPack`, so we want to use
 [docker layer caching](https://thenewstack.io/understanding-the-docker-cache-for-faster-builds/) as
 much as possible for performance reasons. Next time a repository is built with `CondaBuildPack`,
-we can skip straight to the **copy** step (since the base environment docker image *layers* have
+we can skip straight to the **copy** step (since the base environment docker image _layers_ have
 already been built and cached).
 
 The `get_build_scripts` and `get_build_script_files` methods are primarily used for this.
@@ -65,11 +66,11 @@ The `get_build_scripts` and `get_build_script_files` methods are primarily used 
 and `get_build_script_files` is used to copy specific scripts (such as a conda installer) into
 the image to be run as pat of `get_build_scripts`. Code in either has following constraints:
 
-1. You can *not* use the contents of repository in them, since this happens before the repository
+1. You can _not_ use the contents of repository in them, since this happens before the repository
    is copied into the image. For example, `pip install -r requirements.txt` will not work,
    since there's no `requirements.txt` inside the image at this point. This is an explicit
    design decision, to enable better layer caching.
-2. You *may*, however, read the contents of the repository and modify the scripts emitted based
+2. You _may_, however, read the contents of the repository and modify the scripts emitted based
    on that! For example, in `CondaBuildPack`, if there's Python 2 specified in `environment.yml`,
    a different kind of environment is set up. The reading of the `environment.yml` is performed
    in the BuildPack itself, and not in the scripts returned by `get_build_scripts`. This is fine.
@@ -118,7 +119,7 @@ a path to a repository. This might be a local path or a URL. Upon being called,
 `repo2docker` will loop through all ContentProviders and perform the following
 commands:
 
-* Run the `detect()` method on the repository path given to `repo2docker`. This
+- Run the `detect()` method on the repository path given to `repo2docker`. This
   should return any value other than `None` if the path matches what the ContentProvider is looking
   for.
 
@@ -126,12 +127,11 @@ commands:
   > checks whether the argument is a valid local path. If so, then `detect(`
   > returns a dictionary: `{'path': source}` which defines the path to the repository.
   > This path is used by `fetch()` to check that it matches the output directory.
-* If `detect()` returns something other than `None`, run `fetch()` with the
+
+- If `detect()` returns something other than `None`, run `fetch()` with the
   returned value as its argument. This should
   result in the contents of the repository being placed locally to a folder.
 
 For more information on ContentProviders, take a look at
 [the ContentProvider base class](https://github.com/jupyterhub/repo2docker/blob/80b979f8580ddef184d2ba7d354e7a833cfa38a4/repo2docker/contentproviders/base.py#L16-L60)
 which has more explanation.
-
-

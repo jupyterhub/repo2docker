@@ -1,10 +1,9 @@
 ---
 name: Support question
 about: Ask a question about using repo2docker
-title: ''
-labels: ''
-assignees: ''
-
+title: ""
+labels: ""
+assignees: ""
 ---
 
 🚨 Please do **not** open an issue for support questions. Instead please search for similar issues or post on http://discourse.jupyter.org/c/questions. 🚨
