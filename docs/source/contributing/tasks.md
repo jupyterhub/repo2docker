@@ -155,18 +155,6 @@ release on the [GitHub repository releases page](https://github.com/jupyterhub/r
 That's it!
 
 
-## Keeping the Pipfile and requirements files up to date
-
-We now have both a `dev-requirements.txt` and a `Pifile` for repo2docker, as
-such it is important to keep these in sync/up-to-date.
-
-Both files use `pip identifiers` so if you are updating for example the Sphinx version
-in the `doc-requirements.txt` (currently `Sphinx = ">=1.4,!=1.5.4"`) you can use the
-same syntax to update the Pipfile and viceversa.
-
-At the moment this has to be done manually so please make sure to update both
-files accordingly.
-
 # Uncommon tasks
 
 ## Compare generated Dockerfiles between repo2docker versions

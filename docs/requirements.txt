@@ -1,0 +1,7 @@
+myst-parser>=0.18
+pydata-sphinx-theme>=0.11
+sphinx-autobuild
+sphinx-copybutton
+sphinxcontrib-autoprogram>=0.1.7
+sphinxext-opengraph
+sphinxext-rediraffe

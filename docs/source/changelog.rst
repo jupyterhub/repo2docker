@@ -5,7 +5,7 @@ Changelog
 Version 2022.10.0
 =================
 
-`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2022.02.0...2022.10.0>`_
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2022.02.0...2022.10.0>`__
 
 New features
 ------------
@@ -61,7 +61,7 @@ Other merged PRs
 Version 2022.02.0
 =================
 
-`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.08.0...2022.02.0>`_
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.08.0...2022.02.0>`__
 
 New features
 ------------
@@ -77,7 +77,7 @@ New features
 - Set labels when building image from Dockerfile :pr:`1097` by :user:`TimoRoth`
 - jupyterlab 3.1.17 :pr:`1092` by :user:`minrk`
 - Bump JupyterLab to 3.1.11 :pr:`1081` by :user:`choldgraf`
-- Bootstrap base env with micromamba :pr:`1062` by :user:`wolfv ` 
+- Bootstrap base env with micromamba :pr:`1062` by :user:`wolfv`
 - Default UI to JupyterLab :pr:`1035` by :user:`SylvainCorlay`
 
 API changes
@@ -111,7 +111,7 @@ Other merged PRs
 Version 2021.08.0
 =================
 
-`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.03.0...2021.08.0>`_
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.03.0...2021.08.0>`__
 
 The repo2docker container image has moved to `quay.io/jupyterhub/repo2docker <https://quay.io/repository/jupyterhub/repo2docker?tab=tags>`_
 
@@ -157,14 +157,14 @@ Other merged PRs
 Version 2021.03.0
 =================
 
-`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.01.0...2021.03.0>`_
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/2021.01.0...2021.03.0>`__
 
 New features
 ------------
 
 - freeze with mamba, add 3.9 :pr:`1017` by :user:`minrk`
 - Add GH workflow to push releases to PYPi and introduce CalVer :pr:`1004` by :user:`betatim`
-- Add entrypoint script which automatically propagates *_PROXY env vars… :pr:`1003` ([@g-braeunlich](https://github.com/g-braeunlich))
+- Add entrypoint script which automatically propagates \*_PROXY env vars… :pr:`1003` ([@g-braeunlich](https://github.com/g-braeunlich))
 - Update to JupyterLab 3.0 :pr:`996` by :user:`jtpio`
 - Fetch available Julia versions from hosted json :pr:`994` by :user:`tomyun`
 - Add a contentprovider for Software Heritage persistent ID (SWHID) :pr:`988` by :user:`douardda`
@@ -178,7 +178,7 @@ Bug fixes
 ---------
 
 - fix dataverse regression introduced in last release :pr:`1011` by :user:`MridulS`
-- buildpacks.r: dont use apt-key directly to respect *_proxy env vars :pr:`1019` ([@g-braeunlich](https://github.com/g-braeunlich))
+- buildpacks.r: dont use apt-key directly to respect \*_proxy env vars :pr:`1019` ([@g-braeunlich](https://github.com/g-braeunlich))
 
 Other merged PRs
 ----------------
@@ -193,7 +193,7 @@ Other merged PRs
 Version 2021.01.0
 =================
 
-`Full changelog <https://github.com/jupyterhub/repo2docker/compare/0.11.0...2021.01.0>`_
+`Full changelog <https://github.com/jupyterhub/repo2docker/compare/0.11.0...2021.01.0>`__
 
 New features
 ------------

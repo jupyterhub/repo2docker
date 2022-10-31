@@ -1,6 +1,0 @@
-name: repo2docker
-type: sphinx
-python:
-  version: 3
-  setup_py_install: true
-requirements_file: docs/doc-requirements.txt
