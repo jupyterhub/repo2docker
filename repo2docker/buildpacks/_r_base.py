@@ -33,7 +33,7 @@ def rstudio_base_scripts(r_version):
             echo '{shiny_sha256sum} /tmp/shiny.deb' | sha256sum -c - && \
             apt-get update > /dev/null && \
             apt install -y --no-install-recommends /tmp/rstudio.deb /tmp/shiny.deb && \
-            rm /tmp/rstudio.deb && \
+            rm /tmp/*.deb && \
             apt-get -qq purge && \
             apt-get -qq clean && \
             rm -rf /var/lib/apt/lists/*

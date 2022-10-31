@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+"""
+Script to check for leftover files
+
+Checks a collection of temporary or cache directories,
+to ensure we aren't wasting image size by forgetting cleanup steps.
+
+This script is run in every local repo image we test
+"""
+
+import os
+import sys
+from subprocess import check_output
+from textwrap import indent
+
+# directories larger than this are considered a failure
+# a few little files here aren't a problem
+THRESHOLD = 1  # in MB
+
+MB = 1024 * 1024
+
+# the paths to check
+# all of these locations
+# should be cleaned up
+# missing is okay
+PATHS = [
+    "/tmp/",
+    # check whole home?
+    # this shouldn't be empty, but  for our tests (so far) it should be very small
+    # This is the easiest way to ensure we aren't leaving any unexpected files
+    # without knowing ahead of time where all possible caches might be (.npm, .cache, etc.)
+    "~/",
+    "/root/",
+]
+
+
+def du(path):
+    """Return disk usage in megabytes of a path"""
+    # -ks: get total size, reported in kilobytes
+    out = check_output(["du", "-Hks", path])
+    return int(out.split(None, 1)[0]) / 1024
+
+
+def check_dir_size(path):
+    """Check the size of a directory
+
+    Returns:
+
+    True: directory size is below THRESHOLD or is missing
+    False: directory is larger than THRESHOLD
+    """
+    path = os.path.expanduser(path)
+
+    if not os.path.exists(path):
+        print("{path}: missing OK".format(**locals()))
+        return True
+
+    size_mb = du(path)
+    print("{path}: {size_mb:.1f} MB".format(**locals()), end=" ")
+    if size_mb <= THRESHOLD:
+        print("OK")
+        return True
+    else:
+        print("FAIL")
+        # check size of files one-level deep (du only reports dirs)
+        for name in os.listdir(path):
+            subpath = os.path.join(path, name)
+            if os.path.isfile(subpath):
+                file_sz = os.stat(subpath).st_size / MB
+                if file_sz > 0.1:
+                    print("  {file_sz:.1f}M {subpath}".format(**locals()))
+        # get report on all subdirs that are at least 100k
+        print(
+            indent(
+                check_output(["du", "-Hh", "-t", "100000", path]).decode("utf8"), "  "
+            )
+        )
+        return False
+
+
+def main():
+    results = [check_dir_size(path) for path in PATHS]
+    if not all(results):
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

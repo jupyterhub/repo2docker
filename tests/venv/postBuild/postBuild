@@ -1,3 +1,4 @@
 #!/bin/bash
 jupyter nbextension enable --py --sys-prefix ipyleaflet
 npm install --global configurable-http-proxy
+npm cache clean --force
