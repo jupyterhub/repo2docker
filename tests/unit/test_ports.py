@@ -96,7 +96,7 @@ def read_port_mapping_response(
         else:
             break
     else:
-        pytest.fail("Never succeeded in talking to %s" % url)
+        pytest.fail(f"Never succeeded in talking to {url}")
     assert "Directory listing" in r.text
 
 

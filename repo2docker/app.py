@@ -611,7 +611,7 @@ class Repo2Docker(Application):
             else:
                 # no port specified, pick a random one
                 container_port = host_port = str(self._get_free_port())
-                self.ports = {"%s/tcp" % container_port: host_port}
+                self.ports = {f"{container_port}/tcp": host_port}
             self.port = host_port
             # To use the option --NotebookApp.custom_display_url
             # make sure the base-notebook image is updated:
