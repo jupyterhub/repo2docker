@@ -218,9 +218,9 @@ def get_argparser():
     )
 
     argparser.add_argument(
-        "--engine", 
-        type=str, 
-        default="docker", 
+        "--engine",
+        type=str,
+        default="docker",
         help=Repo2Docker.engine.help,
     )
 
