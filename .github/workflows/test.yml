@@ -91,6 +91,4 @@ jobs:
         run: |
           pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
 
-      - name: Submit codecov report
-        run: |
-          codecov
+      - uses: codecov/codecov-action@v3
