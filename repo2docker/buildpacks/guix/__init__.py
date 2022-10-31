@@ -9,9 +9,7 @@ class GuixBuildPack(BaseImage):
 
     def get_build_env(self):
         """"""
-        env = super().get_build_env() + [
-            ("GUIX_DIR", "${APP_BASE}/guix")
-        ]
+        env = super().get_build_env() + [("GUIX_DIR", "${APP_BASE}/guix")]
         return env
 
     def get_path(self):
@@ -19,8 +17,6 @@ class GuixBuildPack(BaseImage):
         path = super().get_path()
         path.insert(0, "${GUIX_DIR}/bin")
         return path
-
-
 
     def get_build_scripts(self):
         """
@@ -34,15 +30,13 @@ class GuixBuildPack(BaseImage):
                 bash /tmp/.local/bin/guix-install.bash
                 """,
             ),
-
         ]
 
     def get_build_script_files(self):
 
         """Copying guix installation script on the image"""
         return {
-            "guix/guix-install.bash":
-                "/tmp/.local/bin/guix-install.bash",
+            "guix/guix-install.bash": "/tmp/.local/bin/guix-install.bash",
         }
 
     def get_assemble_scripts(self):
@@ -54,7 +48,7 @@ class GuixBuildPack(BaseImage):
         use guix time-machine if channels.scm file exists.
         Finally set Guix environment variables.
         """
-        assemble_script ="""
+        assemble_script = """
                  /var/guix/profiles/per-user/root/current-guix/bin/guix-daemon \
                  --build-users-group=guixbuild --disable-chroot & \
                  su - $NB_USER -c '{}' && \
@@ -64,20 +58,22 @@ class GuixBuildPack(BaseImage):
 
         if os.path.exists(self.binder_path("channels.scm")):
             assemble_script = assemble_script.format(
-                "guix time-machine -C  " + self.binder_path("channels.scm") +
-                " -- package -m "  + self.binder_path("manifest.scm")
+                "guix time-machine -C  "
+                + self.binder_path("channels.scm")
+                + " -- package -m "
+                + self.binder_path("manifest.scm")
             )
         else:
             assemble_script = assemble_script.format(
                 "guix package -m " + self.binder_path("manifest.scm")
             )
         return super().get_assemble_scripts() + [
-            ( "root",
-              assemble_script,
-             )
+            (
+                "root",
+                assemble_script,
+            )
         ]
 
     def detect(self):
         """Check if current repo should be built with the guix BuildPack"""
         return os.path.exists(self.binder_path("manifest.scm"))
-    

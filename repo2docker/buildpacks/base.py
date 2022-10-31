@@ -718,4 +718,3 @@ class BaseImage(BuildPack):
             # the only path evaluated at container start time rather than build time
             return os.path.join("${REPO_DIR}", start)
         return None
-
