@@ -154,7 +154,8 @@ class PipfileBuildPack(CondaBuildPack):
                 "${NB_USER}",
                 """(cd {working_directory} && \\
                     PATH="${{KERNEL_PYTHON_PREFIX}}/bin:$PATH" \\
-                        pipenv install {install_option} --system --dev \\
+                        pipenv install {install_option} --system --dev && \\
+                        pipenv --clear \\
                 )""".format(
                     working_directory=working_directory,
                     install_option="--ignore-pipfile"
