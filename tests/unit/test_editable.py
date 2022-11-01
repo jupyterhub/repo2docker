@@ -5,7 +5,6 @@ import time
 
 from repo2docker.__main__ import make_r2d
 
-
 DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dockerfile", "editable")
 
 

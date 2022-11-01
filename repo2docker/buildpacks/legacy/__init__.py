@@ -20,7 +20,7 @@ class LegacyBinderDockerBuildPack:
         """Check if current repo should be built with the Legacy BuildPack."""
         log = logging.getLogger("repo2docker")
         try:
-            with open("Dockerfile", "r") as f:
+            with open("Dockerfile") as f:
                 for line in f:
                     if line.startswith("FROM"):
                         if "andrewosh/binder-base" in line.split("#")[0].lower():

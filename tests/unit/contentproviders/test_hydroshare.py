@@ -1,15 +1,14 @@
 import os
-import pytest
-
+import re
 from contextlib import contextmanager
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest.mock import patch
 from zipfile import ZipFile
-import re
+
+import pytest
 
 from repo2docker.contentproviders import Hydroshare
 from repo2docker.contentproviders.base import ContentProviderException
-
 
 doi_responses = {
     "https://doi.org/10.4211/hs.b8f6eae9d89241cf8b5904033460af61": (
@@ -103,8 +102,8 @@ def test_detect_hydroshare(requests_mock):
 def hydroshare_archive(prefix="b8f6eae9d89241cf8b5904033460af61/data/contents"):
     with NamedTemporaryFile(suffix=".zip") as zfile:
         with ZipFile(zfile.name, mode="w") as zip:
-            zip.writestr("{}/some-file.txt".format(prefix), "some content")
-            zip.writestr("{}/some-other-file.txt".format(prefix), "some more content")
+            zip.writestr(f"{prefix}/some-file.txt", "some content")
+            zip.writestr(f"{prefix}/some-other-file.txt", "some more content")
 
         yield zfile
 
@@ -149,7 +148,7 @@ def test_fetch_bag():
                         output.append(l)
 
                     unpacked_files = set(os.listdir(d))
-                    expected = set(["some-other-file.txt", "some-file.txt"])
+                    expected = {"some-other-file.txt", "some-file.txt"}
                     assert expected == unpacked_files
 
 

@@ -2,11 +2,10 @@ import os
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
+import pytest
 from ruamel.yaml import YAML
 
 from repo2docker.buildpacks.conda.freeze import set_python
-
-import pytest
 
 V = "3.7"
 yaml = YAML(typ="rt")

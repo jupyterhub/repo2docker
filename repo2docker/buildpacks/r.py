@@ -1,12 +1,12 @@
-import re
-import os
 import datetime
+import os
+import re
+
 import requests
 
-
 from ..semver import parse_version as V
-from .python import PythonBuildPack
 from ._r_base import rstudio_base_scripts
+from .python import PythonBuildPack
 
 
 class RBuildPack(PythonBuildPack):
@@ -139,7 +139,7 @@ class RBuildPack(PythonBuildPack):
                 self._checkpoint_date = datetime.date.today() - datetime.timedelta(
                     days=2
                 )
-                self._runtime = "r-{}".format(str(self._checkpoint_date))
+                self._runtime = f"r-{str(self._checkpoint_date)}"
             return True
 
     def get_env(self):
@@ -223,7 +223,7 @@ class RBuildPack(PythonBuildPack):
         for i in range(max_days_prior):
             try_date = snapshot_date - datetime.timedelta(days=i)
             # Fall back to MRAN if packagemanager.rstudio.com doesn't have it
-            url = "https://mran.microsoft.com/snapshot/{}".format(try_date.isoformat())
+            url = f"https://mran.microsoft.com/snapshot/{try_date.isoformat()}"
             r = requests.head(url)
             if r.ok:
                 return url
@@ -336,12 +336,10 @@ class RBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 # Install a pinned version of devtools, IRKernel and shiny
-                r"""
-                R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='{devtools_cran_mirror_url}')" && \
+                rf"""
+                R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='{self.get_devtools_snapshot_url()}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
-                """.format(
-                    devtools_cran_mirror_url=self.get_devtools_snapshot_url()
-                ),
+                """,
             ),
         ]
 
@@ -374,8 +372,7 @@ class RBuildPack(PythonBuildPack):
                     "${NB_USER}",
                     # Delete /tmp/downloaded_packages only if install.R fails, as the second
                     # invocation of install.R might be able to reuse them
-                    "Rscript %s && touch /tmp/.preassembled || true && rm -rf /tmp/downloaded_packages"
-                    % installR_path,
+                    f"Rscript {installR_path} && touch /tmp/.preassembled || true && rm -rf /tmp/downloaded_packages",
                 )
             ]
 
@@ -392,9 +389,7 @@ class RBuildPack(PythonBuildPack):
                     "${NB_USER}",
                     # only run install.R if the pre-assembly failed
                     # Delete any downloaded packages in /tmp, as they aren't reused by R
-                    """if [ ! -f /tmp/.preassembled ]; then Rscript {}; rm -rf /tmp/downloaded_packages; fi""".format(
-                        installR_path
-                    ),
+                    f"""if [ ! -f /tmp/.preassembled ]; then Rscript {installR_path}; rm -rf /tmp/downloaded_packages; fi""",
                 )
             ]
 

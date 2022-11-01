@@ -1,18 +1,15 @@
-import os
 import json
-import shutil
 import logging
-
-from os import makedirs
-from os import path
-from requests import Session, HTTPError
-
+import os
+import shutil
+from os import makedirs, path
 from zipfile import ZipFile, is_zipfile
 
-from .base import ContentProvider
-from ..utils import copytree, deep_get
-from ..utils import normalize_doi, is_doi
+from requests import HTTPError, Session
+
 from .. import __version__
+from ..utils import copytree, deep_get, is_doi, normalize_doi
+from .base import ContentProvider
 
 
 class DoiProvider(ContentProvider):
@@ -23,7 +20,7 @@ class DoiProvider(ContentProvider):
         self.session = Session()
         self.session.headers.update(
             {
-                "user-agent": "repo2docker {}".format(__version__),
+                "user-agent": f"repo2docker {__version__}",
             }
         )
 
@@ -38,7 +35,7 @@ class DoiProvider(ContentProvider):
         if not isinstance(req, request.Request):
             req = request.Request(req)
 
-        req.add_header("User-Agent", "repo2docker {}".format(__version__))
+        req.add_header("User-Agent", f"repo2docker {__version__}")
         if headers is not None:
             for key, value in headers.items():
                 req.add_header(key, value)
@@ -52,7 +49,7 @@ class DoiProvider(ContentProvider):
             doi = normalize_doi(doi)
 
             try:
-                resp = self._request("https://doi.org/{}".format(doi))
+                resp = self._request(f"https://doi.org/{doi}")
                 resp.raise_for_status()
             # If the DOI doesn't resolve, just return URL
             except HTTPError:
@@ -67,26 +64,26 @@ class DoiProvider(ContentProvider):
         # file related to a record
         file_url = deep_get(file_ref, host["download"])
         fname = deep_get(file_ref, host["filename"])
-        logging.debug("Downloading file {} as {}\n".format(file_url, fname))
+        logging.debug(f"Downloading file {file_url} as {fname}\n")
 
-        yield "Requesting {}\n".format(file_url)
+        yield f"Requesting {file_url}\n"
         resp = self._request(file_url, stream=True)
         resp.raise_for_status()
 
         if path.dirname(fname):
             sub_dir = path.join(output_dir, path.dirname(fname))
             if not path.exists(sub_dir):
-                yield "Creating {}\n".format(sub_dir)
+                yield f"Creating {sub_dir}\n"
                 makedirs(sub_dir, exist_ok=True)
 
         dst_fname = path.join(output_dir, fname)
         with open(dst_fname, "wb") as dst:
-            yield "Fetching {}\n".format(fname)
+            yield f"Fetching {fname}\n"
             for chunk in resp.iter_content(chunk_size=None):
                 dst.write(chunk)
 
         if unzip and is_zipfile(dst_fname):
-            yield "Extracting {}\n".format(fname)
+            yield f"Extracting {fname}\n"
             zfile = ZipFile(dst_fname)
             zfile.extractall(path=output_dir)
             zfile.close()
@@ -106,4 +103,4 @@ class DoiProvider(ContentProvider):
                 copytree(path.join(output_dir, d), output_dir)
                 shutil.rmtree(path.join(output_dir, d))
 
-            yield "Fetched files: {}\n".format(os.listdir(output_dir))
+            yield f"Fetched files: {os.listdir(output_dir)}\n"

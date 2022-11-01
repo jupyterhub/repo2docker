@@ -1,7 +1,7 @@
 import subprocess
 
+from ..utils import R2dState, execute_cmd
 from .base import ContentProvider, ContentProviderException
-from ..utils import execute_cmd, R2dState
 
 args_enabling_topic = ["--config", "extensions.topic="]
 
@@ -41,8 +41,7 @@ class Mercurial(ContentProvider):
                 # don't update so the clone will include an empty working
                 # directory, the given ref will be updated out later
                 cmd.extend(["--noupdate"])
-            for line in execute_cmd(cmd, capture=yield_output):
-                yield line
+            yield from execute_cmd(cmd, capture=yield_output)
 
         except subprocess.CalledProcessError as error:
             msg = f"Failed to clone repository from {repo}"
@@ -54,17 +53,16 @@ class Mercurial(ContentProvider):
         # check out the specific ref given by the user
         if ref is not None:
             try:
-                for line in execute_cmd(
+                yield from execute_cmd(
                     ["hg", "update", "--clean", ref] + args_enabling_topic,
                     cwd=output_dir,
                     capture=yield_output,
-                ):
-                    yield line
+                )
             except subprocess.CalledProcessError:
                 self.log.error(
-                    "Failed to update to ref %s", ref, extra=dict(phase=R2dState.FAILED)
+                    f"Failed to update to ref {ref}", extra=dict(phase=R2dState.FAILED)
                 )
-                raise ValueError("Failed to update to ref {}".format(ref))
+                raise ValueError(f"Failed to update to ref {ref}")
 
         cmd = ["hg", "identify", "-i"] + args_enabling_topic
         sha1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=output_dir)

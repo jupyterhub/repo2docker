@@ -30,7 +30,7 @@ def test_env(capfd):
                 "repo2docker",
                 # 'key=value' are exported as is in docker
                 "-e",
-                "FOO={}".format(ts),
+                f"FOO={ts}",
                 "--env",
                 "BAR=baz",
                 # 'key' is exported with the currently exported value
@@ -65,7 +65,7 @@ def test_env(capfd):
 
     # stderr should contain lines of output
     declares = [x for x in captured.err.splitlines() if x.startswith("declare")]
-    assert 'declare -x FOO="{}"'.format(ts) in declares
+    assert f'declare -x FOO="{ts}"' in declares
     assert 'declare -x BAR="baz"' in declares
     assert 'declare -x SPAM="eggs"' in declares
     assert "declare -x NO_SPAM" not in declares

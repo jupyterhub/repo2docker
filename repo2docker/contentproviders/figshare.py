@@ -1,16 +1,14 @@
+import json
 import os
 import re
-import json
 import shutil
-
-from os import makedirs
-from os import path
-from urllib.request import Request
+from os import makedirs, path
 from urllib.error import HTTPError
+from urllib.request import Request
 from zipfile import is_zipfile
 
-from .doi import DoiProvider
 from ..utils import copytree, deep_get
+from .doi import DoiProvider
 
 
 class Figshare(DoiProvider):
@@ -75,11 +73,9 @@ class Figshare(DoiProvider):
         article_version = spec["version"]
         host = spec["host"]
 
-        yield "Fetching Figshare article {} in version {}.\n".format(
-            article_id, article_version
-        )
+        yield f"Fetching Figshare article {article_id} in version {article_version}.\n"
         resp = self.urlopen(
-            "{}{}/versions/{}".format(host["api"], article_id, article_version),
+            f'{host["api"]}{article_id}/versions/{article_version}',
             headers={"accept": "application/json"},
         )
 
@@ -91,10 +87,9 @@ class Figshare(DoiProvider):
         only_one_file = len(files) == 1
         for file_ref in files:
             unzip = file_ref["name"].endswith(".zip") and only_one_file
-            for line in self.fetch_file(file_ref, host, output_dir, unzip):
-                yield line
+            yield from self.fetch_file(file_ref, host, output_dir, unzip)
 
     @property
     def content_id(self):
         """The Figshare article ID"""
-        return "{}.v{}".format(self.article_id, self.article_version)
+        return f"{self.article_id}.v{self.article_version}"

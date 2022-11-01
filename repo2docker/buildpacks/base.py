@@ -1,14 +1,15 @@
-import textwrap
-import jinja2
-import tarfile
+import hashlib
 import io
+import logging
 import os
 import re
-import logging
 import string
 import sys
-import hashlib
+import tarfile
+import textwrap
+
 import escapism
+import jinja2
 
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
@@ -462,7 +463,7 @@ class BuildPack:
         last_user = "root"
         for user, script in self.get_build_scripts():
             if last_user != user:
-                build_script_directives.append("USER {}".format(user))
+                build_script_directives.append(f"USER {user}")
                 last_user = user
             build_script_directives.append(
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
@@ -472,7 +473,7 @@ class BuildPack:
         last_user = "root"
         for user, script in self.get_assemble_scripts():
             if last_user != user:
-                assemble_script_directives.append("USER {}".format(user))
+                assemble_script_directives.append(f"USER {user}")
                 last_user = user
             assemble_script_directives.append(
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
@@ -482,7 +483,7 @@ class BuildPack:
         last_user = "root"
         for user, script in self.get_preassemble_scripts():
             if last_user != user:
-                preassemble_script_directives.append("USER {}".format(user))
+                preassemble_script_directives.append(f"USER {user}")
                 last_user = user
             preassemble_script_directives.append(
                 "RUN {}".format(textwrap.dedent(script.strip("\n")))
@@ -594,8 +595,8 @@ class BuildPack:
         # buildpacks/docker.py where it is duplicated
         if not isinstance(memory_limit, int):
             raise ValueError(
-                "The memory limit has to be specified as an"
-                "integer but is '{}'".format(type(memory_limit))
+                "The memory limit has to be specified as an "
+                f"integer but is '{type(memory_limit)}'"
             )
         limits = {}
         if memory_limit:
@@ -616,8 +617,7 @@ class BuildPack:
 
         build_kwargs.update(extra_build_kwargs)
 
-        for line in client.build(**build_kwargs):
-            yield line
+        yield from client.build(**build_kwargs)
 
 
 class BaseImage(BuildPack):
@@ -648,8 +648,7 @@ class BaseImage(BuildPack):
                     # FIXME: Add support for specifying version numbers
                     if not re.match(r"^[a-z0-9.+-]+", package):
                         raise ValueError(
-                            "Found invalid package name {} in "
-                            "apt.txt".format(package)
+                            f"Found invalid package name {package} in apt.txt"
                         )
                     extra_apt_packages.append(package)
 

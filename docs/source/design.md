@@ -7,8 +7,7 @@ The philosophy for the repo2docker buildpacks includes:
 - using common configuration files for familiar installation and packaging tools
 - allowing configuration files to be combined to compose more complex setups
 - specifying default locations for configuration files
-(in the repository's root, `binder` or `.binder` directory)
-
+  (in the repository's root, `binder` or `.binder` directory)
 
 When designing `repo2docker` and adding to it in the future, the
 developers are influenced by two primary use cases.
@@ -79,7 +78,7 @@ is a highly recommended quick read.
 Although other projects, like
 [s2i](https://github.com/openshift/source-to-image), exist to convert source to
 Docker images, `repo2docker` provides the additional functionality to support
-*composable* environments. We want to easily have an image with
+_composable_ environments. We want to easily have an image with
 Python3+Julia+R-3.2 environments, rather than just one single language
 environment. While generally one language environment per container works well,
 in many scientific / datascience computing environments you need multiple

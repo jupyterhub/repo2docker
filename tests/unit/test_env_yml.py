@@ -3,7 +3,9 @@ Test if the environment.yml is empty or it constains other data structure than a
 """
 import os
 import sys
+
 import pytest
+
 from repo2docker import buildpacks
 
 

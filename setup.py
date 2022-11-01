@@ -1,6 +1,8 @@
-from distutils.cmd import Command
-from setuptools import setup, find_packages
 import sys
+from distutils.cmd import Command
+
+from setuptools import find_packages, setup
+
 import versioneer
 
 if sys.version_info[0] < 3:
@@ -23,8 +25,8 @@ class GenerateDataverseInstallationsFileCommand(Command):
         pass
 
     def run(self):
-        from urllib.request import urlopen
         import json
+        from urllib.request import urlopen
 
         resp = urlopen(self.url, timeout=5)
         resp_body = resp.read()

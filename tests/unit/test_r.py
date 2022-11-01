@@ -1,8 +1,8 @@
 from datetime import date
+from unittest.mock import patch
 
 import pytest
 from requests.models import Response
-from unittest.mock import patch
 
 from repo2docker import buildpacks
 
@@ -87,6 +87,7 @@ def test_snapshot_mran_date(requested, expected):
 
     with patch("requests.head", side_effect=mock_request_head):
         r = buildpacks.RBuildPack()
-        assert r.get_mran_snapshot_url(
-            requested
-        ) == "https://mran.microsoft.com/snapshot/{}".format(expected.isoformat())
+        assert (
+            r.get_mran_snapshot_url(requested)
+            == f"https://mran.microsoft.com/snapshot/{expected.isoformat()}"
+        )

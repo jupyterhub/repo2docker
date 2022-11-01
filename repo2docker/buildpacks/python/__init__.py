@@ -1,8 +1,8 @@
 """Generates Dockerfiles based on an input matrix based on Python."""
 import os
 
-from ..conda import CondaBuildPack
 from ...utils import is_local_pip_requirement, open_guess_encoding
+from ..conda import CondaBuildPack
 
 
 class PythonBuildPack(CondaBuildPack):
@@ -55,9 +55,7 @@ class PythonBuildPack(CondaBuildPack):
                         "${NB_USER}",
                         # want the $NB_PYHTON_PREFIX environment variable, not for
                         # Python's string formatting to try and replace this
-                        '${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{}"'.format(
-                            nb_requirements_file
-                        ),
+                        f'${{NB_PYTHON_PREFIX}}/bin/pip install --no-cache-dir -r "{nb_requirements_file}"',
                     )
                 )
 
@@ -67,7 +65,7 @@ class PythonBuildPack(CondaBuildPack):
             scripts.append(
                 (
                     "${NB_USER}",
-                    '{} install --no-cache-dir -r "{}"'.format(pip, requirements_file),
+                    f'{pip} install --no-cache-dir -r "{requirements_file}"',
                 )
             )
         return scripts
@@ -126,9 +124,7 @@ class PythonBuildPack(CondaBuildPack):
 
         # setup.py exists *and* binder dir is not used
         if not self.binder_dir and os.path.exists(setup_py):
-            assemble_scripts.append(
-                ("${NB_USER}", "{} install --no-cache-dir .".format(pip))
-            )
+            assemble_scripts.append(("${NB_USER}", f"{pip} install --no-cache-dir ."))
         return assemble_scripts
 
     def detect(self):

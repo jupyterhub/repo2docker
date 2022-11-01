@@ -8,7 +8,6 @@ import pytest
 from repo2docker.contentproviders import Mercurial
 from repo2docker.contentproviders.mercurial import args_enabling_topic
 
-
 SKIP_HG = os.environ.get("REPO2DOCKER_SKIP_HG_TESTS", "").lower() not in {
     "",
     "0",

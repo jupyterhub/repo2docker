@@ -5,7 +5,6 @@ Test that --cache-from is passed in to docker API properly.
 from unittest.mock import MagicMock
 
 import docker
-
 from repo2docker.buildpacks import (
     BaseImage,
     DockerBuildPack,

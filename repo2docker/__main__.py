@@ -1,14 +1,15 @@
 import argparse
-import sys
-import os
 import logging
+import os
+import sys
+
+from . import __version__
 from .app import Repo2Docker
 from .engine import BuildError, ImageLoadError
-from . import __version__
 from .utils import (
-    validate_and_generate_port_mapping,
-    is_valid_docker_image_name,
     R2dState,
+    is_valid_docker_image_name,
+    validate_and_generate_port_mapping,
 )
 
 
@@ -52,7 +53,7 @@ class MimicDockerEnvHandling(argparse.Action):
         #  key          pass using current value, or don't pass
         if "=" not in values:
             try:
-                value_to_append = "{}={}".format(values, os.environ[values])
+                value_to_append = f"{values}={os.environ[values]}"
             except KeyError:
                 # no local def, so don't pass
                 return
@@ -304,8 +305,8 @@ def make_r2d(argv=None):
             r2d.volumes[os.path.abspath(args.repo)] = "."
         else:
             r2d.log.error(
-                'Cannot mount "{}" in editable mode '
-                "as it is not a directory".format(args.repo),
+                f'Cannot mount "{args.repo}" in editable mode '
+                "as it is not a directory",
                 extra=dict(phase=R2dState.FAILED),
             )
             sys.exit(1)

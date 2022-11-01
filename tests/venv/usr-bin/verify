@@ -4,4 +4,4 @@ import os
 
 assert os.path.expanduser("~/.local/bin") in os.getenv("PATH"), os.getenv("PATH")
 assert os.getcwd() == os.environ["REPO_DIR"]
-assert "{}/.local/bin".format(os.environ["REPO_DIR"]) in os.getenv("PATH")
+assert f'{os.environ["REPO_DIR"]}/.local/bin' in os.getenv("PATH")

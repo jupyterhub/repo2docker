@@ -1,13 +1,12 @@
-from contextlib import contextmanager
-from enum import Enum
-from functools import partial
 import os
 import re
 import subprocess
+from contextlib import contextmanager
+from enum import Enum
+from functools import partial
+from shutil import copy2, copystat
+
 import chardet
-
-from shutil import copystat, copy2
-
 from traitlets import Integer, TraitError
 
 
@@ -136,13 +135,10 @@ def validate_and_generate_port_mapping(port_mappings):
         try:
             p = int(port)
         except ValueError as e:
-            raise ValueError(
-                'Port specification "{}" has ' "an invalid port.".format(mapping)
-            )
+            raise ValueError(f'Port specification "{mapping}" has an invalid port.')
         if not 0 < p <= 65535:
             raise ValueError(
-                'Port specification "{}" specifies '
-                "a port outside 1-65535.".format(mapping)
+                f'Port specification "{mapping}" specifies a port outside 1-65535.'
             )
         return port
 
@@ -152,8 +148,7 @@ def validate_and_generate_port_mapping(port_mappings):
             port, protocol = parts
             if protocol not in ("tcp", "udp"):
                 raise ValueError(
-                    'Port specification "{}" has '
-                    "an invalid protocol.".format(mapping)
+                    f'Port specification "{mapping}" has an invalid protocol.'
                 )
         elif len(parts) == 1:
             port = parts[0]
@@ -310,14 +305,14 @@ class ByteSpecification(Integer):
             num = float(value[:-1])
         except ValueError:
             raise TraitError(
-                "{val} is not a valid memory specification. "
-                "Must be an int or a string with suffix K, M, G, T".format(val=value)
+                f"{value} is not a valid memory specification. "
+                "Must be an int or a string with suffix K, M, G, T"
             )
         suffix = value[-1]
         if suffix not in self.UNIT_SUFFIXES:
             raise TraitError(
-                "{val} is not a valid memory specification. "
-                "Must be an int or a string with suffix K, M, G, T".format(val=value)
+                f"{value} is not a valid memory specification. "
+                "Must be an int or a string with suffix K, M, G, T"
             )
         else:
             return int(float(num) * self.UNIT_SUFFIXES[suffix])

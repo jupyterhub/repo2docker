@@ -1,7 +1,9 @@
 """Generates a variety of Dockerfiles based on an input matrix
 """
 import os
+
 import docker
+
 from .base import BuildPack
 
 
@@ -34,8 +36,8 @@ class DockerBuildPack(BuildPack):
         # buildpacks/base.py where it is duplicated
         if not isinstance(memory_limit, int):
             raise ValueError(
-                "The memory limit has to be specified as an"
-                "integer but is '{}'".format(type(memory_limit))
+                "The memory limit has to be specified as an "
+                f"integer but is '{type(memory_limit)}'"
             )
         limits = {}
         if memory_limit:
@@ -57,5 +59,4 @@ class DockerBuildPack(BuildPack):
 
         build_kwargs.update(extra_build_kwargs)
 
-        for line in client.build(**build_kwargs):
-            yield line
+        yield from client.build(**build_kwargs)

@@ -32,17 +32,18 @@ py.test -s tests/<path-to-test>
 
 To skip the tests related to Mercurial repositories (to avoid to install
 Mercurial and hg-evolve), one can use the environment variable
-``REPO2DOCKER_SKIP_HG_TESTS``.
+`REPO2DOCKER_SKIP_HG_TESTS`.
 
 ### Troubleshooting Tests
 
 Some of the tests have non-python requirements for your development machine. They are:
 
 - `git-lfs` must be installed ([instructions](https://github.com/git-lfs/git-lfs)). It need not be activated -- there is no need to run the `git lfs install` command. It just needs to be available to the test suite.
-   - If your test failure messages include "`git-lfs filter-process: git-lfs: command not found`", this step should address the problem.
+
+  - If your test failure messages include "`git-lfs filter-process: git-lfs: command not found`", this step should address the problem.
 
 - Minimum Docker Image size of 128GB is required. If you are not running docker on a linux OS, you may need to expand the runtime image size for your installation. See Docker's instructions for [macOS](https://docs.docker.com/docker-for-mac/space/) or [Windows 10](https://docs.docker.com/docker-for-windows/#resources) for more information.
-    - If your test failure messages include "`No space left on device: '/home/...`", this step should address the problem.
+  - If your test failure messages include "`No space left on device: '/home/...`", this step should address the problem.
 
 ## Update and Freeze BuildPack Dependencies
 
@@ -51,35 +52,36 @@ dependencies that are installed by default for several buildpacks.
 
 For both the `conda` and `virtualenv` (`pip`) base environments in the **Conda BuildPack** and **Python BuildPack**,
 we install specific pinned versions of all dependencies. We explicitly list the dependencies
-we want, then *freeze* them at commit time to explicitly list all the
+we want, then _freeze_ them at commit time to explicitly list all the
 transitive dependencies at current versions. This way, we know that
 all dependencies will have the exact same version installed at all times.
 
 To update one of the dependencies shared across all `repo2docker` builds, you
 must follow these steps (with more detailed information in the sections below):
 
-1. Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](tasks:conda-dependencies)) 
+1. Bump the version numbers of the dependencies you want to update in the `conda` environment ([link](tasks:conda-dependencies))
 2. Make a pull request with your changes ([link](https://github.com/jupyterhub/repo2docker/blob/HEAD/CONTRIBUTING.md#make-a-pull-request))
 
 See the subsections below for more detailed instructions.
 
 (tasks:conda-dependencies)=
+
 ### Conda dependencies
 
 1. There are two files related to conda dependencies. Edit as needed.
 
-    - `repo2docker/buildpacks/conda/environment.yml`
+   - `repo2docker/buildpacks/conda/environment.yml`
 
-       Contains list of packages to install in Python3 conda environments,
-       which are the default. **This is where all Notebook versions &
-       notebook extensions (such as JupyterLab / nteract) go**.
+     Contains list of packages to install in Python3 conda environments,
+     which are the default. **This is where all Notebook versions &
+     notebook extensions (such as JupyterLab / nteract) go**.
 
-    - `repo2docker/buildpacks/conda/environment.py-2.7.yml`
+   - `repo2docker/buildpacks/conda/environment.py-2.7.yml`
 
-       Contains list of packages to install in Python2 conda environments, which
-       can be specifically requested by users. **This only needs `IPyKernel`
-       and kernel related libraries**. Notebook / Notebook Extension need
-       not be installed here.
+     Contains list of packages to install in Python2 conda environments, which
+     can be specifically requested by users. **This only needs `IPyKernel`
+     and kernel related libraries**. Notebook / Notebook Extension need
+     not be installed here.
 
 2. Once you edit either of these files to add a new package / bump version on
    an existing package, you should then run:
@@ -147,13 +149,12 @@ Once this has completed, make sure that the new version has been updated.
 Once the new release has been pushed to PyPI, we need to create a new
 release on the [GitHub repository releases page](https://github.com/jupyterhub/repo2docker/releases). Once on that page, follow these steps:
 
-* Click "Draft a new release"
-* Choose a tag version using the same tag you just created above
-* The release name is simply the tag version
-* Finally, click "Publish release"
+- Click "Draft a new release"
+- Choose a tag version using the same tag you just created above
+- The release name is simply the tag version
+- Finally, click "Publish release"
 
 That's it!
-
 
 # Uncommon tasks
 

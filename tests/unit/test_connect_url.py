@@ -1,10 +1,11 @@
 """
 Test if the explict hostname is supplied correctly to the container
 """
-import requests
 import time
-from repo2docker.app import Repo2Docker
 
+import requests
+
+from repo2docker.app import Repo2Docker
 
 # Minimal Dockerfile to make build as fast as possible
 DOCKER_FILE = """
@@ -40,8 +41,8 @@ def test_connect_url(tmpdir):
     app.start()
     container = app.start_container()
 
-    container_url = "http://{}:{}/api".format(app.hostname, app.port)
-    expected_url = "http://{}:{}".format(app.hostname, app.port)
+    container_url = f"http://{app.hostname}:{app.port}/api"
+    expected_url = f"http://{app.hostname}:{app.port}"
 
     # wait a bit for the container to be ready
     # give the container a chance to start
@@ -59,13 +60,13 @@ def test_connect_url(tmpdir):
             try:
                 info = requests.get(container_url).json()
             except Exception as e:
-                print("Error: %s" % e)
+                print(f"Error: {e}")
                 time.sleep(i * 3)
             else:
                 print(info)
                 success = True
                 break
-        assert success, "Notebook never started in %s" % container
+        assert success, f"Notebook never started in {container}"
     finally:
         # stop the container
         container.stop()

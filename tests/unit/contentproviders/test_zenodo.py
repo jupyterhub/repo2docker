@@ -1,14 +1,14 @@
 import json
 import os
-import pytest
 import re
-
 from contextlib import contextmanager
 from io import BytesIO
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest.mock import patch
-from urllib.request import urlopen, Request
+from urllib.request import Request, urlopen
 from zipfile import ZipFile
+
+import pytest
 
 from repo2docker.contentproviders import Zenodo
 
@@ -82,8 +82,8 @@ def test_detect_zenodo(test_input, expected, requests_mock):
 def zenodo_archive(prefix="a_directory"):
     with NamedTemporaryFile(suffix=".zip") as zfile:
         with ZipFile(zfile.name, mode="w") as zip:
-            zip.writestr("{}/some-file.txt".format(prefix), "some content")
-            zip.writestr("{}/some-other-file.txt".format(prefix), "some more content")
+            zip.writestr(f"{prefix}/some-file.txt", "some content")
+            zip.writestr(f"{prefix}/some-other-file.txt", "some more content")
 
         yield zfile.name
 
@@ -96,15 +96,13 @@ def test_fetch_software_from_github_archive(requests_mock):
             "files": [
                 {
                     "filename": "some_dir/afake.zip",
-                    "links": {"download": "file://{}".format(zen_path)},
+                    "links": {"download": f"file://{zen_path}"},
                 }
             ],
             "metadata": {"upload_type": "other"},
         }
         requests_mock.get("https://zenodo.org/api/records/1234", json=mock_response)
-        requests_mock.get(
-            "file://{}".format(zen_path), content=open(zen_path, "rb").read()
-        )
+        requests_mock.get(f"file://{zen_path}", content=open(zen_path, "rb").read())
 
         zen = Zenodo()
         spec = {"host": test_zen.hosts[1], "record": "1234"}
@@ -115,7 +113,7 @@ def test_fetch_software_from_github_archive(requests_mock):
                 output.append(l)
 
             unpacked_files = set(os.listdir(d))
-            expected = set(["some-other-file.txt", "some-file.txt"])
+            expected = {"some-other-file.txt", "some-file.txt"}
             assert expected == unpacked_files
 
 
@@ -129,15 +127,13 @@ def test_fetch_software(requests_mock):
                     # this is the difference to the GitHub generated one,
                     # the ZIP file isn't in a directory
                     "filename": "afake.zip",
-                    "links": {"download": "file://{}".format(zen_path)},
+                    "links": {"download": f"file://{zen_path}"},
                 }
             ],
             "metadata": {"upload_type": "software"},
         }
         requests_mock.get("https://zenodo.org/api/records/1234", json=mock_response)
-        requests_mock.get(
-            "file://{}".format(zen_path), content=open(zen_path, "rb").read()
-        )
+        requests_mock.get(f"file://{zen_path}", content=open(zen_path, "rb").read())
 
         with TemporaryDirectory() as d:
             zen = Zenodo()
@@ -147,7 +143,7 @@ def test_fetch_software(requests_mock):
                 output.append(l)
 
             unpacked_files = set(os.listdir(d))
-            expected = set(["some-other-file.txt", "some-file.txt"])
+            expected = {"some-other-file.txt", "some-file.txt"}
             assert expected == unpacked_files
 
 
@@ -159,21 +155,21 @@ def test_fetch_data(requests_mock):
                 "files": [
                     {
                         "filename": "afake.zip",
-                        "links": {"download": "file://{}".format(a_zen_path)},
+                        "links": {"download": f"file://{a_zen_path}"},
                     },
                     {
                         "filename": "bfake.zip",
-                        "links": {"download": "file://{}".format(b_zen_path)},
+                        "links": {"download": f"file://{b_zen_path}"},
                     },
                 ],
                 "metadata": {"upload_type": "data"},
             }
             requests_mock.get("https://zenodo.org/api/records/1234", json=mock_response)
             requests_mock.get(
-                "file://{}".format(a_zen_path), content=open(a_zen_path, "rb").read()
+                f"file://{a_zen_path}", content=open(a_zen_path, "rb").read()
             )
             requests_mock.get(
-                "file://{}".format(b_zen_path), content=open(b_zen_path, "rb").read()
+                f"file://{b_zen_path}", content=open(b_zen_path, "rb").read()
             )
 
             with TemporaryDirectory() as d:

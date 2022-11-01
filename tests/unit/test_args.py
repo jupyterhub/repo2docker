@@ -2,9 +2,11 @@
 Test argument parsing and r2d construction
 """
 import os
+
 import pytest
-from repo2docker.__main__ import make_r2d
+
 from repo2docker import __version__
+from repo2docker.__main__ import make_r2d
 
 
 def test_version(capsys):
@@ -13,7 +15,7 @@ def test_version(capsys):
     """
     with pytest.raises(SystemExit):
         make_r2d(["--version"])
-    assert capsys.readouterr().out == "{}\n".format(__version__)
+    assert capsys.readouterr().out == f"{__version__}\n"
 
 
 def test_simple():

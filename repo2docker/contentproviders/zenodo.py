@@ -1,14 +1,12 @@
-import os
 import json
+import os
 import shutil
-
-from os import makedirs
-from os import path
-from urllib.request import Request
+from os import makedirs, path
 from urllib.error import HTTPError
+from urllib.request import Request
 
-from .doi import DoiProvider
 from ..utils import copytree, deep_get
+from .doi import DoiProvider
 
 
 class Zenodo(DoiProvider):
@@ -66,9 +64,9 @@ class Zenodo(DoiProvider):
         record_id = spec["record"]
         host = spec["host"]
 
-        yield "Fetching Zenodo record {}.\n".format(record_id)
+        yield f"Fetching Zenodo record {record_id}.\n"
         resp = self.urlopen(
-            "{}{}".format(host["api"], record_id),
+            f'{host["api"]}{record_id}',
             headers={"accept": "application/json"},
         )
 
@@ -77,10 +75,7 @@ class Zenodo(DoiProvider):
         files = deep_get(record, host["filepath"])
         only_one_file = len(files) == 1
         for file_ref in files:
-            for line in self.fetch_file(
-                file_ref, host, output_dir, unzip=only_one_file
-            ):
-                yield line
+            yield from self.fetch_file(file_ref, host, output_dir, unzip=only_one_file)
 
     @property
     def content_id(self):

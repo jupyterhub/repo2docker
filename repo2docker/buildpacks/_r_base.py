@@ -26,7 +26,7 @@ def rstudio_base_scripts(r_version):
             # we should have --no-install-recommends on all our apt-get install commands,
             # but here it's important because these recommend r-base,
             # which will upgrade the installed version of R, undoing our pinned version
-            r"""
+            rf"""
             curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
             curl --silent --location --fail {shiny_server_url} > /tmp/shiny.deb && \
             echo '{rstudio_sha256sum} /tmp/rstudio.deb' | sha256sum -c - && \
@@ -37,24 +37,16 @@ def rstudio_base_scripts(r_version):
             apt-get -qq purge && \
             apt-get -qq clean && \
             rm -rf /var/lib/apt/lists/*
-            """.format(
-                rstudio_url=rstudio_url,
-                rstudio_sha256sum=rstudio_sha256sum,
-                shiny_server_url=shiny_server_url,
-                shiny_sha256sum=shiny_sha256sum,
-            ),
+            """,
         ),
         (
             "${NB_USER}",
             # Install jupyter-rsession-proxy
-            r"""
+            rf"""
                 pip install --no-cache \
                     jupyter-rsession-proxy=={rsession_proxy_version} \
                     jupyter-shiny-proxy=={shiny_proxy_version}
-                """.format(
-                rsession_proxy_version=rsession_proxy_version,
-                shiny_proxy_version=shiny_proxy_version,
-            ),
+                """,
         ),
         (
             # Not all of these locations are configurable; so we make sure

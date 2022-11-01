@@ -4,8 +4,8 @@ Test if the subdirectory is correctly navigated to
 import os
 
 import escapism
-
 import pytest
+
 from repo2docker.app import Repo2Docker
 
 TEST_REPO = "https://github.com/binderhub-ci-repos/repo2docker-subdir-support"
@@ -21,7 +21,7 @@ def test_subdir(run_repo2docker):
     run_repo2docker(argv)
 
     # check that we restored the current working directory
-    assert cwd == os.getcwd(), "We should be back in %s" % cwd
+    assert cwd == os.getcwd(), f"We should be back in {cwd}"
 
 
 def test_subdir_in_image_name():

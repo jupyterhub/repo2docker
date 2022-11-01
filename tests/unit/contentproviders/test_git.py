@@ -1,7 +1,9 @@
 import os
-import pytest
 import subprocess
 from tempfile import TemporaryDirectory
+
+import pytest
+
 from repo2docker.contentproviders import Git
 
 

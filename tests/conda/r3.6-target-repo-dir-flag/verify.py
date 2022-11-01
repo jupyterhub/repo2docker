@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import sys
 import os
+import sys
 from glob import glob
 
 # conda should still be in /srv/conda

@@ -2,8 +2,8 @@
 
 import os
 
-from ..python import PythonBuildPack
 from ...semver import parse_version as V
+from ..python import PythonBuildPack
 
 
 class JuliaRequireBuildPack(PythonBuildPack):

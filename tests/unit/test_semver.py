@@ -1,5 +1,6 @@
 import pytest
 from semver import VersionInfo
+
 from repo2docker import semver
 
 

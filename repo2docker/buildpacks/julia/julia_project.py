@@ -6,8 +6,8 @@ import requests
 import semver
 import toml
 
-from ..python import PythonBuildPack
 from ...semver import find_semver_match
+from ..python import PythonBuildPack
 
 
 class JuliaProjectTomlBuildPack(PythonBuildPack):

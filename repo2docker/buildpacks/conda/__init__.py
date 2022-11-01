@@ -5,9 +5,9 @@ from collections.abc import Mapping
 
 from ruamel.yaml import YAML
 
-from ..base import BaseImage
-from .._r_base import rstudio_base_scripts
 from ...utils import is_local_pip_requirement
+from .._r_base import rstudio_base_scripts
+from ..base import BaseImage
 
 # pattern for parsing conda dependency line
 PYTHON_REGEX = re.compile(r"python\s*=+\s*([\d\.]*)")
@@ -341,15 +341,13 @@ class CondaBuildPack(BaseImage):
             scripts.append(
                 (
                     "${NB_USER}",
-                    r"""
+                    rf"""
                 TIMEFORMAT='time: %3R' \
-                bash -c 'time ${{MAMBA_EXE}} env update -p {0} --file "{1}" && \
+                bash -c 'time ${{MAMBA_EXE}} env update -p {env_prefix} --file "{environment_yml}" && \
                 time ${{MAMBA_EXE}} clean --all -f -y && \
-                ${{MAMBA_EXE}} list -p {0} \
+                ${{MAMBA_EXE}} list -p {env_prefix} \
                 '
-                """.format(
-                        env_prefix, environment_yml
-                    ),
+                """,
                 )
             )
 
@@ -361,36 +359,30 @@ class CondaBuildPack(BaseImage):
             scripts.append(
                 (
                     "${NB_USER}",
-                    r"""
-                ${{MAMBA_EXE}} install -p {0} r-base{1} r-irkernel r-devtools -y && \
+                    rf"""
+                ${{MAMBA_EXE}} install -p {env_prefix} r-base{r_pin} r-irkernel r-devtools -y && \
                 ${{MAMBA_EXE}} clean --all -f -y && \
-                ${{MAMBA_EXE}} list -p {0}
-                """.format(
-                        env_prefix, r_pin
-                    ),
+                ${{MAMBA_EXE}} list -p {env_prefix}
+                """,
                 )
             )
             scripts += rstudio_base_scripts(self.r_version)
             scripts += [
                 (
                     "root",
-                    r"""
+                    rf"""
                     echo auth-none=1 >> /etc/rstudio/rserver.conf && \
                     echo auth-minimum-user-id=0 >> /etc/rstudio/rserver.conf && \
-                    echo "rsession-which-r={0}/bin/R" >> /etc/rstudio/rserver.conf && \
+                    echo "rsession-which-r={env_prefix}/bin/R" >> /etc/rstudio/rserver.conf && \
                     echo www-frame-origin=same >> /etc/rstudio/rserver.conf
-                    """.format(
-                        env_prefix
-                    ),
+                    """,
                 ),
                 (
                     "${NB_USER}",
                     # Register the jupyter kernel
-                    r"""
-                 R --quiet -e "IRkernel::installspec(prefix='{0}')"
-                 """.format(
-                        env_prefix
-                    ),
+                    rf"""
+                 R --quiet -e "IRkernel::installspec(prefix='{env_prefix}')"
+                 """,
                 ),
             ]
         return scripts
