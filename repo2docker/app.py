@@ -332,7 +332,7 @@ class Repo2Docker(Application):
     )
 
     run = Bool(
-        False,
+        True,
         help="""
         Run docker image after building
         """,
