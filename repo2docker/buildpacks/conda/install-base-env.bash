@@ -5,7 +5,7 @@ set -ex
 
 cd $(dirname $0)
 
-export MAMBA_VERSION=0.25.0
+export MAMBA_VERSION=1.0.0
 export CONDA_VERSION=4.13.0
 
 URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/linux-64/micromamba-${MAMBA_VERSION}-0.tar.bz2"
