@@ -114,6 +114,7 @@ def get_argparser():
 
     argparser.add_argument(
         "--ref",
+        default=None,
         help=(
             "Reference to build instead of default reference. For example"
             " branch name or commit for a Git repository."
@@ -128,6 +129,14 @@ def get_argparser():
         action="store_false",
         help="Do not actually build the image. Useful in conjunction with --debug.",
     )
+
+    argparser.add_argument(
+        "--build",
+        dest="build",
+        action="store_true",
+        help="Build the image (default)",
+    )
+    argparser.set_defaults(build=None)
 
     argparser.add_argument(
         "--build-memory-limit",
@@ -146,6 +155,14 @@ def get_argparser():
         action="store_false",
         help="Do not run container after it has been built",
     )
+
+    argparser.add_argument(
+        "--run",
+        dest="run",
+        action="store_true",
+        help="Run container after it has been built (default).",
+    )
+    argparser.set_defaults(run=None)
 
     argparser.add_argument(
         "--publish",
@@ -181,6 +198,13 @@ def get_argparser():
         action="store_true",
         help="Push docker image to repository",
     )
+    argparser.add_argument(
+        "--no-push",
+        dest="push",
+        action="store_false",
+        help="Don't push docker image to repository (default).",
+    )
+    argparser.set_defaults(push=None)
 
     argparser.add_argument(
         "--volume",
@@ -298,8 +322,14 @@ def make_r2d(argv=None):
         key, _, val = a.partition("=")
         r2d.extra_build_args[key] = val
 
+    # repo is a required arg, and should never come from config:
+    if "repo" in r2d.config.Repo2Docker:
+        r2d.log.warning(
+            f"Ignoring Repo2Docker.repo={r2d.repo!r} configuration, using {args.repo!r} from CLI."
+        )
     r2d.repo = args.repo
-    r2d.ref = args.ref
+    if args.ref is not None:
+        r2d.ref = args.ref
 
     # user wants to mount a local directory into the container for
     # editing
@@ -320,22 +350,22 @@ def make_r2d(argv=None):
 
     if args.image_name:
         r2d.output_image_spec = args.image_name
-    else:
-        # we will pick a name after fetching the repository
-        r2d.output_image_spec = ""
 
     if args.json_logs is not None:
         r2d.json_logs = args.json_logs
 
-    r2d.dry_run = not args.build
+    if args.build is not None:
+        r2d.dry_run = not args.build
 
     if r2d.dry_run:
         # Can't push nor run if we aren't building
         args.run = False
         args.push = False
 
-    r2d.run = args.run
-    r2d.push = args.push
+    if args.run is not None:
+        r2d.run = args.run
+    if args.push is not None:
+        r2d.push = args.push
 
     # check against r2d.run and not args.run as r2d.run is false on
     # --no-build. Also r2d.volumes and not args.volumes since --editable
