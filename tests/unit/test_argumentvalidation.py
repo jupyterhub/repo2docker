@@ -162,7 +162,7 @@ def test_port_mapping_no_run_fail(temp_cwd):
     assert not validate_arguments(
         builddir,
         args_list,
-        "To publish user defined port mappings, the container must also be run",
+        "To publish user-defined port mappings, the container must also be run",
     )
 
 
@@ -175,7 +175,7 @@ def test_all_ports_mapping_no_run_fail(temp_cwd):
     assert not validate_arguments(
         builddir,
         args_list,
-        "To publish user defined port mappings, the container must also be run",
+        "To publish user-defined port mappings, the container must also be run",
     )
 
 
