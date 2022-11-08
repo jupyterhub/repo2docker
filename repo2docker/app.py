@@ -20,7 +20,7 @@ from urllib.parse import urlparse
 import entrypoints
 import escapism
 from pythonjsonlogger import jsonlogger
-from traitlets import Any, Bool, Dict, Int, List, Unicode, default
+from traitlets import Any, Bool, Dict, Int, List, Unicode, default, observe
 from traitlets.config import Application
 
 from . import __version__, contentproviders
@@ -304,7 +304,7 @@ class Repo2Docker(Application):
     )
 
     cleanup_checkout = Bool(
-        False,
+        True,
         help="""
         Delete source repository after building is done.
 
@@ -312,6 +312,12 @@ class Repo2Docker(Application):
         """,
         config=True,
     )
+
+    @default("cleanup_checkout")
+    def _defaut_cleanup_checkout(self):
+        # if the source exists locally we don't want to delete it at the end
+        # FIXME: Find a better way to figure out if repo is 'local'. Push this into ContentProvider?
+        return not os.path.exists(self.repo)
 
     output_image_spec = Unicode(
         "",
@@ -348,6 +354,12 @@ class Repo2Docker(Application):
         """,
         config=True,
     )
+
+    @observe("dry_run")
+    def _dry_run_changed(self, change):
+        if change.new:
+            # dry_run forces run and push to be False
+            self.push = self.run = False
 
     # FIXME: Refactor classes to separate build & run steps
     run_cmd = List(
@@ -727,6 +739,8 @@ class Repo2Docker(Application):
         # making a copy of it as it might contain large files that would be
         # expensive to copy.
         if os.path.isdir(self.repo):
+            # never cleanup when we are working in a local repo
+            self.cleanup_checkout = False
             checkout_path = self.repo
         else:
             if self.git_workdir is None:
@@ -828,6 +842,7 @@ class Repo2Docker(Application):
 
         finally:
             # Cleanup checkout if necessary
+            # never cleanup when checking out a local repo
             if self.cleanup_checkout:
                 shutil.rmtree(checkout_path, ignore_errors=True)
 
