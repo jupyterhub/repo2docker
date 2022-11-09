@@ -187,10 +187,16 @@ def get_argparser():
     argparser.add_argument(
         "--no-clean",
         dest="clean",
-        default=None,
         action="store_false",
         help="Don't clean up remote checkouts after we are done",
     )
+    argparser.add_argument(
+        "--clean",
+        dest="clean",
+        action="store_true",
+        help="Clean up remote checkouts after we are done (default).",
+    )
+    argparser.set_defaults(clean=None)
 
     argparser.add_argument(
         "--push",
