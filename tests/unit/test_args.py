@@ -95,3 +95,36 @@ def test_invalid_image_name():
     """
     with pytest.raises(SystemExit):
         make_r2d(["--image-name", "_invalid", "."])
+
+
+def test_build_config_priority(tmp_path):
+    config_file = str(tmp_path.joinpath("repo2docker_config.py"))
+    with open(config_file, "w") as f:
+        f.write("c.Repo2Docker.dry_run = True")
+    r2d = make_r2d(["--config", config_file, "."])
+    assert r2d.dry_run
+    r2d = make_r2d(["--config", config_file, "--build", "."])
+    assert not r2d.dry_run
+    with open(config_file, "w") as f:
+        f.write("c.Repo2Docker.dry_run = False")
+    r2d = make_r2d(["--config", config_file, "--no-build", "."])
+    assert r2d.dry_run
+
+
+@pytest.mark.parametrize(
+    "trait, arg, default",
+    [
+        ("output_image_spec", "--image-name", ""),
+        ("ref", "--ref", None),
+    ],
+)
+def test_config_priority(tmp_path, trait, arg, default):
+    config_file = str(tmp_path.joinpath("repo2docker_config.py"))
+    r2d = make_r2d(["."])
+    assert getattr(r2d, trait) == default
+    with open(config_file, "w") as f:
+        f.write(f"c.Repo2Docker.{trait} = 'config'")
+    r2d = make_r2d(["--config", config_file, "."])
+    assert getattr(r2d, trait) == "config"
+    r2d = make_r2d(["--config", config_file, arg, "cli", "."])
+    assert getattr(r2d, trait) == "cli"
