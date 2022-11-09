@@ -13,10 +13,12 @@
 - Tests use of a `Project.toml` file for Julia, using the repo2docker default
   version of Julia as specified in `julia_project.py`.
 
-### project-1.0.2
+### project-1.0.2-binder-dir
 
 - Tests use of a `Project.toml` file for Julia, using a version of Julia
   specified via `julia = "=1.0.2"` in `Project.toml`'s `[compat]` section.
+
+- Test use of a `.binder` directory.
 
 ### require
 

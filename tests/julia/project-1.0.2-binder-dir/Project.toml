@@ -1,0 +1,8 @@
+# A broken Project.toml, but the idea is that the test should ignore this file
+# anyhow as there is a .binder folder.
+#
+[deps]
+IteratorInterfaceExtensions = "invalid"
+
+[compat]
+julia = "=1.0.invalid"

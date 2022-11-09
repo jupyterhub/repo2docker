@@ -93,8 +93,15 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             ("JUPYTER_DATA_DIR", "${NB_PYTHON_PREFIX}/share/jupyter"),
         ]
 
+    @property
+    def project_dir(self):
+        if self.binder_dir:
+            return "${REPO_DIR}/" + self.binder_dir
+        else:
+            return "${REPO_DIR}"
+
     def get_env(self):
-        return super().get_env() + [("JULIA_PROJECT", "${REPO_DIR}")]
+        return super().get_env() + [("JULIA_PROJECT", self.project_dir)]
 
     def get_path(self):
         """Adds path to Julia binaries to user's PATH.
@@ -148,15 +155,19 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
         The parent, CondaBuildPack, will add the build steps for
         any needed Python packages found in environment.yml.
         """
-        return super().get_assemble_scripts() + [
+        scripts = super().get_assemble_scripts()
+        scripts.append(
             (
                 "${NB_USER}",
                 r"""
-                JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project=${REPO_DIR}\");" && \
-                julia --project=${REPO_DIR} -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); pkg"precompile"'
-                """,
+            JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project={project}\");" && \
+            julia --project={project} -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); pkg"precompile"'
+            """.format(
+                    project=self.project_dir
+                ),
             )
-        ]
+        )
+        return scripts
 
     def detect(self):
         """
