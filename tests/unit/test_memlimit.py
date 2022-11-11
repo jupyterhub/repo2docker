@@ -47,25 +47,6 @@ def test_memory_limit_enforced(tmpdir):
     }
 
 
-def test_memlimit_same_postbuild():
-    """
-    Validate that the postBuild files for the dockerfile and non-dockerfile
-    tests are the same
-
-    Until https://github.com/jupyterhub/repo2docker/issues/160 gets fixed.
-    """
-    filepaths = [
-        os.path.join(basedir, "memlimit", t, "postBuild")
-        for t in ("dockerfile", "non-dockerfile")
-    ]
-    file_contents = []
-    for fp in filepaths:
-        with open(fp) as f:
-            file_contents.append(f.read())
-    # Make sure they're all the same
-    assert len(set(file_contents)) == 1
-
-
 @pytest.mark.parametrize("BuildPack", [BaseImage, DockerBuildPack])
 def test_memlimit_argument_type(BuildPack):
     # check that an exception is raised when the memory limit isn't an int
