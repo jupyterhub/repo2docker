@@ -1,1 +1,1 @@
-Test that node 12 and npm 6 are installed and runnable.
+Test that node 16 and npm 8 are installed and runnable.
