@@ -4,8 +4,8 @@ import sys
 
 
 def test_sys_version():
-    """The default python version should be 3.7"""
-    assert sys.version_info[:2] == (3, 7)
+    """The default python version should be 3.10"""
+    assert sys.version_info[:2] == (3, 10)
 
 
 def test_there():
