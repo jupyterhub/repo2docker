@@ -39,9 +39,9 @@ def test_legacy_on_repo_without_dockerfile(base_image):
 
 
 @pytest.mark.parametrize("python_version", ["2.6", "3.0", "4.10", "3.99"])
-def test_unsupported_python(tmpdir, python_version):
+def test_unsupported_python(tmpdir, python_version, base_image):
     tmpdir.chdir()
-    bp = PythonBuildPack()
+    bp = PythonBuildPack(base_image)
     bp._python_version = python_version
     assert bp.python_version == python_version
     with pytest.raises(ValueError):
