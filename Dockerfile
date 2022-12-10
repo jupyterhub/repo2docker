@@ -2,7 +2,7 @@
 ARG ALPINE_VERSION=3.16
 FROM alpine:${ALPINE_VERSION} AS builder
 
-RUN apk add --no-cache git python3 python3-dev py-pip build-base
+RUN apk add --no-cache git python3 python3-dev py3-pip build-base
 
 # set pip's cache directory using this environment variable, and use
 # ARG instead of ENV to ensure its only set when the image is built
@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
 FROM alpine:${ALPINE_VERSION}
 
 # install python, git, bash, mercurial
-RUN apk add --no-cache git git-lfs python3 py-pip py3-setuptools bash docker mercurial
+RUN apk add --no-cache git git-lfs python3 py3-pip bash docker mercurial
 
 # repeat ARG from above
 ARG PIP_CACHE_DIR=/tmp/pip-cache
