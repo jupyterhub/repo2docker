@@ -343,8 +343,8 @@ class RBuildPack(PythonBuildPack):
             (
                 "${NB_USER}",
                 # Install a pinned version of devtools, IRKernel and shiny
-                r"""
-                EXPANDED_CRAN_MIRROR_URL="$(. /etc/os-release && echo {self.devtools_cran_mirror_url()} | envsubst)" && \
+                rf"""
+                EXPANDED_CRAN_MIRROR_URL="$(. /etc/os-release && echo {cran_mirror_url} | envsubst)" && \
                 R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos='${{EXPANDED_CRAN_MIRROR_URL}}')" && \
                 R --quiet -e "IRkernel::installspec(prefix='$NB_PYTHON_PREFIX')"
                 """,
