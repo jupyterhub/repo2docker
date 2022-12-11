@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
 FROM alpine:${ALPINE_VERSION}
 
 # install python, git, bash, mercurial
-RUN apk add --no-cache git git-lfs python3 py3-pip bash docker mercurial
+RUN apk add --no-cache git git-lfs python3 py3-pip py3-setuptools bash docker mercurial
 
 # repeat ARG from above
 ARG PIP_CACHE_DIR=/tmp/pip-cache
