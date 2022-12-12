@@ -12,12 +12,12 @@
 # Test that a full remote/ref works
 - name: Binder Examples - Requirements
   url: https://github.com/binder-examples/requirements
-  ref: origin/master
+  ref: origin/main
   verify: python -c 'import matplotlib'
 # Test that ref is added to branch if not present
 - name: Binder Examples - Requirements
   url: https://github.com/binder-examples/requirements
-  ref: master
+  ref: main
   verify: python -c 'import matplotlib'
 # Test that tags work + ref is added to tag if not present
 - name: Binder Examples - Requirements

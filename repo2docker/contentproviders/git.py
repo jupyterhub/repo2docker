@@ -45,10 +45,10 @@ class Git(ContentProvider):
                 self.log.error(
                     f"Failed to check out ref {ref}", extra=dict(phase=R2dState.FAILED)
                 )
-                if ref == "master":
+                if ref == "master" or ref == "main":
                     msg = (
-                        "Failed to check out the 'master' branch. "
-                        "Maybe the default branch is not named 'master' "
+                        f"Failed to check out the '{ref}' branch. "
+                        f"Maybe the default branch is not named '{ref}' "
                         "for this repository.\n\nTry not explicitly "
                         "specifying `--ref`."
                     )
