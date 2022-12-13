@@ -19,3 +19,15 @@ Only images that match the following criteria are supported:
 - Contains a set of base packages installed with [the `buildpack-deps` image family](https://hub.docker.com/_/buildpack-deps).
 
 Other images _may_ work, but are not officially supported.
+
+## This will affect reproducibility 🚨
+
+Changing the base image may have an impact on the reproducibility of repositories that are built.
+There are **no guarantees that repositories will behave the same way as other repo2docker builds if you change the base image**.
+For example these are two scenarios that would make your repositories non-reproducible:
+
+- **Your base image is different from `Ubuntu:bionic`.**
+  If you change the base image in a way that is different from repo2docker's default (the Ubuntu `bionic` image), then repositories that **you** build with repo2docker may be significantly different from those that **other** instances of repo2docker build (e.g., those from [`mybinder.org`](https://mybinder.org)).
+- **Your base image changes over time.**
+  If you choose a base image that changes its composition over time (e.g., an image provided by some other community), then it may cause repositories build with your base image to change in unpredictable ways.
+  We recommend choosing a base image that you know to be stable and trustworthy.
