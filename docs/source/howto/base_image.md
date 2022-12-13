@@ -18,4 +18,4 @@ Only images that match the following criteria are supported:
 - Ubuntu based distributions (minimum `18.04`)
 - Contains a set of base packages installed with [the `buildpack-deps` image family](https://hub.docker.com/_/buildpack-deps).
 
-Other images *may* work, but are not officially supported.
+Other images _may_ work, but are not officially supported.
