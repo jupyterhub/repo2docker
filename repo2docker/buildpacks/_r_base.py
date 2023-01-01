@@ -4,10 +4,14 @@ Base information for using R in BuildPacks.
 Keeping this in r.py would lead to cyclic imports.
 """
 from ..semver import parse_version as V
+from ..utils import get_platform
 
 
 def rstudio_base_scripts(r_version):
     """Base steps to install RStudio and shiny-server."""
+
+    if get_platform() != "linux-64":
+        raise RuntimeError("RStudio is only available for linux-64")
 
     # Shiny server (not the package!) seems to be the same version for all R versions
     shiny_server_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.17.973-amd64.deb"

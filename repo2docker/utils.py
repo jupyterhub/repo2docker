@@ -1,6 +1,8 @@
 import os
+import platform
 import re
 import subprocess
+import warnings
 from contextlib import contextmanager
 from enum import Enum
 from functools import partial
@@ -524,3 +526,18 @@ def is_local_pip_requirement(line):
         return True
 
     return False
+
+
+def get_platform():
+    """Return the platform of the image
+
+    Returns either `linux-64` or `linux-aarch64`
+    """
+    m = platform.machine()
+    if m == "x86_64":
+        return "linux-64"
+    elif m == "aarch64":
+        return "linux-aarch64"
+    else:
+        warnings.warn(f"Unexpected platform '{m}', defaulting to linux-64")
+        return "linux-64"

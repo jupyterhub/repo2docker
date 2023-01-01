@@ -8,6 +8,7 @@ from traitlets import Dict
 import docker
 
 from .engine import Container, ContainerEngine, ContainerEngineException, Image
+from .utils import get_platform
 
 
 class DockerContainer(Container):
@@ -93,6 +94,12 @@ class DockerEngine(ContainerEngine):
         labels=None,
         **kwargs,
     ):
+        platform = get_platform()
+        if platform == "linux-aarch64":
+            docker_platform = "linux/arm64"
+        else:
+            docker_platform = "linux/amd64"
+
         return self._apiclient.build(
             buildargs=buildargs,
             cache_from=cache_from,
@@ -106,7 +113,7 @@ class DockerEngine(ContainerEngine):
             fileobj=fileobj,
             path=path,
             labels=labels,
-            platform="linux/amd64",
+            platform=docker_platform,
             **kwargs,
         )
 

@@ -131,7 +131,9 @@ if __name__ == "__main__":
         for platform in args.platform:
             env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
             set_python(env_file, py)
-            frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + f"-{platform}.lock")
+            frozen_file = pathlib.Path(
+                os.path.splitext(env_file)[0] + f"-{platform}.lock"
+            )
             freeze(env_file, frozen_file, platform)
             if py == default_py:
                 shutil.copy(frozen_file, FROZEN_FILE_T.format(platform=platform))

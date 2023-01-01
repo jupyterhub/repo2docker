@@ -11,6 +11,8 @@ import textwrap
 import escapism
 import jinja2
 
+from ..utils import get_platform
+
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
 FROM buildpack-deps:bionic
@@ -229,6 +231,7 @@ class BuildPack:
                 "Windows environment detected. Note that Windows "
                 "support is experimental in repo2docker."
             )
+        self.platform = get_platform()
 
     def get_packages(self):
         """
