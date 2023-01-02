@@ -35,6 +35,14 @@ class CondaBuildPack(BaseImage):
     # extra pip requirements.txt for the notebook env
     _nb_requirements_file = ""
 
+    def _conda_platform(self):
+        """Return the conda platform name for the current platform"""
+        if self.platform == "linux/amd64":
+            return "linux-64"
+        if self.platform == "linux/arm64":
+            return "linux-aarch64"
+        raise ValueError(f"Unknown platform {self.platform}")
+
     def get_build_env(self):
         """Return environment variables to be set.
 
@@ -59,7 +67,7 @@ class CondaBuildPack(BaseImage):
             # this exe should be used for installs after bootstrap with micromamba
             # switch this to /usr/local/bin/micromamba to use it for all installs
             ("MAMBA_EXE", "${CONDA_DIR}/bin/mamba"),
-            ("CONDA_PLATFORM", self.platform),
+            ("CONDA_PLATFORM", self._conda_platform()),
         ]
         if self._nb_requirements_file:
             env.append(("NB_REQUIREMENTS_FILE", self._nb_requirements_file))
@@ -161,7 +169,7 @@ class CondaBuildPack(BaseImage):
         # major Python versions during upgrade.
         # If no version is specified or no matching X.Y version is found,
         # the default base environment is used.
-        frozen_name = f"environment-{self.platform}.lock"
+        frozen_name = f"environment-{self._conda_platform()}.lock"
         pip_frozen_name = "requirements.txt"
         if py_version:
             if self.python_version == "2.7":
@@ -177,13 +185,15 @@ class CondaBuildPack(BaseImage):
                         self._kernel_requirements_file
                     ) = "/tmp/env/kernel-requirements.txt"
             else:
-                py_frozen_name = f"environment.py-{py_version}-{self.platform}.lock"
+                py_frozen_name = (
+                    f"environment.py-{py_version}-{self._conda_platform()}.lock"
+                )
                 if os.path.exists(os.path.join(HERE, py_frozen_name)):
                     frozen_name = py_frozen_name
                     pip_frozen_name = f"requirements.py-{py_version}.pip"
                 else:
                     raise ValueError(
-                        f"Python version {py_version} {self.platform} is not supported!"
+                        f"Python version {py_version} {self._conda_platform()} is not supported!"
                     )
         files[
             "conda/" + frozen_name
@@ -369,6 +379,10 @@ class CondaBuildPack(BaseImage):
                 """,
                 )
             )
+            if self.platform != "linux/amd64":
+                raise RuntimeError(
+                    f"RStudio is only available for linux/amd64 ({self.platform})"
+                )
             scripts += rstudio_base_scripts(self.r_version)
             scripts += [
                 (

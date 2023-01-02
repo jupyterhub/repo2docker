@@ -15,6 +15,7 @@ import shutil
 import sys
 import tempfile
 import time
+import warnings
 from urllib.parse import urlparse
 
 import entrypoints
@@ -36,7 +37,7 @@ from .buildpacks import (
     RBuildPack,
 )
 from .engine import BuildError, ContainerEngineException, ImageLoadError
-from .utils import ByteSpecification, R2dState, chdir
+from .utils import ByteSpecification, R2dState, chdir, get_platform
 
 
 class Repo2Docker(Application):
@@ -249,6 +250,27 @@ class Repo2Docker(Application):
         """,
         config=True,
     )
+
+    platform = Unicode(
+        config=True,
+        help="""
+        Platform to build for, linux/amd64 (recommended) or linux/arm64 (experimental).
+        """,
+    )
+
+    @default("platform")
+    def _platform_default(self):
+        """
+        Default platform
+        """
+        p = get_platform()
+        if p == "linux/arm64":
+            warnings.warn(
+                "Building for linux/arm64 is experimental. "
+                "To use the recommended platform set --Repo2Docker.platform=linux/amd64. "
+                "To silence this warning set --Repo2Docker.platform=linux/arm64."
+            )
+        return p
 
     extra_build_args = Dict(
         {},
@@ -778,6 +800,7 @@ class Repo2Docker(Application):
                 else:
                     picked_buildpack = self.default_buildpack()
 
+                picked_buildpack.platform = self.platform
                 picked_buildpack.appendix = self.appendix
                 # Add metadata labels
                 picked_buildpack.labels["repo2docker.version"] = self.version
@@ -819,6 +842,7 @@ class Repo2Docker(Application):
                         build_args,
                         self.cache_from,
                         self.extra_build_kwargs,
+                        platform=self.platform,
                     ):
                         if docker_client.string_output:
                             self.log.info(l, extra=dict(phase=R2dState.BUILDING))

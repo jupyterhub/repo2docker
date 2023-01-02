@@ -87,7 +87,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
             For example, a tuple may be `('JULIA_VERSION', '0.6.0')`.
 
         """
-        if self.platform == "linux-aarch64":
+        if self.platform == "linux/arm64":
             julia_arch = julia_arch_short = "aarch64"
         else:
             julia_arch = "x86_64"

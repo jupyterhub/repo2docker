@@ -5,7 +5,6 @@ import re
 import requests
 
 from ..semver import parse_version as V
-from ..utils import get_platform
 from ._r_base import rstudio_base_scripts
 from .python import PythonBuildPack
 
@@ -278,8 +277,10 @@ class RBuildPack(PythonBuildPack):
 
         cran_mirror_url = self.get_cran_mirror_url(self.checkpoint_date)
 
-        if get_platform() != "linux-64":
-            raise RuntimeError("RStudio is only available for linux-64")
+        if self.platform != "linux/amd64":
+            raise RuntimeError(
+                f"RStudio is only available for linux/amd64 ({self.platform})"
+            )
         scripts = [
             (
                 "root",

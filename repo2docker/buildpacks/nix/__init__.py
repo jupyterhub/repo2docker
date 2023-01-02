@@ -31,7 +31,7 @@ class NixBuildPack(BaseImage):
          - install nix package manager for user
 
         """
-        if self.platform == "linux-aarch64":
+        if self.platform == "linux/arm64":
             nix_arch = "aarch64"
         else:
             nix_arch = "x86_64"
