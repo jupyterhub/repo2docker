@@ -173,6 +173,11 @@ class CondaBuildPack(BaseImage):
         pip_frozen_name = "requirements.txt"
         if py_version:
             if self.python_version == "2.7":
+                if "linux-64" != self._conda_platform():
+                    raise ValueError(
+                        f"Python version 2.7 {self._conda_platform()} is not supported!"
+                    )
+
                 # python 2 goes in a different env
                 files[
                     "conda/environment.py-2.7-linux-64.lock"
