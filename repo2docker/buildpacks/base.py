@@ -229,6 +229,7 @@ class BuildPack:
                 "Windows environment detected. Note that Windows "
                 "support is experimental in repo2docker."
             )
+        self.platform = ""
 
     def get_packages(self):
         """
@@ -559,6 +560,7 @@ class BuildPack:
         build_args,
         cache_from,
         extra_build_kwargs,
+        platform=None,
     ):
         tarf = io.BytesIO()
         tar = tarfile.open(fileobj=tarf, mode="w")
@@ -613,6 +615,7 @@ class BuildPack:
             buildargs=build_args,
             container_limits=limits,
             cache_from=cache_from,
+            platform=platform,
         )
 
         build_kwargs.update(extra_build_kwargs)

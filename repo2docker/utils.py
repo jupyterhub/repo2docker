@@ -1,6 +1,8 @@
 import os
+import platform
 import re
 import subprocess
+import warnings
 from contextlib import contextmanager
 from enum import Enum
 from functools import partial
@@ -524,3 +526,22 @@ def is_local_pip_requirement(line):
         return True
 
     return False
+
+
+def get_platform():
+    """Return the target platform of the container image
+
+    Returns either `linux/amd64` or `linux/arm64`
+    """
+    m = platform.machine()
+    if m == "x86_64":
+        return "linux/amd64"
+    elif m == "aarch64":
+        # Linux reports aarch64
+        return "linux/arm64"
+    elif m == "arm64":
+        # OSX reports arm64
+        return "linux/arm64"
+    else:
+        warnings.warn(f"Unexpected platform '{m}', defaulting to linux/amd64")
+        return "linux/amd64"

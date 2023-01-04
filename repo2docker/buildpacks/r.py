@@ -277,6 +277,10 @@ class RBuildPack(PythonBuildPack):
 
         cran_mirror_url = self.get_cran_mirror_url(self.checkpoint_date)
 
+        if self.platform != "linux/amd64":
+            raise RuntimeError(
+                f"RStudio is only available for linux/amd64 ({self.platform})"
+            )
         scripts = [
             (
                 "root",

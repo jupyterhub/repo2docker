@@ -91,6 +91,7 @@ class DockerEngine(ContainerEngine):
         fileobj=None,
         path="",
         labels=None,
+        platform=None,
         **kwargs,
     ):
         return self._apiclient.build(
@@ -106,7 +107,7 @@ class DockerEngine(ContainerEngine):
             fileobj=fileobj,
             path=path,
             labels=labels,
-            platform="linux/amd64",
+            platform=platform,
             **kwargs,
         )
 
