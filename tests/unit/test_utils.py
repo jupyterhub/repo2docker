@@ -168,6 +168,7 @@ def test_local_pip_requirement(req, is_local):
     [
         ("x86_64", "linux/amd64"),
         ("aarch64", "linux/arm64"),
+        ("arm64", "linux/arm64"),
         ("other", "linux/amd64"),
     ],
 )

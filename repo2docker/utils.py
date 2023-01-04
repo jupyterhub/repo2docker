@@ -537,6 +537,10 @@ def get_platform():
     if m == "x86_64":
         return "linux/amd64"
     elif m == "aarch64":
+        # Linux reports aarch64
+        return "linux/arm64"
+    elif m == "arm64":
+        # OSX reports arm64
         return "linux/arm64"
     else:
         warnings.warn(f"Unexpected platform '{m}', defaulting to linux/amd64")
