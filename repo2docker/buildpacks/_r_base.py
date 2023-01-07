@@ -47,7 +47,7 @@ def rstudio_base_scripts(r_version):
             fi && \
             curl --silent --location --fail ${{RSTUDIO_URL}} > /tmp/rstudio.deb && \
             curl --silent --location --fail {shiny_server_url} > /tmp/shiny.deb && \
-            echo "${{RSTUDIO_HASH}} /tmp/rstudio.deb' | sha256sum -c - && \
+            echo "${{RSTUDIO_HASH}} /tmp/rstudio.deb" | sha256sum -c - && \
             echo '{shiny_sha256sum} /tmp/shiny.deb' | sha256sum -c - && \
             apt install -y --no-install-recommends /tmp/rstudio.deb /tmp/shiny.deb && \
             rm /tmp/*.deb && \
