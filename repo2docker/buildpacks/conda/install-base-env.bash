@@ -8,7 +8,7 @@ cd $(dirname $0)
 export MAMBA_VERSION=1.0.0
 export CONDA_VERSION=4.13.0
 
-URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/linux-64/micromamba-${MAMBA_VERSION}-0.tar.bz2"
+URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/${CONDA_PLATFORM}/micromamba-${MAMBA_VERSION}-0.tar.bz2"
 
 # make sure we don't do anything funky with user's $HOME
 # since this is run as root

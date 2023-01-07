@@ -79,16 +79,25 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 will be installed
             - `JULIA_DEPOT_PATH`: path where Julia libraries are installed.
             - `JULIA_VERSION`: default version of julia to be installed
+            - `JULIA_ARCH`: machine architecture used in Julia download URLs
+            - `JULIA_ARCH_SHORT`: machine architecture used in Julia download URLs
             - `JUPYTER`: environment variable required by IJulia to point to
                 the `jupyter` executable
 
             For example, a tuple may be `('JULIA_VERSION', '0.6.0')`.
 
         """
+        if self.platform == "linux/arm64":
+            julia_arch = julia_arch_short = "aarch64"
+        else:
+            julia_arch = "x86_64"
+            julia_arch_short = "x64"
         return super().get_build_env() + [
             ("JULIA_PATH", "${APP_BASE}/julia"),
             ("JULIA_DEPOT_PATH", "${JULIA_PATH}/pkg"),
             ("JULIA_VERSION", self.julia_version),
+            ("JULIA_ARCH", julia_arch),
+            ("JULIA_ARCH_SHORT", julia_arch_short),
             ("JUPYTER", "${NB_PYTHON_PREFIX}/bin/jupyter"),
             ("JUPYTER_DATA_DIR", "${NB_PYTHON_PREFIX}/share/jupyter"),
         ]
@@ -129,7 +138,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 "root",
                 r"""
                 mkdir -p ${JULIA_PATH} && \
-                curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
+                curl -sSL "https://julialang-s3.julialang.org/bin/linux/${JULIA_ARCH_SHORT}/${JULIA_VERSION%[.-]*}/julia-${JULIA_VERSION}-linux-${JULIA_ARCH}.tar.gz" | tar -xz -C ${JULIA_PATH} --strip-components 1
                 """,
             ),
             (

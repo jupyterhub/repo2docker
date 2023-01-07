@@ -22,7 +22,7 @@ from ruamel.yaml import YAML
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
 ENV_FILE = HERE / "environment.yml"
-FROZEN_FILE = os.path.splitext(ENV_FILE)[0] + ".lock"
+FROZEN_FILE_T = os.path.splitext(ENV_FILE)[0] + "-{platform}.lock"
 
 ENV_FILE_T = HERE / "environment.py-{py}.yml"
 
@@ -119,12 +119,21 @@ if __name__ == "__main__":
         help="Python version(s) to update and freeze",
         default=("3.7", "3.8", "3.9", "3.10"),
     )
+    parser.add_argument(
+        "platform",
+        nargs="*",
+        help="Platform(s) to update and freeze",
+        default=("linux-64", "linux-aarch64"),
+    )
     args = parser.parse_args()
     default_py = "3.7"
     for py in args.py:
-        env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
-        set_python(env_file, py)
-        frozen_file = pathlib.Path(os.path.splitext(env_file)[0] + ".lock")
-        freeze(env_file, frozen_file)
-        if py == default_py:
-            shutil.copy(frozen_file, FROZEN_FILE)
+        for platform in args.platform:
+            env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
+            set_python(env_file, py)
+            frozen_file = pathlib.Path(
+                os.path.splitext(env_file)[0] + f"-{platform}.lock"
+            )
+            freeze(env_file, frozen_file, platform)
+            if py == default_py:
+                shutil.copy(frozen_file, FROZEN_FILE_T.format(platform=platform))
