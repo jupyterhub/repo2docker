@@ -4,7 +4,7 @@ channels:
 - conda-forge
 dependencies:
 - python=3.7.*
-- nodejs=16
+- nodejs=18
 - pip
 - ipywidgets==8.0.2
 - jupyter-offlinenotebook==0.2.2
