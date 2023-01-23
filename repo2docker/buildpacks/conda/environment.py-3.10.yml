@@ -1,10 +1,10 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2023-01-20 15:47:50 UTC
+# Generated on 2023-01-23 12:08:19 UTC
 channels:
 - conda-forge
 dependencies:
 - python=3.10.*
-- nodejs=16
+- nodejs=18
 - pip
 - ipywidgets==8.0.2
 - jupyter-offlinenotebook==0.2.2
