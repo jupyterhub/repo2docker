@@ -45,8 +45,8 @@ class PythonBuildPack(CondaBuildPack):
         # whether it's distinct from the notebook or the same.
         pip = "${KERNEL_PYTHON_PREFIX}/bin/pip"
         scripts = []
-        if self.py2:
-            # using python 2 kernel,
+        if self.separate_kernel_env:
+            # using legacy Python kernel
             # requirements3.txt allows installation in the notebook server env
             nb_requirements_file = self.binder_path("requirements3.txt")
             if os.path.exists(nb_requirements_file):

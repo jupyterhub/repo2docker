@@ -1,10 +1,12 @@
 """BuildPack for conda environments"""
 import os
 import re
+import warnings
 from collections.abc import Mapping
 
 from ruamel.yaml import YAML
 
+from ...semver import parse_version as V
 from ...utils import is_local_pip_requirement
 from .._r_base import rstudio_base_scripts
 from ..base import BaseImage
@@ -98,7 +100,7 @@ class CondaBuildPack(BaseImage):
         """
         path = super().get_path()
         path.insert(0, "${CONDA_DIR}/bin")
-        if self.py2:
+        if self.separate_kernel_env:
             path.insert(0, "${KERNEL_PYTHON_PREFIX}/bin")
         path.insert(0, "${NB_PYTHON_PREFIX}/bin")
         # This is at the end of $PATH, for backwards compat reasons
@@ -172,20 +174,24 @@ class CondaBuildPack(BaseImage):
         frozen_name = f"environment-{self._conda_platform()}.lock"
         pip_frozen_name = "requirements.txt"
         if py_version:
-            if self.python_version == "2.7":
-                if "linux-64" != self._conda_platform():
+            conda_platform = self._conda_platform()
+            if self.separate_kernel_env:
+                self.log.warning(
+                    f"User-requested packages for legacy Python version {py_version} will be installed in a separate kernel environment.\n"
+                )
+                lockfile_name = f"environment.py-{py_version}-{conda_platform}.lock"
+                if not os.path.exists(os.path.join(HERE, lockfile_name)):
                     raise ValueError(
-                        f"Python version 2.7 {self._conda_platform()} is not supported!"
+                        f"Python version {py_version} on {conda_platform} is not supported!"
                     )
-
-                # python 2 goes in a different env
                 files[
-                    "conda/environment.py-2.7-linux-64.lock"
+                    f"conda/{lockfile_name}"
                 ] = self._kernel_environment_file = "/tmp/env/kernel-environment.lock"
-                # additional pip requirements for kernel env
-                if os.path.exists(os.path.join(HERE, "requirements.py-2.7.txt")):
+
+                requirements_file_name = f"requirements.py-{py_version}.pip"
+                if os.path.exists(os.path.join(HERE, requirements_file_name)):
                     files[
-                        "conda/requirements.py-2.7.txt"
+                        f"conda/{requirements_file_name}"
                     ] = (
                         self._kernel_requirements_file
                     ) = "/tmp/env/kernel-requirements.txt"
@@ -333,7 +339,25 @@ class CondaBuildPack(BaseImage):
     @property
     def py2(self):
         """Am I building a Python 2 kernel environment?"""
+        warnings.warn(
+            "CondaBuildPack.py2 is deprecated in 2023.2. Use CondaBuildPack.separate_kernel_env.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self.python_version and self.python_version.split(".")[0] == "2"
+
+    # Python versions _older_ than this get a separate kernel env
+    kernel_env_cutoff_version = "3.7"
+
+    @property
+    def separate_kernel_env(self):
+        """Whether the kernel should be installed into a separate env from the server
+
+        Applies to older versions of Python that aren't kept up-to-date
+        """
+        return self.python_version and V(self.python_version) < V(
+            self.kernel_env_cutoff_version
+        )
 
     def get_preassemble_script_files(self):
         """preassembly only requires environment.yml
@@ -352,7 +376,11 @@ class CondaBuildPack(BaseImage):
         """Return series of build-steps specific to this source repository."""
         scripts = []
         environment_yml = self.binder_path("environment.yml")
-        env_prefix = "${KERNEL_PYTHON_PREFIX}" if self.py2 else "${NB_PYTHON_PREFIX}"
+        env_prefix = (
+            "${KERNEL_PYTHON_PREFIX}"
+            if self.separate_kernel_env
+            else "${NB_PYTHON_PREFIX}"
+        )
         if os.path.exists(environment_yml):
             # TODO: when using micromamba, we call $MAMBA_EXE install -p ...
             # whereas mamba/conda need `env update -p ...` when it's an env.yaml file
