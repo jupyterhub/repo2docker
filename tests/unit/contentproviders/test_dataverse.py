@@ -95,7 +95,6 @@ def test_detect_dataverse(test_input, expected, requests_mock):
 
 @pytest.fixture
 def dv_files(tmpdir):
-
     f1 = tmpdir.join("some-file.txt")
     f1.write("some content")
 
