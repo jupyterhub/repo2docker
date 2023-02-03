@@ -35,7 +35,6 @@ hydroshare_data = {
 
 
 def test_content_id(requests_mock):
-
     requests_mock.get(re.compile("https://"), json=hydroshare_data)
     requests_mock.get(re.compile("https://doi.org"), json=doi_resolver)
 

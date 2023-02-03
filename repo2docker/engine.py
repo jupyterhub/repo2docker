@@ -177,6 +177,7 @@ class ContainerEngine(LoggingConfigurable):
         fileobj=None,
         path="",
         labels=None,
+        platform=None,
         **kwargs,
     ):
         """
@@ -207,6 +208,8 @@ class ContainerEngine(LoggingConfigurable):
             path to the Dockerfile
         labels : dict
             Dictionary of labels to set on the image
+        platform: str
+            Platform to build for
 
         Returns
         -------

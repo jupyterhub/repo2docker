@@ -30,6 +30,7 @@ class DockerBuildPack(BuildPack):
         build_args,
         cache_from,
         extra_build_kwargs,
+        platform=None,
     ):
         """Build a Docker image based on the Dockerfile in the source repo."""
         # If you work on this bit of code check the corresponding code in
@@ -55,6 +56,7 @@ class DockerBuildPack(BuildPack):
             container_limits=limits,
             cache_from=cache_from,
             labels=self.get_labels(),
+            platform=platform,
         )
 
         build_kwargs.update(extra_build_kwargs)

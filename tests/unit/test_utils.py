@@ -2,6 +2,7 @@
 Tests for repo2docker/utils.py
 """
 import os
+import platform
 import subprocess
 import tempfile
 
@@ -160,3 +161,17 @@ def test_open_guess_encoding():
 )
 def test_local_pip_requirement(req, is_local):
     assert utils.is_local_pip_requirement(req) == is_local
+
+
+@pytest.mark.parametrize(
+    "machine_name,expected",
+    [
+        ("x86_64", "linux/amd64"),
+        ("aarch64", "linux/arm64"),
+        ("arm64", "linux/arm64"),
+        ("other", "linux/amd64"),
+    ],
+)
+def test_get_platform(monkeypatch, machine_name, expected):
+    monkeypatch.setattr(platform, "machine", lambda: machine_name)
+    assert utils.get_platform() == expected

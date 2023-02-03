@@ -97,7 +97,7 @@ http://mybinder.org/v2/gh/binder-examples/r/HEAD?urlpath=rstudio
 Shiny
 =====
 
-`Shiny lets you create interactive visualizaions with R <https://shiny.rstudio.com/>`_.
+`Shiny lets you create interactive visualizations with R <https://shiny.rstudio.com/>`_.
 Shiny is automatically enabled if a configuration file for
 R is detected (i.e. an R version specified in ``runtime.txt``). If
 this is detected, Shiny will be accessible by appending

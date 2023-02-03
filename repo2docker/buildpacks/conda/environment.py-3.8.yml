@@ -4,11 +4,11 @@ channels:
 - conda-forge
 dependencies:
 - python=3.8.*
-- nodejs=16
+- nodejs=18
 - pip
 - ipywidgets==8.0.2
 - jupyter-offlinenotebook==0.2.2
-- jupyter-resource-usage==0.6.3
+- jupyter-resource-usage==0.7.0
 - jupyterlab==3.4.8
 - jupyterhub-singleuser==1.5.0
 - notebook==6.4.12
