@@ -141,7 +141,7 @@ class CondaBuildPack(BaseImage):
             ),
         ]
 
-    major_pythons = {"2": "2.7", "3": "3.7"}
+    major_pythons = {"2": "2.7", "3": "3.10"}
 
     def get_build_script_files(self):
         """
