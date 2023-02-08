@@ -10,19 +10,19 @@
   ref: b8259dac9eb
   verify: python -c 'import matplotlib'
 # Test that a full remote/ref works
-- name: Binder Examples - Requirements
+- name: Binder Examples - Requirements - origin/main
   url: https://github.com/binder-examples/requirements
   ref: origin/main
   verify: python -c 'import matplotlib'
 # Test that ref is added to branch if not present
-- name: Binder Examples - Requirements
+- name: Binder Examples - Requirements - main
   url: https://github.com/binder-examples/requirements
   ref: main
   verify: python -c 'import matplotlib'
 # Test that tags work + ref is added to tag if not present
-- name: Binder Examples - Requirements
+- name: Binder Examples - Requirements - tag
   url: https://github.com/binder-examples/requirements
-  ref: python-3.7
+  ref: python-3.8
   verify: python -c 'import matplotlib'
 # Zenodo record of https://github.com/binder-examples/requirements
 - name: 10.5281/zenodo.3242074
