@@ -165,49 +165,54 @@ class CondaBuildPack(BaseImage):
             "conda/activate-conda.sh": "/etc/profile.d/activate-conda.sh",
         }
         py_version = self.python_version
+        if not py_version or len(py_version.split(".")) != 2:
+            raise ValueError(
+                f"{self.__class__.__name__}.python_version must always be specified as 'x.y', e.g. '3.10', got {py_version}."
+            )
         self.log.info(f"Building conda environment for python={py_version}\n")
         # Select the frozen base environment based on Python version.
         # avoids expensive and possibly conflicting upgrades when changing
         # major Python versions during upgrade.
-        # If no version is specified or no matching X.Y version is found,
-        # the default base environment is used.
-        frozen_name = f"environment-{self._conda_platform()}.lock"
-        pip_frozen_name = "requirements.txt"
-        if py_version:
-            conda_platform = self._conda_platform()
-            if self.separate_kernel_env:
-                self.log.warning(
-                    f"User-requested packages for legacy Python version {py_version} will be installed in a separate kernel environment.\n"
-                )
-                lockfile_name = f"environment.py-{py_version}-{conda_platform}.lock"
-                if not os.path.exists(os.path.join(HERE, lockfile_name)):
-                    raise ValueError(
-                        f"Python version {py_version} on {conda_platform} is not supported!"
-                    )
-                files[
-                    f"conda/{lockfile_name}"
-                ] = self._kernel_environment_file = "/tmp/env/kernel-environment.lock"
+        conda_platform = self._conda_platform()
 
-                requirements_file_name = f"requirements.py-{py_version}.pip"
-                if os.path.exists(os.path.join(HERE, requirements_file_name)):
-                    files[
-                        f"conda/{requirements_file_name}"
-                    ] = (
-                        self._kernel_requirements_file
-                    ) = "/tmp/env/kernel-requirements.txt"
-            else:
-                py_frozen_name = (
-                    f"environment.py-{py_version}-{self._conda_platform()}.lock"
+        if self.separate_kernel_env:
+            # setup kernel environment (separate from server)
+            # server runs with default env
+            server_py_version = self.major_pythons["3"]
+            self.log.warning(
+                f"User-requested packages for legacy Python version {py_version} will be installed in a separate kernel environment in $KERNEL_PYTHON_PREFIX.\n"
+                f"Jupyter Server will run with {server_py_version} in $NB_PYTHON_PREFIX.\n"
+            )
+            lockfile_name = f"environment.py-{py_version}-{conda_platform}.lock"
+            if not os.path.exists(os.path.join(HERE, lockfile_name)):
+                raise ValueError(
+                    f"Python version {py_version} on {conda_platform} is not supported!"
                 )
-                if os.path.exists(os.path.join(HERE, py_frozen_name)):
-                    frozen_name = py_frozen_name
-                    pip_frozen_name = f"requirements.py-{py_version}.pip"
-                else:
-                    raise ValueError(
-                        f"Python version {py_version} {self._conda_platform()} is not supported!"
-                    )
+            files[
+                f"conda/{lockfile_name}"
+            ] = self._kernel_environment_file = "/tmp/env/kernel-environment.lock"
+
+            requirements_file_name = f"requirements.py-{py_version}.pip"
+            if os.path.exists(os.path.join(HERE, requirements_file_name)):
+                files[
+                    f"conda/{requirements_file_name}"
+                ] = self._kernel_requirements_file = "/tmp/env/kernel-requirements.txt"
+        else:
+            # server and kernel are the same
+            server_py_version = py_version
+
+        # setup the server Python environment
+        conda_frozen_name = f"environment.py-{server_py_version}-{conda_platform}.lock"
+        pip_frozen_name = f"requirements.py-{server_py_version}.pip"
+
+        if not os.path.exists(os.path.join(HERE, conda_frozen_name)):
+            # no env, not supported
+            raise ValueError(
+                f"Python version {server_py_version} on {conda_platform} is not supported!"
+            )
+
         files[
-            "conda/" + frozen_name
+            "conda/" + conda_frozen_name
         ] = self._nb_environment_file = "/tmp/env/environment.lock"
 
         # add requirements.txt, if present
@@ -267,8 +272,9 @@ class CondaBuildPack(BaseImage):
     def python_version(self):
         """Detect the Python version for a given `environment.yml`
 
-        Will return 'x.y' if version is found (e.g '3.6'),
-        or a Falsy empty string '' if not found.
+        Will always return an `x.y` version.
+        If no version is found, the default Python version is used,
+        via self.major_pythons['3'].
 
         Version information below the minor level is dropped.
         """
@@ -286,13 +292,17 @@ class CondaBuildPack(BaseImage):
 
             # extract major.minor
             if py_version:
-                if len(py_version) == 1:
-                    self._python_version = self.major_pythons.get(py_version[0])
+                py_version_info = py_version.split(".")
+                if len(py_version_info) == 1:
+                    self._python_version = self.major_pythons[py_version_info[0]]
                 else:
                     # return major.minor
-                    self._python_version = ".".join(py_version.split(".")[:2])
+                    self._python_version = ".".join(py_version_info[:2])
             else:
-                self._python_version = ""
+                self._python_version = self.major_pythons["3"]
+                self.log.warning(
+                    f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
+                )
 
         return self._python_version
 
