@@ -1,17 +1,28 @@
 #!/usr/bin/env python
+import os
 import sys
-from subprocess import check_output
+from subprocess import STDOUT, check_output
 
-assert sys.version_info[:2] == (3, 5), sys.version
+assert sys.version_info[:2] == (3, 7), sys.version
 
-out = check_output(["micromamba", "--version"]).decode("utf8").strip()
+
+def sh(cmd, **kwargs):
+    return check_output(cmd, **kwargs).decode("utf8").strip()
+
+
+kernel_python = os.path.join(os.environ["KERNEL_PYTHON_PREFIX"], "bin", "python")
+out = sh([kernel_python, "--version"], stderr=STDOUT)
+v = out.split()[1]
+assert v[:3] == "3.5", out
+
+out = sh(["micromamba", "--version"])
 assert out == "1.1.0", out
 
-out = check_output(["mamba", "--version"]).decode("utf8").strip()
+out = sh(["mamba", "--version"])
 assert (
     out
     == """mamba 1.1.0
 conda 4.13.0"""
 ), out
 
-import numpy
+sh([kernel_python, "-c", "import numpy"])

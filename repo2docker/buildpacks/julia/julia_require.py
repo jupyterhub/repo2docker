@@ -82,6 +82,14 @@ class JuliaRequireBuildPack(PythonBuildPack):
         else:
             julia_arch = "x86_64"
             julia_arch_short = "x64"
+
+        if V(self.julia_version) < V("0.7"):
+            # IJulia with Julia 0.6 isn't compatible with more recent jupyter-core
+            # point it to the one in the kernel env
+            # I _think_ this is only relevant during installation
+            jupyter = "${KERNEL_PYTHON_PREFIX}/bin/jupyter"
+        else:
+            jupyter = "${NB_PYTHON_PREFIX}/bin/jupyter"
         return super().get_build_env() + [
             ("JULIA_PATH", "${APP_BASE}/julia"),
             ("JULIA_HOME", "${JULIA_PATH}/bin"),  # julia <= 0.6
@@ -91,7 +99,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
             ("JULIA_VERSION", self.julia_version),
             ("JULIA_ARCH", julia_arch),
             ("JULIA_ARCH_SHORT", julia_arch_short),
-            ("JUPYTER", "${NB_PYTHON_PREFIX}/bin/jupyter"),
+            ("JUPYTER", jupyter),
         ]
 
     def get_path(self):

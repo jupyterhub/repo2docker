@@ -1,9 +1,9 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2023-02-03 12:32:57 UTC
+# Generated on 2023-02-03 12:31:38 UTC
 channels:
 - conda-forge
 dependencies:
-- python=3.8.*
+- python=3.11.*
 - nodejs=18
 - pip
 - ipywidgets==8.0.2
