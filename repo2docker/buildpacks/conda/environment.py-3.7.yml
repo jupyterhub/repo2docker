@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2023-02-03 15:06:11 UTC
+# Generated on 2023-02-03 12:33:27 UTC
 channels:
 - conda-forge
 dependencies:
@@ -10,6 +10,6 @@ dependencies:
 - jupyter-offlinenotebook==0.2.2
 - jupyter-resource-usage==0.7.0
 - jupyterlab==3.4.8
-- jupyterhub-singleuser==1.5.0
+- jupyterhub-singleuser==3.1.1
 - notebook==6.4.12
 - nteract_on_jupyter==2.1.3

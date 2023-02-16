@@ -1,0 +1,3 @@
+#!/bin/bash
+set -ex
+pytest -vs ./verify.py

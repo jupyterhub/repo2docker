@@ -113,8 +113,8 @@ class PipfileBuildPack(CondaBuildPack):
         # environment.
         assemble_scripts = super().get_assemble_scripts()
 
-        if self.py2:
-            # using Python 2 as a kernel, but Python 3 for the notebook server
+        if self.separate_kernel_env:
+            # using legacy Python (e.g. 2.7) as a kernel
 
             # requirements3.txt allows for packages to be installed to the
             # notebook servers Python environment
