@@ -7,6 +7,7 @@ import string
 import sys
 import tarfile
 import textwrap
+from functools import lru_cache
 
 import escapism
 import jinja2
@@ -230,6 +231,18 @@ class BuildPack:
                 "support is experimental in repo2docker."
             )
         self.platform = ""
+        self._memoize()
+
+    def _memoize(self):
+        """Memoize `get_foo` methods with lru_cache()
+
+        Avoids duplicate log statements when calling what should be idempotent methods more than once
+        """
+        for method_name in dir(self):
+            if method_name.startswith("get_"):
+                method = getattr(self, method_name)
+                if callable(method):
+                    setattr(self, method_name, lru_cache()(method))
 
     def get_packages(self):
         """
