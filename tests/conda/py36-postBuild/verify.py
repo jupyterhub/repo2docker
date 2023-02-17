@@ -69,7 +69,7 @@ def test_kernel_env(kernel_conda):
 def test_server_env(server_conda):
     # this should be the default version
     # it will need updating when the default changes
-    assert server_conda["python"]["version"][:3] == "3.7"
+    assert server_conda["python"]["version"].split(".")[:2] == ["3", "10"]
 
 
 def test_conda_install(kernel_conda, server_conda):

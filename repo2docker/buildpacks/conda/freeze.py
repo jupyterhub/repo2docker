@@ -126,7 +126,7 @@ if __name__ == "__main__":
         default=("linux-64", "linux-aarch64"),
     )
     args = parser.parse_args()
-    default_py = "3.7"
+    default_py = "3.10"
     for py in args.py:
         for platform in args.platform:
             env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
