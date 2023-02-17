@@ -22,6 +22,10 @@ Repo2docker officially supports the following versions of Python
 (specified in your :ref:`environment.yml <environment.yml>` or
 :ref:`runtime.txt <runtime.txt>` file):
 
+- 3.11 (added in 2023)
+- 3.10 (added in 2022, default in 2023)
+- 3.9 (added in 2021)
+- 3.8 (added in 0.11)
 - 3.7 (added in 0.7, default in 0.8)
 - 3.6 (default in 0.7 and earlier)
 - 3.5
@@ -35,9 +39,18 @@ in the base environment is not packaged for your Python,
 either because the version of the package is too new and your chosen Python is too old,
 or vice versa.
 
-I Python 2.7 is specified, a separate environment for the kernel will be
-installed with Python 2. The notebook server will run in the default Python 3.7
-environment.
+If an old version of Python is specified (3.6 or earlier in 2023), a separate environment for the kernel will be installed with your requested Python version.
+The notebook server will run in the default |default_python| environment.
+That is, your _notebooks_ will run with Python 3.6, while your notebook _server_ will run with |default_python|.
+
+These two environments can be distinguished with ``$NB_PYTHON_PREFIX/bin/python`` for the server and ``$KERNEL_PYTHON_PREFIX/bin/python`` for the kernel.
+Both of these environment variables area always defined, even when they are the same.
+
+Starting in 2023, the default version of Python used when Python version is unspecified will be updated more often.
+Python itself releases a new version every year now, and repo2docker will follow, with the default Python version generally trailing the latest stable version of Python itself by 1-2 versions.
+
+If you choose not to specify a Python version, your repository is _guaranteed_ to stop working, eventually.
+We **strongly** recommend specifying a Python version (in environment.yml, runtime.txt, Pipfile, etc.)
 
 Julia
 ~~~~~

@@ -43,8 +43,8 @@ specified in your ``environment.yml``.
 You can also specify which Python version to install in your built environment
 with ``environment.yml``. By default, ``repo2docker`` installs
 |default_python| with your ``environment.yml`` unless you include the version of
-Python in this file.  ``conda`` supports all versions of Python,
-though ``repo2docker`` support is best with Python 3.7, 3.6, 3.5 and 2.7.
+Python in this file.  ``conda`` Should support all versions of Python,
+though ``repo2docker`` support is best with Python 3.7-3.11.
 
 .. warning::
    If you include a Python version in a ``runtime.txt`` file in addition to your
