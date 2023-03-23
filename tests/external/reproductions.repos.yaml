@@ -10,30 +10,24 @@
   ref: b8259dac9eb
   verify: python -c 'import matplotlib'
 # Test that a full remote/ref works
-- name: Binder Examples - Requirements
+- name: Binder Examples - Requirements - origin/main
   url: https://github.com/binder-examples/requirements
   ref: origin/main
   verify: python -c 'import matplotlib'
 # Test that ref is added to branch if not present
-- name: Binder Examples - Requirements
+- name: Binder Examples - Requirements - main
   url: https://github.com/binder-examples/requirements
   ref: main
   verify: python -c 'import matplotlib'
 # Test that tags work + ref is added to tag if not present
-- name: Binder Examples - Requirements
+- name: Binder Examples - Requirements - tag
   url: https://github.com/binder-examples/requirements
-  ref: python-3.7
+  ref: python-3.8
   verify: python -c 'import matplotlib'
-# Test that custom channels and downgrades don't
-# get blocked by pinning
-- name: Xeus-Cling
-  url: https://github.com/QuantStack/xeus-cling
-  ref: 0.6.0
-  verify: jupyter kernelspec list
 # Zenodo record of https://github.com/binder-examples/requirements
 - name: 10.5281/zenodo.3242074
   url: 10.5281/zenodo.3242074
-  verify: python -c 'import matplotlib'
+  verify: /srv/conda/envs/kernel/bin/python -c 'import matplotlib'
 # Test that files in git-lfs are properly cloned
 - name: LFS
   url: https://github.com/binderhub-ci-repos/lfs

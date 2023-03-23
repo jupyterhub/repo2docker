@@ -11,6 +11,7 @@ on:
       - "**.rst"
       - ".github/workflows/*"
       - "!.github/workflows/test.yml"
+      - ".pre-commit-config.yaml"
   push:
     paths-ignore:
       - "docs/**"
@@ -18,6 +19,7 @@ on:
       - "**.rst"
       - ".github/workflows/*"
       - "!.github/workflows/test.yml"
+      - ".pre-commit-config.yaml"
     branches-ignore:
       - "dependabot/**"
       - "pre-commit-ci-update-config"

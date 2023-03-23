@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import json
+import pprint
+from subprocess import check_output
+
+
+def json_sh(cmd):
+    """Run a command that produces JSON on stdout and return the parsed result"""
+    buf = check_output(cmd)
+    return json.loads(buf.decode("utf8", "replace"))
+
+
+conda_pkg_list = json_sh(["conda", "list", "--json"])
+pprint.pprint(conda_pkg_list)
+# make it a dict
+pkgs = {pkg["name"]: pkg for pkg in conda_pkg_list}
+
+# base env resolved
+assert pkgs["python"]["version"].startswith("3.9"), pkgs["python"]
+assert "xeus-cling" in pkgs
+assert pkgs["xeus-cling"]["version"] == "0.6.0"
+
+# verify downgrade
+# this may be brittle, but it's unlikely any of these old versions
+# of packages will be rebuilt
+# xeus-cling 0.6.0 pins xeus 0.20, which pins openssl 1.1.1,
+# which in turn downgrades Python from >=3.9.16 to 3.9.6
+
+assert pkgs["openssl"]["version"].startswith("1.1.1"), pkgs["openssl"]["version"]
+assert pkgs["python"]["version"] == "3.9.6", pkgs["python"]["version"]
