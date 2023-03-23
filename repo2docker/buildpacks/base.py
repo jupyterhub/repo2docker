@@ -232,7 +232,7 @@ class BuildPack:
             )
         self.platform = ""
 
-    @lru_cache
+    @lru_cache()
     def get_packages(self):
         """
         List of packages that are installed in this BuildPack.
@@ -242,7 +242,7 @@ class BuildPack:
         """
         return set()
 
-    @lru_cache
+    @lru_cache()
     def get_base_packages(self):
         """
         Base set of apt packages that are installed for all images.
@@ -259,7 +259,7 @@ class BuildPack:
             "unzip",
         }
 
-    @lru_cache
+    @lru_cache()
     def get_build_env(self):
         """
         Ordered list of environment variables to be set for this image.
@@ -275,7 +275,7 @@ class BuildPack:
         """
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_env(self):
         """
         Ordered list of environment variables to be set for this image.
@@ -290,7 +290,7 @@ class BuildPack:
         """
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_path(self):
         """
         Ordered list of file system paths to look for executables in.
@@ -300,14 +300,14 @@ class BuildPack:
         """
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_labels(self):
         """
         Docker labels to set on the built image.
         """
         return self.labels
 
-    @lru_cache
+    @lru_cache()
     def get_build_script_files(self):
         """
         Dict of files to be copied to the container image for use in building.
@@ -332,7 +332,7 @@ class BuildPack:
                     f"Found a stencila manifest.xml at {root}. Stencila is no longer supported."
                 )
 
-    @lru_cache
+    @lru_cache()
     def get_build_scripts(self):
         """
         Ordered list of shell script snippets to build the base image.
@@ -354,7 +354,7 @@ class BuildPack:
 
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_preassemble_script_files(self):
         """
         Dict of files to be copied to the container image for use in preassembly.
@@ -368,7 +368,7 @@ class BuildPack:
         """
         return {}
 
-    @lru_cache
+    @lru_cache()
     def get_preassemble_scripts(self):
         """
         Ordered list of shell snippets to build an image for this repository.
@@ -385,7 +385,7 @@ class BuildPack:
         """
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_assemble_scripts(self):
         """
         Ordered list of shell script snippets to build the repo into the image.
@@ -412,7 +412,7 @@ class BuildPack:
         """
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_post_build_scripts(self):
         """
         An ordered list of executable scripts to execute after build.
@@ -425,7 +425,7 @@ class BuildPack:
         """
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_start_script(self):
         """
         The path to a script to be executed at container start up.
@@ -638,14 +638,14 @@ class BuildPack:
 
 
 class BaseImage(BuildPack):
-    @lru_cache
+    @lru_cache()
     def get_build_env(self):
         """Return env directives required for build"""
         return [
             ("APP_BASE", "/srv"),
         ]
 
-    @lru_cache
+    @lru_cache()
     def get_env(self):
         """Return env directives to be set after build"""
         return []
@@ -653,7 +653,7 @@ class BaseImage(BuildPack):
     def detect(self):
         return True
 
-    @lru_cache
+    @lru_cache()
     def get_preassemble_scripts(self):
         scripts = []
         try:
@@ -693,19 +693,19 @@ class BaseImage(BuildPack):
 
         return scripts
 
-    @lru_cache
+    @lru_cache()
     def get_assemble_scripts(self):
         """Return directives to run after the entire repository has been added to the image"""
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_post_build_scripts(self):
         post_build = self.binder_path("postBuild")
         if os.path.exists(post_build):
             return [post_build]
         return []
 
-    @lru_cache
+    @lru_cache()
     def get_start_script(self):
         start = self.binder_path("start")
         if os.path.exists(start):

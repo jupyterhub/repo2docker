@@ -8,12 +8,12 @@ from ..base import BaseImage
 class NixBuildPack(BaseImage):
     """A nix Package Manager BuildPack"""
 
-    @lru_cache
+    @lru_cache()
     def get_path(self):
         """Return paths to be added to PATH environemnt variable"""
         return super().get_path() + ["/home/${NB_USER}/.nix-profile/bin"]
 
-    @lru_cache
+    @lru_cache()
     def get_env(self):
         """Ordered list of environment variables to be set for this image"""
 
@@ -23,7 +23,7 @@ class NixBuildPack(BaseImage):
             ("GIT_SSL_CAINFO", "/etc/ssl/certs/ca-certificates.crt"),
         ]
 
-    @lru_cache
+    @lru_cache()
     def get_build_scripts(self):
         """
         Return series of build-steps common to all nix repositories.
@@ -59,7 +59,7 @@ class NixBuildPack(BaseImage):
             ),
         ]
 
-    @lru_cache
+    @lru_cache()
     def get_build_script_files(self):
         """Dict of files to be copied to the container image for use in building"""
         return {
@@ -67,7 +67,7 @@ class NixBuildPack(BaseImage):
             "nix/nix-shell-wrapper": "/usr/local/bin/nix-shell-wrapper",
         }
 
-    @lru_cache
+    @lru_cache()
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this source repository."""
         return super().get_assemble_scripts() + [
@@ -81,7 +81,7 @@ class NixBuildPack(BaseImage):
             )
         ]
 
-    @lru_cache
+    @lru_cache()
     def get_start_script(self):
         """The path to a script to be executed as ENTRYPOINT"""
         # the shell wrapper script duplicates the behaviour of other buildpacks

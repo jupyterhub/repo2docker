@@ -76,7 +76,7 @@ class PipfileBuildPack(CondaBuildPack):
             self._python_version = self.major_pythons["3"]
             return self._python_version
 
-    @lru_cache
+    @lru_cache()
     def get_preassemble_script_files(self):
         """Return files needed for preassembly"""
         files = super().get_preassemble_script_files()
@@ -86,7 +86,7 @@ class PipfileBuildPack(CondaBuildPack):
                 files[path] = path
         return files
 
-    @lru_cache
+    @lru_cache()
     def get_preassemble_scripts(self):
         """scripts to run prior to staging the repo contents"""
         scripts = super().get_preassemble_scripts()
@@ -104,7 +104,7 @@ class PipfileBuildPack(CondaBuildPack):
         )
         return scripts
 
-    @lru_cache
+    @lru_cache()
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository."""
         # If we have either Pipfile.lock, Pipfile, or runtime.txt declare the
