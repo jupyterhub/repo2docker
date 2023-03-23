@@ -1,6 +1,7 @@
 """Generates a Dockerfile based on an input matrix with REQUIRE for legacy Julia"""
 
 import os
+from functools import lru_cache
 
 from ...semver import parse_version as V
 from ..python import PythonBuildPack
@@ -54,6 +55,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
         self._julia_version = julia_version
         return self._julia_version
 
+    @lru_cache
     def get_build_env(self):
         """Get additional environment settings for Julia and Jupyter
 
@@ -102,6 +104,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
             ("JUPYTER", jupyter),
         ]
 
+    @lru_cache
     def get_path(self):
         """Adds path to Julia binaries to user's PATH.
 
@@ -112,6 +115,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
         """
         return super().get_path() + ["${JULIA_HOME}"]
 
+    @lru_cache
     def get_build_scripts(self):
         """
         Return series of build-steps common to "ALL" Julia repositories
@@ -149,6 +153,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
             ),
         ]
 
+    @lru_cache
     def get_assemble_scripts(self):
         """
         Return series of build-steps specific to "this" Julia repository
@@ -176,6 +181,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
             )
         ]
 
+    @lru_cache
     def get_build_script_files(self):
         files = {
             "julia/install-repo-dependencies.jl": "/tmp/install-repo-dependencies.jl"

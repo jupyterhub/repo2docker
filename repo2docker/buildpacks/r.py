@@ -1,6 +1,7 @@
 import datetime
 import os
 import re
+from functools import lru_cache
 
 import requests
 
@@ -142,6 +143,7 @@ class RBuildPack(PythonBuildPack):
                 self._runtime = f"r-{str(self._checkpoint_date)}"
             return True
 
+    @lru_cache
     def get_env(self):
         """
         Set custom env vars needed for RStudio to load
@@ -156,6 +158,7 @@ class RBuildPack(PythonBuildPack):
             ("LD_LIBRARY_PATH", "${R_HOME}/lib:${LD_LIBRARY_PATH}"),
         ]
 
+    @lru_cache
     def get_path(self):
         """
         Return paths to be added to the PATH environment variable.
@@ -165,6 +168,7 @@ class RBuildPack(PythonBuildPack):
         """
         return super().get_path() + ["/usr/lib/rstudio-server/bin/"]
 
+    @lru_cache
     def get_build_env(self):
         """
         Return environment variables to be set.
@@ -178,6 +182,7 @@ class RBuildPack(PythonBuildPack):
             ("R_LIBS_USER", "${APP_BASE}/rlibs")
         ]
 
+    @lru_cache
     def get_packages(self):
         """
         Return list of packages to be installed.
@@ -195,6 +200,7 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_packages().union(packages)
 
+    @lru_cache
     def get_rspm_snapshot_url(self, snapshot_date, max_days_prior=7):
         for i in range(max_days_prior):
             snapshots = requests.post(
@@ -219,6 +225,7 @@ class RBuildPack(PythonBuildPack):
             )
         )
 
+    @lru_cache
     def get_mran_snapshot_url(self, snapshot_date, max_days_prior=7):
         for i in range(max_days_prior):
             try_date = snapshot_date - datetime.timedelta(days=i)
@@ -233,6 +240,7 @@ class RBuildPack(PythonBuildPack):
             )
         )
 
+    @lru_cache
     def get_cran_mirror_url(self, snapshot_date):
         # Date after which we will use rspm + binary packages instead of MRAN + source packages
         rspm_cutoff_date = datetime.date(2022, 1, 1)
@@ -242,6 +250,7 @@ class RBuildPack(PythonBuildPack):
         else:
             return self.get_mran_snapshot_url(snapshot_date)
 
+    @lru_cache
     def get_devtools_snapshot_url(self):
         """
         Return url of snapshot to use for getting devtools install
@@ -255,6 +264,7 @@ class RBuildPack(PythonBuildPack):
         # necessary apt packages.
         return "https://packagemanager.rstudio.com/all/__linux__/bionic/2022-01-04+Y3JhbiwyOjQ1MjYyMTU7NzlBRkJEMzg"
 
+    @lru_cache
     def get_build_scripts(self):
         """
         Return series of build-steps common to all R repositories
@@ -349,6 +359,7 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_build_scripts() + scripts
 
+    @lru_cache
     def get_preassemble_script_files(self):
         files = super().get_preassemble_script_files()
         installR_path = self.binder_path("install.R")
@@ -357,6 +368,7 @@ class RBuildPack(PythonBuildPack):
 
         return files
 
+    @lru_cache
     def get_preassemble_scripts(self):
         """Install contents of install.R
 
@@ -382,6 +394,7 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_preassemble_scripts() + scripts
 
+    @lru_cache
     def get_assemble_scripts(self):
         """Install the dependencies of or the repository itself"""
         assemble_scripts = super().get_assemble_scripts()
