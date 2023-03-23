@@ -191,6 +191,7 @@ class RBuildPack(PythonBuildPack):
             "libapparmor1",
             "sudo",
             "lsb-release",
+            "libssl-dev",
         ]
 
         return super().get_packages().union(packages)
