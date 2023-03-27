@@ -127,7 +127,6 @@ class CondaBuildPack(BaseImage):
         - a frozen base set of requirements, including:
             - support for Jupyter widgets
             - support for JupyterLab
-            - support for nteract
 
         """
         return super().get_build_scripts() + [
