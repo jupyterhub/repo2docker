@@ -23,6 +23,9 @@ class PythonBuildPack(CondaBuildPack):
             # not a Python runtime (e.g. R, which subclasses this)
             # use the default Python
             self._python_version = self.major_pythons["3"]
+            self.log.warning(
+                f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
+            )
             return self._python_version
 
         py_version_info = runtime.split("-", 1)[1].split(".")

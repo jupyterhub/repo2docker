@@ -1,8 +1,6 @@
 """
 Test if the environment.yml is empty or it constains other data structure than a dictionary
 """
-import os
-import sys
 
 import pytest
 
@@ -15,8 +13,8 @@ def test_empty_env_yml(tmpdir):
     p.write("")
     bp = buildpacks.CondaBuildPack()
     py_ver = bp.python_version
-    # If the environment.yml is empty python_version will get an empty string
-    assert py_ver == ""
+    # If the environment.yml is empty, python_version will get the default Python version
+    assert py_ver == bp.major_pythons["3"]
 
 
 def test_no_dict_env_yml(tmpdir):

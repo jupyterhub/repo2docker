@@ -64,15 +64,19 @@ class PipfileBuildPack(CondaBuildPack):
 
         # extract major.minor
         if py_version:
-            if len(py_version.split(".")) == 1:
-                self._python_version = self.major_pythons.get(py_version[0])
+            py_version_info = py_version.split(".")
+            if len(py_version_info) == 1:
+                self._python_version = self.major_pythons[py_version_info[0]]
             else:
                 # return major.minor
-                self._python_version = ".".join(py_version.split(".")[:2])
+                self._python_version = ".".join(py_version_info[:2])
             return self._python_version
         else:
             # use the default Python
             self._python_version = self.major_pythons["3"]
+            self.log.warning(
+                f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
+            )
             return self._python_version
 
     def get_preassemble_script_files(self):
