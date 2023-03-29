@@ -102,11 +102,18 @@ class Dataverse(DoiProvider):
 
         for fobj in deep_get(record, "latestVersion.files"):
             file_url = (
-                f'{host["url"]}/api/access/datafile/{deep_get(fobj, "dataFile.id")}'
+                # without format=original you get the preservation format (plain text, tab separated)
+                f'{host["url"]}/api/access/datafile/{deep_get(fobj, "dataFile.id")}?format=original'
             )
-            filename = os.path.join(fobj.get("directoryLabel", ""), fobj["label"])
+            filename = fobj["label"]
+            original_filename = fobj["dataFile"].get("originalFileName", None)
+            if original_filename:
+                # replace preservation format filename (foo.tab) with original filename (foo.dta)
+                filename = original_filename
 
-            file_ref = {"download": file_url, "filename": filename}
+            filename_with_path = os.path.join(fobj.get("directoryLabel", ""), filename)
+
+            file_ref = {"download": file_url, "filename": filename_with_path}
             fetch_map = {key: key for key in file_ref.keys()}
 
             yield from self.fetch_file(file_ref, fetch_map, output_dir)
