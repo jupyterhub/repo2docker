@@ -4,8 +4,8 @@ import re
 from io import BytesIO
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
-from urllib.request import Request, urlopen
 from urllib.parse import urlsplit
+from urllib.request import Request, urlopen
 
 import pytest
 
