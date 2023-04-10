@@ -7,6 +7,12 @@ which node
 node --version
 node --version | grep v18
 
+# npm comes with the nodejs conda-forge package that we have pinned, but we
+# don't have npm pinned. For example nodejs 18.13.0 brought npm 8.19.3, but
+# nodejs 18.14.0 brought npm 9.3.1.
+#
+# Since we have no npm version pinning, we just test that some version is
+# installed.
+#
 which npm
 npm --version
-npm --version | grep 8.
