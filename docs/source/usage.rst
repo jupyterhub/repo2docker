@@ -113,9 +113,9 @@ Debugging repo2docker with ``--debug`` and ``--no-build``
 
 To debug the docker image being built, pass the ``--debug`` parameter:
 
-  .. code-block:: bash
+.. code-block:: bash
 
-     jupyter-repo2docker --debug https://github.com/norvig/pytudes
+   jupyter-repo2docker --debug https://github.com/norvig/pytudes
 
 This will print the generated ``Dockerfile``, build it, and run it.
 
@@ -124,9 +124,15 @@ pass ``--no-build`` to the commandline. This ``Dockerfile`` output
 is for **debugging purposes** of ``repo2docker`` only - it can not
 be used by docker directly.
 
-  .. code-block:: bash
+.. code-block:: bash
 
-     jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
+   jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
+
+.. warning::
+
+   ``repo2docker --no-build --debug . > Dockerfile`` will create an empty
+   Dockerfile. Please use ``repo2docker --no-build --debug . > tmp_Dockerfile
+   && mv tmp_Dockerfile Dockerfile`` instead!
 
 
 Command line API
