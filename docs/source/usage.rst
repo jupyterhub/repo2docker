@@ -106,6 +106,8 @@ by ``repo2docker`` to see how to configure the build process.
    :ref:`configuration files <config-files>`.
 
 
+.. _usage-debugging-with-debug-and-no-build:
+
 Debugging repo2docker with ``--debug`` and ``--no-build``
 =========================================================
 
