@@ -240,14 +240,13 @@ In the majority of cases, providing your own Dockerfile is not necessary as the 
 images provide core functionality, compact image sizes, and efficient builds. We recommend
 trying the other configuration files before deciding to use your own Dockerfile.
 
-With Dockerfiles, a regular Docker build will be performed.
+Try the ``--appendix`` :ref:`CLI flag <usage-cli>` as a last resort. If you
+still can't achieve your goals, you should create a Dockerfile from scratch to
+define your image.
 
 .. note::
-    If a Dockerfile is present, all other configuration files will be ignored.
-
-If you're working on an existing project and need the `Dockerfile` escape
-hatch, you can :ref:`view the generated Dockerfile
-<usage-debugging-with-debug-and-no-build>`.
+   With Dockerfiles, a regular Docker build will be performed. All other
+   configuration files will be ignored.
 
 See the `Advanced Binder Documentation <https://mybinder.readthedocs.io/en/latest/tutorials/dockerfile.html>`_ for
 best-practices with Dockerfiles.

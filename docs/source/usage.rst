@@ -111,6 +111,11 @@ by ``repo2docker`` to see how to configure the build process.
 Debugging repo2docker with ``--debug`` and ``--no-build``
 =========================================================
 
+.. warning::
+
+   This feature is *not* for bootstrapping a custom Dockerfile. Please see the
+   :ref:`relevant FAQ entry <faq-dockerfile-bootstrap>`.
+
 To debug the docker image being built, pass the ``--debug`` parameter:
 
 .. code-block:: bash
@@ -128,12 +133,8 @@ be used by docker directly.
 
    jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
 
-.. warning::
 
-   ``repo2docker --no-build --debug . > Dockerfile`` will create an empty
-   Dockerfile. Please use ``repo2docker --no-build --debug . > tmp_Dockerfile
-   && mv tmp_Dockerfile Dockerfile`` instead!
-
+.. _usage-cli:
 
 Command line API
 ================
