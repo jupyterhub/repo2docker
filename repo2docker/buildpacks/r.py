@@ -22,8 +22,8 @@ class RBuildPack(PythonBuildPack):
 
        Where 'year', 'month' and 'date' refer to a specific
        date whose CRAN snapshot we will use to fetch packages.
-       Uses https://packagemanager.rstudio.com, or MRAN if no snapshot
-       is found on packagemanager.rstudio.com
+       Uses https://packagemanager.posit.co, or MRAN if no snapshot
+       is found on packagemanager.posit.co
 
     2. A `DESCRIPTION` file signaling an R package
 
@@ -204,7 +204,7 @@ class RBuildPack(PythonBuildPack):
     def get_rspm_snapshot_url(self, snapshot_date, max_days_prior=7):
         for i in range(max_days_prior):
             snapshots = requests.post(
-                "https://packagemanager.rstudio.com/__api__/url",
+                "https://packagemanager.posit.co/__api__/url",
                 # Ask for midnight UTC snapshot
                 json={
                     "repo": "all",
@@ -216,11 +216,11 @@ class RBuildPack(PythonBuildPack):
             # Construct a snapshot URL that will give us binary packages for Ubuntu Bionic (18.04)
             if "upsi" in snapshots:
                 return (
-                    "https://packagemanager.rstudio.com/all/__linux__/bionic/"
+                    "https://packagemanager.posit.co/all/__linux__/bionic/"
                     + snapshots["upsi"]
                 )
         raise ValueError(
-            "No snapshot found for {} or {} days prior in packagemanager.rstudio.com".format(
+            "No snapshot found for {} or {} days prior in packagemanager.posit.co".format(
                 snapshot_date.strftime("%Y-%m-%d"), max_days_prior
             )
         )
@@ -229,7 +229,7 @@ class RBuildPack(PythonBuildPack):
     def get_mran_snapshot_url(self, snapshot_date, max_days_prior=7):
         for i in range(max_days_prior):
             try_date = snapshot_date - datetime.timedelta(days=i)
-            # Fall back to MRAN if packagemanager.rstudio.com doesn't have it
+            # Fall back to MRAN if packagemanager.posit.co doesn't have it
             url = f"https://mran.microsoft.com/snapshot/{try_date.isoformat()}"
             r = requests.head(url)
             if r.ok:
@@ -258,11 +258,11 @@ class RBuildPack(PythonBuildPack):
         devtools is part of our 'core' base install, so we should have some
         control over what version we install here.
         """
-        # Picked from https://packagemanager.rstudio.com/client/#/repos/1/overview
+        # Picked from https://packagemanager.posit.co/client/#/repos/1/overview
         # Hardcoded rather than dynamically determined from a date to avoid extra API calls
-        # Plus, we can always use packagemanager.rstudio.com here as we always install the
+        # Plus, we can always use packagemanager.posit.co here as we always install the
         # necessary apt packages.
-        return "https://packagemanager.rstudio.com/all/__linux__/bionic/2022-01-04+Y3JhbiwyOjQ1MjYyMTU7NzlBRkJEMzg"
+        return "https://packagemanager.posit.co/all/__linux__/bionic/2022-01-04+Y3JhbiwyOjQ1MjYyMTU7NzlBRkJEMzg"
 
     @lru_cache()
     def get_build_scripts(self):
