@@ -26,7 +26,7 @@ def test_version_completion(tmpdir):
     tmpdir.chdir()
 
     with open("runtime.txt", "w") as f:
-        f.write(f"r-3.6-2019-01-01")
+        f.write("r-3.6-2019-01-01")
 
     r = buildpacks.RBuildPack()
     assert r.r_version == "3.6.3"
@@ -52,7 +52,7 @@ def test_mran_date(tmpdir, runtime, expected):
 
 def test_snapshot_rspm_date():
     test_dates = {
-        # Even though there is no snapshot specified in the interface at https://packagemanager.rstudio.com/client/#/repos/1/overview
+        # Even though there is no snapshot specified in the interface at https://packagemanager.posit.co/client/#/repos/1/overview
         # For 2021 Oct 22, the API still returns a valid URL that one can install
         # packages from - probably some server side magic that repeats our client side logic.
         # No snapshot for this date from
@@ -65,7 +65,7 @@ def test_snapshot_rspm_date():
     for requested, expected in test_dates.items():
         snapshot_url = r.get_rspm_snapshot_url(requested)
         assert snapshot_url.startswith(
-            "https://packagemanager.rstudio.com/all/__linux__/bionic/"
+            "https://packagemanager.posit.co/all/__linux__/bionic/"
             + expected.strftime("%Y-%m-%d")
         )
 

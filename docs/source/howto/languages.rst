@@ -66,11 +66,11 @@ by adding a :ref:`install.R<install.R>` file to your repo. RStudio and IRKernel 
 installed by default for all R versions.
 
 If you request R 4.1 or later, or specify a snapshot date newer than
-``2022-01-01``, `packagemanager.rstudio.com <https://packagemanager.rstudio.com/client/#/>`_
+``2022-01-01``, `packagemanager.posit.co <https://packagemanager.posit.co/client/#/>`_
 will be used to provide much faster installations via `binary packages <https://www.rstudio.com/blog/package-manager-v1-1-no-interruptions/>`_.
 For *some* packages, this might require you install underlying system libraries
 using :ref:`apt.txt` - look at the page for the CRAN package you are interested in at
-`packagemanager.rstudio.com <https://packagemanager.rstudio.com/client/#/>`_ to find
+`packagemanager.posit.co <https://packagemanager.posit.co/client/#/>`_ to find
 a list.
 
 For older R versions with an older snapshot date, `MRAN <https://mran.microsoft.com/>`_

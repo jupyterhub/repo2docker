@@ -8,6 +8,6 @@ if (!(version$major == "4" && as.double(version$minor) >= 0 && as.double(version
 }
 
 # The date we have chosen should give us an rspm mirror
-if (!(startsWith(options()$repos["CRAN"], "https://packagemanager.rstudio.com"))) {
+if (!(startsWith(options()$repos["CRAN"], "https://packagemanager.posit.co"))) {
   quit("yes", 1)
 }
