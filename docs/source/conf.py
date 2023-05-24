@@ -29,9 +29,9 @@ default_role = "literal"
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 templates_path = ["_templates"]
 extlinks = {
-    "issue": ("https://github.com/jupyterhub/repo2docker/issues/%s", "Issue #"),
-    "pr": ("https://github.com/jupyterhub/repo2docker/pull/%s", "PR #"),
-    "user": ("https://github.com/%s", "@"),
+    "issue": ("https://github.com/jupyterhub/repo2docker/issues/%s", "Issue #%s"),
+    "pr": ("https://github.com/jupyterhub/repo2docker/pull/%s", "PR #%s"),
+    "user": ("https://github.com/%s", "@%s"),
 }
 
 
