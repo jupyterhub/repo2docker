@@ -120,6 +120,8 @@ class DockerEngine(ContainerEngine):
         return Image(tags=image["RepoTags"], config=image["ContainerConfig"])
 
     def push(self, image_spec):
+        if self.registry_credentials:
+            self._apiclient.login(**self.registry_credentials)
         return self._apiclient.push(image_spec, stream=True)
 
     def run(
