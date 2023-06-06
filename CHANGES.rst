@@ -1,1 +1,1 @@
-The ``repo2docker`` changelog has been moved. It can be viewed online at https://repo2docker.readthedocs.io/en/latest/changelog.html. In the ``repo2docker`` repository, the changelog is located at ``docs/source/changelog.rst``.
+The ``repo2docker`` changelog has been moved. It can be viewed online at https://repo2docker.readthedocs.io/en/latest/changelog.html. In the ``repo2docker`` repository, the changelog is located at ``docs/source/changelog.md``.
