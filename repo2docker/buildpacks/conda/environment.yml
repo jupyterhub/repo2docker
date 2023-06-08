@@ -7,6 +7,7 @@ dependencies:
   - ipywidgets==8.*   # https://github.com/jupyter-widgets/ipywidgets
   - jupyter-offlinenotebook==0.2.*   # https://github.com/manics/jupyter-offlinenotebook
   - jupyter-resource-usage==0.7.*   # https://github.com/jupyter-server/jupyter-resource-usage
-  - jupyterlab==3.*   # https://github.com/jupyterlab/jupyterlab
+  - jupyter_server==1.*   # https://github.com/jupyter-server/jupyter_server
   - jupyterhub-singleuser==3.*   # https://github.com/jupyterhub/jupyterhub
+  - jupyterlab==3.*   # https://github.com/jupyterlab/jupyterlab
   - notebook==6.*   # https://github.com/jupyter/notebook
