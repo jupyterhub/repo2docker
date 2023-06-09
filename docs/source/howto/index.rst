@@ -15,3 +15,4 @@ Select from the pages listed below to get started.
    lab_workspaces
    jupyterhub_images
    deploy
+   base_image

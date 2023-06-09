@@ -1,8 +1,8 @@
 # syntax = docker/dockerfile:1.3
-ARG ALPINE_VERSION=3.16
+ARG ALPINE_VERSION=3.17
 FROM alpine:${ALPINE_VERSION}
 
-RUN apk add --no-cache git python3 python3-dev py-pip build-base
+RUN apk add --no-cache git python3 python3-dev py3-pip py3-setuptools build-base
 
 # build wheels in first image
 ADD . /tmp/src
@@ -16,7 +16,7 @@ RUN mkdir /tmp/wheelhouse \
 FROM alpine:${ALPINE_VERSION}
 
 # install python, git, bash, mercurial
-RUN apk add --no-cache git git-lfs python3 py-pip bash docker mercurial
+RUN apk add --no-cache git git-lfs python3 py3-pip py3-setuptools bash docker mercurial
 
 # install hg-evolve (Mercurial extensions)
 RUN pip3 install hg-evolve --user --no-cache-dir
