@@ -230,29 +230,9 @@ class RBuildPack(PythonBuildPack):
         )
 
     @lru_cache()
-    def get_mran_snapshot_url(self, snapshot_date, max_days_prior=7):
-        for i in range(max_days_prior):
-            try_date = snapshot_date - datetime.timedelta(days=i)
-            # Fall back to MRAN if packagemanager.posit.co doesn't have it
-            url = f"https://mran.microsoft.com/snapshot/{try_date.isoformat()}"
-            r = requests.head(url)
-            if r.ok:
-                return url
-        raise ValueError(
-            "No snapshot found for {} or {} days prior in mran.microsoft.com".format(
-                snapshot_date.strftime("%Y-%m-%d"), max_days_prior
-            )
-        )
-
-    @lru_cache()
     def get_cran_mirror_url(self, snapshot_date):
         # Date after which we will use rspm + binary packages instead of MRAN + source packages
-        rspm_cutoff_date = datetime.date(2022, 1, 1)
-
-        if snapshot_date >= rspm_cutoff_date or self.r_version >= V("4.1"):
-            return self.get_rspm_snapshot_url(snapshot_date)
-        else:
-            return self.get_mran_snapshot_url(snapshot_date)
+        return self.get_rspm_snapshot_url(snapshot_date)
 
     @lru_cache()
     def get_devtools_snapshot_url(self):

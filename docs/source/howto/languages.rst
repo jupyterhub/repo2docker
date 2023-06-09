@@ -65,17 +65,14 @@ to install libraries from on the given date. You can install more R packages fro
 by adding a :ref:`install.R<install.R>` file to your repo. RStudio and IRKernel are
 installed by default for all R versions.
 
-If you request R 4.1 or later, or specify a snapshot date newer than
-``2022-01-01``, `packagemanager.posit.co <https://packagemanager.posit.co/client/#/>`_
+`packagemanager.posit.co <https://packagemanager.posit.co/client/#/>`_
 will be used to provide much faster installations via `binary packages <https://www.rstudio.com/blog/package-manager-v1-1-no-interruptions/>`_.
 For *some* packages, this might require you install underlying system libraries
 using :ref:`apt.txt` - look at the page for the CRAN package you are interested in at
 `packagemanager.posit.co <https://packagemanager.posit.co/client/#/>`_ to find
 a list.
 
-For older R versions with an older snapshot date, `MRAN <https://mran.microsoft.com/>`_
-is used as source of packages. This purely provides source packages, and you should
-migrate away from this if possible.
+repo2docker stopped using the Microsoft mirror MRAN for older R versions after its shutdown in July, 2023.
 
 
 Julia

@@ -118,7 +118,7 @@ with ``REQUIRE`` and ``environment.yml``, visit
 ================================================
 
 This is used to install R libraries pinned to a specific snapshot on
-`MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
+`Posit Package Manager <https://mran.microsoft.com/documents/rro/reproducibility>`_.
 To set the date of the snapshot add a runtime.txt_.
 For an example ``install.R`` file, visit our `example install.R file <https://github.com/binder-examples/r/blob/HEAD/install.R>`_.
 
@@ -207,7 +207,7 @@ For these cases, we have a special file, ``runtime.txt``.
 Have ``python-x.y`` in ``runtime.txt`` to run the repository with Python version x.y.
 See our `Python2 example repository <https://github.com/binder-examples/python2_runtime/blob/HEAD/runtime.txt>`_.
 
-Have ``r-<RVERSION>-<YYYY>-<MM>-<DD>`` in ``runtime.txt`` to run the repository with R version RVERSION and libraries from a YYYY-MM-DD snapshot of `MRAN <https://mran.microsoft.com/documents/rro/reproducibility>`_.
+Have ``r-<RVERSION>-<YYYY>-<MM>-<DD>`` in ``runtime.txt`` to run the repository with R version RVERSION and libraries from a YYYY-MM-DD snapshot of `Posit Package Manager <https://packagemanager.posit.co/client/#/repos/2/overview>`__.
 RVERSION can be set to 3.4, 3.5, 3.6, or to patch releases for the 3.5 and 3.6 series.
 If you do not specify a version, the latest release will be used (currently R 3.6).
 See our `R example repository <https://github.com/binder-examples/r/blob/HEAD/runtime.txt>`_.
