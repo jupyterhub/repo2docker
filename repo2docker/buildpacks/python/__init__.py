@@ -1,5 +1,6 @@
 """Generates Dockerfiles based on an input matrix based on Python."""
 import os
+from functools import lru_cache
 
 from ...utils import is_local_pip_requirement, open_guess_encoding
 from ..conda import CondaBuildPack
@@ -23,6 +24,9 @@ class PythonBuildPack(CondaBuildPack):
             # not a Python runtime (e.g. R, which subclasses this)
             # use the default Python
             self._python_version = self.major_pythons["3"]
+            self.log.warning(
+                f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
+            )
             return self._python_version
 
         py_version_info = runtime.split("-", 1)[1].split(".")
@@ -93,6 +97,7 @@ class PythonBuildPack(CondaBuildPack):
         # allow assembly from subset
         return True
 
+    @lru_cache()
     def get_preassemble_script_files(self):
         assemble_files = super().get_preassemble_script_files()
         for name in ("requirements.txt", "requirements3.txt"):
@@ -101,6 +106,7 @@ class PythonBuildPack(CondaBuildPack):
                 assemble_files[requirements_txt] = requirements_txt
         return assemble_files
 
+    @lru_cache()
     def get_preassemble_scripts(self):
         """Return scripts to run before adding the full repository"""
         scripts = super().get_preassemble_scripts()
@@ -108,6 +114,7 @@ class PythonBuildPack(CondaBuildPack):
             scripts.extend(self._get_pip_scripts())
         return scripts
 
+    @lru_cache()
     def get_assemble_scripts(self):
         """Return series of build steps that require the full repository"""
         # If we have a runtime.txt & that's set to python-2.7,

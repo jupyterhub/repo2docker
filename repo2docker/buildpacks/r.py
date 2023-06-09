@@ -1,6 +1,7 @@
 import datetime
 import os
 import re
+from functools import lru_cache
 
 import requests
 
@@ -21,8 +22,8 @@ class RBuildPack(PythonBuildPack):
 
        Where 'year', 'month' and 'date' refer to a specific
        date whose CRAN snapshot we will use to fetch packages.
-       Uses https://packagemanager.rstudio.com, or MRAN if no snapshot
-       is found on packagemanager.rstudio.com
+       Uses https://packagemanager.posit.co, or MRAN if no snapshot
+       is found on packagemanager.posit.co
 
     2. A `DESCRIPTION` file signaling an R package
 
@@ -142,6 +143,7 @@ class RBuildPack(PythonBuildPack):
                 self._runtime = f"r-{str(self._checkpoint_date)}"
             return True
 
+    @lru_cache()
     def get_env(self):
         """
         Set custom env vars needed for RStudio to load
@@ -156,6 +158,7 @@ class RBuildPack(PythonBuildPack):
             ("LD_LIBRARY_PATH", "${R_HOME}/lib:${LD_LIBRARY_PATH}"),
         ]
 
+    @lru_cache()
     def get_path(self):
         """
         Return paths to be added to the PATH environment variable.
@@ -165,6 +168,7 @@ class RBuildPack(PythonBuildPack):
         """
         return super().get_path() + ["/usr/lib/rstudio-server/bin/"]
 
+    @lru_cache()
     def get_build_env(self):
         """
         Return environment variables to be set.
@@ -178,6 +182,7 @@ class RBuildPack(PythonBuildPack):
             ("R_LIBS_USER", "${APP_BASE}/rlibs")
         ]
 
+    @lru_cache()
     def get_packages(self):
         """
         Return list of packages to be installed.
@@ -196,10 +201,11 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_packages().union(packages)
 
+    @lru_cache()
     def get_rspm_snapshot_url(self, snapshot_date, max_days_prior=7):
         for i in range(max_days_prior):
             snapshots = requests.post(
-                "https://packagemanager.rstudio.com/__api__/url",
+                "https://packagemanager.posit.co/__api__/url",
                 # Ask for midnight UTC snapshot
                 json={
                     "repo": "all",
@@ -214,19 +220,20 @@ class RBuildPack(PythonBuildPack):
                     # Env variables here are expanded by envsubst in the Dockerfile, after sourcing
                     # /etc/os-release. This allows us to use distro specific variables here to get
                     # appropriate binary packages without having to hard code version names here.
-                    "https://packagemanager.rstudio.com/all/__linux__/${VERSION_CODENAME}/"
+                    "https://packagemanager.posit.co/all/__linux__/${VERSION_CODENAME}/"
                     + snapshots["upsi"]
                 )
         raise ValueError(
-            "No snapshot found for {} or {} days prior in packagemanager.rstudio.com".format(
+            "No snapshot found for {} or {} days prior in packagemanager.posit.co".format(
                 snapshot_date.strftime("%Y-%m-%d"), max_days_prior
             )
         )
 
+    @lru_cache()
     def get_mran_snapshot_url(self, snapshot_date, max_days_prior=7):
         for i in range(max_days_prior):
             try_date = snapshot_date - datetime.timedelta(days=i)
-            # Fall back to MRAN if packagemanager.rstudio.com doesn't have it
+            # Fall back to MRAN if packagemanager.posit.co doesn't have it
             url = f"https://mran.microsoft.com/snapshot/{try_date.isoformat()}"
             r = requests.head(url)
             if r.ok:
@@ -237,6 +244,7 @@ class RBuildPack(PythonBuildPack):
             )
         )
 
+    @lru_cache()
     def get_cran_mirror_url(self, snapshot_date):
         # Date after which we will use rspm + binary packages instead of MRAN + source packages
         rspm_cutoff_date = datetime.date(2022, 1, 1)
@@ -246,6 +254,7 @@ class RBuildPack(PythonBuildPack):
         else:
             return self.get_mran_snapshot_url(snapshot_date)
 
+    @lru_cache()
     def get_devtools_snapshot_url(self):
         """
         Return url of snapshot to use for getting devtools install
@@ -253,15 +262,16 @@ class RBuildPack(PythonBuildPack):
         devtools is part of our 'core' base install, so we should have some
         control over what version we install here.
         """
-        # Picked from https://packagemanager.rstudio.com/client/#/repos/1/overview
+        # Picked from https://packagemanager.posit.co/client/#/repos/1/overview
         # Hardcoded rather than dynamically determined from a date to avoid extra API calls
-        # Plus, we can always use packagemanager.rstudio.com here as we always install the
+        # Plus, we can always use packagemanager.posit.co here as we always install the
         # necessary apt packages.
         # Env variables here are expanded by envsubst in the Dockerfile, after sourcing
         # /etc/os-release. This allows us to use distro specific variables here to get
         # appropriate binary packages without having to hard code version names here.
-        return "https://packagemanager.rstudio.com/all/__linux__/${VERSION_CODENAME}/2022-06-03+Y3JhbiwyOjQ1MjYyMTU7RkM5ODcwN0M"
+        return "https://packagemanager.posit.co/all/__linux__/${VERSION_CODENAME}/2022-06-03+Y3JhbiwyOjQ1MjYyMTU7RkM5ODcwN0M"
 
+    @lru_cache()
     def get_build_scripts(self):
         """
         Return series of build-steps common to all R repositories
@@ -358,6 +368,7 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_build_scripts() + scripts
 
+    @lru_cache()
     def get_preassemble_script_files(self):
         files = super().get_preassemble_script_files()
         installR_path = self.binder_path("install.R")
@@ -366,6 +377,7 @@ class RBuildPack(PythonBuildPack):
 
         return files
 
+    @lru_cache()
     def get_preassemble_scripts(self):
         """Install contents of install.R
 
@@ -391,6 +403,7 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_preassemble_scripts() + scripts
 
+    @lru_cache()
     def get_assemble_scripts(self):
         """Install the dependencies of or the repository itself"""
         assemble_scripts = super().get_assemble_scripts()

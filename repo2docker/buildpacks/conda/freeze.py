@@ -11,8 +11,6 @@ python freeze.py [3.8]
 
 import os
 import pathlib
-import shutil
-import sys
 from argparse import ArgumentParser
 from datetime import datetime
 from subprocess import check_call
@@ -22,8 +20,6 @@ from ruamel.yaml import YAML
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
 ENV_FILE = HERE / "environment.yml"
-FROZEN_FILE_T = os.path.splitext(ENV_FILE)[0] + "-{platform}.lock"
-
 ENV_FILE_T = HERE / "environment.py-{py}.yml"
 
 yaml = YAML(typ="rt")
@@ -126,7 +122,6 @@ if __name__ == "__main__":
         default=("linux-64", "linux-aarch64"),
     )
     args = parser.parse_args()
-    default_py = "3.10"
     for py in args.py:
         for platform in args.platform:
             env_file = pathlib.Path(str(ENV_FILE_T).format(py=py))
@@ -135,5 +130,3 @@ if __name__ == "__main__":
                 os.path.splitext(env_file)[0] + f"-{platform}.lock"
             )
             freeze(env_file, frozen_file, platform)
-            if py == default_py:
-                shutil.copy(frozen_file, FROZEN_FILE_T.format(platform=platform))

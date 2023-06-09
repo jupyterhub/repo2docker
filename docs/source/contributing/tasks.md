@@ -74,7 +74,7 @@ See the subsections below for more detailed instructions.
 
      Contains list of packages to install in Python3 conda environments,
      which are the default. **This is where all Notebook versions &
-     notebook extensions (such as JupyterLab / nteract) go**.
+     notebook extensions (such as JupyterLab) go**.
 
    - `repo2docker/buildpacks/conda/environment.py-2.7.yml`
 

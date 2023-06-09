@@ -2,8 +2,11 @@
 Interface for a repo2docker container engine
 """
 
+import json
+import os
 from abc import ABC, abstractmethod
 
+from traitlets import Dict, default
 from traitlets.config import LoggingConfigurable
 
 # Based on https://docker-py.readthedocs.io/en/4.2.0/containers.html
@@ -142,6 +145,37 @@ class ContainerEngine(LoggingConfigurable):
     Initialised with a reference to the parent so can also be configured using traitlets.
     """
 
+    registry_credentials = Dict(
+        help="""
+        Credentials dictionary, if set will be used to authenticate with
+        the registry. Typically this will include the keys:
+
+            - `username`: The registry username
+            - `password`: The registry password or token
+            - `registry`: The registry URL
+
+        This can also be set by passing a JSON object in the
+        CONTAINER_ENGINE_REGISTRY_CREDENTIALS environment variable.
+        """,
+        config=True,
+    )
+
+    @default("registry_credentials")
+    def _registry_credentials_default(self):
+        """
+        Set the registry credentials from CONTAINER_ENGINE_REGISTRY_CREDENTIALS
+        """
+        obj = os.getenv("CONTAINER_ENGINE_REGISTRY_CREDENTIALS")
+        if obj:
+            try:
+                return json.loads(obj)
+            except json.JSONDecodeError:
+                self.log.error(
+                    "CONTAINER_ENGINE_REGISTRY_CREDENTIALS is not valid JSON"
+                )
+                raise
+        return {}
+
     string_output = True
     """
     Whether progress events should be strings or an object.
@@ -250,6 +284,9 @@ class ContainerEngine(LoggingConfigurable):
     def push(self, image_spec):
         """
         Push image to a registry
+
+        If the registry_credentials traitlets is set it should be used to
+        authenticate with the registry before pushing.
 
         Parameters
         ----------

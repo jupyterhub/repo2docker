@@ -10,4 +10,3 @@ dependencies:
   - jupyterlab==3.4.8
   - jupyterhub-singleuser==3.1.1
   - notebook==6.4.12
-  - nteract_on_jupyter==2.1.3

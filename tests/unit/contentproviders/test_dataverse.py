@@ -4,6 +4,7 @@ import re
 from io import BytesIO
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
+from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 import pytest
@@ -131,7 +132,8 @@ def test_dataverse_fetch(dv_files, requests_mock):
     spec = {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"}
 
     def mock_filecontent(req, context):
-        file_no = int(req.url.split("/")[-1]) - 1
+        parts = urlsplit(req.url)
+        file_no = int(parts.path.split("/")[-1]) - 1
         return open(dv_files[file_no], "rb").read()
 
     requests_mock.get(

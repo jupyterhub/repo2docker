@@ -46,37 +46,6 @@ And you can switch back to JupyterLab by replacing ``/tree/`` with ``/lab/``:
 
    http(s)://<server:port>/lab/
 
-
-nteract
-=======
-
-`nteract is a notebook interface <https://nteract.io/>`_ built with React.
-It is similar to a more feature-filled version of the traditional
-Jupyter Notebook interface.
-
-nteract comes pre-installed in any session that has been built from
-a Python repository.
-
-You can launch nteract from within a user
-session by replacing ``/tree`` with ``/nteract`` at the end of a notebook
-server's URL like so:
-
-.. code-block:: none
-
-   http(s)://<server:port>/nteract
-
-For example, the following Binder URL will open the
-`pyTudes repository <https://github.com/norvig/pytudes>`_
-and begin an nteract session in the ``ipynb`` folder:
-
-https://mybinder.org/v2/gh/norvig/pytudes/HEAD?urlpath=nteract/tree/ipynb
-
-The ``/tree/ipynb`` above is how nteract directs you to a specific file
-or folder.
-
-To learn more about nteract, visit `the nteract website <https://nteract.io/about>`_.
-
-
 RStudio
 =======
 

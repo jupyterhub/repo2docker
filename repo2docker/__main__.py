@@ -275,7 +275,12 @@ def get_argparser():
         "--cache-from", action="append", default=[], help=Repo2Docker.cache_from.help
     )
 
-    argparser.add_argument("--engine", help="Name of the container engine")
+    argparser.add_argument(
+        "--engine",
+        type=str,
+        default="docker",
+        help=Repo2Docker.engine.help,
+    )
 
     return argparser
 

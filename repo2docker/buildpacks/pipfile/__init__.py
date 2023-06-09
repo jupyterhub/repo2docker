@@ -8,6 +8,7 @@ same as the Python or Conda build packs.
 import json
 import os
 import re
+from functools import lru_cache
 
 import toml
 
@@ -64,17 +65,22 @@ class PipfileBuildPack(CondaBuildPack):
 
         # extract major.minor
         if py_version:
-            if len(py_version.split(".")) == 1:
-                self._python_version = self.major_pythons.get(py_version[0])
+            py_version_info = py_version.split(".")
+            if len(py_version_info) == 1:
+                self._python_version = self.major_pythons[py_version_info[0]]
             else:
                 # return major.minor
-                self._python_version = ".".join(py_version.split(".")[:2])
+                self._python_version = ".".join(py_version_info[:2])
             return self._python_version
         else:
             # use the default Python
             self._python_version = self.major_pythons["3"]
+            self.log.warning(
+                f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
+            )
             return self._python_version
 
+    @lru_cache()
     def get_preassemble_script_files(self):
         """Return files needed for preassembly"""
         files = super().get_preassemble_script_files()
@@ -84,6 +90,7 @@ class PipfileBuildPack(CondaBuildPack):
                 files[path] = path
         return files
 
+    @lru_cache()
     def get_preassemble_scripts(self):
         """scripts to run prior to staging the repo contents"""
         scripts = super().get_preassemble_scripts()
@@ -101,6 +108,7 @@ class PipfileBuildPack(CondaBuildPack):
         )
         return scripts
 
+    @lru_cache()
     def get_assemble_scripts(self):
         """Return series of build-steps specific to this repository."""
         # If we have either Pipfile.lock, Pipfile, or runtime.txt declare the

@@ -38,7 +38,7 @@ jobs:
 
       # https://github.com/docker/build-push-action
       - name: Build Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           tags: jupyter/repo2docker:pr
