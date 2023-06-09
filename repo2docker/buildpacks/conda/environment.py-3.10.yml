@@ -1,14 +1,15 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2023-04-09 15:23:40 UTC
+# Generated on 2023-06-08 09:35:19 UTC
 channels:
 - conda-forge
 dependencies:
 - python=3.10.*
 - nodejs=18
 - pip
-- ipywidgets==8.0.2
-- jupyter-offlinenotebook==0.2.2
-- jupyter-resource-usage==0.7.0
-- jupyterlab==3.4.8
-- jupyterhub-singleuser==3.1.1
-- notebook==6.4.12
+- ipywidgets==8.*     # https://github.com/jupyter-widgets/ipywidgets
+- jupyter-offlinenotebook==0.2.*     # https://github.com/manics/jupyter-offlinenotebook
+- jupyter-resource-usage==0.7.*     # https://github.com/jupyter-server/jupyter-resource-usage
+- jupyter_server==1.*     # https://github.com/jupyter-server/jupyter_server
+- jupyterhub-singleuser==3.*     # https://github.com/jupyterhub/jupyterhub
+- jupyterlab==3.*     # https://github.com/jupyterlab/jupyterlab
+- notebook==6.*     # https://github.com/jupyter/notebook
