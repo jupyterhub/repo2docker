@@ -230,11 +230,6 @@ class RBuildPack(PythonBuildPack):
         )
 
     @lru_cache()
-    def get_cran_mirror_url(self, snapshot_date):
-        # Date after which we will use rspm + binary packages instead of MRAN + source packages
-        return self.get_rspm_snapshot_url(snapshot_date)
-
-    @lru_cache()
     def get_devtools_snapshot_url(self):
         """
         Return url of snapshot to use for getting devtools install
@@ -272,7 +267,7 @@ class RBuildPack(PythonBuildPack):
         contents of runtime.txt.
         """
 
-        cran_mirror_url = self.get_cran_mirror_url(self.checkpoint_date)
+        cran_mirror_url = self.get_rspm_snapshot_url(self.checkpoint_date)
 
         if self.platform != "linux/amd64":
             raise RuntimeError(
