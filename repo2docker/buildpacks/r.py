@@ -9,6 +9,9 @@ from ..semver import parse_version as V
 from ._r_base import rstudio_base_scripts
 from .python import PythonBuildPack
 
+# Aproximately the first snapshot on RSPM (Posit package manager)
+# that seems to have a working IRKernel.
+RSPM_CUTOFF_DATE = datetime.datetime(2018, 12, 7)
 
 class RBuildPack(PythonBuildPack):
     """
@@ -265,6 +268,12 @@ class RBuildPack(PythonBuildPack):
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt.
         """
+        if self.checkpoint_date < RSPM_CUTOFF_DATE:
+            raise RuntimeError(
+                f'Microsoft killed MRAN, the source of R package snapshots before {RSPM_CUTOFF_DATE.strptime("%Y-%m-%d")}. '\
+                f'This repo has a snapshot date of {self.checkpoint_date.strftime("%Y-%m-%d")} specified in runtime.txt. '\
+                'Please use a newer snapshot date'
+            )
 
         cran_mirror_url = self.get_rspm_snapshot_url(self.checkpoint_date)
 
