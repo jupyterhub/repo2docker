@@ -24,18 +24,6 @@
   `runtime.txt` is omitted and a recent enough snapshot date is assumed a RSPM
   snapshot of CRAN to be used.
 
-### r3.6-mran
-
-- Test setup of a R 3.6 environment by specifying `r-3.6-...` in `runtime.txt`,
-  where the date provided in `runtime.txt` is old enough for a MRAN snapshot of
-  CRAN to be used.
-
-### r4.0-mran
-
-- Test setup of a R 4.0 environment by specifying `r-4.0-...` in `runtime.txt`,
-  where the date provided in `runtime.txt` is old enough for a MRAN snapshot of
-  CRAN to be used.
-
 ### r4.0-rspm
 
 - Test setup of a R 4.0 environment by specifying `r-4.0-...` in `runtime.txt`,

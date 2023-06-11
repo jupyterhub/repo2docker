@@ -22,8 +22,7 @@ class RBuildPack(PythonBuildPack):
 
        Where 'year', 'month' and 'date' refer to a specific
        date whose CRAN snapshot we will use to fetch packages.
-       Uses https://packagemanager.posit.co, or MRAN if no snapshot
-       is found on packagemanager.posit.co
+       Uses https://packagemanager.posit.co.
 
     2. A `DESCRIPTION` file signaling an R package
 

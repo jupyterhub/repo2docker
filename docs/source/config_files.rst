@@ -118,7 +118,7 @@ with ``REQUIRE`` and ``environment.yml``, visit
 ================================================
 
 This is used to install R libraries pinned to a specific snapshot on
-`Posit Package Manager <https://mran.microsoft.com/documents/rro/reproducibility>`_.
+`Posit Package Manager <https://packagemanager.posit.co/>`_.
 To set the date of the snapshot add a runtime.txt_.
 For an example ``install.R`` file, visit our `example install.R file <https://github.com/binder-examples/r/blob/HEAD/install.R>`_.
 
