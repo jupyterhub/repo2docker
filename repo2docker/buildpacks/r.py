@@ -11,7 +11,7 @@ from .python import PythonBuildPack
 
 # Aproximately the first snapshot on RSPM (Posit package manager)
 # that seems to have a working IRKernel.
-RSPM_CUTOFF_DATE = datetime.datetime(2018, 12, 7)
+RSPM_CUTOFF_DATE = datetime.date(2018, 12, 7)
 
 class RBuildPack(PythonBuildPack):
     """
