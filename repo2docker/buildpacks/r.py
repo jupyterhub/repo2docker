@@ -270,7 +270,7 @@ class RBuildPack(PythonBuildPack):
         """
         if self.checkpoint_date < RSPM_CUTOFF_DATE:
             raise RuntimeError(
-                f'Microsoft killed MRAN, the source of R package snapshots before {RSPM_CUTOFF_DATE.strptime("%Y-%m-%d")}. '\
+                f'Microsoft killed MRAN, the source of R package snapshots before {RSPM_CUTOFF_DATE.strftime("%Y-%m-%d")}. '\
                 f'This repo has a snapshot date of {self.checkpoint_date.strftime("%Y-%m-%d")} specified in runtime.txt. '\
                 'Please use a newer snapshot date'
             )
