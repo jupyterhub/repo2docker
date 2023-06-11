@@ -78,8 +78,11 @@ def test_mran_dead(tmpdir, base_image):
     tmpdir.chdir()
 
     with open("runtime.txt", "w") as f:
-        f.write('r-3.6-2017-06-04')
+        f.write("r-3.6-2017-06-04")
 
     r = buildpacks.RBuildPack(base_image)
-    with pytest.raises(RuntimeError, match=r'^Microsoft killed MRAN, the source of R package snapshots before 2018-12-07.*'):
+    with pytest.raises(
+        RuntimeError,
+        match=r"^Microsoft killed MRAN, the source of R package snapshots before 2018-12-07.*",
+    ):
         r.get_build_scripts()

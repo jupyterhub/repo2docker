@@ -13,6 +13,7 @@ from .python import PythonBuildPack
 # that seems to have a working IRKernel.
 RSPM_CUTOFF_DATE = datetime.date(2018, 12, 7)
 
+
 class RBuildPack(PythonBuildPack):
     """
     Setup R for use with a repository
@@ -270,9 +271,9 @@ class RBuildPack(PythonBuildPack):
         """
         if self.checkpoint_date < RSPM_CUTOFF_DATE:
             raise RuntimeError(
-                f'Microsoft killed MRAN, the source of R package snapshots before {RSPM_CUTOFF_DATE.strftime("%Y-%m-%d")}. '\
-                f'This repo has a snapshot date of {self.checkpoint_date.strftime("%Y-%m-%d")} specified in runtime.txt. '\
-                'Please use a newer snapshot date'
+                f'Microsoft killed MRAN, the source of R package snapshots before {RSPM_CUTOFF_DATE.strftime("%Y-%m-%d")}. '
+                f'This repo has a snapshot date of {self.checkpoint_date.strftime("%Y-%m-%d")} specified in runtime.txt. '
+                "Please use a newer snapshot date"
             )
 
         cran_mirror_url = self.get_rspm_snapshot_url(self.checkpoint_date)
