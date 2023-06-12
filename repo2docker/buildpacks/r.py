@@ -9,6 +9,10 @@ from ..semver import parse_version as V
 from ._r_base import rstudio_base_scripts
 from .python import PythonBuildPack
 
+# Aproximately the first snapshot on RSPM (Posit package manager)
+# that seems to have a working IRKernel.
+RSPM_CUTOFF_DATE = datetime.date(2018, 12, 7)
+
 
 class RBuildPack(PythonBuildPack):
     """
@@ -22,8 +26,7 @@ class RBuildPack(PythonBuildPack):
 
        Where 'year', 'month' and 'date' refer to a specific
        date whose CRAN snapshot we will use to fetch packages.
-       Uses https://packagemanager.posit.co, or MRAN if no snapshot
-       is found on packagemanager.posit.co
+       Uses https://packagemanager.posit.co.
 
     2. A `DESCRIPTION` file signaling an R package
 
@@ -230,31 +233,6 @@ class RBuildPack(PythonBuildPack):
         )
 
     @lru_cache()
-    def get_mran_snapshot_url(self, snapshot_date, max_days_prior=7):
-        for i in range(max_days_prior):
-            try_date = snapshot_date - datetime.timedelta(days=i)
-            # Fall back to MRAN if packagemanager.posit.co doesn't have it
-            url = f"https://mran.microsoft.com/snapshot/{try_date.isoformat()}"
-            r = requests.head(url)
-            if r.ok:
-                return url
-        raise ValueError(
-            "No snapshot found for {} or {} days prior in mran.microsoft.com".format(
-                snapshot_date.strftime("%Y-%m-%d"), max_days_prior
-            )
-        )
-
-    @lru_cache()
-    def get_cran_mirror_url(self, snapshot_date):
-        # Date after which we will use rspm + binary packages instead of MRAN + source packages
-        rspm_cutoff_date = datetime.date(2022, 1, 1)
-
-        if snapshot_date >= rspm_cutoff_date or self.r_version >= V("4.1"):
-            return self.get_rspm_snapshot_url(snapshot_date)
-        else:
-            return self.get_mran_snapshot_url(snapshot_date)
-
-    @lru_cache()
     def get_devtools_snapshot_url(self):
         """
         Return url of snapshot to use for getting devtools install
@@ -291,8 +269,14 @@ class RBuildPack(PythonBuildPack):
         We set the snapshot date used to install R libraries from based on the
         contents of runtime.txt.
         """
+        if self.checkpoint_date < RSPM_CUTOFF_DATE:
+            raise RuntimeError(
+                f'Microsoft killed MRAN, the source of R package snapshots before {RSPM_CUTOFF_DATE.strftime("%Y-%m-%d")}. '
+                f'This repo has a snapshot date of {self.checkpoint_date.strftime("%Y-%m-%d")} specified in runtime.txt. '
+                "Please use a newer snapshot date"
+            )
 
-        cran_mirror_url = self.get_cran_mirror_url(self.checkpoint_date)
+        cran_mirror_url = self.get_rspm_snapshot_url(self.checkpoint_date)
 
         if self.platform != "linux/amd64":
             raise RuntimeError(

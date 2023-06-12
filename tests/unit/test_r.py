@@ -40,7 +40,7 @@ def test_version_completion(tmpdir, base_image):
         ("r-3.5-2019-01-01", (2019, 1, 1)),
     ],
 )
-def test_mran_date(tmpdir, runtime, expected, base_image):
+def test_cran_date(tmpdir, runtime, expected, base_image):
     tmpdir.chdir()
 
     with open("runtime.txt", "w") as f:
@@ -74,21 +74,15 @@ def test_snapshot_rspm_date(base_image):
         r.get_rspm_snapshot_url(date(1691, 9, 5))
 
 
-@pytest.mark.parametrize("expected", [date(2019, 12, 29), date(2019, 12, 26)])
-@pytest.mark.parametrize("requested", [date(2019, 12, 31)])
-def test_snapshot_mran_date(requested, expected, base_image):
-    def mock_request_head(url):
-        r = Response()
-        if url == "https://mran.microsoft.com/snapshot/" + expected.isoformat():
-            r.status_code = 200
-        else:
-            r.status_code = 404
-            r.reason = "Mock MRAN no snapshot"
-        return r
+def test_mran_dead(tmpdir, base_image):
+    tmpdir.chdir()
 
-    with patch("requests.head", side_effect=mock_request_head):
-        r = buildpacks.RBuildPack(base_image)
-        assert (
-            r.get_mran_snapshot_url(requested)
-            == f"https://mran.microsoft.com/snapshot/{expected.isoformat()}"
-        )
+    with open("runtime.txt", "w") as f:
+        f.write("r-3.6-2017-06-04")
+
+    r = buildpacks.RBuildPack(base_image)
+    with pytest.raises(
+        RuntimeError,
+        match=r"^Microsoft killed MRAN, the source of R package snapshots before 2018-12-07.*",
+    ):
+        r.get_build_scripts()

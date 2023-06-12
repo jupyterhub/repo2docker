@@ -7,7 +7,7 @@ if (!(version$major == "3" && as.double(version$minor) >= 6 && as.double(version
   quit("yes", 1)
 }
 
-# Fail if MRAN isn't the configured CRAN mirror
-if (!(startsWith(options()$repos["CRAN"], "https://mran.microsoft.com"))) {
+# Fail if RSPM isn't the configured CRAN mirror
+if (!(startsWith(options()$repos["CRAN"], "https://packagemanager.posit.co"))) {
   quit("yes", 1)
 }
