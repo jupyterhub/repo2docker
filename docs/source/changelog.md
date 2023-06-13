@@ -2,7 +2,7 @@
 
 ## Version 2023.06.0
 
-([full changelog](https://github.com/jupyterhub/repo2docker/compare/2022.10.0...0ea6f7d85ed2adab17dae3ba2685a90df52c166d))
+([full changelog](https://github.com/jupyterhub/repo2docker/compare/2022.10.0...2023.06.0))
 
 ### Breaking changes
 
