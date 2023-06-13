@@ -1,5 +1,100 @@
 # Changelog
 
+## Version 2023.06.0
+
+([full changelog](https://github.com/jupyterhub/repo2docker/compare/2022.10.0...2023.06.0))
+
+### Breaking changes
+
+- JupyterHub version installed by default upgraded from 1.5 to 3.1.1
+- Microsoft [killed MRAN](https://techcommunity.microsoft.com/t5/azure-sql-blog/microsoft-r-application-network-retirement/ba-p/3707161), so all package snapshots now come from [Posit Package Manager](https://packagemanager.posit.co/client/). Snapshots from before 2018-12-07 are now no longer available, so you might have to update the snapshot date in your `runtime.txt`.
+
+### New features added
+
+- Support Python 3.11 and upgrade jupyterhub from 1.5.0 to 3.1.1 [#1239](https://github.com/jupyterhub/repo2docker/pull/1239) ([@minrk](https://github.com/minrk))
+- allow user to specify a single port with default command [#918](https://github.com/jupyterhub/repo2docker/pull/918) ([@minrk](https://github.com/minrk))
+- Let `FROM <base_image>` in the Dockerfile template be configurable [#909](https://github.com/jupyterhub/repo2docker/pull/909) ([@yuvipanda](https://github.com/yuvipanda))
+
+### Enhancements made
+
+- Update to mamba 1.4.0 [#1256](https://github.com/jupyterhub/repo2docker/pull/1256) ([@SylvainCorlay](https://github.com/SylvainCorlay))
+- [MRG] download original file formats from Dataverse #1242 [#1253](https://github.com/jupyterhub/repo2docker/pull/1253) ([@pdurbin](https://github.com/pdurbin))
+- Add optional registry credentials to push() [#1245](https://github.com/jupyterhub/repo2docker/pull/1245) ([@manics](https://github.com/manics))
+- Add ARM64 support where possible [#1228](https://github.com/jupyterhub/repo2docker/pull/1228) ([@manics](https://github.com/manics))
+- Switch default python to 3.10 [#1219](https://github.com/jupyterhub/repo2docker/pull/1219) ([@yuvipanda](https://github.com/yuvipanda))
+
+### Bugs fixed
+
+- Microsoft killed MRAN, stop relying on it [#1285](https://github.com/jupyterhub/repo2docker/pull/1285) ([@minrk](https://github.com/minrk))
+- Update the location of R packagemanager [#1273](https://github.com/jupyterhub/repo2docker/pull/1273) ([@Xarthisius](https://github.com/Xarthisius))
+- missing `f` in julia fetch error f-string [#1264](https://github.com/jupyterhub/repo2docker/pull/1264) ([@minrk](https://github.com/minrk))
+- avoid duplicate log statements by memoizing getters [#1248](https://github.com/jupyterhub/repo2docker/pull/1248) ([@minrk](https://github.com/minrk))
+- Add Conda env library path to RStudio configuration [#1237](https://github.com/jupyterhub/repo2docker/pull/1237) ([@TimStewartJ](https://github.com/TimStewartJ))
+- Create Julia projects based on binder/Project.toml when found [#1216](https://github.com/jupyterhub/repo2docker/pull/1216) ([@frankier](https://github.com/frankier))
+- Allow REPO_DIR to be a non-existing folder by creating it and providing the user with permissions [#976](https://github.com/jupyterhub/repo2docker/pull/976) ([@bollwyvl](https://github.com/bollwyvl))
+
+### Maintenance and upkeep improvements
+
+- Microsoft killed MRAN, stop relying on it [#1285](https://github.com/jupyterhub/repo2docker/pull/1285) ([@minrk](https://github.com/minrk))
+- Relax pins to major versions and refreeze, introduce explicit jupyter_server v1 pin [#1283](https://github.com/jupyterhub/repo2docker/pull/1283) ([@consideRatio](https://github.com/consideRatio))
+- fix github link templates [#1276](https://github.com/jupyterhub/repo2docker/pull/1276) ([@minrk](https://github.com/minrk))
+- dependabot: monthly updates of github actions [#1262](https://github.com/jupyterhub/repo2docker/pull/1262) ([@consideRatio](https://github.com/consideRatio))
+- Remove deprecated nteract_on_jupyter [#1259](https://github.com/jupyterhub/repo2docker/pull/1259) ([@yuvipanda](https://github.com/yuvipanda))
+- disable codecov failures [#1251](https://github.com/jupyterhub/repo2docker/pull/1251) ([@minrk](https://github.com/minrk))
+- Support Python 3.11 and upgrade jupyterhub from 1.5.0 to 3.1.1 [#1239](https://github.com/jupyterhub/repo2docker/pull/1239) ([@minrk](https://github.com/minrk))
+- pre-commit update to fix ci [#1238](https://github.com/jupyterhub/repo2docker/pull/1238) ([@minrk](https://github.com/minrk))
+- Upgrade to mamba 1.1 and enable rich SAT error messages [#1232](https://github.com/jupyterhub/repo2docker/pull/1232) ([@SylvainCorlay](https://github.com/SylvainCorlay))
+- Upgrade to mamba 1.0 [#1213](https://github.com/jupyterhub/repo2docker/pull/1213) ([@SylvainCorlay](https://github.com/SylvainCorlay))
+- docker image: update alpine to 3.16 [#1212](https://github.com/jupyterhub/repo2docker/pull/1212) ([@consideRatio](https://github.com/consideRatio))
+- reconcile CLI/config priority [#1211](https://github.com/jupyterhub/repo2docker/pull/1211) ([@minrk](https://github.com/minrk))
+- pipfile: pass --clear flag, and do it separetely to not be ignored [#1208](https://github.com/jupyterhub/repo2docker/pull/1208) ([@consideRatio](https://github.com/consideRatio))
+- run submodule test over https [#1204](https://github.com/jupyterhub/repo2docker/pull/1204) ([@minrk](https://github.com/minrk))
+- pre-commit: add pyupgrade, isort, and prettier for .md files [#1202](https://github.com/jupyterhub/repo2docker/pull/1202) ([@consideRatio](https://github.com/consideRatio))
+- Create wheels with the build package, stop calling setup.py directly [#1199](https://github.com/jupyterhub/repo2docker/pull/1199) ([@consideRatio](https://github.com/consideRatio))
+- Add check-tmp step to local repo tests [#1126](https://github.com/jupyterhub/repo2docker/pull/1126) ([@minrk](https://github.com/minrk))
+- Set default, type, and help method for engine in argparse [#1073](https://github.com/jupyterhub/repo2docker/pull/1073) ([@jgarte](https://github.com/jgarte))
+
+### Documentation improvements
+
+- Fix links to jupyterlab-demo postBuild file [#1282](https://github.com/jupyterhub/repo2docker/pull/1282) ([@fcollonval](https://github.com/fcollonval))
+- Recreate changelog as markdown [#1281](https://github.com/jupyterhub/repo2docker/pull/1281) ([@yuvipanda](https://github.com/yuvipanda))
+- fix github link templates [#1276](https://github.com/jupyterhub/repo2docker/pull/1276) ([@minrk](https://github.com/minrk))
+- update docs for default and supported Python versions [#1250](https://github.com/jupyterhub/repo2docker/pull/1250) ([@minrk](https://github.com/minrk))
+- docs: add devenv, linkcheck, and refresh misc config etc [#1197](https://github.com/jupyterhub/repo2docker/pull/1197) ([@consideRatio](https://github.com/consideRatio))
+
+### Other merged PRs
+
+- build(deps): bump pypa/gh-action-pypi-publish from 1.8.5 to (edit) release/v1 [#1279](https://github.com/jupyterhub/repo2docker/pull/1279) ([@dependabot](https://github.com/dependabot))
+- [pre-commit.ci] pre-commit autoupdate [#1270](https://github.com/jupyterhub/repo2docker/pull/1270) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- build(deps): bump pypa/gh-action-pypi-publish from 1.8.4 to 1.8.5 [#1263](https://github.com/jupyterhub/repo2docker/pull/1263) ([@dependabot](https://github.com/dependabot))
+- [pre-commit.ci] pre-commit autoupdate [#1261](https://github.com/jupyterhub/repo2docker/pull/1261) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- build(deps): bump pypa/gh-action-pypi-publish from 1.8.3 to 1.8.4 [#1260](https://github.com/jupyterhub/repo2docker/pull/1260) ([@dependabot](https://github.com/dependabot))
+- build(deps): bump pypa/gh-action-pypi-publish from 1.6.4 to 1.8.3 [#1257](https://github.com/jupyterhub/repo2docker/pull/1257) ([@dependabot](https://github.com/dependabot))
+- [pre-commit.ci] pre-commit autoupdate [#1252](https://github.com/jupyterhub/repo2docker/pull/1252) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- Ensure `BuildPack.python_version` is specified [#1249](https://github.com/jupyterhub/repo2docker/pull/1249) ([@minrk](https://github.com/minrk))
+- Update install-nix.bash [#1244](https://github.com/jupyterhub/repo2docker/pull/1244) ([@robertodr](https://github.com/robertodr))
+- build(deps): bump docker/build-push-action from 3 to 4 [#1241](https://github.com/jupyterhub/repo2docker/pull/1241) ([@dependabot](https://github.com/dependabot))
+- Update to `jupyter-resource-usage==0.7.0` [#1236](https://github.com/jupyterhub/repo2docker/pull/1236) ([@jtpio](https://github.com/jtpio))
+- Also install dev requirements on Gitpod [#1235](https://github.com/jupyterhub/repo2docker/pull/1235) ([@jtpio](https://github.com/jtpio))
+- Bump to Node 18 [#1234](https://github.com/jupyterhub/repo2docker/pull/1234) ([@jtpio](https://github.com/jtpio))
+- [pre-commit.ci] pre-commit autoupdate [#1229](https://github.com/jupyterhub/repo2docker/pull/1229) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- Quick-fix for Docker image build [#1227](https://github.com/jupyterhub/repo2docker/pull/1227) ([@manics](https://github.com/manics))
+- Fix tests/external/reproductions.repos.yaml [#1226](https://github.com/jupyterhub/repo2docker/pull/1226) ([@manics](https://github.com/manics))
+- Fix typo [#1224](https://github.com/jupyterhub/repo2docker/pull/1224) ([@fkohrt](https://github.com/fkohrt))
+- build(deps): bump pypa/gh-action-pypi-publish from 1.5.1 to 1.6.4 [#1223](https://github.com/jupyterhub/repo2docker/pull/1223) ([@dependabot](https://github.com/dependabot))
+- [pre-commit.ci] pre-commit autoupdate [#1222](https://github.com/jupyterhub/repo2docker/pull/1222) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- ci: cleanup no longer used test logic related to memlimit [#1218](https://github.com/jupyterhub/repo2docker/pull/1218) ([@consideRatio](https://github.com/consideRatio))
+- [pre-commit.ci] pre-commit autoupdate [#1217](https://github.com/jupyterhub/repo2docker/pull/1217) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- ci: use non-deprecated codecov uploader [#1209](https://github.com/jupyterhub/repo2docker/pull/1209) ([@consideRatio](https://github.com/consideRatio))
+- ci: stop running pre-commit in gha, rely on pre-commit.ci [#1200](https://github.com/jupyterhub/repo2docker/pull/1200) ([@consideRatio](https://github.com/consideRatio))
+- Initial changelog for 2022.10.0 [#1194](https://github.com/jupyterhub/repo2docker/pull/1194) ([@manics](https://github.com/manics))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyterhub/repo2docker/graphs/contributors?from=2022-10-18&to=2023-06-13&type=c))
+
+[@AliMirlou](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AAliMirlou+updated%3A2022-10-18..2023-06-13&type=Issues) | [@betatim](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Abetatim+updated%3A2022-10-18..2023-06-13&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Abollwyvl+updated%3A2022-10-18..2023-06-13&type=Issues) | [@choldgraf](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Acholdgraf+updated%3A2022-10-18..2023-06-13&type=Issues) | [@consideRatio](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AconsideRatio+updated%3A2022-10-18..2023-06-13&type=Issues) | [@craig-willis](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Acraig-willis+updated%3A2022-10-18..2023-06-13&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Adependabot+updated%3A2022-10-18..2023-06-13&type=Issues) | [@fcollonval](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Afcollonval+updated%3A2022-10-18..2023-06-13&type=Issues) | [@fkohrt](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Afkohrt+updated%3A2022-10-18..2023-06-13&type=Issues) | [@frankier](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Afrankier+updated%3A2022-10-18..2023-06-13&type=Issues) | [@jgarte](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ajgarte+updated%3A2022-10-18..2023-06-13&type=Issues) | [@jhamman](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ajhamman+updated%3A2022-10-18..2023-06-13&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ajtpio+updated%3A2022-10-18..2023-06-13&type=Issues) | [@manics](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Amanics+updated%3A2022-10-18..2023-06-13&type=Issues) | [@meeseeksmachine](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ameeseeksmachine+updated%3A2022-10-18..2023-06-13&type=Issues) | [@minrk](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aminrk+updated%3A2022-10-18..2023-06-13&type=Issues) | [@nuest](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Anuest+updated%3A2022-10-18..2023-06-13&type=Issues) | [@pdurbin](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Apdurbin+updated%3A2022-10-18..2023-06-13&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Apre-commit-ci+updated%3A2022-10-18..2023-06-13&type=Issues) | [@robertodr](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Arobertodr+updated%3A2022-10-18..2023-06-13&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3ASylvainCorlay+updated%3A2022-10-18..2023-06-13&type=Issues) | [@TimStewartJ](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3ATimStewartJ+updated%3A2022-10-18..2023-06-13&type=Issues) | [@trybik](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Atrybik+updated%3A2022-10-18..2023-06-13&type=Issues) | [@welcome](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Awelcome+updated%3A2022-10-18..2023-06-13&type=Issues) | [@westurner](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Awesturner+updated%3A2022-10-18..2023-06-13&type=Issues) | [@Xarthisius](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AXarthisius+updated%3A2022-10-18..2023-06-13&type=Issues) | [@yamaton](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ayamaton+updated%3A2022-10-18..2023-06-13&type=Issues) | [@yuvipanda](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ayuvipanda+updated%3A2022-10-18..2023-06-13&type=Issues)
+
 ## Version 2022.10.0
 
 [Full changelog](https://github.com/jupyterhub/repo2docker/compare/2022.02.0...2022.10.0)
