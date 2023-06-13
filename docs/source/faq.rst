@@ -62,11 +62,11 @@ Julia versions 0.6.x and earlier are supported via a :ref:`REQUIRE <REQUIRE>` fi
 R
 ~
 
-The default version of R is currently R 3.6.1. You can select the version of
+The default version of R is currently R 4.2. You can select the version of
 R you want to use by specifying it in the :ref:`runtime.txt <runtime.txt>`
 file.
 
-We support R versions 3.4, 3.5 and 3.6.
+We support R versions 3.4, 3.5, 3.6, 4.0, 4.1 and 4.2.
 
 
 Why is my repository failing to build with ``ResolvePackageNotFound`` ?
