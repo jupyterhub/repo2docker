@@ -14,6 +14,6 @@ another JupyterLab installation in order to share a workspace with
 someone else.
 
 In order to package your workspace with a repository, we recommend
-following the steps in this example repository:
+following the steps in the documentation:
 
-https://github.com/ian-r-rose/binder-workspace-demo/
+https://jupyterlab.readthedocs.io/en/stable/user/binder.html#customize-the-layout
