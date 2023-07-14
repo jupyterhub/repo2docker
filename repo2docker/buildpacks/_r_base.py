@@ -38,7 +38,7 @@ def rstudio_base_scripts(r_version):
             # which will upgrade the installed version of R, undoing our pinned version
             rf"""
             apt-get update > /dev/null && \
-            if apt-cache search libssl3 > /dev/null; then \
+            if apt-cache search libssl3 | grep -q libssl3; then \
               RSTUDIO_URL="{rstudio_openssl3_url}" ;\
               RSTUDIO_HASH="{rstudio_openssl3_sha256sum}" ;\
             else \
