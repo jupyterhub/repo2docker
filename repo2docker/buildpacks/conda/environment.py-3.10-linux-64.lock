@@ -114,6 +114,7 @@ https://conda.anaconda.org/conda-forge/noarch/jedi-0.19.1-pyhd8ed1ab_0.conda#81a
 https://conda.anaconda.org/conda-forge/noarch/jinja2-3.1.2-pyhd8ed1ab_1.tar.bz2#c8490ed5c70966d232fdd389d0dbed37
 https://conda.anaconda.org/conda-forge/noarch/jupyterlab_pygments-0.2.2-pyhd8ed1ab_0.tar.bz2#243f63592c8e449f40cd42eb5cf32f40
 https://conda.anaconda.org/conda-forge/noarch/matplotlib-inline-0.1.6-pyhd8ed1ab_0.tar.bz2#b21613793fcc81d944c76c9f2864a7de
+https://conda.anaconda.org/conda-forge/noarch/overrides-7.4.0-pyhd8ed1ab_0.conda#4625b7b01d7f4ac9c96300a5515acfaa
 https://conda.anaconda.org/conda-forge/noarch/pexpect-4.8.0-pyh1a96a4e_2.tar.bz2#330448ce4403cc74990ac07c555942a1
 https://conda.anaconda.org/conda-forge/noarch/pip-23.2.1-pyhd8ed1ab_0.conda#e2783aa3f9235225eec92f9081c5b801
 https://conda.anaconda.org/conda-forge/noarch/python-dateutil-2.8.2-pyhd8ed1ab_0.tar.bz2#dd999d1cc9f79e67dbb855c8924c7984
@@ -173,3 +174,5 @@ https://conda.anaconda.org/conda-forge/noarch/notebook-6.5.6-pyha770c72_0.conda#
 https://conda.anaconda.org/conda-forge/noarch/jupyter-offlinenotebook-0.2.2-pyh1d7be83_0.tar.bz2#fe55056ce4bc4bd4953ba440270735fb
 https://conda.anaconda.org/conda-forge/noarch/jupyterlab-3.6.6-pyhd8ed1ab_0.conda#05def61d4c64b0f3161eaeb3b00cc790
 https://conda.anaconda.org/conda-forge/noarch/jupyterhub-singleuser-3.1.1-pyh2a2186d_0.conda#6d0a3394efe9ff7c0ad1ed03a6ca3720
+https://conda.anaconda.org/conda-forge/noarch/notebook-7.0.2-pyhd8ed1ab_0.conda#b97fc9e73cb1372834f4e7e257120d14
+https://conda.anaconda.org/conda-forge/noarch/jupyter-offlinenotebook-0.2.2-pyh1d7be83_0.tar.bz2#fe55056ce4bc4bd4953ba440270735fb
