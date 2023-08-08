@@ -27,7 +27,7 @@ There are **no guarantees that repositories will behave the same way as other re
 For example these are two scenarios that would make your repositories non-reproducible:
 
 - **Your base image is different from `Ubuntu:jammy`.**
-  If you change the base image in a way that is different from repo2docker's default (the Ubuntu `bionic` image), then repositories that **you** build with repo2docker may be significantly different from those that **other** instances of repo2docker build (e.g., those from [`mybinder.org`](https://mybinder.org)).
+  If you change the base image in a way that is different from repo2docker's default (the Ubuntu `jammy` image), then repositories that **you** build with repo2docker may be significantly different from those that **other** instances of repo2docker build (e.g., those from [`mybinder.org`](https://mybinder.org)).
 - **Your base image changes over time.**
   If you choose a base image that changes its composition over time (e.g., an image provided by some other community), then it may cause repositories build with your base image to change in unpredictable ways.
   We recommend choosing a base image that you know to be stable and trustworthy.
