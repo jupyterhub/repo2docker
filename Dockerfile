@@ -16,7 +16,7 @@ RUN mkdir /tmp/wheelhouse \
 FROM alpine:${ALPINE_VERSION}
 
 # install python, git, bash, mercurial
-RUN apk add --no-cache git git-lfs python3 py3-pip py3-setuptools bash docker mercurial
+RUN apk add --no-cache git git-lfs python3 py3-pip py3-setuptools bash docker mercurial openssh
 
 # install hg-evolve (Mercurial extensions)
 RUN pip3 install hg-evolve --user --no-cache-dir
