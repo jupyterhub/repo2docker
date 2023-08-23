@@ -1,9 +1,4 @@
-# <a href="https://github.com/jupyterhub/repo2docker"><img src="https://raw.githubusercontent.com/jupyterhub/repo2docker/8731ecf0967cc5fde028c456f2b92be651ebbc18/docs/source/_static/images/repo2docker.png" height="48px" /> repo2docker</a>
-
-[![Build Status](https://github.com/jupyterhub/repo2docker/workflows/Test/badge.svg)](https://github.com/jupyterhub/repo2docker/actions)
-[![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
-[![Contribute](https://img.shields.io/badge/I_want_to_contribute!-grey?logo=jupyter)](https://repo2docker.readthedocs.io/en/latest/contributing/contributing.html)
-[![Docker Repository on Quay](https://img.shields.io/badge/quay.io-container-green "Docker Repository on Quay")](https://quay.io/repository/jupyterhub/repo2docker?tab=tags)
+# <a href="https://github.com/jupyterhub/repo2docker"><img src="https://raw.githubusercontent.com/jupyterhub/repo2docker/8731ecf0967cc5fde028c456f2b92be651ebbc18/docs/source/_static/images/repo2docker.png" height="48px" /> repo2docker</a> - with "enterprise" scenario bells-and-whistles
 
 `repo2docker` fetches a git repository and builds a container image based on
 the configuration files found in the repository.
@@ -11,24 +6,9 @@ the configuration files found in the repository.
 See the [repo2docker documentation](http://repo2docker.readthedocs.io)
 for more information on using repo2docker.
 
-For support questions please search or post to https://discourse.jupyter.org/c/binder.
+This fork adds various bells-and-whistles to make `repo2docker` more usable in an enterprise context.  Presently this includes:
 
-See the [contributing guide](CONTRIBUTING.md) for information on contributing to
-repo2docker.
-
----
-
-Please note that this repository is participating in a study into sustainability
-of open source projects. Data will be gathered about this repository for
-approximately the next 12 months, starting from 2021-06-11.
-
-Data collected will include number of contributors, number of PRs, time taken to
-close/merge these PRs, and issues closed.
-
-For more information, please visit
-[our informational page](https://sustainable-open-science-and-software.github.io/) or download our [participant information sheet](https://sustainable-open-science-and-software.github.io/assets/PIS_sustainable_software.pdf).
-
----
+- Support for authenticating against Azure DevOps hosted `pip` repositories using an Azure Service Principal
 
 ## Using repo2docker
 
@@ -36,7 +16,7 @@ For more information, please visit
 
 1. Docker to build & run the repositories. The [community edition](https://store.docker.com/search?type=edition&offering=community)
    is recommended.
-2. Python 3.6+.
+2. Python 3.10+ (although 3.6+ may work).
 
 Supported on Linux and macOS. [See documentation note about Windows support.](http://repo2docker.readthedocs.io/en/latest/install.html#note-about-windows-support)
 
@@ -99,4 +79,4 @@ The philosophy of repo2docker is inspired by
 
 ## Docker Image
 
-Repo2Docker can be run inside a Docker container if access to the Docker Daemon is provided, for example see [BinderHub](https://github.com/jupyterhub/binderhub). Docker images are [published to quay.io](https://quay.io/repository/jupyterhub/repo2docker?tab=tags). The old [Docker Hub image](https://hub.docker.com/r/jupyter/repo2docker) is no longer supported.
+Repo2Docker can be run inside a Docker container if access to the Docker Daemon is provided, for example see [BinderHub](https://github.com/jupyterhub/binderhub).
