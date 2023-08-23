@@ -1,1 +1,8 @@
 repo2docker/_version.py export-subst
+
+* text=auto eol=lf
+
+*.sh    text eol=lf
+*.bash    text eol=lf
+*.py    text eol=lf
+*.yaml  text eol=lf
