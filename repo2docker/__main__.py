@@ -68,7 +68,8 @@ class MimicDockerEnvHandling(argparse.Action):
 def get_argparser():
     """Get arguments that may be used by repo2docker"""
     argparser = argparse.ArgumentParser(
-        description="Fetch a repository and build a container image"
+        description="Fetch a repository and build a container image",
+        formatter_class=argparse.RawTextHelpFormatter
     )
 
     argparser.add_argument(
@@ -282,6 +283,34 @@ def get_argparser():
         help=Repo2Docker.engine.help,
     )
 
+    argparser.add_argument(
+        "--pip-index-url",
+        type=str,
+        default="https://pipy.python.org/simple",
+        help=Repo2Docker.pip_index_url.help,
+    )
+
+    argparser.add_argument(
+        "--pip-auth",
+        type=str,
+        default="none",
+        help=Repo2Docker.pip_auth.help,
+    )
+
+    argparser.add_argument(
+        "--pip-identity",
+        type=str,
+        default="",
+        help=Repo2Docker.pip_identity.help,
+    )
+
+    argparser.add_argument(
+        "--pip-secret",
+        type=str,
+        default="",
+        help=Repo2Docker.pip_secret.help,
+    )
+
     return argparser
 
 
@@ -463,6 +492,18 @@ def make_r2d(argv=None):
 
     if args.target_repo_dir:
         r2d.target_repo_dir = args.target_repo_dir
+
+    if args.pip_index_url:
+        r2d.pip_index_url = args.pip_index_url
+
+    if args.pip_auth:
+        r2d.pip_auth = args.pip_auth
+
+    if args.pip_identity:
+        r2d.pip_identity = args.pip_identity
+
+    if args.pip_secret:
+        r2d.pip_secret = args.pip_secret
 
     return r2d
 

@@ -87,6 +87,9 @@ ENV {{item[0]}}={{item[1]}}
 {% endfor -%}
 {% endif -%}
 
+# Build arguments for custom/authenticated software repositories
+ARG PIP_INDEX_URL="https://pipy.python.org/simple"
+
 {% if path -%}
 # Special case PATH
 ENV PATH={{ ':'.join(path) }}:${PATH}

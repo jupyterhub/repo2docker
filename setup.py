@@ -61,6 +61,7 @@ setup(
         "semver",
         "toml",
         "traitlets",
+        "azure-identity",
     ],
     python_requires=">=3.6",
     author="Project Jupyter Contributors",
