@@ -482,14 +482,21 @@ class Repo2Docker(Application):
         help="""
         pip authentication mechanism.
 
-        - "none" (default), authentication is disabled.
-        - "basic" uses simple HTTP username+password authentication.
-          Provide pip_identity for username, pip_secret for password.
-        - "azure-sp-key" requests a temporary authentication token
-          from Azure using a Service Principal key (password).
-          Provide pip_secret for the Service Principal key.
-        - "azure-sp-certificate" requests a temporary authentication
-          token from Azure using a Service Principal certificate. 
+        - Generic options
+        
+          - "none" (default), authentication is disabled.
+          - "basic" uses simple HTTP username+password authentication.
+            Provide pip_identity for username, pip_secret for password.
+          
+        - For Azure DevOps, a service principal must be defined
+          by --pip-identity in the format "<tenant_id>/<client_id>"
+          (delimited by a forward-slash)
+
+          - "azure-sp-key" requests a temporary authentication token
+            from Azure using a Service Principal key (password).
+            Provide pip_secret for the Service Principal key.
+          - "azure-sp-certificate" requests a temporary authentication
+            token from Azure using a Service Principal certificate. 
         """
     )
 
@@ -823,7 +830,14 @@ class Repo2Docker(Application):
             
             try:
                 tenant_id, client_id = str(self.pip_identity).split('/', 1)
+            except ValueError as e:
+                self.log.error(e)
+                self.log.error("\nAzure SP authentication for pip authentication specified " +
+                               "but identity was not in the form '<tenant_id>/<client_id>' - " +
+                               "unable to proceed\n")
+                self.exit(1)
 
+            try:
                 if auth == "azure-sp-key":
                     credential = ClientSecretCredential(
                         tenant_id=tenant_id,
@@ -834,16 +848,14 @@ class Repo2Docker(Application):
                     credential = CertificateCredential(
                         tenant_id=tenant_id,
                         client_id=client_id,
-                        certificate_data=self.pip_secret
+                        certificate_data=str(self.pip_secret).encode()
                     )
-            except ValueError:
-                self.log.error("\nAzure SP authentication for pip authentication specified " +
-                               "but identity was not in the form '<tenant_id>.<client_id>' - " +
-                               "unable to proceed\n")
-                self.exit(1)
             except ClientAuthenticationError as e:
-                self.log.error(f"\nAzure SP authentication for pip authentication specified " +
-                               "but authentication failed: {e}\n")
+                self.log.error("\nAzure SP authentication for pip authentication specified " +
+                               f"but authentication failed: {e}\n")
+                self.exit(1)
+            except Exception as e:
+                self.log.error(f"\nThere was an unexpected issue processing the Azure SP authentication: {e}\n")
                 self.exit(1)
 
             # 499b84ac-1321-427f-aa17-267ca6975798/.default   (universally ADO)
