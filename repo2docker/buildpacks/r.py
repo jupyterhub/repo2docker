@@ -217,7 +217,7 @@ class RBuildPack(PythonBuildPack):
                     ),
                 },
             ).json()
-            # Construct a snapshot URL that will give us binary packages for Ubuntu Bionic (18.04)
+            # Construct a snapshot URL that will give us binary packages for appropriate ubuntu version
             if "upsi" in snapshots:
                 return (
                     # Env variables here are expanded by envsubst in the Dockerfile, after sourcing

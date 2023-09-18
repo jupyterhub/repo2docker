@@ -49,7 +49,7 @@ Many ingredients go into making an image from a repository:
 
 `repo2docker` controls the first two, the user controls the third one. The current
 policy for the version of the base image is that we will use the current LTS
-version Bionic Beaver (18.04) for the foreseeable future.
+version Jammy Jellyfish (22.04) for the foreseeable future.
 
 The version of `repo2docker` used to build an image can influence which packages
 are installed by default and which features are supported during the build

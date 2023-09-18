@@ -105,7 +105,7 @@ def base_image():
     """
     Base ubuntu image to use when testing specific BuildPacks
     """
-    return "buildpack-deps:bionic"
+    return "buildpack-deps:jammy"
 
 
 def _add_content_to_git(repo_dir):
