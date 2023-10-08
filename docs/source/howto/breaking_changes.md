@@ -16,7 +16,7 @@ In this case you should see if your packages can be installed using a {ref}`Cond
 
 Alternatively you can try installing the packages from source, using a {ref}`postBuild <postBuild>` script.
 
-As a last resort you can install an older version of repo2docker locally, build your image, push it to a public container registry such as [Docker Hub](https://hub.docker.com/), [GitHub Container Registry](https://docs.github.com/en/packages/guides/about-github-container-registry) or [quay.io](https://quay.io/), and replace your repository's repo2docker configuration with a minimal `Dockerfile` containing just.
+As a last resort you can install an older version of repo2docker locally, build your image, push it to a public container registry such as [Docker Hub](https://hub.docker.com/), [GitHub Container Registry](https://docs.github.com/en/packages/guides/about-github-container-registry) or [quay.io](https://quay.io/), and replace your repository's repo2docker configuration with a minimal {ref}`Dockerfile <dockerfile>` containing just:
 
 ```dockerfile
 FROM <registry>/<username>/<image>:<tag>

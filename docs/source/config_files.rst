@@ -233,6 +233,8 @@ To see an example repository visit
 `nix binder example <https://github.com/binder-examples/nix>`_.
 
 
+.. _dockerfile:
+
 ``Dockerfile`` - Advanced environments
 ======================================
 
