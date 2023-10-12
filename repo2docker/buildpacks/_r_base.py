@@ -11,7 +11,6 @@ def rstudio_base_scripts(r_version):
 
     # Shiny server (not the package!) seems to be the same version for all R versions
     shiny_server_url = "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.17.973-amd64.deb"
-    shiny_proxy_version = "1.1"
     shiny_sha256sum = "80f1e48f6c824be7ef9c843bb7911d4981ac7e8a963e0eff823936a8b28476ee"
 
     # RStudio server has different builds based on wether OpenSSL 3 or 1.1 is available in the base
@@ -28,7 +27,6 @@ def rstudio_base_scripts(r_version):
     rstudio_openssl1_sha256sum = (
         "bb88e37328c304881e60d6205d7dac145525a5c2aaaf9da26f1cb625b7d47e6e"
     )
-    rsession_proxy_version = "2.0.1"
 
     return [
         (
@@ -59,10 +57,10 @@ def rstudio_base_scripts(r_version):
         (
             "${NB_USER}",
             # Install jupyter-rsession-proxy
-            rf"""
+            r"""
                 pip install --no-cache \
-                    jupyter-rsession-proxy=={rsession_proxy_version} \
-                    jupyter-shiny-proxy=={shiny_proxy_version}
+                    jupyter-rsession-proxy \
+                    jupyter-shiny-proxy
                 """,
         ),
         (
