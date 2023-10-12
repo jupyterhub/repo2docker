@@ -21,3 +21,6 @@ As a last resort you can install an older version of repo2docker locally, build 
 ```dockerfile
 FROM <registry>/<username>/<image>:<tag>
 ```
+
+This image will contain a frozen version of your repository at the time the image was built.
+You will need to rebuild and push it everytime your repository is modified.
