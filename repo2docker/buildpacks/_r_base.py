@@ -28,7 +28,7 @@ def rstudio_base_scripts(r_version):
     rstudio_openssl1_sha256sum = (
         "bb88e37328c304881e60d6205d7dac145525a5c2aaaf9da26f1cb625b7d47e6e"
     )
-    rsession_proxy_version = "2.0.1"
+    rsession_proxy_version = "2.2.0"
 
     return [
         (
