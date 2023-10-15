@@ -92,16 +92,31 @@ def test_fetch_software_from_github_archive(requests_mock):
     # we "fetch" a local ZIP file to simulate a Zenodo record created from a
     # GitHub repository via the Zenodo-GitHub integration
     with zenodo_archive() as zen_path:
-        mock_response = {
+        mock_record = {
             "files": [
                 {
                     "filename": "some_dir/afake.zip",
-                    "links": {"download": f"file://{zen_path}"},
                 }
             ],
+            "links": {
+                "files": "https://zenodo.org/api/records/1234/files",
+            },
             "metadata": {"upload_type": "other"},
         }
-        requests_mock.get("https://zenodo.org/api/records/1234", json=mock_response)
+        requests_mock.get("https://zenodo.org/api/records/1234", json=mock_record)
+
+        mock_record_files = {
+            "entries": [
+                {
+                    "key": "some_dir/afake.zip",
+                    "links": {"content": f"file://{zen_path}"},
+                }
+            ],
+        }
+        requests_mock.get(
+            "https://zenodo.org/api/records/1234/files", json=mock_record_files
+        )
+
         requests_mock.get(f"file://{zen_path}", content=open(zen_path, "rb").read())
 
         zen = Zenodo()
@@ -121,18 +136,33 @@ def test_fetch_software(requests_mock):
     # we "fetch" a local ZIP file to simulate a Zenodo software record with a
     # ZIP file in it
     with zenodo_archive() as zen_path:
-        mock_response = {
+        mock_record = {
             "files": [
                 {
                     # this is the difference to the GitHub generated one,
                     # the ZIP file isn't in a directory
                     "filename": "afake.zip",
-                    "links": {"download": f"file://{zen_path}"},
                 }
             ],
+            "links": {
+                "files": "https://zenodo.org/api/records/1234/files",
+            },
             "metadata": {"upload_type": "software"},
         }
-        requests_mock.get("https://zenodo.org/api/records/1234", json=mock_response)
+        requests_mock.get("https://zenodo.org/api/records/1234", json=mock_record)
+
+        mock_record_files = {
+            "entries": [
+                {
+                    "key": "afake.zip",
+                    "links": {"content": f"file://{zen_path}"},
+                }
+            ],
+        }
+        requests_mock.get(
+            "https://zenodo.org/api/records/1234/files", json=mock_record_files
+        )
+
         requests_mock.get(f"file://{zen_path}", content=open(zen_path, "rb").read())
 
         with TemporaryDirectory() as d:
@@ -151,20 +181,38 @@ def test_fetch_data(requests_mock):
     # we "fetch" a local ZIP file to simulate a Zenodo data record
     with zenodo_archive() as a_zen_path:
         with zenodo_archive() as b_zen_path:
-            mock_response = {
+            mock_record = {
                 "files": [
                     {
                         "filename": "afake.zip",
-                        "links": {"download": f"file://{a_zen_path}"},
                     },
                     {
                         "filename": "bfake.zip",
-                        "links": {"download": f"file://{b_zen_path}"},
                     },
                 ],
+                "links": {
+                    "files": "https://zenodo.org/api/records/1234/files",
+                },
                 "metadata": {"upload_type": "data"},
             }
-            requests_mock.get("https://zenodo.org/api/records/1234", json=mock_response)
+            requests_mock.get("https://zenodo.org/api/records/1234", json=mock_record)
+
+            mock_record_files = {
+                "entries": [
+                    {
+                        "key": "afake.zip",
+                        "links": {"content": f"file://{a_zen_path}"},
+                    },
+                    {
+                        "key": "bfake.zip",
+                        "links": {"content": f"file://{b_zen_path}"},
+                    },
+                ],
+            }
+            requests_mock.get(
+                "https://zenodo.org/api/records/1234/files", json=mock_record_files
+            )
+
             requests_mock.get(
                 f"file://{a_zen_path}", content=open(a_zen_path, "rb").read()
             )
