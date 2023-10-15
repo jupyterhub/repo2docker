@@ -13,6 +13,7 @@ Select from the pages listed below to get started.
    languages
    export_environment
    lab_workspaces
+   breaking_changes
    jupyterhub_images
    deploy
    base_image
