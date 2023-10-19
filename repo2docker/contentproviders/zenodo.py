@@ -22,19 +22,26 @@ class Zenodo(DoiProvider):
                 "hostname": [
                     "https://sandbox.zenodo.org/record/",
                     "http://sandbox.zenodo.org/record/",
+                    "http://sandbox.zenodo.org/records/",
                 ],
                 "api": "https://sandbox.zenodo.org/api/records/",
-                "filepath": "files",
-                "filename": "filename",
-                "download": "links.download",
+                "files": "links.files",
+                "filepath": "entries",
+                "filename": "key",
+                "download": "links.content",
                 "type": "metadata.upload_type",
             },
             {
-                "hostname": ["https://zenodo.org/record/", "http://zenodo.org/record/"],
+                "hostname": [
+                    "https://zenodo.org/record/",
+                    "http://zenodo.org/record/",
+                    "https://zenodo.org/records/",
+                ],
                 "api": "https://zenodo.org/api/records/",
-                "filepath": "files",
-                "filename": "filename",
-                "download": "links.download",
+                "files": "links.files",
+                "filepath": "entries",
+                "filename": "key",
+                "download": "links.content",
                 "type": "metadata.upload_type",
             },
             {
@@ -43,6 +50,7 @@ class Zenodo(DoiProvider):
                     "http://data.caltech.edu/records/",
                 ],
                 "api": "https://data.caltech.edu/api/record/",
+                "files": "",
                 "filepath": "metadata.electronic_location_and_access",
                 "filename": "electronic_name.0",
                 "download": "uniform_resource_identifier",
@@ -69,8 +77,16 @@ class Zenodo(DoiProvider):
             f'{host["api"]}{record_id}',
             headers={"accept": "application/json"},
         )
-
         record = resp.json()
+
+        if host["files"]:
+            yield f"Fetching Zenodo record {record_id} files.\n"
+            files_url = deep_get(record, host["files"])
+            resp = self.urlopen(
+                files_url,
+                headers={"accept": "application/json"},
+            )
+            record = resp.json()
 
         files = deep_get(record, host["filepath"])
         only_one_file = len(files) == 1

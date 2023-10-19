@@ -51,9 +51,15 @@ class DoiProvider(ContentProvider):
             try:
                 resp = self._request(f"https://doi.org/{doi}")
                 resp.raise_for_status()
-            # If the DOI doesn't resolve, just return URL
-            except HTTPError:
-                return doi
+            except HTTPError as e:
+                # If the DOI doesn't exist, just return URL
+                if e.response.status_code == 404:
+                    return doi
+                # Reraise any other errors because if the DOI service is down (or
+                # we hit a rate limit) we don't want to silently continue to the
+                # default Git provider as this leads to a misleading error.
+                logging.error(f"DOI {doi} does not resolve: {e}")
+                raise
             return resp.url
         else:
             # Just return what is actulally just a URL
