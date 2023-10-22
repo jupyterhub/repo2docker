@@ -340,6 +340,15 @@ class RBuildPack(PythonBuildPack):
                 """,
             ),
             (
+                "root",
+                # Configure log-level and send to stderr
+                # Set log-level=debug to investigate problems
+                # https://docs.posit.co/ide/server-pro/server_management/logging.html
+                rf"""
+                printf '[*]\nlog-level=info\nlogger-type=stderr\n' > /etc/rstudio/logging.conf
+                """,
+            ),
+            (
                 "${NB_USER}",
                 # Install a pinned version of devtools, IRKernel and shiny
                 rf"""
