@@ -3,7 +3,7 @@
 You may change the base image used in the `Dockerfile` that creates images by repo2docker.
 This is equivalent to changing the `FROM <base_image>` in the Dockerfile.
 
-To do so, use the `base_image` traitlet when invoking `repo2docker`.
+To do so, use the `base_image` traitlet when invoking `repo2docker` (ex: `repo2docker --Repo2Docker.base_image=image_name`).
 Note that this is not configurable by individual repositories, it is configured when you invoke the `repo2docker` command.
 
 ```{note}
