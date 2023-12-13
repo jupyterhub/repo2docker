@@ -11,7 +11,6 @@ from functools import lru_cache
 
 import escapism
 import jinja2
-
 from docker.utils.build import exclude_paths
 
 # Only use syntax features supported by Docker 17.09
@@ -614,7 +613,7 @@ class BuildPack:
 
         for ignore_file_name in [".dockerignore", ".containerignore"]:
             if os.path.exists(ignore_file_name):
-                with open(ignore_file_name, "r") as ignore_file:
+                with open(ignore_file_name) as ignore_file:
                     cleaned_lines = [
                         line.strip() for line in ignore_file.read().splitlines()
                     ]
@@ -625,9 +624,6 @@ class BuildPack:
                             if line != "" and line[0] != "#"
                         ]
                     )
-
-        if not exclude:
-            exclude = ["**/.git"]
 
         files_to_add = exclude_paths(".", exclude)
 
