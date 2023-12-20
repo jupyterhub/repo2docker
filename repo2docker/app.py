@@ -21,13 +21,14 @@ from urllib.parse import urlparse
 import entrypoints
 import escapism
 from pythonjsonlogger import jsonlogger
-from traitlets import Any, Bool, Dict, Int, List, Unicode, default, observe
+from traitlets import Any, Bool, Dict, Enum, Int, List, Unicode, default, observe
 from traitlets.config import Application
 
 from . import __version__, contentproviders
 from .buildpacks import (
     CondaBuildPack,
     DockerBuildPack,
+    ExcludesStrategy,
     JuliaProjectTomlBuildPack,
     JuliaRequireBuildPack,
     LegacyBinderDockerBuildPack,
@@ -462,6 +463,32 @@ class Repo2Docker(Application):
         """,
     )
 
+    extra_ignore_file = Unicode(
+        "",
+        config=True,
+        help="""
+        Path to an additional .dockerignore or .containerignore file to be applied
+        when building an image.
+
+        Depending on the strategy selected the content of the file will replace,
+        be merged or be ignored.
+        """,
+    )
+
+    ignore_file_strategy = Enum(
+        ExcludesStrategy.values(),
+        config=True,
+        default_value=ExcludesStrategy.theirs,
+        help="""
+        Strategy to use if an extra ignore file is passed:
+        - merge means that the content of the extra ignore file will be merged
+          with the ignore file contained in the repository (if any)
+        - ours means that the extra ignore file content will be used in any case
+        - theirs means that if there is an ignore file in the repository, the
+          extra ignore file will not be used.
+        """,
+    )
+
     def get_engine(self):
         """Return an instance of the container engine.
 
@@ -860,6 +887,8 @@ class Repo2Docker(Application):
                         self.cache_from,
                         self.extra_build_kwargs,
                         platform=self.platform,
+                        extra_ignore_file=self.extra_ignore_file,
+                        ignore_file_strategy=self.ignore_file_strategy,
                     ):
                         if docker_client.string_output:
                             self.log.info(l, extra=dict(phase=R2dState.BUILDING))

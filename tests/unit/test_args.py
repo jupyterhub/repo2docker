@@ -128,3 +128,8 @@ def test_config_priority(tmp_path, trait, arg, default):
     assert getattr(r2d, trait) == "config"
     r2d = make_r2d(["--config", config_file, arg, "cli", "."])
     assert getattr(r2d, trait) == "cli"
+
+
+def test_non_existing_exclude_file():
+    with pytest.raises(SystemExit):
+        make_r2d(["--extra-ignore-file", "does-not-exist"])
