@@ -7,7 +7,7 @@ import string
 import sys
 import tarfile
 import textwrap
-from enum import StrEnum, auto
+from enum import Enum
 from functools import lru_cache
 
 import escapism
@@ -206,10 +206,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_NB_UID = 1000
 
 
-class ExcludesStrategy(StrEnum):
-    theirs = auto()
-    ours = auto()
-    merge = auto()
+class ExcludesStrategy(Enum):
+    THEIRS = "theirs"
+    OURS = "ours"
+    MERGE = "merge"
 
     @classmethod
     def values(cls):
@@ -594,7 +594,7 @@ class BuildPack:
         extra_build_kwargs,
         platform=None,
         extra_ignore_file=None,
-        ignore_file_strategy=ExcludesStrategy.theirs,
+        ignore_file_strategy=ExcludesStrategy.THEIRS,
     ):
         tarf = io.BytesIO()
         tar = tarfile.open(fileobj=tarf, mode="w")
@@ -640,9 +640,9 @@ class BuildPack:
                 excludes.extend(_read_excludes(ignore_file_name))
 
         if extra_ignore_file is not None:
-            if ignore_file_strategy == ExcludesStrategy.ours:
+            if ignore_file_strategy == ExcludesStrategy.OURS:
                 excludes = extra_excludes
-            elif ignore_file_strategy == ExcludesStrategy.merge:
+            elif ignore_file_strategy == ExcludesStrategy.MERGE:
                 excludes.extend(extra_excludes)
             else:
                 # ignore means that if an ignore file exist, its content is used

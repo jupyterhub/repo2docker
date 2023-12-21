@@ -478,7 +478,7 @@ class Repo2Docker(Application):
     ignore_file_strategy = Enum(
         ExcludesStrategy.values(),
         config=True,
-        default_value=ExcludesStrategy.theirs,
+        default_value=ExcludesStrategy.THEIRS.value,
         help="""
         Strategy to use if an extra ignore file is passed:
         - merge means that the content of the extra ignore file will be merged
@@ -888,7 +888,9 @@ class Repo2Docker(Application):
                         self.extra_build_kwargs,
                         platform=self.platform,
                         extra_ignore_file=self.extra_ignore_file,
-                        ignore_file_strategy=self.ignore_file_strategy,
+                        ignore_file_strategy=ExcludesStrategy(
+                            self.ignore_file_strategy
+                        ),
                     ):
                         if docker_client.string_output:
                             self.log.info(l, extra=dict(phase=R2dState.BUILDING))
