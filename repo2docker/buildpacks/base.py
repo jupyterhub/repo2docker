@@ -612,6 +612,7 @@ class BuildPack:
         exclude = []
 
         for ignore_file_name in [".dockerignore", ".containerignore"]:
+            ignore_file_name = self.binder_path(ignore_file_name)
             if os.path.exists(ignore_file_name):
                 with open(ignore_file_name) as ignore_file:
                     cleaned_lines = [
