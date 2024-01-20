@@ -662,6 +662,19 @@
             "slug": "edmond_mpg_de",
             "url": "https://edmond.mpg.de",
             "version": "5.14"
+        },
+        {
+            "description": "The institutional research data repository of the National Yang Ming Chiao Tung University",
+            "full_name": "National Yang Ming Chiao Tung University",
+            "id": 1797,
+            "is_active": true,
+            "lat": 24.7867714,
+            "lng": 120.9984256,
+            "logo": "https://dataverse.lib.nycu.edu.tw/logos/navbar/logo.png",
+            "name": "NYCU Dataverse",
+            "slug": "nycu-dataverse",
+            "url": "https://dataverse.lib.nycu.edu.tw",
+            "version": "5.10.1"
         }        
     ]
 }
