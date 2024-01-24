@@ -11,6 +11,7 @@ from functools import lru_cache
 
 import escapism
 import jinja2
+from docker.utils.build import exclude_paths
 
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
@@ -590,16 +591,16 @@ class BuildPack:
 
         tar.addfile(dockerfile_tarinfo, io.BytesIO(dockerfile))
 
-        def _filter_tar(tar):
+        def _filter_tar(tarinfo):
             # We need to unset these for build_script_files we copy into tar
             # Otherwise they seem to vary each time, preventing effective use
             # of the cache!
             # https://github.com/docker/docker-py/pull/1582 is related
-            tar.uname = ""
-            tar.gname = ""
-            tar.uid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
-            tar.gid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
-            return tar
+            tarinfo.uname = ""
+            tarinfo.gname = ""
+            tarinfo.uid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
+            tarinfo.gid = int(build_args.get("NB_UID", DEFAULT_NB_UID))
+            return tarinfo
 
         for src in sorted(self.get_build_script_files()):
             dest_path, src_path = self.generate_build_context_filename(src)
@@ -608,7 +609,34 @@ class BuildPack:
         for fname in ("repo2docker-entrypoint", "python3-login"):
             tar.add(os.path.join(HERE, fname), fname, filter=_filter_tar)
 
-        tar.add(".", "src/", filter=_filter_tar)
+        exclude = []
+
+        for ignore_file_name in [".dockerignore", ".containerignore"]:
+            ignore_file_name = self.binder_path(ignore_file_name)
+            if os.path.exists(ignore_file_name):
+                with open(ignore_file_name) as ignore_file:
+                    cleaned_lines = [
+                        line.strip() for line in ignore_file.read().splitlines()
+                    ]
+                    exclude.extend(
+                        [
+                            line
+                            for line in cleaned_lines
+                            if line != "" and line[0] != "#"
+                        ]
+                    )
+
+        files_to_add = exclude_paths(".", exclude)
+
+        if files_to_add:
+            for item in files_to_add:
+                tar.add(item, f"src/{item}", filter=_filter_tar)
+        else:
+            # Either the source was empty or everything was filtered out.
+            # In any case, create an src dir so the build can proceed.
+            src = tarfile.TarInfo("src")
+            src.type = tarfile.DIRTYPE
+            tar.addfile(src)
 
         tar.close()
         tarf.seek(0)
