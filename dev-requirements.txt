@@ -2,6 +2,6 @@ build
 conda-lock
 pre-commit
 pytest-cov
-pytest>=4.6
+pytest>=4.6,<8
 pyyaml
 requests_mock
