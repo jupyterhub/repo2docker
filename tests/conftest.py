@@ -33,11 +33,11 @@ from repo2docker.__main__ import make_r2d
 TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
-def pytest_collect_file(parent, path):
-    if path.basename == "verify":
-        return LocalRepo.from_parent(parent, path=path)
-    elif path.basename.endswith(".repos.yaml"):
-        return RemoteRepoList.from_parent(parent, path=path)
+def pytest_collect_file(parent, file_path):
+    if file_path.name == "verify":
+        return LocalRepo.from_parent(parent, path=file_path)
+    elif file_path.name.endswith(".repos.yaml"):
+        return RemoteRepoList.from_parent(parent, path=file_path)
 
 
 def make_test_func(args, skip_build=False, extra_run_kwargs=None):
@@ -233,24 +233,23 @@ class LocalRepo(pytest.File):
         args = ["--appendix", 'RUN echo "appendix" > /tmp/appendix']
         # If there's an extra-args.yaml file in a test dir, assume it contains
         # a yaml list with extra arguments to be passed to repo2docker
-        extra_args_path = os.path.join(self.path.dirname, "test-extra-args.yaml")
-        if os.path.exists(extra_args_path):
-            with open(extra_args_path) as f:
-                extra_args = yaml.safe_load(f)
+        extra_args_path = self.path.parent / "test-extra-args.yaml"
+        if extra_args_path.exists():
+            extra_args = yaml.safe_load(extra_args_path.read_text())
             args += extra_args
 
-        print(self.path.basename, self.path.dirname, str(self.path))
+        print(self.path.name, self.path.parent, str(self.path))
         # re-use image name for multiple tests of the same image
         # so we don't run through the build twice
-        rel_repo_dir = os.path.relpath(self.path.dirname, TESTS_DIR)
+        rel_repo_dir = os.path.relpath(self.path.parent, TESTS_DIR)
         image_name = f"r2d-tests-{escapism.escape(rel_repo_dir, escape_char='-').lower()}-{int(time.time())}"
         args.append(f"--image-name={image_name}")
-        args.append(self.path.dirname)
+        args.append(str(self.path.parent))
         yield Repo2DockerTest.from_parent(self, name="build", args=args)
 
         yield Repo2DockerTest.from_parent(
             self,
-            name=self.path.basename,
+            name=self.path.name,
             args=args + ["./verify"],
             skip_build=True,
         )
