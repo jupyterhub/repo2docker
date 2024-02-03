@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.3
-ARG ALPINE_VERSION=3.17
+ARG ALPINE_VERSION=3.19
 FROM alpine:${ALPINE_VERSION}
 
 RUN apk add --no-cache git python3 python3-dev py3-pip py3-setuptools build-base
