@@ -29,7 +29,7 @@ ENV PATH ${VIRTUAL_ENV}/bin:${PATH}
 RUN python3 -m venv ${VIRTUAL_ENV}
 
 # install hg-evolve (Mercurial extensions)
-RUN pip install hg-evolve --user --no-cache-dir
+RUN pip install hg-evolve --no-cache-dir
 
 # install repo2docker
 COPY --from=0 /tmp/wheelhouse /tmp/wheelhouse
