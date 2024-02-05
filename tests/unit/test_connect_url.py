@@ -1,6 +1,7 @@
 """
 Test if the explict hostname is supplied correctly to the container
 """
+
 import time
 
 import requests

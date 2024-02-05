@@ -1,4 +1,5 @@
 """BuildPack for conda environments"""
+
 import os
 import re
 import warnings
@@ -193,15 +194,15 @@ class CondaBuildPack(BaseImage):
                 raise ValueError(
                     f"Python version {py_version} on {conda_platform} is not supported!"
                 )
-            files[
-                f"conda/{lockfile_name}"
-            ] = self._kernel_environment_file = "/tmp/env/kernel-environment.lock"
+            files[f"conda/{lockfile_name}"] = self._kernel_environment_file = (
+                "/tmp/env/kernel-environment.lock"
+            )
 
             requirements_file_name = f"requirements.py-{py_version}.pip"
             if os.path.exists(os.path.join(HERE, requirements_file_name)):
-                files[
-                    f"conda/{requirements_file_name}"
-                ] = self._kernel_requirements_file = "/tmp/env/kernel-requirements.txt"
+                files[f"conda/{requirements_file_name}"] = (
+                    self._kernel_requirements_file
+                ) = "/tmp/env/kernel-requirements.txt"
         else:
             # server and kernel are the same
             server_py_version = py_version
@@ -216,15 +217,15 @@ class CondaBuildPack(BaseImage):
                 f"Python version {server_py_version} on {conda_platform} is not supported!"
             )
 
-        files[
-            "conda/" + conda_frozen_name
-        ] = self._nb_environment_file = "/tmp/env/environment.lock"
+        files["conda/" + conda_frozen_name] = self._nb_environment_file = (
+            "/tmp/env/environment.lock"
+        )
 
         # add requirements.txt, if present
         if os.path.exists(os.path.join(HERE, pip_frozen_name)):
-            files[
-                "conda/" + pip_frozen_name
-            ] = self._nb_requirements_file = "/tmp/env/requirements.txt"
+            files["conda/" + pip_frozen_name] = self._nb_requirements_file = (
+                "/tmp/env/requirements.txt"
+            )
 
         files.update(super().get_build_script_files())
         return files

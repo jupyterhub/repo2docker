@@ -7,6 +7,7 @@ Usage:
 
     python -m repo2docker https://github.com/you/your-repo
 """
+
 import getpass
 import json
 import logging

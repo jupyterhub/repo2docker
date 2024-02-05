@@ -4,6 +4,7 @@ Base classes for repo2docker ContentProviders
 ContentProviders accept a `spec` of various kinds, and
 provide the contents from the spec to a given output directory.
 """
+
 import logging
 import os
 

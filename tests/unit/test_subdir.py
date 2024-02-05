@@ -1,6 +1,7 @@
 """
 Test if the subdirectory is correctly navigated to
 """
+
 import os
 
 import escapism

@@ -1,6 +1,7 @@
 """
 Tests for repo2docker/utils.py
 """
+
 import os
 import platform
 import subprocess

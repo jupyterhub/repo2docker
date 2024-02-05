@@ -6,6 +6,7 @@ container requires a specific repository and commit to be checked out,
 and that is the only thing that is tested.
 
 """
+
 import os
 import subprocess
 from tempfile import TemporaryDirectory

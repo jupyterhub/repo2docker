@@ -10,7 +10,6 @@ matcher functors take a version string and return True if it passes its
 constraints.
 """
 
-
 import re
 from functools import lru_cache
 

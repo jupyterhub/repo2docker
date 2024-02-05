@@ -1,6 +1,7 @@
 """
 Test if labels are supplied correctly to the container
 """
+
 from unittest.mock import Mock
 
 import pytest

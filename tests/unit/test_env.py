@@ -1,6 +1,7 @@
 """
 Test that environment variables may be defined
 """
+
 import os
 import subprocess
 import sys
