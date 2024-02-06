@@ -1,6 +1,7 @@
 """
 Test argument parsing and r2d construction
 """
+
 import os
 
 import pytest

@@ -173,9 +173,11 @@ class PipfileBuildPack(CondaBuildPack):
                         pipenv --clear \\
                 )""".format(
                     working_directory=working_directory,
-                    install_option="--ignore-pipfile"
-                    if os.path.exists(pipfile_lock)
-                    else "--skip-lock",
+                    install_option=(
+                        "--ignore-pipfile"
+                        if os.path.exists(pipfile_lock)
+                        else "--skip-lock"
+                    ),
                 ),
             )
         )

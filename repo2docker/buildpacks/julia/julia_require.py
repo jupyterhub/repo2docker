@@ -175,7 +175,7 @@ class JuliaRequireBuildPack(PythonBuildPack):
                 r"""
             julia /tmp/install-repo-dependencies.jl "%(require)s"
             """
-                % {"require": require}
+                % {"require": require},
                 # TODO: For some reason, `rm`ing the file fails with permission denied.
                 # && rm /tmp/install-repo-dependencies.jl
             )
