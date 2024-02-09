@@ -247,3 +247,28 @@ def test_docker_no_build_success(temp_cwd):
     args_list = ["--no-build", "--no-run"]
 
     assert validate_arguments(builddir, args_list, disable_dockerd=True)
+
+
+@pytest.mark.parametrize(
+    "strategy, is_valid",
+    [
+        ("theirs", True),
+        ("ours", True),
+        ("merge", True),
+        ("invalid", False),
+    ],
+)
+def test_ignore_file_strategy(temp_cwd, strategy, is_valid):
+    """ """
+
+    args_list = ["--no-build", "--no-run", "--ignore-file-strategy", strategy]
+
+    assert (
+        validate_arguments(
+            builddir,
+            args_list,
+            "--ignore-file-strategy: invalid choice: 'invalid' (choose from 'theirs', 'ours', 'merge')",
+            disable_dockerd=True,
+        )
+        == is_valid
+    )
