@@ -115,6 +115,9 @@ flag for each variable that you want to define.
 
 For example ``jupyter-repo2docker -e VAR1=val1 -e VAR2=val2 ...``
 
+
+.. _faq-dockerfile-bootstrap:
+
 Can I use repo2docker to bootstrap my own Dockerfile?
 -----------------------------------------------------
 
@@ -189,3 +192,33 @@ tool called `source2image <https://github.com/openshift/source-to-image/>`_.
 This is an excellent open tool for containerization, but we
 ultimately decided that it did not fit the use-case we wanted to address. For more information,
 `here <https://github.com/yuvipanda/words/blob/fd096dd49d87e624acd8bdf6d13c0cecb930bb3f/content/post/why-not-s2i.md>`_ is a short blog post about the decision and the reasoning behind it.
+
+
+Where are my ``man`` pages?
+---------------------------
+
+The base image used by ``repo2docker`` is `Minimal Ubuntu
+<https://wiki.ubuntu.com/Minimal>`_ version 18. In Minimal Ubuntu, ``man``
+pages are disabled to reduce image size. If your use case is interactive
+computing or education, you may want to re-enable ``man`` pages. To do this,
+use the ``--appendix`` :ref:`CLI flag <usage-cli>` to pass in additional
+``Dockerfile`` instructions, for example:
+
+.. code-block:: dockerfile
+
+   # Re-enable man pages disabled in Ubuntu 18 minimal image
+   # https://wiki.ubuntu.com/Minimal
+   USER root
+   RUN yes | unminimize
+   # NOTE: $NB_PYTHON_PREFIX is the same as $CONDA_PREFIX at run-time.
+   # $CONDA_PREFIX isn't available in this context.
+   # NOTE: Prepending ensures a working path; if $MANPATH was previously empty,
+   # the trailing colon ensures that system paths are searched.
+   ENV MANPATH="${NB_PYTHON_PREFIX}/share/man:${MANPATH}"
+   RUN mandb
+
+   # Revert to default user
+   USER ${NB_USER}
+
+This appendix can be used by, for example, writing it to a file named
+``appendix`` and executing ``repo2docker --appendix "$(cat appendix)" .``.
