@@ -13,7 +13,7 @@ from .base import ContentProvider
 
 
 def get_hashed_slug(url, changes_with_content):
-    """Return a unique slug that is invariant to query parameters in the url"""
+    """Returns a unique slug that is invariant to query parameters in the url"""
     parsed_url = urlparse(url)
     stripped_url = urlunparse(
         (parsed_url.scheme, parsed_url.netloc, parsed_url.path, "", "", "")
@@ -34,13 +34,9 @@ def fetch_zipfile(session, url, dst_dir):
     return dst_filename
 
 
-def handle_items(_, item):
-    print(item)
-
-
 def extract_validate_and_identify_bundle(zip_filename, dst_dir):
     if not os.path.exists(zip_filename):
-        raise RuntimeError("Download MECA bundle not found")
+        raise RuntimeError("Downloaded MECA bundle not found")
 
     if not is_zipfile(zip_filename):
         raise RuntimeError("MECA bundle is not a zip file")
@@ -84,7 +80,7 @@ class Meca(ContentProvider):
     def detect(self, spec, ref=None, extra_args=None):
         """`spec` contains a faux protocol of meca+http[s] for detection purposes
         and we assume `spec` trusted as a reachable MECA bundle from an allowed origin
-        (binderhub RepoProvider class already checking for this).
+        (binderhub RepoProvider class is already checking for this).
 
         An other HEAD check in made here in order to get the content-length header
         """
@@ -94,8 +90,8 @@ class Meca(ContentProvider):
         parsed = parsed._replace(scheme=parsed.scheme[:-5])
         url = urlunparse(parsed)
 
-        r = self.session.head(url)
-        changes_with_content = r.headers.get("ETag") or r.headers.get("Content-Length")
+        headers = self.session.head(url).headers
+        changes_with_content = headers.get("ETag") or headers.get("Content-Length")
 
         self.hashed_slug = get_hashed_slug(url, changes_with_content)
 
