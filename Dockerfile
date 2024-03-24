@@ -5,8 +5,8 @@ FROM alpine:${ALPINE_VERSION}
 RUN apk add --no-cache git python3 python3-dev py3-pip py3-setuptools build-base
 
 # build wheels in a build stage
-ENV VIRTUAL_ENV /opt/venv
-ENV PATH ${VIRTUAL_ENV}/bin:${PATH}
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
 
 RUN python3 -m venv ${VIRTUAL_ENV}
 
@@ -23,8 +23,8 @@ FROM alpine:${ALPINE_VERSION}
 # install python, git, bash, mercurial
 RUN apk add --no-cache git git-lfs python3 py3-pip py3-setuptools bash docker mercurial
 
-ENV VIRTUAL_ENV /opt/venv
-ENV PATH ${VIRTUAL_ENV}/bin:${PATH}
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
 
 RUN python3 -m venv ${VIRTUAL_ENV}
 
