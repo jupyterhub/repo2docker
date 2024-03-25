@@ -2,28 +2,23 @@ import os
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
-import pytest
-
 from repo2docker.contentproviders import CKAN
 
-test_ckan = CKAN()
-test_hosts = [
-    (
-        [
-            "http://demo.ckan.org/dataset/sample-dataset-1",
-        ],
-        {
-            "dataset_id": "sample-dataset-1",
-            "api_url": "http://demo.ckan.org/api/3/action/",
-            "version": "1707387710",
-        },
+
+def test_detect_ckan(requests_mock):
+    mock_response = {"result": {"metadata_modified": "2024-02-27T14:15:54.573058"}}
+    requests_mock.get("http://demo.ckan.org/api/3/action/status_show", status_code=200)
+    requests_mock.get(
+        "http://demo.ckan.org/api/3/action/package_show?id=1234", json=mock_response
     )
-]
 
+    expected = {
+        "dataset_id": "1234",
+        "api_url": "http://demo.ckan.org/api/3/action/",
+        "version": "1709043354",
+    }
 
-@pytest.mark.parametrize("test_input, expected", test_hosts)
-def test_detect_ckan(test_input, expected):
-    assert CKAN().detect(test_input[0]) == expected
+    assert CKAN().detect("http://demo.ckan.org/dataset/1234") == expected
 
 
 def test_detect_not_ckan():
