@@ -154,6 +154,7 @@ class Repo2Docker(Application):
             contentproviders.Swhid,
             contentproviders.Mercurial,
             contentproviders.Git,
+            contentproviders.Meca,
         ],
         config=True,
         help="""
