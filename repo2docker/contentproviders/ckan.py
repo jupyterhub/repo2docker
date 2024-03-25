@@ -1,4 +1,3 @@
-import re
 from datetime import datetime, timedelta, timezone
 from os import path
 from urllib.parse import urlparse
@@ -37,7 +36,6 @@ class CKAN(ContentProvider):
         return self.session.get(url, **kwargs)
 
     urlopen = _request
-    url_regex = r"/dataset/[a-z0-9_\\-]*$"
 
     def detect(self, source, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a CKAN dataset."""
@@ -45,14 +43,18 @@ class CKAN(ContentProvider):
         if not parsed_url.netloc:
             return None
 
-        api_url = parsed_url._replace(
-            path=re.sub(self.url_regex, "/api/3/action/", parsed_url.path)
-        ).geturl()
+        url_parts = parsed_url.path.split("/")
+        if url_parts[-2] == "dataset":
+            self.dataset_id = url_parts[-1]
+        else:
+            return None
+
+        api_url_path = "/api/3/action/"
+        api_url = parsed_url._replace(path=api_url_path).geturl()
 
         status_show_url = f"{api_url}status_show"
         resp = self.urlopen(status_show_url)
         if resp.status_code == 200:
-            self.dataset_id = parsed_url.path.rsplit("/", maxsplit=1)[1]
             self.version = self._fetch_version(api_url)
             return {
                 "dataset_id": self.dataset_id,
