@@ -50,7 +50,9 @@ class CKAN(ContentProvider):
             return None
 
         api_url_path = "/api/3/action/"
-        api_url = parsed_url._replace(path=api_url_path).geturl()
+        api_url = parsed_url._replace(
+            path="/".join(url_parts[:-2]) + api_url_path
+        ).geturl()
 
         status_show_url = f"{api_url}status_show"
         resp = self.urlopen(status_show_url)
