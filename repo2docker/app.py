@@ -152,6 +152,7 @@ class Repo2Docker(Application):
             contentproviders.Dataverse,
             contentproviders.Hydroshare,
             contentproviders.Swhid,
+            contentproviders.CKAN,
             contentproviders.Mercurial,
             contentproviders.Git,
         ],

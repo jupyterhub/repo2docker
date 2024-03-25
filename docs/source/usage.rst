@@ -39,7 +39,8 @@ where ``<source-repository>`` is:
 
   * a URL of a Git repository (``https://github.com/binder-examples/requirements``),
   * a Zenodo DOI (``10.5281/zenodo.1211089``),
-  * a SWHID_ (``swh:1:rev:999dd06c7f679a2714dfe5199bdca09522a29649``), or
+  * a SWHID_ (``swh:1:rev:999dd06c7f679a2714dfe5199bdca09522a29649``),
+  * a URL of a CKAN_ dataset (``https://demo.ckan.org/dataset/sample-dataset-1``), or
   * a path to a local directory (``a/local/directory``)
 
 of the source repository you want to build.
@@ -136,3 +137,4 @@ Command line API
 
 .. _Pytudes: https://github.com/norvig/pytudes
 .. _SWHID: https://docs.softwareheritage.org/devel/swh-model/persistent-identifiers.html
+.. _CKAN: https://ckan.org
