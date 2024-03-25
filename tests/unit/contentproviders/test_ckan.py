@@ -25,6 +25,8 @@ test_hosts = [
 def test_detect_ckan(test_input, expected):
     assert CKAN().detect(test_input[0]) == expected
 
+
+def test_detect_not_ckan():
     # Don't trigger the CKAN content provider
     assert CKAN().detect("/some/path/here") is None
     assert CKAN().detect("https://example.com/path/here") is None
