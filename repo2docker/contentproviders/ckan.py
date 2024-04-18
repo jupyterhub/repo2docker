@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from os import path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from requests import Session
 
@@ -43,23 +43,33 @@ class CKAN(ContentProvider):
         if not parsed_url.netloc:
             return None
 
-        url_parts = parsed_url.path.split("/")
-        if url_parts[-2] == "dataset":
-            self.dataset_id = url_parts[-1]
+        url_parts_1 = parsed_url.path.split("/history/")
+        url_parts_2 = url_parts_1[0].split("/")
+        if url_parts_2[-2] == "dataset":
+            self.dataset_id = url_parts_2[-1]
         else:
             return None
 
         api_url_path = "/api/3/action/"
         api_url = parsed_url._replace(
-            path="/".join(url_parts[:-2]) + api_url_path
+            path="/".join(url_parts_2[:-2]) + api_url_path, query=""
         ).geturl()
 
         status_show_url = f"{api_url}status_show"
         resp = self.urlopen(status_show_url)
         if resp.status_code == 200:
+
+            # handle the activites
+            activity_id = None
+            if parse_qs(parsed_url.query).get("activity_id") is not None:
+                activity_id = parse_qs(parsed_url.query).get("activity_id")[0]
+            if len(url_parts_1) == 2:
+                activity_id = url_parts_1[-1]
+
             self.version = self._fetch_version(api_url)
             return {
                 "dataset_id": self.dataset_id,
+                "activity_id": activity_id,
                 "api_url": api_url,
                 "version": self.version,
             }
@@ -69,11 +79,21 @@ class CKAN(ContentProvider):
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch a CKAN dataset."""
         dataset_id = spec["dataset_id"]
+        activity_id = spec["activity_id"]
 
         yield f"Fetching CKAN dataset {dataset_id}.\n"
-        package_show_url = f"{spec['api_url']}package_show?id={dataset_id}"
+
+        # handle the activites
+        if activity_id:
+            fetch_url = (
+                f"{spec['api_url']}activity_data_show?"
+                f"id={activity_id}&object_type=package"
+            )
+        else:
+            fetch_url = f"{spec['api_url']}package_show?id={dataset_id}"
+
         resp = self.urlopen(
-            package_show_url,
+            fetch_url,
             headers={"accept": "application/json"},
         )
 
