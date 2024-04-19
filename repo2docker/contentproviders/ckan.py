@@ -105,6 +105,8 @@ class CKAN(ContentProvider):
 
         for resource in resources:
             file_url = resource["url"]
+            if file_url == "":
+                continue
             fname = file_url.rsplit("/", maxsplit=1)[-1]
             if fname == "":
                 fname = resource["id"]
