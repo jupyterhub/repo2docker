@@ -1,0 +1,15 @@
+# AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
+# Generated on 2024-05-21 07:52:44 UTC
+channels:
+- conda-forge
+dependencies:
+- python=3.12.*
+- nodejs=18
+- pip
+- ipywidgets==8.*     # https://github.com/jupyter-widgets/ipywidgets
+- jupyter-offlinenotebook==0.2.*     # https://github.com/manics/jupyter-offlinenotebook
+- jupyter-resource-usage==0.7.*     # https://github.com/jupyter-server/jupyter-resource-usage
+- jupyter_server==1.*     # https://github.com/jupyter-server/jupyter_server
+- jupyterhub-singleuser==3.*     # https://github.com/jupyterhub/jupyterhub
+- jupyterlab==3.*     # https://github.com/jupyterlab/jupyterlab
+- notebook==6.*     # https://github.com/jupyter/notebook
