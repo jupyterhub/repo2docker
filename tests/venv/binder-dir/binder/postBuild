@@ -1,2 +1,2 @@
 #!/bin/bash
-jupyter nbextension enable --py --sys-prefix ipyleaflet
+jupyter nbclassic-nbextension enable --py --sys-prefix ipyleaflet
