@@ -1,2 +1,3 @@
 #!/bin/bash
+# FIXME: This doesn't work with ipyleaflet >= 0.19
 jupyter nbextension enable --py --sys-prefix ipyleaflet

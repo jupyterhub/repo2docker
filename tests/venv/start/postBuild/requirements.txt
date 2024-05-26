@@ -1,1 +1,1 @@
-ipyleaflet
+ipyleaflet==0.18.2
