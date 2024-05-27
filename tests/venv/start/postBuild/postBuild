@@ -2,6 +2,3 @@
 
 # this value should not be visible in `verify`
 export TEST_START_VAR="var is set by postBuild"
-
-# FIXME: This doesn't work with ipyleaflet >= 0.19
-jupyter nbextension enable --py --sys-prefix ipyleaflet
