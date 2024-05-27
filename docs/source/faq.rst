@@ -55,10 +55,10 @@ We **strongly** recommend specifying a Python version (in environment.yml, runti
 Julia
 ~~~~~
 
-All Julia versions since Julia 0.7.0 are supported via a :ref:`Project.toml <Project.toml>`
+All Julia versions since Julia 1.3 are supported via a :ref:`Project.toml <Project.toml>`
 file, and this is the recommended way to install Julia environments.
 
-The older Julia REQUIRE file is no longer supported because required infrastructure has been removed.
+Julia < 1.3 and the older Julia REQUIRE file is no longer supported because required infrastructure has been removed.
 
 R
 ~
