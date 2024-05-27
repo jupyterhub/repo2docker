@@ -5,14 +5,14 @@ The Reproducible Execution Environment Specification
 ====================================================
 
 repo2docker scans a repository for particular :ref:`config-files`, such
-as ``requirements.txt`` or ``REQUIRE``. The collection of files, their contents,
+as ``requirements.txt`` or ``Project.toml``. The collection of files, their contents,
 and the resulting actions that repo2docker takes is known
 as the **Reproducible Execution Environment Specification** (or REES).
 
 The goal of the REES is to automate and encourage existing community best practices
 for reproducible computational environments. This includes installing pacakges using
 community-standard specification files and their corresponding tools,
-such as ``requirements.txt`` (with ``pip``), ``REQUIRE`` (with Julia), or
+such as ``requirements.txt`` (with ``pip``), ``Project.toml`` (with Julia), or
 ``apt.txt`` (with ``apt``). While repo2docker automates the
 creation of the environment, a human should be able to look at a REES-compliant
 repository and reproduce the environment using common, clear steps without

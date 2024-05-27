@@ -87,7 +87,7 @@ the `build` method of the `BuildPack` base class.
 
 The **assemble** stage builds the specific environment that is requested by the repository.
 This usually means installing required libraries specified in a format native to the language
-(`requirements.txt`, `environment.yml`, `REQUIRE`, `install.R`, etc).
+(`requirements.txt`, `environment.yml`, `Project.toml`, `install.R`, etc).
 
 Most of this work is done in `get_assemble_scripts` method. It can return arbitrary bash script
 lines that can be run as different users, and has access to the repository contents (unlike
