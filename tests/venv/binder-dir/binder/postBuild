@@ -1,2 +1,2 @@
 #!/bin/bash
-jupyter nbextension enable --py --sys-prefix ipyleaflet
+echo 'Done!' > $HOME/postbuild.txt
