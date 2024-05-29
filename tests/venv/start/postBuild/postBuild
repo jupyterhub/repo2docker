@@ -3,4 +3,4 @@
 # this value should not be visible in `verify`
 export TEST_START_VAR="var is set by postBuild"
 
-jupyter nbextension enable --py --sys-prefix ipyleaflet
+echo 'Done!' > $HOME/postbuild.txt

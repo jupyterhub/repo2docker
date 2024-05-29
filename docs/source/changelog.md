@@ -1,5 +1,63 @@
 # Changelog
 
+## Version 2024.03.0
+
+([full changelog](https://github.com/jupyterhub/repo2docker/compare/2023.06.0...2024.01.03))
+
+### New features added
+
+- Implement support for dockerignore and containerignore [#1205](https://github.com/jupyterhub/repo2docker/pull/1205) ([@sgaist](https://github.com/sgaist))
+
+### Enhancements made
+
+- rstudio: log-level info to stderr [#1317](https://github.com/jupyterhub/repo2docker/pull/1317) ([@manics](https://github.com/manics))
+
+### Bugs fixed
+
+- Get Zenodo working again [#1315](https://github.com/jupyterhub/repo2docker/pull/1315) ([@manics](https://github.com/manics))
+
+### Maintenance and upkeep improvements
+
+- Update mamba to 1.5.7 from 1.5.1, and conda to 24.3.0 from 23.7.4 [#1337](https://github.com/jupyterhub/repo2docker/pull/1337) ([@SylvainCorlay](https://github.com/SylvainCorlay))
+- Dockerfile: bump alpine from 3.17 to 3.19 and Python 3.10 to 3.11 [#1332](https://github.com/jupyterhub/repo2docker/pull/1332) ([@yuvipanda](https://github.com/yuvipanda))
+- Upgrade base image from to Ubuntu 22.04 from 18.04 [#1287](https://github.com/jupyterhub/repo2docker/pull/1287) ([@yuvipanda](https://github.com/yuvipanda))
+
+### Documentation improvements
+
+- Add Ubuntu 22.04 upgrade guide [#1309](https://github.com/jupyterhub/repo2docker/pull/1309) ([@manics](https://github.com/manics))
+- Update version of R available [#1288](https://github.com/jupyterhub/repo2docker/pull/1288) ([@yuvipanda](https://github.com/yuvipanda))
+- Add changelog for 2023.06.0 [#1286](https://github.com/jupyterhub/repo2docker/pull/1286) ([@yuvipanda](https://github.com/yuvipanda))
+
+### Other merged PRs
+
+- [pre-commit.ci] pre-commit autoupdate [#1333](https://github.com/jupyterhub/repo2docker/pull/1333) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- build(deps): bump codecov/codecov-action from 3 to 4 [#1331](https://github.com/jupyterhub/repo2docker/pull/1331) ([@dependabot](https://github.com/dependabot))
+- Support pytest=8 [#1330](https://github.com/jupyterhub/repo2docker/pull/1330) ([@manics](https://github.com/manics))
+- Update versioneer [#1329](https://github.com/jupyterhub/repo2docker/pull/1329) ([@TimoRoth](https://github.com/TimoRoth))
+- build(deps): bump actions/setup-python from 4 to 5 [#1328](https://github.com/jupyterhub/repo2docker/pull/1328) ([@dependabot](https://github.com/dependabot))
+- build(deps): bump actions/upload-artifact from 3 to 4 [#1327](https://github.com/jupyterhub/repo2docker/pull/1327) ([@dependabot](https://github.com/dependabot))
+- Add NYCU Dataverse [#1326](https://github.com/jupyterhub/repo2docker/pull/1326) ([@twtw](https://github.com/twtw))
+- [pre-commit.ci] pre-commit autoupdate [#1322](https://github.com/jupyterhub/repo2docker/pull/1322) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- New domain for Edmond MPG repository [#1321](https://github.com/jupyterhub/repo2docker/pull/1321) ([@haarli](https://github.com/haarli))
+- [pre-commit.ci] pre-commit autoupdate [#1319](https://github.com/jupyterhub/repo2docker/pull/1319) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- [MRG] docs: Add base_image parameter example. [#1318](https://github.com/jupyterhub/repo2docker/pull/1318) ([@hiroyuki-sato](https://github.com/hiroyuki-sato))
+- Upgrade mamba and refreeze [#1313](https://github.com/jupyterhub/repo2docker/pull/1313) ([@manics](https://github.com/manics))
+- r: Bump version of rsession-proxy [#1310](https://github.com/jupyterhub/repo2docker/pull/1310) ([@yuvipanda](https://github.com/yuvipanda))
+- build(deps): bump actions/checkout from 3 to 4 [#1308](https://github.com/jupyterhub/repo2docker/pull/1308) ([@dependabot](https://github.com/dependabot))
+- build(deps): bump docker/build-push-action from 4 to 5 [#1307](https://github.com/jupyterhub/repo2docker/pull/1307) ([@dependabot](https://github.com/dependabot))
+- build(deps): bump docker/setup-qemu-action from 2 to 3 [#1306](https://github.com/jupyterhub/repo2docker/pull/1306) ([@dependabot](https://github.com/dependabot))
+- build(deps): bump docker/setup-buildx-action from 2 to 3 [#1305](https://github.com/jupyterhub/repo2docker/pull/1305) ([@dependabot](https://github.com/dependabot))
+- Update conda and mamba [#1299](https://github.com/jupyterhub/repo2docker/pull/1299) ([@SylvainCorlay](https://github.com/SylvainCorlay))
+- Point to official documentation for handling JupyterLab workspace [#1294](https://github.com/jupyterhub/repo2docker/pull/1294) ([@fcollonval](https://github.com/fcollonval))
+- Fix rstudio-build selection [#1293](https://github.com/jupyterhub/repo2docker/pull/1293) ([@yamaton](https://github.com/yamaton))
+- [pre-commit.ci] pre-commit autoupdate [#1291](https://github.com/jupyterhub/repo2docker/pull/1291) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyterhub/repo2docker/graphs/contributors?from=2023-06-13&to=2024-03-28&type=c))
+
+[@annakrystalli](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aannakrystalli+updated%3A2023-06-13..2024-03-28&type=Issues) | [@betatim](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Abetatim+updated%3A2023-06-13..2024-03-28&type=Issues) | [@bollwyvl](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Abollwyvl+updated%3A2023-06-13..2024-03-28&type=Issues) | [@consideRatio](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AconsideRatio+updated%3A2023-06-13..2024-03-28&type=Issues) | [@dependabot](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Adependabot+updated%3A2023-06-13..2024-03-28&type=Issues) | [@dolfinus](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Adolfinus+updated%3A2023-06-13..2024-03-28&type=Issues) | [@fcollonval](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Afcollonval+updated%3A2023-06-13..2024-03-28&type=Issues) | [@felder](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Afelder+updated%3A2023-06-13..2024-03-28&type=Issues) | [@haarli](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ahaarli+updated%3A2023-06-13..2024-03-28&type=Issues) | [@hiroyuki-sato](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ahiroyuki-sato+updated%3A2023-06-13..2024-03-28&type=Issues) | [@manics](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Amanics+updated%3A2023-06-13..2024-03-28&type=Issues) | [@mathieuboudreau](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Amathieuboudreau+updated%3A2023-06-13..2024-03-28&type=Issues) | [@minrk](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aminrk+updated%3A2023-06-13..2024-03-28&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Apre-commit-ci+updated%3A2023-06-13..2024-03-28&type=Issues) | [@rgaiacs](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Argaiacs+updated%3A2023-06-13..2024-03-28&type=Issues) | [@ryanlovett](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aryanlovett+updated%3A2023-06-13..2024-03-28&type=Issues) | [@sgaist](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Asgaist+updated%3A2023-06-13..2024-03-28&type=Issues) | [@SylvainCorlay](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3ASylvainCorlay+updated%3A2023-06-13..2024-03-28&type=Issues) | [@TimoRoth](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3ATimoRoth+updated%3A2023-06-13..2024-03-28&type=Issues) | [@twtw](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Atwtw+updated%3A2023-06-13..2024-03-28&type=Issues) | [@welcome](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Awelcome+updated%3A2023-06-13..2024-03-28&type=Issues) | [@yamaton](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ayamaton+updated%3A2023-06-13..2024-03-28&type=Issues) | [@yuvipanda](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ayuvipanda+updated%3A2023-06-13..2024-03-28&type=Issues)
+
 ## Version 2023.06.0
 
 ([full changelog](https://github.com/jupyterhub/repo2docker/compare/2022.10.0...2023.06.0))

@@ -4,3 +4,5 @@ which gfortran
 test -z $(pip list | grep scipy)
 jupyter nbextension list
 jupyter nbextension list | grep 'jupyter-leaflet' | grep enabled
+
+grep 'Done!' $HOME/postbuild.txt
