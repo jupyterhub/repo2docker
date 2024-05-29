@@ -2,4 +2,4 @@
 IteratorInterfaceExtensions = "82899510-4779-5014-852e-03e436cf321d"
 
 [compat]
-julia = "=1.0.2"
+julia = "=1.3"

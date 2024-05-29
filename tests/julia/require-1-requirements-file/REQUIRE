@@ -1,5 +1,0 @@
-julia 1
-
-# Julia packages:
-PyCall
-PyPlot

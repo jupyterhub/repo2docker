@@ -102,14 +102,8 @@ of the Julia packages that are installed.
 ``REQUIRE`` - Install a Julia environment (legacy)
 ==================================================
 
-A ``REQUIRE`` file can specify both the version of Julia to be used and
-which Julia packages should be used. The use of ``REQUIRE`` is only
-recommended for pre 1.0 Julia versions. The recommended way of installing
-a Julia environment that uses Julia 1.0 or newer is to use a ``Project.toml``
-file. If both a ``REQUIRE`` and a ``Project.toml`` file are detected,
-the ``REQUIRE`` file is ignored. To see an example of a Julia repository
-with ``REQUIRE`` and ``environment.yml``, visit
-`binder-examples/julia-python <https://github.com/binder-examples/julia-python>`_.
+``REQUIRE`` files no longer work, and are no longer supported.
+The recommended way of installing a Julia environment is to use a ``Project.toml`` file.
 
 
 .. _install.R:
