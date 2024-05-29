@@ -95,11 +95,32 @@ def create_semver_matcher(constraint_str):
         else:
             return VersionRange(constraint, (major(constraint) + 1,), True)
 
-    # '~' matching (only allowed to bump the last present number by one)
+    # '~' matching, bumps minor version unless only major specified or leading 0.0.
+    # https://pkgdocs.julialang.org/v1/compatibility/#Tilde-specifiers
     if comparison_symbol == "~":
-        return VersionRange(
-            constraint, constraint[:-1] + (constraint[-1] + 1,), exclusive=False
-        )
+        if len(constraint) == 1:
+            # only major specified
+            # ~x -> [x-x+1)
+            return VersionRange(constraint, (constraint[0] + 1,), exclusive=True)
+        elif len(constraint) == 2:
+            # ~x.y -> [x.y-x.y+1)
+            return VersionRange(
+                constraint,
+                (
+                    major(constraint),
+                    minor(constraint) + 1,
+                ),
+                exclusive=True,
+            )
+        else:
+            # 3 parts, different depending on if starts with 0.0
+            if major(constraint) == 0 and minor(constraint) == 0:
+                # ~0.0.3 = [0.0.3-0.0.4)
+                upper = (0, 0, patch(constraint) + 1)
+            else:
+                # ~0.2.3 = [0.2.3-0.3)
+                upper = (major(constraint), minor(constraint) + 1)
+            return VersionRange(constraint, upper, exclusive=True)
 
     # Use semver package's comparisons for everything else:
 
