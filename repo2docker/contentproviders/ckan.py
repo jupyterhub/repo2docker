@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from os import path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse, urlencode
 
 from requests import Session
 
@@ -86,11 +86,10 @@ class CKAN(ContentProvider):
         # handle the activites
         if activity_id:
             fetch_url = (
-                f"{spec['api_url']}activity_data_show?"
-                f"id={activity_id}&object_type=package"
+                f"{spec['api_url']}activity_data_show?" + urlencode({"id": activity_id, "object_type": "package"})
             )
         else:
-            fetch_url = f"{spec['api_url']}package_show?id={dataset_id}"
+            fetch_url = f"{spec['api_url']}package_show?" + urlencode({"id": dataset_id})
 
         resp = self.urlopen(
             fetch_url,
