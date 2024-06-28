@@ -117,7 +117,7 @@ class DockerEngine(ContainerEngine):
 
     def inspect_image(self, image):
         image = self._apiclient.inspect_image(image)
-        return Image(tags=image["RepoTags"], config=image["ContainerConfig"])
+        return Image(tags=image["RepoTags"], config=image["Config"])
 
     def push(self, image_spec):
         if self.registry_credentials:
