@@ -155,6 +155,7 @@ class Repo2Docker(Application):
             contentproviders.CKAN,
             contentproviders.Mercurial,
             contentproviders.Git,
+            contentproviders.Meca,
         ],
         config=True,
         help="""
