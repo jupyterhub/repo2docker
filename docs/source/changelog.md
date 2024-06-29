@@ -2,19 +2,22 @@
 
 ## 2024.06.0
 
-([full changelog](https://github.com/jupyterhub/repo2docker/compare/243669b928fd1486c7d08328a7d1bcc1dd6b831c...5ed990188e4f348c98f298410c538839c696dfb2))
+([full changelog](https://github.com/jupyterhub/repo2docker/compare/2024.03.0...2024.06.0))
+
+### Breaking changes
+
+- [MRG] Update to JupyterLab 4 [#1340](https://github.com/jupyterhub/repo2docker/pull/1340) ([@jtpio](https://github.com/jtpio))
+- Remove support for deprecated Julia REQUIRE, Julia < 1.3 [#1350](https://github.com/jupyterhub/repo2docker/pull/1350) ([@minrk](https://github.com/minrk))
 
 ### Enhancements made
 
 - add Python 3.12 [#1347](https://github.com/jupyterhub/repo2docker/pull/1347) ([@minrk](https://github.com/minrk))
-- [MRG] Update to JupyterLab 4 [#1340](https://github.com/jupyterhub/repo2docker/pull/1340) ([@jtpio](https://github.com/jtpio))
 - [MRG] Add CKAN content provider [#1336](https://github.com/jupyterhub/repo2docker/pull/1336) ([@u10313335](https://github.com/u10313335))
 
 ### Bugs fixed
 
 - Docker engine: replace ContainerConfig with Config [#1355](https://github.com/jupyterhub/repo2docker/pull/1355) ([@manics](https://github.com/manics))
 - fix julia semver tilde upper bounds [#1351](https://github.com/jupyterhub/repo2docker/pull/1351) ([@minrk](https://github.com/minrk))
-- Remove support for deprecated Julia REQUIRE, Julia < 1.3 [#1350](https://github.com/jupyterhub/repo2docker/pull/1350) ([@minrk](https://github.com/minrk))
 
 ### Other merged PRs
 
