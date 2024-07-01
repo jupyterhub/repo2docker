@@ -1,5 +1,36 @@
 # Changelog
 
+## 2024.07.0
+
+([full changelog](https://github.com/jupyterhub/repo2docker/compare/2024.03.0...2024.07.0))
+
+### Breaking changes
+
+- [MRG] Update to JupyterLab 4 [#1340](https://github.com/jupyterhub/repo2docker/pull/1340) ([@jtpio](https://github.com/jtpio))
+- Remove support for deprecated Julia REQUIRE, Julia < 1.3 [#1350](https://github.com/jupyterhub/repo2docker/pull/1350) ([@minrk](https://github.com/minrk))
+
+### Enhancements made
+
+- add Python 3.12 [#1347](https://github.com/jupyterhub/repo2docker/pull/1347) ([@minrk](https://github.com/minrk))
+- [MRG] Add CKAN content provider [#1336](https://github.com/jupyterhub/repo2docker/pull/1336) ([@u10313335](https://github.com/u10313335))
+
+### Bugs fixed
+
+- Docker engine: replace ContainerConfig with Config [#1355](https://github.com/jupyterhub/repo2docker/pull/1355) ([@manics](https://github.com/manics))
+- fix julia semver tilde upper bounds [#1351](https://github.com/jupyterhub/repo2docker/pull/1351) ([@minrk](https://github.com/minrk))
+
+### Other merged PRs
+
+- update postBuild tests without ipyleaflet [#1348](https://github.com/jupyterhub/repo2docker/pull/1348) ([@manics](https://github.com/manics))
+- [pre-commit.ci] pre-commit autoupdate [#1344](https://github.com/jupyterhub/repo2docker/pull/1344) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+- [pre-commit.ci] pre-commit autoupdate [#1342](https://github.com/jupyterhub/repo2docker/pull/1342) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyterhub/repo2docker/graphs/contributors?from=2024-03-31&to=2024-06-28&type=c))
+
+[@jtpio](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ajtpio+updated%3A2024-03-31..2024-06-28&type=Issues) | [@manics](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Amanics+updated%3A2024-03-31..2024-06-28&type=Issues) | [@minrk](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aminrk+updated%3A2024-03-31..2024-06-28&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Apre-commit-ci+updated%3A2024-03-31..2024-06-28&type=Issues) | [@u10313335](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Au10313335+updated%3A2024-03-31..2024-06-28&type=Issues) | [@welcome](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Awelcome+updated%3A2024-03-31..2024-06-28&type=Issues) | [@yuvipanda](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ayuvipanda+updated%3A2024-03-31..2024-06-28&type=Issues)
+
 ## Version 2024.03.0
 
 ([full changelog](https://github.com/jupyterhub/repo2docker/compare/2023.06.0...2024.01.03))
