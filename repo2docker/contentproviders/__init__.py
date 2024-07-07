@@ -7,3 +7,4 @@ from .hydroshare import Hydroshare
 from .mercurial import Mercurial
 from .swhid import Swhid
 from .zenodo import Zenodo
+from .meca import Meca
