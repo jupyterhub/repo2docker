@@ -1,13 +1,16 @@
-from .base import ContentProvider
-from requests import Session
 import os
+import shutil
+import tempfile
+import xml.etree.ElementTree as ET
 from hashlib import md5
 from os import path
-import tempfile
-import shutil
-import xml.etree.ElementTree as ET
-from zipfile import ZipFile, is_zipfile
 from urllib.parse import urlparse, urlunparse
+from zipfile import ZipFile, is_zipfile
+
+from requests import Session
+
+from .base import ContentProvider
+
 
 def get_hashed_slug(url, changes_with_content):
     """Return a unique slug that is invariant to query parameters in the url"""
@@ -17,6 +20,7 @@ def get_hashed_slug(url, changes_with_content):
     )
 
     return "meca-" + md5(f"{stripped_url}-{changes_with_content}".encode()).hexdigest()
+
 
 def fetch_zipfile(session, url, dst_dir):
     resp = session.get(url, headers={"accept": "application/zip"}, stream=True)

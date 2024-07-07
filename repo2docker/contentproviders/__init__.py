@@ -4,7 +4,7 @@ from .dataverse import Dataverse
 from .figshare import Figshare
 from .git import Git
 from .hydroshare import Hydroshare
+from .meca import Meca
 from .mercurial import Mercurial
 from .swhid import Swhid
 from .zenodo import Zenodo
-from .meca import Meca
