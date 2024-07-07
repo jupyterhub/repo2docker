@@ -1,3 +1,4 @@
+import hashlib
 import os
 import shutil
 import tempfile
@@ -78,35 +79,50 @@ class Meca(ContentProvider):
         )
 
     def detect(self, spec, ref=None, extra_args=None):
-        """`spec` contains a faux protocol of meca+http[s] for detection purposes
+        """`spec` contains a faux protocol of http[s]+meca for detection purposes
         and we assume `spec` trusted as a reachable MECA bundle from an allowed origin
         (binderhub RepoProvider class is already checking for this).
 
         An other HEAD check in made here in order to get the content-length header
         """
-        parsed = urlparse(spec)
-        if not parsed.scheme.endswith("+meca"):
-            return None
-        parsed = parsed._replace(scheme=parsed.scheme[:-5])
-        url = urlunparse(parsed)
+        is_local_file = False
+        if spec.endswith(".meca.zip") and os.path.isfile(spec):
+            url = os.path.abspath(spec)
+            is_local_file = True
+            with open(url, "rb") as f:
+                file_hash = hashlib.blake2b()
+                while chunk := f.read(8192):
+                    file_hash.update(chunk)
+            changes_with_content = file_hash.hexdigest()
+        else:
+            parsed = urlparse(spec)
+            if not parsed.scheme.endswith("+meca"):
+                return None
+            parsed = parsed._replace(scheme=parsed.scheme[:-5])
+            url = urlunparse(parsed)
 
-        headers = self.session.head(url).headers
-        changes_with_content = headers.get("ETag") or headers.get("Content-Length")
+            headers = self.session.head(url).headers
+            changes_with_content = headers.get("ETag") or headers.get("Content-Length")
 
         self.hashed_slug = get_hashed_slug(url, changes_with_content)
 
-        return {"url": url, "slug": self.hashed_slug}
+        return {"url": url, "slug": self.hashed_slug, "is_local_file": is_local_file}
 
     def fetch(self, spec, output_dir, yield_output=False):
         hashed_slug = spec["slug"]
         url = spec["url"]
+        is_local_file = spec["is_local_file"]
 
         yield f"Creating temporary directory.\n"
         with tempfile.TemporaryDirectory() as tmpdir:
             yield f"Temporary directory created at {tmpdir}.\n"
 
-            yield f"Fetching MECA Bundle {url}.\n"
-            zip_filename = fetch_zipfile(self.session, url, tmpdir)
+            if is_local_file:
+                yield f"Found MECA Bundle {url}.\n"
+                zip_filename = url
+            else:
+                yield f"Fetching MECA Bundle {url}.\n"
+                zip_filename = fetch_zipfile(self.session, url, tmpdir)
 
             yield f"Extracting MECA Bundle {zip_filename}.\n"
             is_meca, bundle_dir = extract_validate_and_identify_bundle(
