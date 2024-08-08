@@ -1,4 +1,4 @@
 #!/bin/bash
-jupyter nbextension enable --py --sys-prefix ipyleaflet
+jupyter server extension disable --sys-prefix jupyter_collaboration
 npm install --global configurable-http-proxy
 npm cache clean --force
