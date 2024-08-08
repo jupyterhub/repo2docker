@@ -2,7 +2,6 @@
 set -euo pipefail
 which gfortran
 test -z $(pip list | grep scipy)
-jupyter nbextension list
-jupyter nbextension list | grep 'jupyter-leaflet' | grep enabled
+pip list | grep leaflet
 
 grep 'Done!' $HOME/postbuild.txt
