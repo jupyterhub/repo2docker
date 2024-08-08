@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euo pipefail
-jupyter nbextension list | grep 'jupyter-leaflet' | grep enabled
+jupyter server extension list 2>&1 | grep 'jupyter_collaboration' | grep disabled
 which configurable-http-proxy 

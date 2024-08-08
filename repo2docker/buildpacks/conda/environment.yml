@@ -10,4 +10,4 @@ dependencies:
   - jupyter_server==2.*   # https://github.com/jupyter-server/jupyter_server
   - jupyterhub-singleuser==5.*   # https://github.com/jupyterhub/jupyterhub
   - jupyterlab==4.*   # https://github.com/jupyterlab/jupyterlab
-  - notebook==6.*   # https://github.com/jupyter/notebook
+  - notebook==7.*   # https://github.com/jupyter/notebook

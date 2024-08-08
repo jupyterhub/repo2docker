@@ -1,1 +1,1 @@
-ipyleaflet
+jupyter-collaboration
