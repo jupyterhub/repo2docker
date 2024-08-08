@@ -17,7 +17,6 @@ Test lifecycle:
 """
 
 import os
-import pipes
 import shlex
 import subprocess
 import time
@@ -218,7 +217,7 @@ class Repo2DockerTest(pytest.Function):
     def repr_failure(self, excinfo):
         err = excinfo.value
         if isinstance(err, SystemExit):
-            cmd = f'jupyter-repo2docker {" ".join(map(pipes.quote, self.args))}'
+            cmd = f'jupyter-repo2docker {" ".join(map(shlex.quote, self.args))}'
             return f"{cmd} | exited with status={err.code}"
         else:
             return super().repr_failure(excinfo)
