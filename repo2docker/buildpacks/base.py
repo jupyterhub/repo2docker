@@ -186,8 +186,8 @@ ENV R2D_ENTRYPOINT="{{ start_script }}"
 
 # Add entrypoint
 ENV PYTHONUNBUFFERED=1
-COPY /python3-login /usr/local/bin/python3-login
-COPY /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
+COPY --chmod=0755 /python3-login /usr/local/bin/python3-login
+COPY --chmod=0755 /repo2docker-entrypoint /usr/local/bin/repo2docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/repo2docker-entrypoint"]
 
 # Specify the default command to run
