@@ -30,7 +30,6 @@ export PATH="${PWD}/bin:$PATH"
 cat <<EOT >> ${CONDA_DIR}/.condarc
 channels:
   - conda-forge
-  - defaults
 auto_update_conda: false
 show_channel_urls: true
 update_dependencies: false
