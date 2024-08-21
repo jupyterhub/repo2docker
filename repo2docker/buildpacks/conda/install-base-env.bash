@@ -36,7 +36,12 @@ update_dependencies: false
 # channel_priority: flexible
 EOT
 
-micromamba install -c conda-forge/label/mamba_dev -c conda-forge conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
+# TODO: remove channels once 2.0.0 is used.
+micromamba install \
+    -c conda-forge/label/mamba_dev \
+    -c conda-canary/label/conda-libmamba-solver-pr-457 \
+    -c conda-forge \
+    conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
 
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
