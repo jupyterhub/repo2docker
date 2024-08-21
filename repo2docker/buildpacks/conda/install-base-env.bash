@@ -36,11 +36,12 @@ update_dependencies: false
 # channel_priority: flexible
 EOT
 
-# TODO: remove channels once 2.0.0 is used.
+# TODO: remove channels and conda-libmamba-solver once 2.0.0 is used.
 micromamba install \
-    -c conda-forge/label/mamba_dev \
     -c conda-canary/label/conda-libmamba-solver-pr-457 \
+    -c conda-forge/label/mamba_dev \
     -c conda-forge \
+    "conda-libmamba-solver>=24.7.0.141" \
     conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
 
 echo "installing notebook env:"
