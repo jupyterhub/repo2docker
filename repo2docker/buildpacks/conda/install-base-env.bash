@@ -5,8 +5,8 @@ set -ex
 
 cd $(dirname $0)
 
-export MAMBA_VERSION=1.5.7
-export CONDA_VERSION=24.3.0
+export MAMBA_VERSION="2.0.0rc2"
+export CONDA_VERSION=24.7.1
 
 URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/${CONDA_PLATFORM}/micromamba-${MAMBA_VERSION}-0.tar.bz2"
 
@@ -36,7 +36,7 @@ update_dependencies: false
 # channel_priority: flexible
 EOT
 
-micromamba install conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
+micromamba install -c conda-forge/label/mamba_dev -c conda-forge conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
 
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"

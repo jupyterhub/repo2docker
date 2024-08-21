@@ -21,8 +21,8 @@ assert out == "1.5.7", out
 out = sh(["mamba", "--version"])
 assert (
     out
-    == """mamba 1.5.7
-conda 24.3.0"""
+    == """mamba 2.2.0rc2
+conda 24.7.0"""
 ), out
 
 sh([kernel_python, "-c", "import numpy"])
