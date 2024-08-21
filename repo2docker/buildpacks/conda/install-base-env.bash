@@ -23,7 +23,7 @@ chmod 0755 "$MICROMAMBA_EXE"
 
 eval "$(${MICROMAMBA_EXE} shell hook -p ${CONDA_DIR} -s posix)"
 
-eval "$(micromamba shell hook --shell )"
+eval "$(micromamba shell hook --shell bash)"
 
 micromamba activate
 
