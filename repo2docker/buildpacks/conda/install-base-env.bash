@@ -43,8 +43,9 @@ micromamba install \
     -c conda-canary/label/conda-libmamba-solver-pr-457 \
     -c conda-forge/label/mamba_dev \
     -c conda-forge \
-    "conda-libmamba-solver>=24.7.0.141" \
-    conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
+    "conda-libmamba-solver>=${CONDA_VERSION}" \
+    "conda>=${CONDA_VERSION}" \
+    mamba=${MAMBA_VERSION} -y
 
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
