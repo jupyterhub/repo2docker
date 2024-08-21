@@ -16,12 +16,12 @@ v = out.split()[1]
 assert v[:3] == "3.5", out
 
 out = sh(["micromamba", "--version"])
-assert out == "1.5.7", out
+assert out == "2.0.0", out
 
 out = sh(["mamba", "--version"])
 assert (
     out
-    == """mamba 2.2.0rc2
+    == """mamba 2.0.0
 conda 24.7.0"""
 ), out
 
