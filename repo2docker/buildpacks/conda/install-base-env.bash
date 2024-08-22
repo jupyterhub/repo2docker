@@ -23,8 +23,6 @@ chmod 0755 "$MICROMAMBA_EXE"
 
 eval "$(${MICROMAMBA_EXE} shell hook --root-prefix ${CONDA_DIR} -s posix)"
 
-eval "$(micromamba shell hook --shell bash)"
-
 micromamba activate
 
 export PATH="${PWD}/bin:$PATH"
