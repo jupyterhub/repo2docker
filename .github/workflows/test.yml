@@ -91,6 +91,6 @@ jobs:
 
       - name: Run pytest
         run: |
-          pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
+          pytest --verbose -s --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
 
       - uses: codecov/codecov-action@v4
