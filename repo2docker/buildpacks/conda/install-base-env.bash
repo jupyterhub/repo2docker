@@ -41,7 +41,7 @@ micromamba install \
     -c conda-canary/label/conda-libmamba-solver-pr-457 \
     -c conda-forge/label/mamba_dev \
     -c conda-forge \
-    "conda-libmamba-solver>=${CONDA_VERSION}" \
+    "conda-canary/label/conda-libmamba-solver-pr-457::conda-libmamba-solver>=${CONDA_VERSION}" \
     "conda>=${CONDA_VERSION}" \
     mamba=${MAMBA_VERSION} -y
 
