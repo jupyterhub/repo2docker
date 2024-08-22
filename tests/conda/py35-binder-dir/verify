@@ -19,10 +19,6 @@ out = sh(["micromamba", "--version"])
 assert out == "2.0.0", out
 
 out = sh(["mamba", "--version"])
-assert (
-    out
-    == """mamba 2.0.0
-conda 24.7.0"""
-), out
+assert out == "2.0.0", out
 
 sh([kernel_python, "-c", "import numpy"])
