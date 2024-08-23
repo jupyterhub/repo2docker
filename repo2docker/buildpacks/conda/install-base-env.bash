@@ -49,7 +49,7 @@ echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
 
 
-time ${MAMBA_EXE} create -p ${NB_PYTHON_PREFIX} --file "${NB_ENVIRONMENT_FILE}"
+time ${MICROMAMBA_EXE} create -p ${NB_PYTHON_PREFIX} --file "${NB_ENVIRONMENT_FILE}"
 
 if [[ ! -z "${NB_REQUIREMENTS_FILE:-}" ]]; then
     echo "installing pip requirements"
@@ -66,7 +66,7 @@ if [[ ! -z "${KERNEL_ENVIRONMENT_FILE:-}" ]]; then
     # install kernel env and register kernelspec
     echo "installing kernel env:"
     cat "${KERNEL_ENVIRONMENT_FILE}"
-    time ${MAMBA_EXE} create -p ${KERNEL_PYTHON_PREFIX} --file "${KERNEL_ENVIRONMENT_FILE}"
+    time ${MICROMAMBA_EXE} create -p ${KERNEL_PYTHON_PREFIX} --file "${KERNEL_ENVIRONMENT_FILE}"
 
     if [[ ! -z "${KERNEL_REQUIREMENTS_FILE:-}" ]]; then
         echo "installing pip requirements for kernel"
@@ -76,18 +76,18 @@ if [[ ! -z "${KERNEL_ENVIRONMENT_FILE:-}" ]]; then
 
     ${KERNEL_PYTHON_PREFIX}/bin/ipython kernel install --prefix "${NB_PYTHON_PREFIX}"
     echo '' > ${KERNEL_PYTHON_PREFIX}/conda-meta/history
-    ${MAMBA_EXE} list -p ${KERNEL_PYTHON_PREFIX}
+    ${MICROMAMBA_EXE} list -p ${KERNEL_PYTHON_PREFIX}
 fi
 
 # Clean things out!
-time ${MAMBA_EXE} clean --all -f -y
+time ${MICROMAMBA_EXE} clean --all -f -y
 
 # Remove the pip cache created as part of installing micromamba
 rm -rf /root/.cache
 
 chown -R $NB_USER:$NB_USER ${CONDA_DIR}
 
-${MAMBA_EXE} list -p ${NB_PYTHON_PREFIX}
+${MICROMAMBA_EXE} list -p ${NB_PYTHON_PREFIX}
 
 # Set NPM config
 ${NB_PYTHON_PREFIX}/bin/npm config --global set prefix ${NPM_DIR}
