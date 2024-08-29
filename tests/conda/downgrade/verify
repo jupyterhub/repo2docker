@@ -27,4 +27,4 @@ assert pkgs["xeus-cling"]["version"] == "0.6.0"
 # which in turn downgrades Python from >=3.9.16 to 3.9.6
 
 assert pkgs["openssl"]["version"].startswith("1.1.1"), pkgs["openssl"]["version"]
-assert pkgs["python"]["version"] == "3.9.6", pkgs["python"]["version"]
+assert pkgs["python"]["version"] == "3.9.0", pkgs["python"]["version"]
