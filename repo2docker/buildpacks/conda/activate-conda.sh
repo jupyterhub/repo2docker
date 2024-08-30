@@ -1,4 +1,5 @@
 # enable conda and activate the notebook environment
+set -ex
 eval $(micromamba shell hook -s posix -r ${CONDA_DIR})
 for name in conda mamba; do
     CONDA_PROFILE="${CONDA_DIR}/etc/profile.d/${name}.sh"
