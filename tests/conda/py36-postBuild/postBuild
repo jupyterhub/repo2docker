@@ -1,6 +1,8 @@
 #!/bin/bash
 set -ex
 
+env | sort
+
 mamba info
 
 # mamba/conda installs in kernel env
