@@ -1,6 +1,8 @@
 #!/bin/bash
 set -ex
 
+mamba info
+
 # mamba/conda installs in kernel env
 mamba install -y make
 
