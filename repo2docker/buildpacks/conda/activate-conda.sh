@@ -2,6 +2,7 @@
 eval $(micromamba shell hook -s posix -r ${CONDA_DIR})
 for name in conda mamba; do
     CONDA_PROFILE="${CONDA_DIR}/etc/profile.d/${name}.sh"
+    echo "Activating profile: ${CONDA_PROFILE}"
     test -f $CONDA_PROFILE && . $CONDA_PROFILE
 done
 if [[ "${KERNEL_PYTHON_PREFIX}" != "${NB_PYTHON_PREFIX}" ]]; then
