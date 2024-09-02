@@ -153,6 +153,7 @@ class Repo2Docker(Application):
             contentproviders.Hydroshare,
             contentproviders.Swhid,
             contentproviders.CKAN,
+            contentproviders.Meca,
             contentproviders.Mercurial,
             contentproviders.Git,
         ],
