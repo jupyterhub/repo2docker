@@ -1,3 +1,6 @@
 dependencies:
   - python=3.5
   - numpy
+  # Without this numpy fails to load with error
+  # ImportError: libgfortran.so.3: cannot open shared object file: No such file or directory
+  - libgfortran=3
