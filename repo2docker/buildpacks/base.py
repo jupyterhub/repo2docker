@@ -630,7 +630,7 @@ class BuildPack:
 
         if files_to_add:
             for item in files_to_add:
-                tar.add(item, f"src/{item}", filter=_filter_tar)
+                tar.add(item, f"src/{item}", recursive=False, filter=_filter_tar)
         else:
             # Either the source was empty or everything was filtered out.
             # In any case, create an src dir so the build can proceed.
