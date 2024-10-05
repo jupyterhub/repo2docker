@@ -5,7 +5,7 @@ import os
 
 import docker
 
-from .base import BuildPack
+from .base import BuildPack, ExcludesStrategy
 
 
 class DockerBuildPack(BuildPack):
@@ -32,6 +32,8 @@ class DockerBuildPack(BuildPack):
         cache_from,
         extra_build_kwargs,
         platform=None,
+        extra_ignore_file=None,
+        ignore_file_strategy=ExcludesStrategy.THEIRS,
     ):
         """Build a Docker image based on the Dockerfile in the source repo."""
         # If you work on this bit of code check the corresponding code in
