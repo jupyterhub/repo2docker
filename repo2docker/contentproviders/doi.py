@@ -58,7 +58,7 @@ class DoiProvider(ContentProvider):
                 # Reraise any other errors because if the DOI service is down (or
                 # we hit a rate limit) we don't want to silently continue to the
                 # default Git provider as this leads to a misleading error.
-                logging.error(f"DOI {doi} does not resolve: {e}")
+                self.log.error(f"DOI {doi} does not resolve: {e}")
                 raise
             return resp.url
         else:
@@ -70,7 +70,7 @@ class DoiProvider(ContentProvider):
         # file related to a record
         file_url = deep_get(file_ref, host["download"])
         fname = deep_get(file_ref, host["filename"])
-        logging.debug(f"Downloading file {file_url} as {fname}\n")
+        self.log.debug(f"Downloading file {file_url} as {fname}\n")
 
         yield f"Requesting {file_url}\n"
         resp = self._request(file_url, stream=True)
