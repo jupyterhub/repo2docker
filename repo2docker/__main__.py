@@ -482,6 +482,15 @@ def main():
         if r2d.log_level == logging.DEBUG:
             r2d.log.exception(e)
         sys.exit(1)
+    finally:
+        # workaround bug in traitlets Application.__del__:
+        # https://github.com/ipython/traitlets/pull/912
+        # make sure close_handlers is called before process teardown
+        try:
+            r2d.close_handlers()
+        except AttributeError:
+            # traitlets < 5.10
+            pass
 
 
 if __name__ == "__main__":
