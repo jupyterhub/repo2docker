@@ -177,7 +177,7 @@ class JuliaProjectTomlBuildPack(PythonBuildPack):
                 "${NB_USER}",
                 r"""
             JULIA_PROJECT="" julia -e "using Pkg; Pkg.add(\"IJulia\"); using IJulia; installkernel(\"Julia\", \"--project={project}\");" && \
-            julia --project={project} -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); pkg"precompile"'
+            julia --project={project} -e 'using Pkg; Pkg.instantiate(); Pkg.resolve(); Pkg.instantiate()'
             """.format(
                     project=self.project_dir
                 ),
