@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import sys
+from pathlib import Path
 
 from . import __version__
 from .app import Repo2Docker
@@ -282,6 +283,22 @@ def get_argparser():
         help=Repo2Docker.engine.help,
     )
 
+    argparser.add_argument(
+        "--extra-ignore-file",
+        dest="extra_ignore_file",
+        type=Path,
+        help=Repo2Docker.extra_ignore_file.help,
+    )
+
+    argparser.add_argument(
+        "--ignore-file-strategy",
+        dest="ignore_file_strategy",
+        type=str,
+        choices=Repo2Docker.ignore_file_strategy.values,
+        default=Repo2Docker.ignore_file_strategy.default_value,
+        help=Repo2Docker.ignore_file_strategy.help,
+    )
+
     return argparser
 
 
@@ -463,6 +480,15 @@ def make_r2d(argv=None):
 
     if args.target_repo_dir:
         r2d.target_repo_dir = args.target_repo_dir
+
+    if args.extra_ignore_file is not None:
+        if not args.extra_ignore_file.exists():
+            print(f"The ignore file {args.extra_ignore_file} does not exist")
+            sys.exit(1)
+        r2d.extra_ignore_file = str(args.extra_ignore_file.resolve())
+
+    if args.ignore_file_strategy is not None:
+        r2d.ignore_file_strategy = args.ignore_file_strategy
 
     return r2d
 
