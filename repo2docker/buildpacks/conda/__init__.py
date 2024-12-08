@@ -355,7 +355,7 @@ class CondaBuildPack(BaseImage):
     @property
     def py2(self):
         """Am I building a Python 2 kernel environment?"""
-        warnings.warn(
+        self.log.warning(
             "CondaBuildPack.py2 is deprecated in 2023.2. Use CondaBuildPack.separate_kernel_env.",
             DeprecationWarning,
             stacklevel=2,
