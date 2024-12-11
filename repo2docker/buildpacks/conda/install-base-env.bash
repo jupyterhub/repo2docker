@@ -36,7 +36,11 @@ update_dependencies: false
 # channel_priority: flexible
 EOT
 
-micromamba install conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
+micromamba install \
+    -c conda-forge \
+    -c conda-forge/label/mamba_dev \
+    conda=${CONDA_VERSION} \
+    mamba=${MAMBA_VERSION} -y
 
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
