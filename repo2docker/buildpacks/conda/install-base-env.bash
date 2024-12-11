@@ -38,7 +38,7 @@ EOT
 
 micromamba install \
     -c conda-forge \
-    -c conda-forge/label/mamba_dev \
+    -c conda-forge/label/mamba_prerelease \
     conda=${CONDA_VERSION} \
     mamba=${MAMBA_VERSION} -y
 
