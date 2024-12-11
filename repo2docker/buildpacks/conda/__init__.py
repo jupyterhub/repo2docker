@@ -71,7 +71,7 @@ class CondaBuildPack(BaseImage):
             ("MAMBA_ROOT_PREFIX", "${CONDA_DIR}"),
             # this exe should be used for installs after bootstrap with micromamba
             # switch this to /usr/local/bin/micromamba to use it for all installs
-            ("MAMBA_EXE", "${CONDA_DIR}/bin/mamba"),
+            ("MAMBA_EXE", "/usr/local/bin/micromamba"),
             ("CONDA_PLATFORM", self._conda_platform()),
         ]
         if self._nb_requirements_file:
