@@ -36,10 +36,10 @@ update_dependencies: false
 # channel_priority: flexible
 EOT
 
-micromamba install
+micromamba install \
     -c conda-forge/label/mamba_prerelease \
     -c conda-forge \
-    conda=${CONDA_VERSION} 
+    conda=${CONDA_VERSION} \
     mamba=${MAMBA_VERSION} -y
 
 echo "installing notebook env:"
