@@ -49,7 +49,9 @@ class DoiProvider(ContentProvider):
             doi = normalize_doi(doi)
 
             try:
-                resp = self._request(f"https://doi.org/{doi}")
+                # We don't need to fetch the *contents* of the page the doi resolves to -
+                # only need to know what it redirects to.
+                resp = self._request(f"https://doi.org/{doi}", allow_redirects=False)
                 resp.raise_for_status()
             except HTTPError as e:
                 # If the DOI doesn't exist, just return URL
@@ -60,7 +62,7 @@ class DoiProvider(ContentProvider):
                 # default Git provider as this leads to a misleading error.
                 self.log.error(f"DOI {doi} does not resolve: {e}")
                 raise
-            return resp.url
+            return resp.headers['Location']
         else:
             # Just return what is actulally just a URL
             return doi
