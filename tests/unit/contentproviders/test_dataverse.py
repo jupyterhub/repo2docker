@@ -70,8 +70,8 @@ def test_detect_dataverse(test_input, expected, requests_mock):
     assert requests_mock.call_count == 0
     # valid Dataverse DOIs trigger this content provider
     assert Dataverse().detect(test_input[0]) == expected[0]
-    # 4: doi resolution (302), File, doi resolution (302), then dataset
-    assert requests_mock.call_count == 4
+    # 4: doi resolution (302), doi resolution (302)
+    assert requests_mock.call_count == 2
     requests_mock.reset_mock()
 
     assert Dataverse().detect(test_input[1]) == expected[0]
