@@ -62,7 +62,7 @@ class DoiProvider(ContentProvider):
                 # default Git provider as this leads to a misleading error.
                 self.log.error(f"DOI {doi} does not resolve: {e}")
                 raise
-            return resp.headers['Location']
+            return resp.headers["Location"]
         else:
             # Just return what is actulally just a URL
             return doi
