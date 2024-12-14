@@ -75,8 +75,8 @@ def test_detect_hydroshare(requests_mock):
     assert (
         Hydroshare().detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61") == expected
     )
-    # assert 3 calls were made, 2 to resolve the DOI (302 + 200) and another to fetch the version
-    assert requests_mock.call_count == 3
+    # assert 2 calls were made, 1 to resolve the DOI (302) and another to fetch the version
+    assert requests_mock.call_count == 2
     requests_mock.reset_mock()
 
     assert (

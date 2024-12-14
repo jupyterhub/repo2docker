@@ -66,8 +66,8 @@ def test_detect_zenodo(test_input, expected, requests_mock):
     assert Zenodo().detect(test_input[0]) == expected
     assert Zenodo().detect(test_input[1]) == expected
     assert Zenodo().detect(test_input[2]) == expected
-    # only two of the three calls above have to resolve a DOI (2 req per doi resolution)
-    assert requests_mock.call_count == 4
+    # only two of the three calls above have to resolve a DOI (1 req per doi resolution)
+    assert requests_mock.call_count == 2
     requests_mock.reset_mock()
 
     # Don't trigger the Zenodo content provider
