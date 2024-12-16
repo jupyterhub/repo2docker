@@ -60,6 +60,7 @@ jobs:
           - r
           - unit
           - venv
+          - contentproviders
         include:
           # The actions/setup-python action with Python version 3.6 isn't
           # possible to use with the ubuntu-22.04 runner, so we use ubuntu-20.04
