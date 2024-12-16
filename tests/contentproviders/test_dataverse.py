@@ -15,8 +15,8 @@ cimmyt_dv = next(_ for _ in test_dv.hosts if _["name"] == "CIMMYT Research Data"
     [
         ("doi:10.7910/DVN/6ZXAGT/3YRRYJ", {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"}),
         ("10.7910/DVN/6ZXAGT/3YRRYJ", {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"}),
-        ("https://dataverse.harvard.edu/api/access/datafile/3323458", {"host": harvard_dv, "record": "doi:10.7910/DVN/6ZXAGT"}),
-        ("https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016", {"host": cimmyt_dv, "record": "doi:10.7910/DVN/6ZXAGT"}),
+        ("https://dataverse.harvard.edu/api/access/datafile/3323458", {"host": harvard_dv, "record": "doi:10.7910/DVN/3MJ7IR"}),
+        ("https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016", {"host": cimmyt_dv, "record": "hdl:11529/10016"}),
         ("/some/random/string", None),
         ("https://example.com/path/here", None),
         # Non dataverse DOIs
