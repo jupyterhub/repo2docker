@@ -46,21 +46,28 @@ class DoiProvider(ContentProvider):
         # Transform a DOI to a URL
         # If not a doi, assume we have a URL and return
         if is_doi(doi):
-            doi = normalize_doi(doi)
+            normalized_doi = normalize_doi(doi)
 
-            try:
-                resp = self._request(f"https://doi.org/{doi}")
-                resp.raise_for_status()
-            except HTTPError as e:
-                # If the DOI doesn't exist, just return URL
-                if e.response.status_code == 404:
-                    return doi
-                # Reraise any other errors because if the DOI service is down (or
-                # we hit a rate limit) we don't want to silently continue to the
-                # default Git provider as this leads to a misleading error.
-                self.log.error(f"DOI {doi} does not resolve: {e}")
+            # Use the doi.org resolver API
+            # documented at https://www.doi.org/the-identifier/resources/factsheets/doi-resolution-documentation#5-proxy-server-rest-api
+            req_url = f"https://doi.org/api/handles/{normalize_doi}"
+            resp = self._request(req_url)
+            if resp.status_code == 404:
+                # Not a doi, return what we were passed in
+                return doi
+            elif resp.status_code == 200:
+                data = resp.json()
+                # Pick the first URL we find from the doi response
+                for v in data["values"]:
+                    if v["type"] == "URL":
+                        return v["data"]["string"]
+
+                # No URLs found for this doi, what do we do?
+                self.log.error("DOI {normalized_doi} doesn't point to any URLs")
+                return doi
+            else:
+                # If we get any other status codes, raise error
                 raise
-            return resp.url
         else:
             # Just return what is actulally just a URL
             return doi
