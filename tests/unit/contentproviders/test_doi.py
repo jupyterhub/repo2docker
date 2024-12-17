@@ -33,7 +33,7 @@ def test_url_headers(requests_mock):
 @pytest.mark.parametrize(
     "requested_doi, expected",
     [
-        ("10.5281/zenodo.3242074", "https://zenodo.org/records/3242074"),
+        ("10.5281/zenodo.3242074", "https://zenodo.org/record/3242074"),
         # Unresolving DOI:
         ("10.1/1234", "10.1/1234"),
     ],
