@@ -71,7 +71,7 @@ class Dataverse(DoiProvider):
 
     def get_dataset_id_from_file_id(self, base_url: str, file_id: str) -> str:
         """
-        Return the persistent_id (DOI) that a given file_id (int or doi) belongs to
+        Return the persistent_id (DOI) of a dataset that a given file_id (int or doi) belongs to
         """
         if file_id.isdigit():
             # the file_id is an integer, rather than a persistent id (DOI)
