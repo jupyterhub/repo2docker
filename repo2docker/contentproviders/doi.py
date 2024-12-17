@@ -50,7 +50,7 @@ class DoiProvider(ContentProvider):
 
             # Use the doi.org resolver API
             # documented at https://www.doi.org/the-identifier/resources/factsheets/doi-resolution-documentation#5-proxy-server-rest-api
-            req_url = f"https://doi.org/api/handles/{normalize_doi}"
+            req_url = f"https://doi.org/api/handles/{normalized_doi}"
             resp = self._request(req_url)
             if resp.status_code == 404:
                 # Not a doi, return what we were passed in
@@ -60,7 +60,7 @@ class DoiProvider(ContentProvider):
                 # Pick the first URL we find from the doi response
                 for v in data["values"]:
                     if v["type"] == "URL":
-                        return v["data"]["string"]
+                        return v["data"]["value"]
 
                 # No URLs found for this doi, what do we do?
                 self.log.error("DOI {normalized_doi} doesn't point to any URLs")

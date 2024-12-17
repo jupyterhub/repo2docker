@@ -3,7 +3,7 @@ import os
 import shutil
 from urllib.parse import parse_qs, urlparse, urlunparse
 
-from ..utils import copytree, deep_get
+from ..utils import copytree, deep_get, is_doi
 from .doi import DoiProvider
 
 
@@ -23,10 +23,11 @@ class Dataverse(DoiProvider):
             self.hosts = json.load(fp)["installations"]
         super().__init__()
 
-    def detect(self, doi, ref=None, extra_args=None):
-        """Trigger this provider for things that resolve to a Dataverse dataset.
+    def detect(self, spec, ref=None, extra_args=None):
+        """
+        Detect if given spec is hosted on dataverse
 
-        Handles:
+        The spec can be:
         - DOI pointing to {siteURL}/dataset.xhtml?persistentId={persistentId}
         - DOI pointing to {siteURL}/file.xhtml?persistentId={persistentId}&...
         - URL {siteURL}/api/access/datafile/{fileId}
@@ -35,9 +36,11 @@ class Dataverse(DoiProvider):
         - https://dataverse.harvard.edu/api/access/datafile/3323458
         - doi:10.7910/DVN/6ZXAGT
         - doi:10.7910/DVN/6ZXAGT/3YRRYJ
-
         """
-        url = self.doi2url(doi)
+        if is_doi(spec):
+            url = self.doi2url(spec)
+        else:
+            url = spec
         # Parse the url, to get the base for later API calls
         parsed_url = urlparse(url)
 
@@ -53,51 +56,77 @@ class Dataverse(DoiProvider):
         if host is None:
             return
 
-        query_args = parse_qs(parsed_url.query)
-        # Corner case handling
-        if parsed_url.path.startswith("/file.xhtml"):
-            # There's no way of getting file information using its persistentId, the only thing we can do is assume that doi
-            # is structured as "doi:<dataset_doi>/<file_doi>" and try to handle dataset that way.
-            new_doi = doi.rsplit("/", 1)[0]
-            if new_doi == doi:
-                # tough luck :( Avoid inifite recursion and exit.
-                return
-            return self.detect(new_doi)
-        elif parsed_url.path.startswith("/api/access/datafile"):
-            # Raw url pointing to a datafile is a typical output from an External Tool integration
+        # At this point, we *know* this is a dataverse URL, because:
+        # 1. The DOI resolved to a particular host (if using DOI)
+        # 2. The host is in the list of known dataverse installations
+        #
+        # We don't know exactly what kind of dataverse object this is, but
+        # that can be figured out during fetch as needed
+        return {"host": host, "url": url}
+
+    def get_persistent_id_from_url(self, url: str) -> str:
+        """
+        Return the persistentId for given dataverse URL.
+
+        Supports the following *dataset* URL styles:
+        - /citation: https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP
+        - /dataset.xhtml: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP
+
+        Supports the following *file* URL styles:
+        - /api/access/datafile: https://dataverse.harvard.edu/api/access/datafile/3323458
+
+        Supports a subset of the following *file* URL styles:
+        - /file.xhtml: https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ
+
+        If a URL can not be parsed, throw an exception
+        """
+        parsed_url = urlparse(url)
+        path = parsed_url.path
+        qs = parse_qs(parsed_url.query)
+
+        # https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP
+        # https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP
+        if path.startswith("/citation") or path.startswith("/dataset.xhtml"):
+            return qs["persistentId"][0]
+        #  https://dataverse.harvard.edu/api/access/datafile/3323458
+        elif path.startswith("/api/access/datafile"):
+            # What we have here is an entity id, which we can use to get a persistentId
             entity_id = os.path.basename(parsed_url.path)
-            search_query = "q=entityId:" + entity_id + "&type=file"
-            # Knowing the file identifier query search api to get parent dataset
-            search_url = urlunparse(
+            # FIXME: Should we be URL Encoding something here to protect from path traversal
+            # or similar attacks?
+            search_query = f"q=entityId:{entity_id}&type=file"
+            search_api_url = urlunparse(
                 parsed_url._replace(path="/api/search", query=search_query)
             )
-            self.log.debug("Querying Dataverse: " + search_url)
-            data = self.urlopen(search_url).json()["data"]
+            self.log.debug("Querying Dataverse: " + search_api_url)
+            data = self.urlopen(search_api_url).json()["data"]
             if data["count_in_response"] != 1:
-                self.log.debug(
-                    f"Dataverse search query failed!\n - doi: {doi}\n - url: {url}\n - resp: {json.dump(data)}\n"
+                raise ValueError(
+                    f"Dataverse search query failed!\n - url: {url}\n - resp: {json.dumps(data)}\n"
                 )
-                return
+            return data["items"][0]["dataset_persistent_id"]
+        elif parsed_url.path.startswith("/file.xhtml"):
+            file_persistent_id = qs['persistentId'][0]
+            dataset_persistent_id = file_persistent_id.rsplit("/", 1)[0]
+            if file_persistent_id == dataset_persistent_id:
+                # We can't figure this one out, throw an error
+                raise ValueError(f"Could not find dataset id for {url}")
+            return dataset_persistent_id
 
-            self.record_id = deep_get(data, "items.0.dataset_persistent_id")
-        elif (
-            parsed_url.path.startswith("/dataset.xhtml")
-            and "persistentId" in query_args
-        ):
-            self.record_id = deep_get(query_args, "persistentId.0")
-
-        if hasattr(self, "record_id"):
-            return {"record": self.record_id, "host": host}
+        raise ValueError(f"Could not determine persistent id for dataverse URL {url}")
 
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Dataverse dataset."""
-        record_id = spec["record"]
+        url = spec["url"]
         host = spec["host"]
 
-        yield f"Fetching Dataverse record {record_id}.\n"
-        url = f'{host["url"]}/api/datasets/:persistentId?persistentId={record_id}'
+        persistent_id = self.get_persistent_id_from_url(url)
+
+        yield f"Fetching Dataverse record {persistent_id}.\n"
+        url = f'{host["url"]}/api/datasets/:persistentId?persistentId={persistent_id}'
 
         resp = self.urlopen(url, headers={"accept": "application/json"})
+        print(resp.json())
         record = resp.json()["data"]
 
         for fobj in deep_get(record, "latestVersion.files"):
@@ -126,7 +155,11 @@ class Dataverse(DoiProvider):
             copytree(os.path.join(output_dir, d), output_dir)
             shutil.rmtree(os.path.join(output_dir, d))
 
+
+        # Save persistent id
+        self.persitent_id = persistent_id
+
     @property
     def content_id(self):
         """The Dataverse persistent identifier."""
-        return self.record_id
+        return self.persistent_id
