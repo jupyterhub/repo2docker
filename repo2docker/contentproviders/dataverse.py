@@ -1,9 +1,9 @@
+import hashlib
 import json
 import os
 import shutil
-import hashlib
-from urllib.parse import parse_qs, urlparse
 from typing import List
+from urllib.parse import parse_qs, urlparse
 
 from ..utils import copytree, deep_get, is_doi
 from .doi import DoiProvider
@@ -120,7 +120,7 @@ class Dataverse(DoiProvider):
             persistent_id = qs["persistentId"][0]
         # https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP
         elif path.startswith("/dataset.xhtml"):
-        #  https://dataverse.harvard.edu/api/access/datafile/3323458
+            #  https://dataverse.harvard.edu/api/access/datafile/3323458
             persistent_id = qs["persistentId"][0]
         elif path.startswith("/api/access/datafile"):
             # What we have here is an entity id, which we can use to get a persistentId
@@ -128,17 +128,27 @@ class Dataverse(DoiProvider):
             persistent_id = self.get_dataset_id_from_file_id(dataverse_host, file_id)
         elif parsed_url.path.startswith("/file.xhtml"):
             file_persistent_id = qs["persistentId"][0]
-            persistent_id = self.get_dataset_id_from_file_id(dataverse_host, file_persistent_id)
+            persistent_id = self.get_dataset_id_from_file_id(
+                dataverse_host, file_persistent_id
+            )
         else:
-            raise ValueError(f"Could not determine persistent id for dataverse URL {url}")
+            raise ValueError(
+                f"Could not determine persistent id for dataverse URL {url}"
+            )
 
-        dataset_api_url = f"{dataverse_host}/api/datasets/:persistentId?persistentId={persistent_id}"
+        dataset_api_url = (
+            f"{dataverse_host}/api/datasets/:persistentId?persistentId={persistent_id}"
+        )
         resp = self._request(dataset_api_url, headers={"accept": "application/json"})
         if resp.status_code == 404 and is_ambiguous:
             # It's possible this is a *file* persistent_id, not a dataset one
-            persistent_id = self.get_dataset_id_from_file_id(dataverse_host, persistent_id)
+            persistent_id = self.get_dataset_id_from_file_id(
+                dataverse_host, persistent_id
+            )
             dataset_api_url = f"{dataverse_host}/api/datasets/:persistentId?persistentId={persistent_id}"
-            resp = self._request(dataset_api_url, headers={"accept": "application/json"})
+            resp = self._request(
+                dataset_api_url, headers={"accept": "application/json"}
+            )
 
             if resp.status_code == 404:
                 # This persistent id is just not here
