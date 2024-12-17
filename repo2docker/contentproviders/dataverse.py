@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import hashlib
 from urllib.parse import parse_qs, urlparse, urlunparse
 
 from ..utils import copytree, deep_get, is_doi
@@ -56,6 +57,9 @@ class Dataverse(DoiProvider):
         if host is None:
             return
 
+        # Used only for content_id
+        self.url = url
+
         # At this point, we *know* this is a dataverse URL, because:
         # 1. The DOI resolved to a particular host (if using DOI)
         # 2. The host is in the list of known dataverse installations
@@ -84,9 +88,9 @@ class Dataverse(DoiProvider):
         data = resp.json()["data"]
         return data["datasetVersion"]["datasetPersistentId"]
 
-    def get_persistent_id_from_url(self, url: str) -> str:
+    def get_datafiles(self, dataverse_host: str, url: str) -> list[dict]:
         """
-        Return the persistentId for given dataverse URL.
+        Return a list of dataFiles for given persistent_id
 
         Supports the following *dataset* URL styles:
         - /citation: https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP
@@ -99,11 +103,6 @@ class Dataverse(DoiProvider):
         - /file.xhtml: https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ
 
         If a URL can not be parsed, throw an exception
-        """
-
-    def get_datafiles(self, dataverse_host: str, url: str) -> list[dict]:
-        """
-        Return a list of dataFiles for given persistent_id
         """
 
         parsed_url = urlparse(url)
@@ -156,9 +155,7 @@ class Dataverse(DoiProvider):
         url = spec["url"]
         host = spec["host"]
 
-        persistent_id = self.get_persistent_id_from_url(url)
-
-        yield f"Fetching Dataverse record {persistent_id}.\n"
+        yield f"Fetching Dataverse record {url}.\n"
 
         for fobj in self.get_datafiles(host["url"], url):
             file_url = (
@@ -186,10 +183,7 @@ class Dataverse(DoiProvider):
             copytree(os.path.join(output_dir, d), output_dir)
             shutil.rmtree(os.path.join(output_dir, d))
 
-        # Save persistent id
-        self.persitent_id = persistent_id
-
     @property
     def content_id(self):
         """The Dataverse persistent identifier."""
-        return self.persistent_id
+        return self.url
