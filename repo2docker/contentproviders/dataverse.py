@@ -2,7 +2,8 @@ import json
 import os
 import shutil
 import hashlib
-from urllib.parse import parse_qs, urlparse, urlunparse
+from urllib.parse import parse_qs, urlparse
+from typing import List
 
 from ..utils import copytree, deep_get, is_doi
 from .doi import DoiProvider
@@ -88,7 +89,7 @@ class Dataverse(DoiProvider):
         data = resp.json()["data"]
         return data["datasetVersion"]["datasetPersistentId"]
 
-    def get_datafiles(self, dataverse_host: str, url: str) -> list[dict]:
+    def get_datafiles(self, dataverse_host: str, url: str) -> List[dict]:
         """
         Return a list of dataFiles for given persistent_id
 
