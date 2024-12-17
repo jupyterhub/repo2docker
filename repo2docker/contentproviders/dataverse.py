@@ -106,7 +106,7 @@ class Dataverse(DoiProvider):
                 )
             return data["items"][0]["dataset_persistent_id"]
         elif parsed_url.path.startswith("/file.xhtml"):
-            file_persistent_id = qs['persistentId'][0]
+            file_persistent_id = qs["persistentId"][0]
             dataset_persistent_id = file_persistent_id.rsplit("/", 1)[0]
             if file_persistent_id == dataset_persistent_id:
                 # We can't figure this one out, throw an error
@@ -114,6 +114,38 @@ class Dataverse(DoiProvider):
             return dataset_persistent_id
 
         raise ValueError(f"Could not determine persistent id for dataverse URL {url}")
+
+    def get_datafiles(self, host: str, persistent_id: str) -> list[dict]:
+        """
+        Return a list of dataFiles for given persistent_id
+        """
+        dataset_url = f"{host}/api/datasets/:persistentId?persistentId={persistent_id}"
+
+        resp = self._request(dataset_url, headers={"accept": "application/json"})
+        # Assume it's a dataset
+        is_dataset = True
+        if resp.status_code == 404:
+            # It's possible this is a *file* persistent_id, not a dataset one
+            file_url = f"{host}/api/files/:persistentId?persistentId={persistent_id}"
+            resp = self._request(file_url, headers={"accept": "application/json"})
+
+            if resp.status_code == 404:
+                # This persistent id is just not here
+                raise ValueError(f"{persistent_id} on {host} is not found")
+
+            # It's not a dataset, it's a file!
+            is_dataset = False
+
+        # We already handled 404, raise error for everything else
+        resp.raise_for_status()
+
+        data = resp.json()["data"]
+
+        if is_dataset:
+            return data["latestVersion"]["files"]
+        else:
+            # Only one file object
+            return [data]
 
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Dataverse dataset."""
@@ -123,13 +155,8 @@ class Dataverse(DoiProvider):
         persistent_id = self.get_persistent_id_from_url(url)
 
         yield f"Fetching Dataverse record {persistent_id}.\n"
-        url = f'{host["url"]}/api/datasets/:persistentId?persistentId={persistent_id}'
 
-        resp = self.urlopen(url, headers={"accept": "application/json"})
-        print(resp.json())
-        record = resp.json()["data"]
-
-        for fobj in deep_get(record, "latestVersion.files"):
+        for fobj in self.get_datafiles(host["url"], persistent_id):
             file_url = (
                 # without format=original you get the preservation format (plain text, tab separated)
                 f'{host["url"]}/api/access/datafile/{deep_get(fobj, "dataFile.id")}?format=original'
@@ -154,7 +181,6 @@ class Dataverse(DoiProvider):
             d = new_subdirs[0]
             copytree(os.path.join(output_dir, d), output_dir)
             shutil.rmtree(os.path.join(output_dir, d))
-
 
         # Save persistent id
         self.persitent_id = persistent_id
