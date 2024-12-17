@@ -137,11 +137,10 @@ class Dataverse(DoiProvider):
         - /citation: https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP
         - /dataset.xhtml: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP
 
-        Supports the following *file* URL styles:
+        Supports the following *file* URL styles (entire dataset file belongs to will be fetched):
         - /api/access/datafile: https://dataverse.harvard.edu/api/access/datafile/3323458
-
-        Supports a subset of the following *file* URL styles:
         - /file.xhtml: https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ
+        - /citation: https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ
 
         If a URL can not be parsed, throw an exception
         """
