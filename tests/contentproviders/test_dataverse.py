@@ -6,6 +6,7 @@ import pytest
 
 from repo2docker.contentproviders import Dataverse
 
+
 @pytest.mark.parametrize(
     ("doi", "resolved"),
     [
@@ -45,22 +46,22 @@ def test_detect(doi, resolved):
         (
             "https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ",
             "doi:10.7910/DVN/6ZXAGT",
-            False
+            False,
         ),
         (
             "https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP",
             "doi:10.7910/DVN/TJCLKP",
-            True
+            True,
         ),
         (
             "https://dataverse.harvard.edu/api/access/datafile/3323458",
             "doi:10.7910/DVN/3MJ7IR",
-            False
+            False,
         ),
         (
             "https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016",
             "hdl:11529/10016",
-            False
+            False,
         ),
     ],
 )

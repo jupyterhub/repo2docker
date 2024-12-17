@@ -99,7 +99,7 @@ class Dataverse(DoiProvider):
 
         Raises a ValueError if we can not parse the url
         """
-        parsed_url= urlparse(url)
+        parsed_url = urlparse(url)
         path = parsed_url.path
         qs = parse_qs(parsed_url.query)
         base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
@@ -157,10 +157,10 @@ class Dataverse(DoiProvider):
         resp = self._request(dataset_api_url, headers={"accept": "application/json"})
         if resp.status_code == 404 and is_ambiguous:
             # It's possible this is a *file* persistent_id, not a dataset one
-            persistent_id = self.get_dataset_id_from_file_id(
-                base_url, persistent_id
+            persistent_id = self.get_dataset_id_from_file_id(base_url, persistent_id)
+            dataset_api_url = (
+                f"{base_url}/api/datasets/:persistentId?persistentId={persistent_id}"
             )
-            dataset_api_url = f"{base_url}/api/datasets/:persistentId?persistentId={persistent_id}"
             resp = self._request(
                 dataset_api_url, headers={"accept": "application/json"}
             )
@@ -181,7 +181,7 @@ class Dataverse(DoiProvider):
         url = spec
         parsed_url = urlparse(url)
         # FIXME: Support determining API URL better
-        base_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
 
         yield f"Fetching Dataverse record {url}.\n"
 
