@@ -187,4 +187,4 @@ class Dataverse(DoiProvider):
     @property
     def content_id(self):
         """The Dataverse persistent identifier."""
-        return self.url
+        return hashlib.sha256(self.url.encode()).hexdigest()
