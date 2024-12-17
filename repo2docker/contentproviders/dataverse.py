@@ -2,7 +2,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import List
+from typing import List, Tuple
 from urllib.parse import parse_qs, urlparse
 
 from ..utils import copytree, deep_get, is_doi
@@ -67,29 +67,69 @@ class Dataverse(DoiProvider):
         #
         # We don't know exactly what kind of dataverse object this is, but
         # that can be figured out during fetch as needed
-        return {"host": host, "url": url}
+        return url
 
-    def get_dataset_id_from_file_id(self, host: str, file_id: str) -> str:
+    def get_dataset_id_from_file_id(self, base_url: str, file_id: str) -> str:
         """
         Return the persistent_id (DOI) that a given file_id (int or doi) belongs to
         """
         if file_id.isdigit():
             # the file_id is an integer, rather than a persistent id (DOI)
-            api_url = f"{host}/api/files/{file_id}?returnDatasetVersion=true"
+            api_url = f"{base_url}/api/files/{file_id}?returnDatasetVersion=true"
         else:
             # the file_id is a doi itself
-            api_url = f"{host}/api/files/:persistentId?persistentId={file_id}&returnDatasetVersion=true"
+            api_url = f"{base_url}/api/files/:persistentId?persistentId={file_id}&returnDatasetVersion=true"
 
         resp = self._request(api_url)
         if resp.status_code == 404:
-            raise ValueError(f"File with id {file_id} not found in {host}")
+            raise ValueError(f"File with id {file_id} not found in {base_url}")
 
         resp.raise_for_status()
 
         data = resp.json()["data"]
         return data["datasetVersion"]["datasetPersistentId"]
 
-    def get_datafiles(self, dataverse_host: str, url: str) -> List[dict]:
+    def parse_dataverse_url(self, url: str) -> Tuple[str, bool]:
+        """
+        Parse the persistent id out of a dataverse URL
+
+        persistent_id can point to either a dataset or a file. The second return
+        value is False if we know that the persistent id is a file or a dataset,
+        and True if it is ambiguous.
+
+        Raises a ValueError if we can not parse the url
+        """
+        parsed_url= urlparse(url)
+        path = parsed_url.path
+        qs = parse_qs(parsed_url.query)
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+        is_ambiguous = False
+        # https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP
+        if path.startswith("/citation"):
+            is_ambiguous = True
+            persistent_id = qs["persistentId"][0]
+        # https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP
+        elif path.startswith("/dataset.xhtml"):
+            #  https://dataverse.harvard.edu/api/access/datafile/3323458
+            persistent_id = qs["persistentId"][0]
+        elif path.startswith("/api/access/datafile"):
+            # What we have here is an entity id, which we can use to get a persistentId
+            file_id = os.path.basename(path)
+            persistent_id = self.get_dataset_id_from_file_id(base_url, file_id)
+        elif parsed_url.path.startswith("/file.xhtml"):
+            file_persistent_id = qs["persistentId"][0]
+            persistent_id = self.get_dataset_id_from_file_id(
+                base_url, file_persistent_id
+            )
+        else:
+            raise ValueError(
+                f"Could not determine persistent id for dataverse URL {url}"
+            )
+
+        return persistent_id, is_ambiguous
+
+    def get_datafiles(self, url: str) -> List[dict]:
         """
         Return a list of dataFiles for given persistent_id
 
@@ -107,52 +147,27 @@ class Dataverse(DoiProvider):
         """
 
         parsed_url = urlparse(url)
-        path = parsed_url.path
-        qs = parse_qs(parsed_url.query)
-        dataverse_host = f"{parsed_url.scheme}://{parsed_url.netloc}"
-        url_kind = None
-        persistent_id = None
-        is_ambiguous = False
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
 
-        # https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP
-        if path.startswith("/citation"):
-            is_ambiguous = True
-            persistent_id = qs["persistentId"][0]
-        # https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP
-        elif path.startswith("/dataset.xhtml"):
-            #  https://dataverse.harvard.edu/api/access/datafile/3323458
-            persistent_id = qs["persistentId"][0]
-        elif path.startswith("/api/access/datafile"):
-            # What we have here is an entity id, which we can use to get a persistentId
-            file_id = os.path.basename(parsed_url.path)
-            persistent_id = self.get_dataset_id_from_file_id(dataverse_host, file_id)
-        elif parsed_url.path.startswith("/file.xhtml"):
-            file_persistent_id = qs["persistentId"][0]
-            persistent_id = self.get_dataset_id_from_file_id(
-                dataverse_host, file_persistent_id
-            )
-        else:
-            raise ValueError(
-                f"Could not determine persistent id for dataverse URL {url}"
-            )
+        persistent_id, is_ambiguous = self.parse_dataverse_url(url)
 
         dataset_api_url = (
-            f"{dataverse_host}/api/datasets/:persistentId?persistentId={persistent_id}"
+            f"{base_url}/api/datasets/:persistentId?persistentId={persistent_id}"
         )
         resp = self._request(dataset_api_url, headers={"accept": "application/json"})
         if resp.status_code == 404 and is_ambiguous:
             # It's possible this is a *file* persistent_id, not a dataset one
             persistent_id = self.get_dataset_id_from_file_id(
-                dataverse_host, persistent_id
+                base_url, persistent_id
             )
-            dataset_api_url = f"{dataverse_host}/api/datasets/:persistentId?persistentId={persistent_id}"
+            dataset_api_url = f"{base_url}/api/datasets/:persistentId?persistentId={persistent_id}"
             resp = self._request(
                 dataset_api_url, headers={"accept": "application/json"}
             )
 
             if resp.status_code == 404:
                 # This persistent id is just not here
-                raise ValueError(f"{persistent_id} on {dataverse_host} is not found")
+                raise ValueError(f"{persistent_id} on {base_url} is not found")
 
         # We already handled 404, raise error for everything else
         resp.raise_for_status()
@@ -163,15 +178,17 @@ class Dataverse(DoiProvider):
 
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Dataverse dataset."""
-        url = spec["url"]
-        host = spec["host"]
+        url = spec
+        parsed_url = urlparse(url)
+        # FIXME: Support determining API URL better
+        base_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
 
         yield f"Fetching Dataverse record {url}.\n"
 
-        for fobj in self.get_datafiles(host["url"], url):
+        for fobj in self.get_datafiles(url):
             file_url = (
                 # without format=original you get the preservation format (plain text, tab separated)
-                f'{host["url"]}/api/access/datafile/{deep_get(fobj, "dataFile.id")}?format=original'
+                f'{base_url}/api/access/datafile/{deep_get(fobj, "dataFile.id")}?format=original'
             )
             filename = fobj["label"]
             original_filename = fobj["dataFile"].get("originalFileName", None)

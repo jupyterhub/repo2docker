@@ -6,48 +6,28 @@ import pytest
 
 from repo2docker.contentproviders import Dataverse
 
-test_dv = Dataverse()
-harvard_dv = next(_ for _ in test_dv.hosts if _["name"] == "Harvard Dataverse")
-cimmyt_dv = next(_ for _ in test_dv.hosts if _["name"] == "CIMMYT Research Data")
-
-
 @pytest.mark.parametrize(
     ("doi", "resolved"),
     [
         (
             "doi:10.7910/DVN/6ZXAGT/3YRRYJ",
-            {
-                "host": harvard_dv,
-                "url": "https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ",
-            },
+            "https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ",
         ),
         (
             "10.7910/DVN/6ZXAGT/3YRRYJ",
-            {
-                "host": harvard_dv,
-                "url": "https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ",
-            },
+            "https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ",
         ),
         (
             "10.7910/DVN/TJCLKP",
-            {
-                "host": harvard_dv,
-                "url": "https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP",
-            },
+            "https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP",
         ),
         (
             "https://dataverse.harvard.edu/api/access/datafile/3323458",
-            {
-                "host": harvard_dv,
-                "url": "https://dataverse.harvard.edu/api/access/datafile/3323458",
-            },
+            "https://dataverse.harvard.edu/api/access/datafile/3323458",
         ),
         (
             "https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016",
-            {
-                "host": cimmyt_dv,
-                "url": "https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016",
-            },
+            "https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016",
         ),
         ("/some/random/string", None),
         ("https://example.com/path/here", None),
@@ -60,28 +40,32 @@ def test_detect(doi, resolved):
 
 
 @pytest.mark.parametrize(
-    ("url", "persistent_id"),
+    ("url", "persistent_id", "is_ambiguous"),
     [
         (
             "https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ",
             "doi:10.7910/DVN/6ZXAGT",
+            False
         ),
         (
             "https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP",
             "doi:10.7910/DVN/TJCLKP",
+            True
         ),
         (
             "https://dataverse.harvard.edu/api/access/datafile/3323458",
             "doi:10.7910/DVN/3MJ7IR",
+            False
         ),
         (
             "https://data.cimmyt.org/dataset.xhtml?persistentId=hdl:11529/10016",
             "hdl:11529/10016",
+            False
         ),
     ],
 )
-def test_get_persistent_id(url, persistent_id):
-    assert Dataverse().get_persistent_id_from_url(url) == persistent_id
+def test_get_persistent_id(url, persistent_id, is_ambiguous):
+    assert Dataverse().parse_dataverse_url(url) == (persistent_id, is_ambiguous)
 
 
 @pytest.mark.parametrize(
