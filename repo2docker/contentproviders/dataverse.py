@@ -58,9 +58,6 @@ class Dataverse(DoiProvider):
         if host is None:
             return
 
-        # Used only for content_id
-        self.url = url
-
         # At this point, we *know* this is a dataverse URL, because:
         # 1. The DOI resolved to a particular host (if using DOI)
         # 2. The host is in the list of known dataverse installations
@@ -171,6 +168,10 @@ class Dataverse(DoiProvider):
         # We already handled 404, raise error for everything else
         resp.raise_for_status()
 
+        # We know the exact persistent_id of the dataset we fetched now
+        # Save it for use as content_id
+        self.persistent_id = persistent_id
+
         data = resp.json()["data"]
 
         return data["latestVersion"]["files"]
@@ -212,5 +213,9 @@ class Dataverse(DoiProvider):
 
     @property
     def content_id(self):
-        """The Dataverse persistent identifier."""
-        return hashlib.sha256(self.url.encode()).hexdigest()
+        """
+        The Dataverse persistent identifier.
+
+        Only valid if called after a succesfull fetch
+        """
+        return self.persistent_id
