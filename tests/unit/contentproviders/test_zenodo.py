@@ -21,18 +21,7 @@ doi_responses = {
 }
 
 
-def doi_resolver(req, context):
-    resp = doi_responses.get(req.url)
-    # doi responses are redirects
-    if resp is not None:
-        context.status_code = 302
-        context.headers["Location"] = resp
-    return resp
-
-
-def test_content_id(requests_mock):
-    requests_mock.get(re.compile("https://"), json=doi_resolver)
-
+def test_content_id():
     zen = Zenodo()
     zen.detect("10.5281/zenodo.3232985")
     assert zen.content_id == "3232985"
@@ -60,15 +49,11 @@ test_hosts = [
 
 
 @pytest.mark.parametrize("test_input,expected", test_hosts)
-def test_detect_zenodo(test_input, expected, requests_mock):
-    requests_mock.get(re.compile("https://"), json=doi_resolver)
+def test_detect_zenodo(test_input, expected):
     # valid Zenodo DOIs trigger this content provider
     assert Zenodo().detect(test_input[0]) == expected
     assert Zenodo().detect(test_input[1]) == expected
     assert Zenodo().detect(test_input[2]) == expected
-    # only two of the three calls above have to resolve a DOI (2 req per doi resolution)
-    assert requests_mock.call_count == 4
-    requests_mock.reset_mock()
 
     # Don't trigger the Zenodo content provider
     assert Zenodo().detect("/some/path/here") is None

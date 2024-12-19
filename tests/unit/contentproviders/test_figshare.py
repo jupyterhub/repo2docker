@@ -21,16 +21,9 @@ test_content_ids = [
 
 
 @pytest.mark.parametrize("link,expected", test_content_ids)
-def test_content_id(link, expected, requests_mock):
-    def mocked_get(req, context):
-        if req.url.startswith("https://doi.org"):
-            context.status_code = 302
-            context.headers["Location"] = link
-        return link
-
-    requests_mock.get(re.compile("https://"), text=mocked_get)
+def test_content_id(link, expected):
     fig = Figshare()
-    fig.detect("10.6084/m9.figshare.9782777")
+    fig.detect(link)
     assert fig.content_id == expected
 
 

@@ -1,9 +1,11 @@
+import hashlib
 import json
 import os
 import shutil
-from urllib.parse import parse_qs, urlparse, urlunparse
+from typing import List, Tuple
+from urllib.parse import parse_qs, urlparse
 
-from ..utils import copytree, deep_get
+from ..utils import copytree, deep_get, is_doi
 from .doi import DoiProvider
 
 
@@ -23,10 +25,11 @@ class Dataverse(DoiProvider):
             self.hosts = json.load(fp)["installations"]
         super().__init__()
 
-    def detect(self, doi, ref=None, extra_args=None):
-        """Trigger this provider for things that resolve to a Dataverse dataset.
+    def detect(self, spec, ref=None, extra_args=None):
+        """
+        Detect if given spec is hosted on dataverse
 
-        Handles:
+        The spec can be:
         - DOI pointing to {siteURL}/dataset.xhtml?persistentId={persistentId}
         - DOI pointing to {siteURL}/file.xhtml?persistentId={persistentId}&...
         - URL {siteURL}/api/access/datafile/{fileId}
@@ -35,9 +38,11 @@ class Dataverse(DoiProvider):
         - https://dataverse.harvard.edu/api/access/datafile/3323458
         - doi:10.7910/DVN/6ZXAGT
         - doi:10.7910/DVN/6ZXAGT/3YRRYJ
-
         """
-        url = self.doi2url(doi)
+        if is_doi(spec):
+            url = self.doi2url(spec)
+        else:
+            url = spec
         # Parse the url, to get the base for later API calls
         parsed_url = urlparse(url)
 
@@ -53,57 +58,137 @@ class Dataverse(DoiProvider):
         if host is None:
             return
 
-        query_args = parse_qs(parsed_url.query)
-        # Corner case handling
-        if parsed_url.path.startswith("/file.xhtml"):
-            # There's no way of getting file information using its persistentId, the only thing we can do is assume that doi
-            # is structured as "doi:<dataset_doi>/<file_doi>" and try to handle dataset that way.
-            new_doi = doi.rsplit("/", 1)[0]
-            if new_doi == doi:
-                # tough luck :( Avoid inifite recursion and exit.
-                return
-            return self.detect(new_doi)
-        elif parsed_url.path.startswith("/api/access/datafile"):
-            # Raw url pointing to a datafile is a typical output from an External Tool integration
-            entity_id = os.path.basename(parsed_url.path)
-            search_query = "q=entityId:" + entity_id + "&type=file"
-            # Knowing the file identifier query search api to get parent dataset
-            search_url = urlunparse(
-                parsed_url._replace(path="/api/search", query=search_query)
+        # At this point, we *know* this is a dataverse URL, because:
+        # 1. The DOI resolved to a particular host (if using DOI)
+        # 2. The host is in the list of known dataverse installations
+        #
+        # We don't know exactly what kind of dataverse object this is, but
+        # that can be figured out during fetch as needed
+        return url
+
+    def get_dataset_id_from_file_id(self, base_url: str, file_id: str) -> str:
+        """
+        Return the persistent_id (DOI) of a dataset that a given file_id (int or doi) belongs to
+        """
+        if file_id.isdigit():
+            # the file_id is an integer, rather than a persistent id (DOI)
+            api_url = f"{base_url}/api/files/{file_id}?returnDatasetVersion=true"
+        else:
+            # the file_id is a doi itself
+            api_url = f"{base_url}/api/files/:persistentId?persistentId={file_id}&returnDatasetVersion=true"
+
+        resp = self._request(api_url)
+        if resp.status_code == 404:
+            raise ValueError(f"File with id {file_id} not found in {base_url}")
+
+        resp.raise_for_status()
+
+        data = resp.json()["data"]
+        return data["datasetVersion"]["datasetPersistentId"]
+
+    def parse_dataverse_url(self, url: str) -> Tuple[str, bool]:
+        """
+        Parse the persistent id out of a dataverse URL
+
+        persistent_id can point to either a dataset or a file. The second return
+        value is False if we know that the persistent id is a file or a dataset,
+        and True if it is ambiguous.
+
+        Raises a ValueError if we can not parse the url
+        """
+        parsed_url = urlparse(url)
+        path = parsed_url.path
+        qs = parse_qs(parsed_url.query)
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+        is_ambiguous = False
+        # https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP
+        if path.startswith("/citation"):
+            is_ambiguous = True
+            persistent_id = qs["persistentId"][0]
+        # https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP
+        elif path.startswith("/dataset.xhtml"):
+            #  https://dataverse.harvard.edu/api/access/datafile/3323458
+            persistent_id = qs["persistentId"][0]
+        elif path.startswith("/api/access/datafile"):
+            # What we have here is an entity id, which we can use to get a persistentId
+            file_id = os.path.basename(path)
+            persistent_id = self.get_dataset_id_from_file_id(base_url, file_id)
+        elif parsed_url.path.startswith("/file.xhtml"):
+            file_persistent_id = qs["persistentId"][0]
+            persistent_id = self.get_dataset_id_from_file_id(
+                base_url, file_persistent_id
             )
-            self.log.debug("Querying Dataverse: " + search_url)
-            data = self.urlopen(search_url).json()["data"]
-            if data["count_in_response"] != 1:
-                self.log.debug(
-                    f"Dataverse search query failed!\n - doi: {doi}\n - url: {url}\n - resp: {json.dump(data)}\n"
-                )
-                return
+        else:
+            raise ValueError(
+                f"Could not determine persistent id for dataverse URL {url}"
+            )
 
-            self.record_id = deep_get(data, "items.0.dataset_persistent_id")
-        elif (
-            parsed_url.path.startswith("/dataset.xhtml")
-            and "persistentId" in query_args
-        ):
-            self.record_id = deep_get(query_args, "persistentId.0")
+        return persistent_id, is_ambiguous
 
-        if hasattr(self, "record_id"):
-            return {"record": self.record_id, "host": host}
+    def get_datafiles(self, url: str) -> List[dict]:
+        """
+        Return a list of dataFiles for given persistent_id
+
+        Supports the following *dataset* URL styles:
+        - /citation: https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP
+        - /dataset.xhtml: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP
+
+        Supports the following *file* URL styles (entire dataset file belongs to will be fetched):
+        - /api/access/datafile: https://dataverse.harvard.edu/api/access/datafile/3323458
+        - /file.xhtml: https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ
+        - /citation: https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/6ZXAGT/3YRRYJ
+
+        If a URL can not be parsed, throw an exception
+        """
+
+        parsed_url = urlparse(url)
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+        persistent_id, is_ambiguous = self.parse_dataverse_url(url)
+
+        dataset_api_url = (
+            f"{base_url}/api/datasets/:persistentId?persistentId={persistent_id}"
+        )
+        resp = self._request(dataset_api_url, headers={"accept": "application/json"})
+        if resp.status_code == 404 and is_ambiguous:
+            # It's possible this is a *file* persistent_id, not a dataset one
+            persistent_id = self.get_dataset_id_from_file_id(base_url, persistent_id)
+            dataset_api_url = (
+                f"{base_url}/api/datasets/:persistentId?persistentId={persistent_id}"
+            )
+            resp = self._request(
+                dataset_api_url, headers={"accept": "application/json"}
+            )
+
+            if resp.status_code == 404:
+                # This persistent id is just not here
+                raise ValueError(f"{persistent_id} on {base_url} is not found")
+
+        # We already handled 404, raise error for everything else
+        resp.raise_for_status()
+
+        # We know the exact persistent_id of the dataset we fetched now
+        # Save it for use as content_id
+        self.persistent_id = persistent_id
+
+        data = resp.json()["data"]
+
+        return data["latestVersion"]["files"]
 
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Dataverse dataset."""
-        record_id = spec["record"]
-        host = spec["host"]
+        url = spec
+        parsed_url = urlparse(url)
+        # FIXME: Support determining API URL better
+        base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
 
-        yield f"Fetching Dataverse record {record_id}.\n"
-        url = f'{host["url"]}/api/datasets/:persistentId?persistentId={record_id}'
+        yield f"Fetching Dataverse record {url}.\n"
 
-        resp = self.urlopen(url, headers={"accept": "application/json"})
-        record = resp.json()["data"]
-
-        for fobj in deep_get(record, "latestVersion.files"):
+        for fobj in self.get_datafiles(url):
             file_url = (
                 # without format=original you get the preservation format (plain text, tab separated)
-                f'{host["url"]}/api/access/datafile/{deep_get(fobj, "dataFile.id")}?format=original'
+                f'{base_url}/api/access/datafile/{deep_get(fobj, "dataFile.id")}?format=original'
             )
             filename = fobj["label"]
             original_filename = fobj["dataFile"].get("originalFileName", None)
@@ -128,5 +213,9 @@ class Dataverse(DoiProvider):
 
     @property
     def content_id(self):
-        """The Dataverse persistent identifier."""
-        return self.record_id
+        """
+        The Dataverse persistent identifier.
+
+        Only valid if called after a succesfull fetch
+        """
+        return self.persistent_id
