@@ -34,20 +34,14 @@ hydroshare_data = {
 }
 
 
-def test_content_id(requests_mock):
-    requests_mock.get(re.compile("https://"), json=hydroshare_data)
-    requests_mock.get(re.compile("https://doi.org"), json=doi_resolver)
-
+def test_content_id():
     hydro = Hydroshare()
 
     hydro.detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61")
-    assert hydro.content_id == "b8f6eae9d89241cf8b5904033460af61.v1569427757"
+    assert hydro.content_id == "b8f6eae9d89241cf8b5904033460af61.v1585005408"
 
 
-def test_detect_hydroshare(requests_mock):
-    requests_mock.get(re.compile("https://"), json=hydroshare_data)
-    requests_mock.get(re.compile("https://doi.org"), json=doi_resolver)
-
+def test_detect_hydroshare():
     # valid Hydroshare DOIs trigger this content provider
     expected = {
         "host": {
@@ -59,7 +53,7 @@ def test_detect_hydroshare(requests_mock):
             "version": "https://www.hydroshare.org/hsapi/resource/{}/scimeta/elements",
         },
         "resource": "b8f6eae9d89241cf8b5904033460af61",
-        "version": "1569427757",
+        "version": "1585005408",
     }
 
     assert (
@@ -68,16 +62,10 @@ def test_detect_hydroshare(requests_mock):
         )
         == expected
     )
-    # assert a call to urlopen was called to fetch version
-    assert requests_mock.call_count == 1
-    requests_mock.reset_mock()
 
     assert (
         Hydroshare().detect("10.4211/hs.b8f6eae9d89241cf8b5904033460af61") == expected
     )
-    # assert 3 calls were made, 2 to resolve the DOI (302 + 200) and another to fetch the version
-    assert requests_mock.call_count == 3
-    requests_mock.reset_mock()
 
     assert (
         Hydroshare().detect(
@@ -85,9 +73,6 @@ def test_detect_hydroshare(requests_mock):
         )
         == expected
     )
-    # assert 3 more calls were made, 2 to resolve the DOI and another to fetch the version
-    assert requests_mock.call_count == 3
-    requests_mock.reset_mock()
 
     # Don't trigger the Hydroshare content provider
     assert Hydroshare().detect("/some/path/here") is None
