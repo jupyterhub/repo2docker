@@ -15,7 +15,7 @@ class Hydroshare(DoiProvider):
 
     def _fetch_version(self, host):
         """Fetch resource modified date and convert to epoch"""
-        json_response = self.urlopen(host["version"].format(self.resource_id)).json()
+        json_response = self.session.get(host["version"].format(self.resource_id)).json()
         date = next(
             item for item in json_response["dates"] if item["type"] == "modified"
         )["start_date"]
@@ -63,7 +63,7 @@ class Hydroshare(DoiProvider):
         yield f"Downloading {bag_url}.\n"
 
         # bag downloads are prepared on demand and may need some time
-        conn = self.urlopen(bag_url)
+        conn = self.session.get(bag_url)
         total_wait_time = 0
         while (
             conn.status_code == 200
@@ -77,7 +77,7 @@ class Hydroshare(DoiProvider):
                 raise ContentProviderException(msg)
             yield f"Bag is being prepared, requesting again in {wait_time} seconds.\n"
             time.sleep(wait_time)
-            conn = self.urlopen(bag_url)
+            conn = self.session.get(bag_url)
         if conn.status_code != 200:
             msg = f"Failed to download bag. status code {conn.status_code}.\n"
             yield msg

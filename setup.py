@@ -26,11 +26,10 @@ class GenerateDataverseInstallationsFileCommand(Command):
 
     def run(self):
         import json
-        from urllib.request import urlopen
+        import requests
 
-        resp = urlopen(self.url, timeout=5)
-        resp_body = resp.read()
-        data = json.loads(resp_body.decode("utf-8"))
+        resp = requests.get(self.url)
+        data = resp.json()
         if "installations" not in data:
             raise ValueError("Malformed installation map.")
 

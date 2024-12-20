@@ -5,7 +5,6 @@ from contextlib import contextmanager
 from io import BytesIO
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest.mock import patch
-from urllib.request import Request, urlopen
 from zipfile import ZipFile
 
 import pytest
