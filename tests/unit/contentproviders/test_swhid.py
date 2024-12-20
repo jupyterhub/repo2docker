@@ -56,7 +56,6 @@ def test_detect(swhid, expected):
     assert provider.detect(swhid) == expected
 
 
-
 def test_unresolving_swhid():
     provider = Swhid()
 
