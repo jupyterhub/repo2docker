@@ -16,7 +16,6 @@ import shutil
 import sys
 import tempfile
 import time
-import warnings
 from urllib.parse import urlparse
 
 import entrypoints

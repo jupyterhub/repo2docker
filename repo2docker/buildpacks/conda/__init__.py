@@ -2,7 +2,6 @@
 
 import os
 import re
-import warnings
 from collections.abc import Mapping
 from functools import lru_cache
 
