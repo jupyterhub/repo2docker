@@ -543,4 +543,5 @@ def get_platform():
         # OSX reports arm64
         return "linux/arm64"
     else:
-        raise ValueError("Unsupported platform {m}")
+        warnings.warn(f"Unexpected platform '{m}', defaulting to linux/amd64")
+        return "linux/amd64"
