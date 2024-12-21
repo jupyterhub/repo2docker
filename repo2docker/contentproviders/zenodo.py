@@ -73,7 +73,7 @@ class Zenodo(DoiProvider):
         host = spec["host"]
 
         yield f"Fetching Zenodo record {record_id}.\n"
-        resp = self.urlopen(
+        resp = self.session.get(
             f'{host["api"]}{record_id}',
             headers={"accept": "application/json"},
         )
@@ -82,7 +82,7 @@ class Zenodo(DoiProvider):
         if host["files"]:
             yield f"Fetching Zenodo record {record_id} files.\n"
             files_url = deep_get(record, host["files"])
-            resp = self.urlopen(
+            resp = self.session.get(
                 files_url,
                 headers={"accept": "application/json"},
             )

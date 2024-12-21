@@ -25,7 +25,7 @@ class CKAN(ContentProvider):
         Borrowed from the Hydroshare provider.
         """
         package_show_url = f"{api_url}package_show?id={self.dataset_id}"
-        resp = self.urlopen(package_show_url).json()
+        resp = self.session.get(package_show_url).json()
         date = resp["result"]["metadata_modified"]
         parsed_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f")
         epoch = parsed_date.replace(tzinfo=timezone(timedelta(0))).timestamp()
@@ -34,8 +34,6 @@ class CKAN(ContentProvider):
 
     def _request(self, url, **kwargs):
         return self.session.get(url, **kwargs)
-
-    urlopen = _request
 
     def detect(self, source, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a CKAN dataset."""
@@ -58,7 +56,7 @@ class CKAN(ContentProvider):
         ).geturl()
 
         status_show_url = f"{api_url}status_show"
-        resp = self.urlopen(status_show_url)
+        resp = self.session.get(status_show_url)
         if resp.status_code == 200:
 
             # Activity ID may be present either as a query parameter, activity_id
@@ -97,7 +95,7 @@ class CKAN(ContentProvider):
                 {"id": dataset_id}
             )
 
-        resp = self.urlopen(
+        resp = self.session.get(
             fetch_url,
             headers={"accept": "application/json"},
         )

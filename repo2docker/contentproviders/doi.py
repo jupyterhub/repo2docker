@@ -27,21 +27,6 @@ class DoiProvider(ContentProvider):
     def _request(self, url, **kwargs):
         return self.session.get(url, **kwargs)
 
-    urlopen = _request
-
-    def _urlopen(self, req, headers=None):
-        """A urlopen() helper"""
-        # someone passed a string, not a request
-        if not isinstance(req, request.Request):
-            req = request.Request(req)
-
-        req.add_header("User-Agent", f"repo2docker {__version__}")
-        if headers is not None:
-            for key, value in headers.items():
-                req.add_header(key, value)
-
-        return request.urlopen(req)
-
     def doi2url(self, doi):
         # Transform a DOI to a URL
         # If not a doi, assume we have a URL and return

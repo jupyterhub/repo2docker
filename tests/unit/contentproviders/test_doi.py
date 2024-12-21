@@ -24,7 +24,7 @@ def test_url_headers(requests_mock):
     doi = DoiProvider()
 
     headers = {"test1": "value1", "Test2": "value2"}
-    result = doi.urlopen("https://mybinder.org", headers=headers)
+    result = doi.session.get("https://mybinder.org", headers=headers)
     assert "test1" in result.request.headers
     assert "Test2" in result.request.headers
     assert result.request.headers["User-Agent"] == f"repo2docker {__version__}"
