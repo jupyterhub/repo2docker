@@ -16,7 +16,6 @@ import shutil
 import sys
 import tempfile
 import time
-import warnings
 from urllib.parse import urlparse
 
 import entrypoints
@@ -267,7 +266,7 @@ class Repo2Docker(Application):
         """
         p = get_platform()
         if p == "linux/arm64":
-            warnings.warn(
+            self.log.warning(
                 "Building for linux/arm64 is experimental. "
                 "To use the recommended platform set --Repo2Docker.platform=linux/amd64. "
                 "To silence this warning set --Repo2Docker.platform=linux/arm64."
