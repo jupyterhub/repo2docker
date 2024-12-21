@@ -60,13 +60,9 @@ class Hydroshare(DoiProvider):
         if parsed.netloc in self.HYDROSHARE_DOMAINS:
             return url
 
-    def _urlretrieve(self, bag_url):
-        return urlretrieve(bag_url)
-
     def fetch(self, spec, output_dir, yield_output=False, timeout=120):
         """Fetch and unpack a Hydroshare resource"""
         url = spec
-        print(url)
         parts = urlparse(url)
         self.resource_id = parts.path.strip("/").rsplit("/", maxsplit=1)[1]
 
@@ -98,7 +94,7 @@ class Hydroshare(DoiProvider):
             raise ContentProviderException(msg)
         # Bag creation seems to need a small time buffer after it says it's ready.
         time.sleep(1)
-        filehandle, _ = self._urlretrieve(bag_url)
+        filehandle, _ = urlretrieve(bag_url)
         zip_file_object = zipfile.ZipFile(filehandle, "r")
         yield "Downloaded, unpacking contents.\n"
 
