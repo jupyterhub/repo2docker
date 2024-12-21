@@ -26,6 +26,7 @@ class GenerateDataverseInstallationsFileCommand(Command):
 
     def run(self):
         import json
+
         import requests
 
         resp = requests.get(self.url)

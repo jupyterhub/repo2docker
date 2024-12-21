@@ -1,16 +1,16 @@
 import json
 import os
 import shutil
-import time
 import tempfile
+import time
 import zipfile
 from datetime import datetime, timedelta, timezone
-from urllib.request import urlretrieve
 from urllib.parse import urlparse, urlunparse
+from urllib.request import urlretrieve
 
+from ..utils import is_doi
 from .base import ContentProviderException
 from .doi import DoiProvider
-from ..utils import is_doi
 
 
 class Hydroshare(DoiProvider):
@@ -70,7 +70,9 @@ class Hydroshare(DoiProvider):
         parts = urlparse(url)
         self.resource_id = parts.path.strip("/").rsplit("/", maxsplit=1)[1]
 
-        bag_url = urlunparse(parts._replace(path=f"django_irods/download/bags/{self.resource_id}"))
+        bag_url = urlunparse(
+            parts._replace(path=f"django_irods/download/bags/{self.resource_id}")
+        )
 
         yield f"Downloading {bag_url}.\n"
 
