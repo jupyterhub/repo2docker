@@ -129,7 +129,6 @@ def test_fetch_zip(requests_mock):
         )
         requests_mock.get(f"file://{fig_path}", content=open(fig_path, "rb").read())
 
-        # with patch.object(Figshare, "urlopen", new=mock_urlopen):
         with TemporaryDirectory() as d:
             output = []
             for l in test_fig.fetch(test_spec, d):

@@ -56,11 +56,6 @@ def test_detect(swhid, expected):
     assert provider.detect(swhid) == expected
 
 
-def fake_urlopen(req):
-    print(req)
-    return req.headers
-
-
 def test_unresolving_swhid():
     provider = Swhid()
 
