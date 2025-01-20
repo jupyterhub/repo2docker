@@ -49,7 +49,7 @@ class Zenodo(DoiProvider):
                     "https://data.caltech.edu/records/",
                     "http://data.caltech.edu/records/",
                 ],
-                "api": "https://data.caltech.edu/api/record/",
+                "api": "https://data.caltech.edu/api/records/",
                 "files": "",
                 "filepath": "metadata.electronic_location_and_access",
                 "filename": "electronic_name.0",
