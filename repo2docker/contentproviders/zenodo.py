@@ -50,11 +50,11 @@ class Zenodo(DoiProvider):
                     "http://data.caltech.edu/records/",
                 ],
                 "api": "https://data.caltech.edu/api/records/",
-                "files": "",
-                "filepath": "metadata.electronic_location_and_access",
-                "filename": "electronic_name.0",
-                "download": "uniform_resource_identifier",
-                "type": "metadata.resourceType.resourceTypeGeneral",
+                "files": "links.files",
+                "filepath": "entries",
+                "filename": "key",
+                "download": "links.content",
+                "type": "metadata.upload_type"
             },
         ]
 
