@@ -54,7 +54,7 @@ class Zenodo(DoiProvider):
                 "filepath": "entries",
                 "filename": "key",
                 "download": "links.content",
-                "type": "metadata.upload_type"
+                "type": "metadata.upload_type",
             },
         ]
 
