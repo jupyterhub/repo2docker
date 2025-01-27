@@ -15,21 +15,24 @@ def rstudio_base_scripts(r_version):
     shiny_proxy_version = "1.1"
     shiny_sha256sum = "80f1e48f6c824be7ef9c843bb7911d4981ac7e8a963e0eff823936a8b28476ee"
 
-    # RStudio server has different builds based on wether OpenSSL 3 or 1.1 is available in the base
-    # image. 3 is present Jammy+, 1.1 until then. Instead of hardcoding URLs based on distro, we actually
-    # check for the dependency itself directly in the code below. You can find these URLs in
-    # https://posit.co/download/rstudio-server/, toggling between Ubuntu 22 (for openssl3) vs earlier versions (openssl 1.1)
+    # RStudio server has different builds based on wether OpenSSL 3 or 1.1 is available.
+    # OpenSSL 3 is present from Ubuntu 22.04 LTS (Jammy).
+    # OpenSSL 1.1 is present until Ubuntu 21.10.
+    # Instead of hardcoding URLs based on distro,
+    # we actually check for the dependency itself directly in the code below.
+    # You can find these URLs in https://posit.co/download/rstudio-server/,
+    # toggling between Ubuntu 22 (for openssl3) vs earlier versions (openssl 1.1)
     # you may forget about openssl, but openssl never forgets you.
-    rstudio_openssl3_url = "https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2022.12.0-353-amd64.deb"
+    rstudio_openssl3_url = "https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.12.0-467-amd64.deb"
     rstudio_openssl3_sha256sum = (
-        "a5aa2202786f9017a6de368a410488ea2e4fc6c739f78998977af214df0d6288"
+        "1493188cdabcc1047db27d1bd0e46947e39562cbd831158c7812f88d80e742b3"
     )
 
-    rstudio_openssl1_url = "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.12.0-353-amd64.deb"
+    rstudio_openssl1_url = "https://download2.rstudio.org/server/focal/amd64/rstudio-server-2024.12.0-467-amd64.deb"
     rstudio_openssl1_sha256sum = (
-        "bb88e37328c304881e60d6205d7dac145525a5c2aaaf9da26f1cb625b7d47e6e"
+        "052540a8df135d9ce7569ddc2fc9637671103934179691bc3e43298336fc3a8e"
     )
-    rsession_proxy_version = "2.2.0"
+    rsession_proxy_version = "2.3.0"
 
     return [
         (
