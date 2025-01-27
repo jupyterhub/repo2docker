@@ -69,9 +69,9 @@ class RBuildPack(PythonBuildPack):
         """
         # Available versions at https://cran.r-project.org/src/base/
         version_map = {
-            "4.4": "4.4.1",
+            "4.4": "4.4.2",
             "4.3": "4.3.3",
-            "4.2": "4.2.1",
+            "4.2": "4.2.3",
             "4.1": "4.1.3",
             "4.0": "4.0.5",
             "3.6": "3.6.3",
@@ -87,7 +87,7 @@ class RBuildPack(PythonBuildPack):
         #       - tests/unit/test_r.py -> test_version_specification
         #       - tests/r/r-rspm-apt/verify
         #
-        r_version = version_map["4.2"]
+        r_version = version_map["4.4"]
 
         if not hasattr(self, "_r_version"):
             parts = self.runtime.split("-")
