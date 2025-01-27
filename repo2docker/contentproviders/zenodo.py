@@ -34,8 +34,8 @@ class Zenodo(DoiProvider):
             {
                 "hostname": [
                     "https://zenodo.org/record/",
-                    "http://zenodo.org/record/",
                     "https://zenodo.org/records/",
+                    "http://zenodo.org/record/",
                 ],
                 "api": "https://zenodo.org/api/records/",
                 "files": "links.files",
