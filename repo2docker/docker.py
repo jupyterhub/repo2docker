@@ -101,7 +101,7 @@ class DockerEngine(ContainerEngine):
         platform=None,
         **kwargs,
     ):
-        args = ["docker", "buildx", "build", "--progress", "plain"]
+        args = ["docker", "buildx", "build", "--progress", "plain", "--load"]
         if buildargs:
             for k, v in buildargs.items():
                 args += ["--build-arg", f"{k}={v}"]
