@@ -7,7 +7,7 @@ import tarfile
 import tempfile
 
 from iso8601 import parse_date
-from traitlets import Dict
+from traitlets import Dict, List, Unicode
 
 import docker
 
@@ -74,6 +74,15 @@ class DockerEngine(ContainerEngine):
         config=True,
     )
 
+    extra_buildx_build_args = List(
+        Unicode,
+        [],
+        help="""
+        Extra commandline arguments to pass to `docker buildx build` when building the image.
+        """,
+        help=True
+    )
+
     def __init__(self, *, parent):
         super().__init__(parent=parent)
         try:
@@ -122,6 +131,9 @@ class DockerEngine(ContainerEngine):
 
         if platform:
             args += ["--platform", platform]
+
+        # place extra args right *before* the path
+        args += self.extra_buildx_build_args
 
         if fileobj:
             with tempfile.TemporaryDirectory() as d:
