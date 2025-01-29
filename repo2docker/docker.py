@@ -2,12 +2,19 @@
 Docker container engine for repo2docker
 """
 
+import subprocess
+import tarfile
+import tempfile
+from queue import Empty, Queue
+from threading import Thread
+
 from iso8601 import parse_date
 from traitlets import Dict
 
 import docker
 
 from .engine import Container, ContainerEngine, ContainerEngineException, Image
+from .utils import execute_cmd
 
 
 class DockerContainer(Container):
@@ -53,7 +60,7 @@ class DockerEngine(ContainerEngine):
     https://docker-py.readthedocs.io/en/4.2.0/api.html#module-docker.api.build
     """
 
-    string_output = False
+    string_output = True
 
     extra_init_args = Dict(
         {},
@@ -82,8 +89,8 @@ class DockerEngine(ContainerEngine):
     def build(
         self,
         *,
-        buildargs=None,
-        cache_from=None,
+        buildargs: dict | None = None,
+        cache_from: list[str] | None = None,
         container_limits=None,
         tag="",
         custom_context=False,
@@ -94,22 +101,29 @@ class DockerEngine(ContainerEngine):
         platform=None,
         **kwargs,
     ):
-        return self._apiclient.build(
-            buildargs=buildargs,
-            cache_from=cache_from,
-            container_limits=container_limits,
-            forcerm=True,
-            rm=True,
-            tag=tag,
-            custom_context=custom_context,
-            decode=True,
-            dockerfile=dockerfile,
-            fileobj=fileobj,
-            path=path,
-            labels=labels,
-            platform=platform,
-            **kwargs,
-        )
+        args = ["docker", "buildx", "build", "--progress", "plain"]
+        if buildargs:
+            for k, v in buildargs.items():
+                args += ["--build-arg", f"{k}={v}"]
+
+        if cache_from:
+            for cf in cache_from:
+                args += ["--cache-from", cf]
+
+        if dockerfile:
+            args += ["--file", dockerfile]
+
+        if tag:
+            args += ["--tag", tag]
+
+        if fileobj:
+            with tempfile.TemporaryDirectory() as d:
+                tarf = tarfile.open(fileobj=fileobj)
+                tarf.extractall(d)
+
+                args += [d]
+
+                yield from execute_cmd(args, True)
 
     def images(self):
         images = self._apiclient.images()
