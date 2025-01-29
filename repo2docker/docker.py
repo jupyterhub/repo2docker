@@ -2,11 +2,9 @@
 Docker container engine for repo2docker
 """
 
-import subprocess
+import shutil
 import tarfile
 import tempfile
-from queue import Empty, Queue
-from threading import Thread
 
 from iso8601 import parse_date
 from traitlets import Dict
@@ -101,6 +99,8 @@ class DockerEngine(ContainerEngine):
         platform=None,
         **kwargs,
     ):
+        if not shutil.which("docker"):
+            raise RuntimeError("The docker commandline client must be installed")
         args = ["docker", "buildx", "build", "--progress", "plain", "--load"]
         if buildargs:
             for k, v in buildargs.items():
