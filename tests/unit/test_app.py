@@ -92,7 +92,6 @@ def test_run_kwargs(repo_with_content):
     assert kwargs["somekey"] == "somevalue"
 
 
-
 def test_dryrun_works_without_docker(tmpdir, capsys):
     with chdir(tmpdir):
         with patch.object(docker, "APIClient") as client:
