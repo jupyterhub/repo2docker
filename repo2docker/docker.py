@@ -89,8 +89,8 @@ class DockerEngine(ContainerEngine):
     def build(
         self,
         *,
-        buildargs: dict | None = None,
-        cache_from: list[str] | None = None,
+        buildargs=None,
+        cache_from=None,
         container_limits=None,
         tag="",
         custom_context=False,
