@@ -124,6 +124,11 @@ class DockerEngine(ContainerEngine):
                 args += [d]
 
                 yield from execute_cmd(args, True)
+        else:
+            # Assume 'path' is passed in
+            args += [path]
+
+            yield from execute_cmd(args, True)
 
     def images(self):
         images = self._apiclient.images()
