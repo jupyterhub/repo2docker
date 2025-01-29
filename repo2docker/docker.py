@@ -75,12 +75,12 @@ class DockerEngine(ContainerEngine):
     )
 
     extra_buildx_build_args = List(
-        Unicode,
+        [Unicode],
         [],
         help="""
         Extra commandline arguments to pass to `docker buildx build` when building the image.
         """,
-        help=True
+        config=True
     )
 
     def __init__(self, *, parent):
