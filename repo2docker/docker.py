@@ -80,7 +80,7 @@ class DockerEngine(ContainerEngine):
         help="""
         Extra commandline arguments to pass to `docker buildx build` when building the image.
         """,
-        config=True
+        config=True,
     )
 
     def __init__(self, *, parent):
