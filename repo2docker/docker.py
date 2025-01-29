@@ -117,7 +117,7 @@ class DockerEngine(ContainerEngine):
             args += ["--tag", tag]
 
         if labels:
-            for k, v in labels:
+            for k, v in labels.items():
                 args += ["--label", f"{k}={v}"]
 
         if platform:
