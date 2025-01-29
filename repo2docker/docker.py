@@ -116,6 +116,13 @@ class DockerEngine(ContainerEngine):
         if tag:
             args += ["--tag", tag]
 
+        if labels:
+            for k, v in labels:
+                args += ["--label", f"{k}={v}"]
+
+        if platform:
+            args += ["--platform", platform]
+
         if fileobj:
             with tempfile.TemporaryDirectory() as d:
                 tarf = tarfile.open(fileobj=fileobj)
