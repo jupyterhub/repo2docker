@@ -99,6 +99,9 @@ class RBuildPack(PythonBuildPack):
                 # available. Users can however explicitly specify the full version to get something specific
                 if r_version in version_map:
                     r_version = version_map[r_version]
+                elif len(r_version.split(".")) == 1:
+                    # must have x.y.z version, add .0 for unrecognized (future) R versions
+                    r_version += ".0"
 
             # translate to the full version string
             self._r_version = r_version
