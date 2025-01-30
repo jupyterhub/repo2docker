@@ -75,7 +75,6 @@ class DockerEngine(ContainerEngine):
     )
 
     extra_buildx_build_args = List(
-        [Unicode],
         [],
         help="""
         Extra commandline arguments to pass to `docker buildx build` when building the image.
