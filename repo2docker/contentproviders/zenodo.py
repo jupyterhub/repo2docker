@@ -27,7 +27,7 @@ class Zenodo(DoiProvider):
                 "filename": "key",
                 "download": "links.content",
                 "type": "metadata.upload_type",
-                "is_caltech": False
+                "is_caltech": False,
             },
             {
                 "hostname": [
@@ -41,7 +41,7 @@ class Zenodo(DoiProvider):
                 "filename": "key",
                 "download": "links.content",
                 "type": "metadata.upload_type",
-                "is_caltech": False
+                "is_caltech": False,
             },
             {
                 "hostname": [
@@ -54,7 +54,7 @@ class Zenodo(DoiProvider):
                 "filename": "key",
                 "download": "links.content",
                 "type": "metadata.upload_type",
-                "is_caltech": True
+                "is_caltech": True,
             },
         ]
 
@@ -98,7 +98,9 @@ class Zenodo(DoiProvider):
         filename = deep_get(file_ref, host["filename"])
         if host["is_caltech"]:
             # Construct the direct download URL for Caltech Data
-            download_url = f"https://data.caltech.edu/records/{self.record_id}/files/{filename}"
+            download_url = (
+                f"https://data.caltech.edu/records/{self.record_id}/files/{filename}"
+            )
         else:
             # Use the standard Zenodo download URL structure
             download_url = deep_get(file_ref, host["download"])
@@ -112,7 +114,7 @@ class Zenodo(DoiProvider):
         # Get file using a streaming approach
         response = self.urlopen(download_url)
         content = response.content  # Get the binary content
-        
+
         # Write the content to file
         with open(output_path, "wb") as fp:
             fp.write(content)
