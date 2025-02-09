@@ -12,7 +12,7 @@ python freeze.py [3.8]
 import os
 import pathlib
 from argparse import ArgumentParser
-from datetime import datetime
+from datetime import datetime, UTC
 from subprocess import check_call
 
 from ruamel.yaml import YAML
@@ -68,7 +68,7 @@ def freeze(env_file, frozen_file, platform="linux-64"):
         f.write(
             f"# AUTO GENERATED FROM {env_file.relative_to(HERE)}, DO NOT MANUALLY MODIFY\n"
         )
-        f.write(f"# Frozen on {datetime.utcnow():%Y-%m-%d %H:%M:%S UTC}\n")
+        f.write(f"# Frozen on {datetime.now(UTC):%Y-%m-%d %H:%M:%S UTC}\n")
         with frozen_tempfile.open() as temp:
             f.write(temp.read())
 
@@ -98,7 +98,7 @@ def set_python(py_env_file, py):
         f.write(
             f"# AUTO GENERATED FROM {ENV_FILE.relative_to(HERE)}, DO NOT MANUALLY MODIFY\n"
         )
-        f.write(f"# Generated on {datetime.utcnow():%Y-%m-%d %H:%M:%S UTC}\n")
+        f.write(f"# Generated on {datetime.now(UTC):%Y-%m-%d %H:%M:%S UTC}\n")
         yaml.dump(env, f)
 
 
