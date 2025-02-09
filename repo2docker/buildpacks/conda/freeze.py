@@ -12,7 +12,7 @@ python freeze.py [3.8]
 import os
 import pathlib
 from argparse import ArgumentParser
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from subprocess import check_call
 
 from ruamel.yaml import YAML
