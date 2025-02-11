@@ -80,11 +80,11 @@ def test_local_dir_image_name(repo_with_content):
 
 def test_extra_buildx_build_args(repo_with_content):
     upstream, sha1 = repo_with_content
-    argv = ['--DockerEngine.extra_buildx_build_args=--check', upstream]
+    argv = ["--DockerEngine.extra_buildx_build_args=--check", upstream]
     app = make_r2d(argv)
     with patch("repo2docker.docker.execute_cmd") as execute_cmd:
         app.build()
-        
+
     args, kwargs = execute_cmd.call_args
     cmd = args[0]
     assert cmd[:3] == ["docker", "buildx", "build"]
