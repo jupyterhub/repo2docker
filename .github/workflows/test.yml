@@ -42,6 +42,9 @@ env:
 
 jobs:
   test:
+    # Don't run scheduled tests on forks
+    if: ${{ github.repository_owner == 'jupyterhub' || github.event_name != 'schedule' }}
+
     runs-on: ubuntu-${{ matrix.ubuntu_version }}
 
     strategy:
