@@ -1,5 +1,5 @@
 # enable conda and activate the notebook environment
-set -ex
+set -e
 eval $(micromamba shell hook -s posix -r ${CONDA_DIR})
 for name in conda mamba; do
     CONDA_PROFILE="${CONDA_DIR}/etc/profile.d/${name}.sh"
@@ -21,3 +21,5 @@ if [[ "${KERNEL_PYTHON_PREFIX}" != "${NB_PYTHON_PREFIX}" ]]; then
 else
     mamba activate ${NB_PYTHON_PREFIX}
 fi
+
+set +e
