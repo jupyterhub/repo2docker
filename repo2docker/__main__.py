@@ -140,7 +140,8 @@ def get_argparser():
 
     argparser.add_argument(
         "--build-memory-limit",
-        help="Total Memory that can be used by the docker build process",
+        # Removed argument, but we still want to support printing an error message if this is passed
+        help=argparse.SUPPRESS
     )
 
     argparser.add_argument(
@@ -434,12 +435,10 @@ def make_r2d(argv=None):
         sys.exit(1)
 
     if args.build_memory_limit:
-        # if the string only contains numerals we assume it should be an int
-        # and specifies a size in bytes
-        if args.build_memory_limit.isnumeric():
-            r2d.build_memory_limit = int(args.build_memory_limit)
-        else:
-            r2d.build_memory_limit = args.build_memory_limit
+        # We no longer support build_memory_limit, it must be set in the builder instance
+        print("--build-memory-limit is no longer supported", file=sys.stderr)
+        print("Use `docker buildx create` to create a custom builder with appropriate memory limits instead", file=sys.stderr)
+        sys.exit(-1)
 
     if args.environment and not r2d.run:
         print("To specify environment variables, you also need to run " "the container")

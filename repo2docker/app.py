@@ -165,12 +165,19 @@ class Repo2Docker(Application):
     build_memory_limit = ByteSpecification(
         0,
         help="""
-        Total memory that can be used by the docker image building process.
+        Unsupported.
 
-        Set to 0 for no limits.
+        When using docker, please use `docker buildx create` to create a new buildkit
+        builder with appropriate limits instead.
         """,
         config=True,
     )
+
+    @observe("build_memory_limit")
+    def build_memory_limit_changed(self, change):
+        print("Setting build_memory_limit is not supported", file=sys.stderr)
+        print("Use `docker buildx create` to create a custom builder with appropriate memory limits instead", file=sys.stderr)
+        sys.exit(-1)
 
     volumes = Dict(
         {},
@@ -856,6 +863,7 @@ class Repo2Docker(Application):
                     for l in picked_buildpack.build(
                         docker_client,
                         self.output_image_spec,
+                        # This is deprecated, but passing it anyway to not break backwards compatibility
                         self.build_memory_limit,
                         build_args,
                         self.cache_from,
