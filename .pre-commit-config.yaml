@@ -15,10 +15,10 @@ repos:
     hooks:
       - id: pyupgrade
         args:
-          - --py36-plus
+          - --py38-plus
         # check-tmp is a Python based test script run in created environments
-        # that can be at least Python 3.5 even though we require Python 3.6 for
-        # repo2docker itself.
+        # that can be Python 3.5, older than the Python version required to run
+        # repo2docker.
         exclude: check-tmp
 
   # Autoformat: Python code
@@ -27,12 +27,12 @@ repos:
     hooks:
       - id: black
         args:
-          - --target-version=py36
-          - --target-version=py37
           - --target-version=py38
           - --target-version=py39
           - --target-version=py310
           - --target-version=py311
+          - --target-version=py312
+          - --target-version=py313
 
   # Autoformat: Python code
   - repo: https://github.com/pycqa/isort

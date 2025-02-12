@@ -51,7 +51,7 @@ jobs:
       fail-fast: false
       matrix:
         ubuntu_version: ["24.04"]
-        python_version: ["3.9"]
+        python_version: ["3.13"]
         repo_type:
           - base
           - conda
@@ -64,17 +64,13 @@ jobs:
           - unit
           - venv
           - contentproviders
-        include:
-          # The actions/setup-python action with Python version 3.6 isn't
-          # possible to use with the ubuntu-22.04 runner, so we use ubuntu-20.04
-          # for this test where Python 3.6 remain available.
-          - ubuntu_version: "20.04"
-            python_version: "3.6"
-            repo_type: venv
           # Playwright test
-          - ubuntu_version: "24.04"
-            python_version: "3.13"
-            repo_type: ui
+          - ui
+        include:
+          # The earliest actions/setup-python versions depend on the runner.
+          - ubuntu_version: "22.04"
+            python_version: "3.8"
+            repo_type: venv
 
     steps:
       - uses: actions/checkout@v4
