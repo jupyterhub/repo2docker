@@ -39,7 +39,7 @@ def pytest_collect_file(parent, file_path):
         return RemoteRepoList.from_parent(parent, path=file_path)
 
 
-def make_test_func(args, skip_build=False, extra_run_kwargs=None):
+def make_test_func(args, skip_build=False, extra_run_kwargs=None, external_script=None):
     """Generate a test function that runs repo2docker"""
 
     def test():
@@ -82,6 +82,10 @@ def make_test_func(args, skip_build=False, extra_run_kwargs=None):
                     success = True
                     break
             assert success, f"Notebook never started in {container}"
+
+            if external_script:
+                subprocess.check_call([external_script, f"http://localhost:{port}"])
+
         finally:
             # stop the container
             container.stop()
@@ -202,12 +206,21 @@ class Repo2DockerTest(pytest.Function):
     """A pytest.Item for running repo2docker"""
 
     def __init__(
-        self, name, parent, args=None, skip_build=False, extra_run_kwargs=None
+        self,
+        name,
+        parent,
+        args=None,
+        skip_build=False,
+        extra_run_kwargs=None,
+        external_script=None,
     ):
         self.args = args
         self.save_cwd = os.getcwd()
         f = parent.obj = make_test_func(
-            args, skip_build=skip_build, extra_run_kwargs=extra_run_kwargs
+            args,
+            skip_build=skip_build,
+            extra_run_kwargs=extra_run_kwargs,
+            external_script=external_script,
         )
         super().__init__(name, parent, callobj=f)
 
@@ -245,6 +258,17 @@ class LocalRepo(pytest.File):
         args.append(f"--image-name={image_name}")
         args.append(str(self.path.parent))
         yield Repo2DockerTest.from_parent(self, name="build", args=args)
+
+        # If external-verify exists it should be run on the host
+        external_verify_script = self.path.parent / "external-verify"
+        if external_verify_script.exists():
+            yield Repo2DockerTest.from_parent(
+                self,
+                name=external_verify_script.name,
+                args=args,
+                skip_build=True,
+                external_script=external_verify_script,
+            )
 
         yield Repo2DockerTest.from_parent(
             self,
