@@ -177,7 +177,7 @@ class Repo2Docker(Application):
     def build_memory_limit_changed(self, change):
         print("Setting build_memory_limit is not supported", file=sys.stderr)
         print(
-            "Use `docker buildx create` to create a custom builder with appropriate memory limits instead",
+            "Check your build engine documentation to set memory limits. Use `docker buildx create` if using the default builder to create a custom builder with appropriate memory limits",
             file=sys.stderr,
         )
         sys.exit(-1)
