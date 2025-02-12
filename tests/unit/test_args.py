@@ -56,6 +56,7 @@ def test_mem_limit():
     with pytest.raises(SystemExit):
         r2d = make_r2d(["--Repo2Docker.build_memory_limit", "1024", "."])
 
+
 def test_run_required():
     """
     Test all the things that should fail if we pass in --no-run
