@@ -50,7 +50,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ubuntu_version: ["22.04"]
+        ubuntu_version: ["24.04"]
         python_version: ["3.9"]
         repo_type:
           - base
