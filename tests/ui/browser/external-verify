@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# This script is run outside the container
+
+set -eux
+
+export TEST_REPO2DOCKER_URL="${1}/?token=token"
+pytest --verbose --color=yes --browser=firefox tests/ui/browser/external-verify.py
