@@ -264,7 +264,7 @@ class LocalRepo(pytest.File):
         if external_verify_script.exists():
             yield Repo2DockerTest.from_parent(
                 self,
-                name=self.path.name,
+                name=external_verify_script.name,
                 args=args,
                 skip_build=True,
                 external_script=external_verify_script,
