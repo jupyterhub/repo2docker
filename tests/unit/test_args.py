@@ -53,6 +53,8 @@ def test_mem_limit():
     with pytest.raises(SystemExit):
         r2d = make_r2d(["--build-memory-limit", "1024", "."])
 
+    with pytest.raises(SystemExit):
+        r2d = make_r2d(["--Repo2Docker.build_memory_limit", "1024", "."])
 
 def test_run_required():
     """
