@@ -69,7 +69,7 @@ jobs:
         include:
           # The earliest actions/setup-python versions depend on the runner.
           - ubuntu_version: "22.04"
-            python_version: "3.8"
+            python_version: "3.9"
             repo_type: venv
 
     steps:
