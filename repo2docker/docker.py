@@ -2,12 +2,17 @@
 Docker container engine for repo2docker
 """
 
+import shutil
+import tarfile
+import tempfile
+
 from iso8601 import parse_date
-from traitlets import Dict
+from traitlets import Dict, List, Unicode
 
 import docker
 
 from .engine import Container, ContainerEngine, ContainerEngineException, Image
+from .utils import execute_cmd
 
 
 class DockerContainer(Container):
@@ -53,7 +58,7 @@ class DockerEngine(ContainerEngine):
     https://docker-py.readthedocs.io/en/4.2.0/api.html#module-docker.api.build
     """
 
-    string_output = False
+    string_output = True
 
     extra_init_args = Dict(
         {},
@@ -65,6 +70,14 @@ class DockerEngine(ContainerEngine):
 
         Parameters here are merged with whatever is picked up from the
         environment.
+        """,
+        config=True,
+    )
+
+    extra_buildx_build_args = List(
+        Unicode(),
+        help="""
+        Extra commandline arguments to pass to `docker buildx build` when building the image.
         """,
         config=True,
     )
@@ -94,22 +107,46 @@ class DockerEngine(ContainerEngine):
         platform=None,
         **kwargs,
     ):
-        return self._apiclient.build(
-            buildargs=buildargs,
-            cache_from=cache_from,
-            container_limits=container_limits,
-            forcerm=True,
-            rm=True,
-            tag=tag,
-            custom_context=custom_context,
-            decode=True,
-            dockerfile=dockerfile,
-            fileobj=fileobj,
-            path=path,
-            labels=labels,
-            platform=platform,
-            **kwargs,
-        )
+        if not shutil.which("docker"):
+            raise RuntimeError("The docker commandline client must be installed")
+        args = ["docker", "buildx", "build", "--progress", "plain", "--load"]
+        if buildargs:
+            for k, v in buildargs.items():
+                args += ["--build-arg", f"{k}={v}"]
+
+        if cache_from:
+            for cf in cache_from:
+                args += ["--cache-from", cf]
+
+        if dockerfile:
+            args += ["--file", dockerfile]
+
+        if tag:
+            args += ["--tag", tag]
+
+        if labels:
+            for k, v in labels.items():
+                args += ["--label", f"{k}={v}"]
+
+        if platform:
+            args += ["--platform", platform]
+
+        # place extra args right *before* the path
+        args += self.extra_buildx_build_args
+
+        if fileobj:
+            with tempfile.TemporaryDirectory() as d:
+                tarf = tarfile.open(fileobj=fileobj)
+                tarf.extractall(d)
+
+                args += [d]
+
+                yield from execute_cmd(args, True)
+        else:
+            # Assume 'path' is passed in
+            args += [path]
+
+            yield from execute_cmd(args, True)
 
     def images(self):
         images = self._apiclient.images()

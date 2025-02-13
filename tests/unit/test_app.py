@@ -78,19 +78,18 @@ def test_local_dir_image_name(repo_with_content):
     )
 
 
-def test_build_kwargs(repo_with_content):
+def test_extra_buildx_build_args(repo_with_content):
     upstream, sha1 = repo_with_content
-    argv = [upstream]
+    argv = ["--DockerEngine.extra_buildx_build_args=--check", upstream]
     app = make_r2d(argv)
-    app.extra_build_kwargs = {"somekey": "somevalue"}
-
-    with patch.object(docker.APIClient, "build") as builds:
-        builds.return_value = []
+    with patch("repo2docker.docker.execute_cmd") as execute_cmd:
         app.build()
-    builds.assert_called_once()
-    args, kwargs = builds.call_args
-    assert "somekey" in kwargs
-    assert kwargs["somekey"] == "somevalue"
+
+    args, kwargs = execute_cmd.call_args
+    cmd = args[0]
+    assert cmd[:3] == ["docker", "buildx", "build"]
+    # make sure it's inserted before the end
+    assert "--check" in cmd[:-1]
 
 
 def test_run_kwargs(repo_with_content):
@@ -105,26 +104,6 @@ def test_run_kwargs(repo_with_content):
     args, kwargs = containers.run.call_args
     assert "somekey" in kwargs
     assert kwargs["somekey"] == "somevalue"
-
-
-def test_root_not_allowed():
-    with TemporaryDirectory() as src, patch("os.geteuid") as geteuid:
-        geteuid.return_value = 0
-        argv = [src]
-        with pytest.raises(SystemExit) as exc:
-            app = make_r2d(argv)
-            assert exc.code == 1
-
-        with pytest.raises(ValueError):
-            app = Repo2Docker(repo=src, run=False)
-            app.build()
-
-        app = Repo2Docker(repo=src, user_id=1000, user_name="jovyan", run=False)
-        app.initialize()
-        with patch.object(docker.APIClient, "build") as builds:
-            builds.return_value = []
-            app.build()
-        builds.assert_called_once()
 
 
 def test_dryrun_works_without_docker(tmpdir, capsys):

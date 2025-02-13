@@ -50,11 +50,11 @@ def test_mem_limit():
     """
     Test various ways of passing --build-memory-limit
     """
-    r2d = make_r2d(["--build-memory-limit", "1024", "."])
-    assert int(r2d.build_memory_limit) == 1024
+    with pytest.raises(SystemExit):
+        r2d = make_r2d(["--build-memory-limit", "1024", "."])
 
-    r2d = make_r2d(["--build-memory-limit", "3K", "."])
-    assert int(r2d.build_memory_limit) == 1024 * 3
+    with pytest.raises(SystemExit):
+        r2d = make_r2d(["--Repo2Docker.build_memory_limit", "1024", "."])
 
 
 def test_run_required():
