@@ -438,7 +438,7 @@ def make_r2d(argv=None):
         # We no longer support build_memory_limit, it must be set in the builder instance
         print("--build-memory-limit is no longer supported", file=sys.stderr)
         print(
-            "Use `docker buildx create` to create a custom builder with appropriate memory limits instead",
+            "Check your build engine documentation to set memory limits. Use `docker buildx create` if using the default builder to create a custom builder with appropriate memory limits",
             file=sys.stderr,
         )
         sys.exit(-1)
