@@ -98,7 +98,7 @@ class PythonBuildPack(CondaBuildPack):
         # allow assembly from subset
         return True
 
-    @lru_cache()
+    @lru_cache
     def get_preassemble_script_files(self):
         assemble_files = super().get_preassemble_script_files()
         for name in ("requirements.txt", "requirements3.txt"):
@@ -107,7 +107,7 @@ class PythonBuildPack(CondaBuildPack):
                 assemble_files[requirements_txt] = requirements_txt
         return assemble_files
 
-    @lru_cache()
+    @lru_cache
     def get_preassemble_scripts(self):
         """Return scripts to run before adding the full repository"""
         scripts = super().get_preassemble_scripts()
@@ -115,7 +115,7 @@ class PythonBuildPack(CondaBuildPack):
             scripts.extend(self._get_pip_scripts())
         return scripts
 
-    @lru_cache()
+    @lru_cache
     def get_assemble_scripts(self):
         """Return series of build steps that require the full repository"""
         # If we have a runtime.txt & that's set to python-2.7,

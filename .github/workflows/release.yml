@@ -29,12 +29,12 @@ on:
 
 jobs:
   build-n-publish:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.13"
 
       - name: install build requirements
         run: |
@@ -62,7 +62,7 @@ jobs:
           password: ${{ secrets.PYPI_PASSWORD }}
 
   publish-docker:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       DEFAULT_REGISTRY: quay.io
       IMAGE_NAME: jupyterhub/repo2docker

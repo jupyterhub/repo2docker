@@ -146,7 +146,7 @@ class RBuildPack(PythonBuildPack):
                 self._runtime = f"r-{str(self._checkpoint_date)}"
             return True
 
-    @lru_cache()
+    @lru_cache
     def get_env(self):
         """
         Set custom env vars needed for RStudio to load
@@ -161,7 +161,7 @@ class RBuildPack(PythonBuildPack):
             ("LD_LIBRARY_PATH", "${R_HOME}/lib:${LD_LIBRARY_PATH}"),
         ]
 
-    @lru_cache()
+    @lru_cache
     def get_path(self):
         """
         Return paths to be added to the PATH environment variable.
@@ -171,7 +171,7 @@ class RBuildPack(PythonBuildPack):
         """
         return super().get_path() + ["/usr/lib/rstudio-server/bin/"]
 
-    @lru_cache()
+    @lru_cache
     def get_build_env(self):
         """
         Return environment variables to be set.
@@ -185,7 +185,7 @@ class RBuildPack(PythonBuildPack):
             ("R_LIBS_USER", "${APP_BASE}/rlibs")
         ]
 
-    @lru_cache()
+    @lru_cache
     def get_packages(self):
         """
         Return list of packages to be installed.
@@ -204,7 +204,7 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_packages().union(packages)
 
-    @lru_cache()
+    @lru_cache
     def get_rspm_snapshot_url(self, snapshot_date, max_days_prior=7):
         for i in range(max_days_prior):
             snapshots = requests.post(
@@ -232,7 +232,7 @@ class RBuildPack(PythonBuildPack):
             )
         )
 
-    @lru_cache()
+    @lru_cache
     def get_devtools_snapshot_url(self):
         """
         Return url of snapshot to use for getting devtools install
@@ -249,7 +249,7 @@ class RBuildPack(PythonBuildPack):
         # appropriate binary packages without having to hard code version names here.
         return "https://packagemanager.posit.co/all/__linux__/${VERSION_CODENAME}/2022-06-03+Y3JhbiwyOjQ1MjYyMTU7RkM5ODcwN0M"
 
-    @lru_cache()
+    @lru_cache
     def get_build_scripts(self):
         """
         Return series of build-steps common to all R repositories
@@ -361,7 +361,7 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_build_scripts() + scripts
 
-    @lru_cache()
+    @lru_cache
     def get_preassemble_script_files(self):
         files = super().get_preassemble_script_files()
         installR_path = self.binder_path("install.R")
@@ -370,7 +370,7 @@ class RBuildPack(PythonBuildPack):
 
         return files
 
-    @lru_cache()
+    @lru_cache
     def get_preassemble_scripts(self):
         """Install contents of install.R
 
@@ -396,7 +396,7 @@ class RBuildPack(PythonBuildPack):
 
         return super().get_preassemble_scripts() + scripts
 
-    @lru_cache()
+    @lru_cache
     def get_assemble_scripts(self):
         """Install the dependencies of or the repository itself"""
         assemble_scripts = super().get_assemble_scripts()

@@ -46,7 +46,7 @@ class CondaBuildPack(BaseImage):
             return "linux-aarch64"
         raise ValueError(f"Unknown platform {self.platform}")
 
-    @lru_cache()
+    @lru_cache
     def get_build_env(self):
         """Return environment variables to be set.
 
@@ -90,13 +90,13 @@ class CondaBuildPack(BaseImage):
             env.append(("KERNEL_PYTHON_PREFIX", "${NB_PYTHON_PREFIX}"))
         return env
 
-    @lru_cache()
+    @lru_cache
     def get_env(self):
         """Make kernel env the default for `conda install`"""
         env = super().get_env() + [("CONDA_DEFAULT_ENV", "${KERNEL_PYTHON_PREFIX}")]
         return env
 
-    @lru_cache()
+    @lru_cache
     def get_path(self):
         """Return paths (including conda environment path) to be added to
         the PATH environment variable.
@@ -111,7 +111,7 @@ class CondaBuildPack(BaseImage):
         path.append("${NPM_DIR}/bin")
         return path
 
-    @lru_cache()
+    @lru_cache
     def get_build_scripts(self):
         """
         Return series of build-steps common to all Python 3 repositories.
@@ -149,7 +149,7 @@ class CondaBuildPack(BaseImage):
 
     major_pythons = {"2": "2.7", "3": "3.10"}
 
-    @lru_cache()
+    @lru_cache
     def get_build_script_files(self):
         """
         Dict of files to be copied to the container image for use in building.
@@ -374,7 +374,7 @@ class CondaBuildPack(BaseImage):
             self.kernel_env_cutoff_version
         )
 
-    @lru_cache()
+    @lru_cache
     def get_preassemble_script_files(self):
         """preassembly only requires environment.yml
 
@@ -388,7 +388,7 @@ class CondaBuildPack(BaseImage):
                 assemble_files[environment_yml] = environment_yml
         return assemble_files
 
-    @lru_cache()
+    @lru_cache
     def get_env_scripts(self):
         """Return series of build-steps specific to this source repository."""
         scripts = []
@@ -455,14 +455,14 @@ class CondaBuildPack(BaseImage):
             ]
         return scripts
 
-    @lru_cache()
+    @lru_cache
     def get_preassemble_scripts(self):
         scripts = super().get_preassemble_scripts()
         if self._should_preassemble_env:
             scripts.extend(self.get_env_scripts())
         return scripts
 
-    @lru_cache()
+    @lru_cache
     def get_assemble_scripts(self):
         scripts = super().get_assemble_scripts()
         if not self._should_preassemble_env:

@@ -30,7 +30,7 @@ def str_to_version(vstr):
     return tuple([int(n) for n in vstr.split(".")])
 
 
-@lru_cache()
+@lru_cache
 def parse_version(vstr):
     """Convert a simple 'x[.y[.z]]' version string to a comparable VersionInfo
 
@@ -62,7 +62,7 @@ def patch(v):
     return v[2] if len(v) >= 3 else 0
 
 
-@lru_cache()
+@lru_cache
 def create_semver_matcher(constraint_str):
     """Create a matcher that can be used to match version tuples
 
