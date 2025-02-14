@@ -58,7 +58,7 @@ class DockerEngine(ContainerEngine):
     https://docker-py.readthedocs.io/en/4.2.0/api.html#module-docker.api.build
     """
 
-    string_output = True
+    string_output = False
 
     extra_init_args = Dict(
         {},
@@ -141,12 +141,18 @@ class DockerEngine(ContainerEngine):
 
                 args += [d]
 
-                yield from execute_cmd(args, True)
+                for line in execute_cmd(args, True):
+                    # Simulate structured JSON output from buildx build, since we
+                    # do get structured json output from pushing and running
+                    yield {"stream": line}
         else:
             # Assume 'path' is passed in
             args += [path]
 
-            yield from execute_cmd(args, True)
+            for line in execute_cmd(args, True):
+                # Simulate structured JSON output from buildx build, since we
+                # do get structured json output from pushing and running
+                yield {"stream": line}
 
     def images(self):
         images = self._apiclient.images()
