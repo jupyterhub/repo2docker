@@ -1,0 +1,13 @@
+#!/usr/bin/env Rscript
+library('digest')
+
+# Fail if version is not 4.3
+print(version)
+if (!(version$major == "4" && version$minor == "3")) {
+  quit("yes", 1)
+}
+
+# The date we have chosen should give us an rspm mirror
+if (!(startsWith(options()$repos["CRAN"], "https://packagemanager.posit.co"))) {
+  quit("yes", 1)
+}
