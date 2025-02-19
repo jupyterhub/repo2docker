@@ -3,7 +3,7 @@ library('digest')
 
 # Fail if version is not 4.0
 print(version)
-if (!(version$major == "4" && as.double(version$minor) >= 0 && as.double(version$minor) < 1)) {
+if (!(version$major == "4" && as.double(version$minor) >= 4 && as.double(version$minor) < 5)) {
   quit("yes", 1)
 }
 
