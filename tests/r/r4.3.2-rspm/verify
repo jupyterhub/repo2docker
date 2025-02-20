@@ -1,9 +1,9 @@
 #!/usr/bin/env Rscript
 library('digest')
 
-# Fail if version is not 4.3
+# Fail if version is not 4.3.2
 print(version)
-if (!(version$major == "4" && version$minor == "3")) {
+if (!(version$major == "4" && version$minor == "3.2")) {
   quit("yes", 1)
 }
 
