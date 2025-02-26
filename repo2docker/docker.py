@@ -163,9 +163,11 @@ class DockerEngine(ContainerEngine):
     @contextmanager
     def docker_login(self, username, password, registry):
         # Determine existing DOCKER_CONFIG
-        dc_path = Path(
-            os.environ.get("DOCKER_CONFIG", os.path.expanduser("~/.docker/config.json"))
-        )
+        old_dc_path = os.environ.get("DOCKER_CONFIG")
+        if old_dc_path is None:
+            dc_path = Path("~/.docker/config.json").expanduser()
+        else:
+            dc_path = Path(old_dc_path)
 
         with tempfile.TemporaryDirectory() as d:
             new_dc_path = Path(d) / "config.json"
@@ -174,21 +176,25 @@ class DockerEngine(ContainerEngine):
                 # whatever configuration the user has already set
                 shutil.copy2(dc_path, new_dc_path)
 
-            env = os.environ.copy()
-            subprocess.check_call(
-                # FIXME: This should be using --password-stdin instead
-                [
+            os.environ['DOCKER_CONFIG'] = d
+            proc = subprocess.run([
                     "docker",
                     "login",
                     "--username",
                     username,
-                    "--password",
-                    password,
+                    "--password-stdin",
                     registry,
                 ],
-                env=env,
+                input=password.encode(),
+                check=True
             )
-            yield
+            try:
+                yield
+            finally:
+                if old_dc_path:
+                    os.environ['DOCKER_CONFIG'] = old_dc_path
+                else:
+                    del os.environ['DOCKER_CONFIG']
 
     def push(self, image_spec):
         if self.registry_credentials:
