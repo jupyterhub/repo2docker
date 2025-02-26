@@ -2,9 +2,13 @@
 Docker container engine for repo2docker
 """
 
+import os
 import shutil
+import subprocess
 import tarfile
 import tempfile
+from contextlib import contextmanager
+from pathlib import Path
 
 from iso8601 import parse_date
 from traitlets import Dict, List, Unicode
@@ -58,7 +62,7 @@ class DockerEngine(ContainerEngine):
     https://docker-py.readthedocs.io/en/4.2.0/api.html#module-docker.api.build
     """
 
-    string_output = False
+    string_output = True
 
     extra_init_args = Dict(
         {},
@@ -141,18 +145,12 @@ class DockerEngine(ContainerEngine):
 
                 args += [d]
 
-                for line in execute_cmd(args, True):
-                    # Simulate structured JSON output from buildx build, since we
-                    # do get structured json output from pushing and running
-                    yield {"stream": line}
+                yield from execute_cmd(args, True)
         else:
             # Assume 'path' is passed in
             args += [path]
 
-            for line in execute_cmd(args, True):
-                # Simulate structured JSON output from buildx build, since we
-                # do get structured json output from pushing and running
-                yield {"stream": line}
+            yield from execute_cmd(args, True)
 
     def images(self):
         images = self._apiclient.images()
@@ -162,10 +160,42 @@ class DockerEngine(ContainerEngine):
         image = self._apiclient.inspect_image(image)
         return Image(tags=image["RepoTags"], config=image["Config"])
 
+    @contextmanager
+    def docker_login(self, username, password, registry):
+        # Determine existing DOCKER_CONFIG
+        dc_path = Path(
+            os.environ.get("DOCKER_CONFIG", os.path.expanduser("~/.docker/config.json"))
+        )
+
+        with tempfile.TemporaryDirectory() as d:
+            new_dc_path = Path(d) / "config.json"
+            if dc_path.exists():
+                # If there is an existing DOCKER_CONFIG, copy it to new location so we inherit
+                # whatever configuration the user has already set
+                shutil.copy2(dc_path, new_dc_path)
+
+            env = os.environ.copy()
+            subprocess.check_call(
+                # FIXME: This should be using --password-stdin instead
+                [
+                    "docker",
+                    "login",
+                    "--username",
+                    username,
+                    "--password",
+                    password,
+                    registry,
+                ],
+                env=env,
+            )
+            yield
+
     def push(self, image_spec):
         if self.registry_credentials:
-            self._apiclient.login(**self.registry_credentials)
-        return self._apiclient.push(image_spec, stream=True)
+            with self.docker_login(**self.registry_credentials):
+                yield from execute_cmd(["docker", "push", image_spec], capture=True)
+        else:
+            yield from execute_cmd(["docker", "push", image_spec], capture=True)
 
     def run(
         self,
