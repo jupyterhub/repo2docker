@@ -176,8 +176,9 @@ class DockerEngine(ContainerEngine):
                 # whatever configuration the user has already set
                 shutil.copy2(dc_path, new_dc_path)
 
-            os.environ['DOCKER_CONFIG'] = d
-            proc = subprocess.run([
+            os.environ["DOCKER_CONFIG"] = d
+            proc = subprocess.run(
+                [
                     "docker",
                     "login",
                     "--username",
@@ -186,15 +187,15 @@ class DockerEngine(ContainerEngine):
                     registry,
                 ],
                 input=password.encode(),
-                check=True
+                check=True,
             )
             try:
                 yield
             finally:
                 if old_dc_path:
-                    os.environ['DOCKER_CONFIG'] = old_dc_path
+                    os.environ["DOCKER_CONFIG"] = old_dc_path
                 else:
-                    del os.environ['DOCKER_CONFIG']
+                    del os.environ["DOCKER_CONFIG"]
 
     def push(self, image_spec):
         if self.registry_credentials:
