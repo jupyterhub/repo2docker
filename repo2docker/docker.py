@@ -152,7 +152,7 @@ class DockerEngine(ContainerEngine):
         if proc.returncode != 0:
             return None
 
-        config = json.loads(proc.stdout.decode())
+        config = json.loads(proc.stdout.decode())[0]
         return Image(tags=config["RepoTags"], config=config["Config"])
 
     @contextmanager
