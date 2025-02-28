@@ -288,27 +288,6 @@ class ContainerEngine(LoggingConfigurable):
         """
         raise NotImplementedError("inspect_image not implemented")
 
-    def push(self, image_spec):
-        """
-        Push image to a registry
-
-        If the registry_credentials traitlets is set it should be used to
-        authenticate with the registry before pushing.
-
-        Parameters
-        ----------
-        image_spec : str
-            The repository spec to push to
-
-        Returns
-        -------
-        A generator of strings. If an error occurs an exception must be thrown.
-
-        If `string_output=True` this should instead be whatever Docker returns:
-        https://github.com/jupyter/repo2docker/blob/0.11.0/repo2docker/app.py#L469-L495
-        """
-        raise NotImplementedError("push not implemented")
-
     # Note this is different from the Docker client which has Client.containers.run
     def run(
         self,
