@@ -190,19 +190,19 @@ class DockerEngine(ContainerEngine):
                 shutil.copy2(dc_path, new_dc_path)
 
             os.environ["DOCKER_CONFIG"] = d
-            proc = subprocess.run(
-                [
-                    "docker",
-                    "login",
-                    "--username",
-                    username,
-                    "--password-stdin",
-                    registry,
-                ],
-                input=password.encode(),
-                check=True,
-            )
             try:
+                subprocess.run(
+                    [
+                        "docker",
+                        "login",
+                        "--username",
+                        username,
+                        "--password-stdin",
+                        registry,
+                    ],
+                    input=password.encode(),
+                    check=True,
+                )
                 yield
             finally:
                 if old_dc_path:
