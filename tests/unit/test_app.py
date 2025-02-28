@@ -10,6 +10,7 @@ from repo2docker.__main__ import make_r2d
 from repo2docker.app import Repo2Docker
 from repo2docker.utils import chdir
 
+
 def test_image_name_remains_unchanged():
     # if we specify an image name, it should remain unmodified
     with TemporaryDirectory() as src:
