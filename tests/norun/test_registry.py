@@ -165,10 +165,29 @@ def test_registry_explicit_creds(registry, dind):
         )
         r2d.start()
 
-        proc = subprocess.run(
-            ["docker", "manifest", "inspect", "--insecure", image_name]
-        )
-        assert proc.returncode == 0
+        # CONTAINER_ENGINE_REGISTRY_CREDENTIALS unfortunately doesn't propagate to docker manifest, so
+        # let's explicitly set up a docker_config here so we can check if the image exists
+        with TemporaryDirectory() as d:
+            (Path(d) / "config.json").write_text(
+                json.dumps(
+                    {
+                        "auths": {
+                            f"http://{registry_host}": {
+                                "auth": b64encode(
+                                    f"{username}:{password}".encode()
+                                ).decode()
+                            }
+                        }
+                    }
+                )
+            )
+            env = os.environ.copy()
+            env["DOCKER_CONFIG"] = d
+            proc = subprocess.run(
+                ["docker", "manifest", "inspect", "--insecure", image_name],
+                env=env
+            )
+            assert proc.returncode == 0
 
         # Validate that we didn't leak our registry creds into existing docker config
         docker_config_path = Path(
