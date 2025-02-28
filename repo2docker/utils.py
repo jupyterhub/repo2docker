@@ -1,7 +1,7 @@
 import os
-import socket
 import platform
 import re
+import socket
 import subprocess
 import warnings
 from contextlib import contextmanager

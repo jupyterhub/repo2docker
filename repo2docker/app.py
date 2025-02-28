@@ -37,7 +37,7 @@ from .buildpacks import (
     RBuildPack,
 )
 from .engine import BuildError, ContainerEngineException, ImageLoadError
-from .utils import ByteSpecification, R2dState, chdir, get_platform, get_free_port
+from .utils import ByteSpecification, R2dState, chdir, get_free_port, get_platform
 
 
 class Repo2Docker(Application):
@@ -743,7 +743,6 @@ class Repo2Docker(Application):
             container.remove()
             if exit_code:
                 sys.exit(exit_code)
-
 
     def find_image(self):
         # if this is a dry run it is Ok for dockerd to be unreachable so we

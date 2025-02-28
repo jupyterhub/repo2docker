@@ -1,15 +1,18 @@
 import os
+import secrets
 import socket
-from pathlib import Path
 import subprocess
+import time
+from pathlib import Path
+
 import pytest
+import requests
+
 from repo2docker.__main__ import make_r2d
 from repo2docker.utils import get_free_port
-import time
-import requests
-import secrets
 
 HERE = Path(__file__).parent
+
 
 @pytest.fixture(scope="session")
 def dind(registry, host_ip):
@@ -21,11 +24,19 @@ def dind(registry, host_ip):
     # but also docker this is your own fucking fault for making technical choices that force dockerhub
     # to be the primary registry, so your registry handling sucks and forces these kinds of difficulties.
     cmd = [
-        "docker", "run", "-e", 'DOCKER_TLS_CERTDIR=',
-        "--privileged", "-p", f"{port}:2376", dind_image,
-        "--host", "0.0.0.0:2376",
-        "--insecure-registry", registry,
-        "--tls=false"
+        "docker",
+        "run",
+        "-e",
+        "DOCKER_TLS_CERTDIR=",
+        "--privileged",
+        "-p",
+        f"{port}:2376",
+        dind_image,
+        "--host",
+        "0.0.0.0:2376",
+        "--insecure-registry",
+        registry,
+        "--tls=false",
     ]
     proc = subprocess.Popen(cmd)
     time.sleep(5)
@@ -35,6 +46,7 @@ def dind(registry, host_ip):
     finally:
         proc.terminate()
         proc.wait()
+
 
 @pytest.fixture(scope="session")
 def host_ip():
@@ -46,27 +58,24 @@ def host_ip():
     s.settimeout(0)
     try:
         # doesn't even have to be reachable
-        s.connect(('10.254.254.254', 1))
+        s.connect(("10.254.254.254", 1))
         host_ip = s.getsockname()[0]
     finally:
         s.close()
 
     return host_ip
 
+
 @pytest.fixture(scope="session")
 def registry(host_ip):
     port = get_free_port()
     # Explicitly pull the image first so it runs on time
-    registry_image =  "registry:3.0.0-rc.3"
+    registry_image = "registry:3.0.0-rc.3"
     subprocess.check_call(["docker", "pull", registry_image])
 
-
-    cmd = [
-        "docker", "run", "--rm",
-        "-p", f"{port}:5000", registry_image
-    ]
+    cmd = ["docker", "run", "--rm", "-p", f"{port}:5000", registry_image]
     proc = subprocess.Popen(cmd)
-    health_url = f'http://{host_ip}:{port}/v2'
+    health_url = f"http://{host_ip}:{port}/v2"
     # Wait for the registry to actually come up
     for i in range(10):
         try:
@@ -89,10 +98,7 @@ def registry(host_ip):
 
 def test_registry(registry, dind):
     image_name = f"{registry}/{secrets.token_hex(8)}:latest"
-    r2d = make_r2d([
-        "--image", image_name,
-        "--push", "--no-run", str(HERE)
-    ])
+    r2d = make_r2d(["--image", image_name, "--push", "--no-run", str(HERE)])
 
     os.environ["DOCKER_HOST"] = dind
     r2d.start()
