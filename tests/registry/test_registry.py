@@ -48,7 +48,11 @@ def dind(registry, host_ip):
     try:
         yield f"tcp://127.0.0.1:{port}", cert_dir
     finally:
-        shutil.rmtree(cert_dir)
+        try:
+            shutil.rmtree(cert_dir)
+        except PermissionError:
+            # Sometimes this is owned by root in CI. is ok, let's let it go
+            pass
         proc.terminate()
         proc.wait()
 
