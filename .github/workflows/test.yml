@@ -65,6 +65,7 @@ jobs:
           - unit
           - venv
           - contentproviders
+          - registry
           # Playwright test
           - ui
         include:
@@ -73,21 +74,8 @@ jobs:
             python_version: "3.9"
             repo_type: venv
 
-    services:
-      # So that we can test this in PRs/branches
-      local-registry:
-        image: registry:2
-        ports:
-          - 5000:5000
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          # Allows pushing to registry on localhost:5000
-          driver-opts: network=host
 
       - uses: actions/setup-python@v5
         with:

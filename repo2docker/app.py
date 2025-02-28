@@ -37,7 +37,7 @@ from .buildpacks import (
     RBuildPack,
 )
 from .engine import BuildError, ContainerEngineException, ImageLoadError
-from .utils import ByteSpecification, R2dState, chdir, get_platform
+from .utils import ByteSpecification, R2dState, chdir, get_platform, get_free_port
 
 
 class Repo2Docker(Application):
@@ -660,7 +660,7 @@ class Repo2Docker(Application):
                 container_port = int(container_port_proto.split("/", 1)[0])
             else:
                 # no port specified, pick a random one
-                container_port = host_port = str(self._get_free_port())
+                container_port = host_port = str(get_free_port())
                 self.ports = {f"{container_port}/tcp": host_port}
             self.port = host_port
             # To use the option --NotebookApp.custom_display_url
@@ -744,17 +744,6 @@ class Repo2Docker(Application):
             if exit_code:
                 sys.exit(exit_code)
 
-    def _get_free_port(self):
-        """
-        Hacky method to get a free random port on local host
-        """
-        import socket
-
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(("", 0))
-        port = s.getsockname()[1]
-        s.close()
-        return port
 
     def find_image(self):
         # if this is a dry run it is Ok for dockerd to be unreachable so we
