@@ -65,7 +65,7 @@ jobs:
           - unit
           - venv
           - contentproviders
-          - registry
+          - norun
           # Playwright test
           - ui
         include:

@@ -10,35 +10,6 @@ from repo2docker.__main__ import make_r2d
 from repo2docker.app import Repo2Docker
 from repo2docker.utils import chdir
 
-
-def test_find_image():
-    images = [{"RepoTags": ["some-org/some-repo:latest"]}]
-
-    with patch("repo2docker.docker.docker.APIClient") as FakeDockerClient:
-        instance = FakeDockerClient.return_value
-        instance.images.return_value = images
-
-        r2d = Repo2Docker()
-        r2d.output_image_spec = "some-org/some-repo"
-        assert r2d.find_image()
-
-        instance.images.assert_called_with()
-
-
-def test_dont_find_image():
-    images = [{"RepoTags": ["some-org/some-image-name:latest"]}]
-
-    with patch("repo2docker.docker.docker.APIClient") as FakeDockerClient:
-        instance = FakeDockerClient.return_value
-        instance.images.return_value = images
-
-        r2d = Repo2Docker()
-        r2d.output_image_spec = "some-org/some-other-image-name"
-        assert not r2d.find_image()
-
-        instance.images.assert_called_with()
-
-
 def test_image_name_remains_unchanged():
     # if we specify an image name, it should remain unmodified
     with TemporaryDirectory() as src:
