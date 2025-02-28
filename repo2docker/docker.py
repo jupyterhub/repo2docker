@@ -141,14 +141,13 @@ class DockerEngine(ContainerEngine):
 
             yield from execute_cmd(args, True)
 
-
     def inspect_image(self, image):
         """
         Return image configuration if it exists, otherwise None
         """
-        proc = subprocess.run([
-            "docker", "image", "inspect", image
-        ], capture_output=True)
+        proc = subprocess.run(
+            ["docker", "image", "inspect", image], capture_output=True
+        )
 
         if proc.returncode != 0:
             return None

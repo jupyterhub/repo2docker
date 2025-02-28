@@ -1,6 +1,6 @@
 import os
-import shutil
 import secrets
+import shutil
 import socket
 import subprocess
 import time
@@ -32,7 +32,8 @@ def dind(registry, host_ip):
         "-e",
         "DOCKER_TLS_CERTDIR=/opt/certs",
         "--privileged",
-        "--mount", f"type=bind,src={cert_dir},dst=/opt/certs",
+        "--mount",
+        f"type=bind,src={cert_dir},dst=/opt/certs",
         "-p",
         f"{port}:2376",
         dind_image,
