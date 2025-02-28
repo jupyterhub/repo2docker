@@ -184,8 +184,7 @@ def test_registry_explicit_creds(registry, dind):
             env = os.environ.copy()
             env["DOCKER_CONFIG"] = d
             proc = subprocess.run(
-                ["docker", "manifest", "inspect", "--insecure", image_name],
-                env=env
+                ["docker", "manifest", "inspect", "--insecure", image_name], env=env
             )
             assert proc.returncode == 0
 

@@ -183,7 +183,9 @@ class ContainerEngine(LoggingConfigurable):
         """
         new = proposal["value"]
         if len({"registry", "username", "password"} & new.keys()) != 3:
-            raise TraitError("registry_credentials must have keys 'registry', 'username' and 'password'")
+            raise TraitError(
+                "registry_credentials must have keys 'registry', 'username' and 'password'"
+            )
 
     string_output = True
     """
