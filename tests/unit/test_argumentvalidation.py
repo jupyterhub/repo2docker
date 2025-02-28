@@ -212,7 +212,6 @@ def test_invalid_container_port_protocol_mapping_fail(temp_cwd):
     assert not validate_arguments(builddir, args_list, "Port specification")
 
 
-
 def test_docker_no_build_success(temp_cwd):
     """
     Test to check if r2d succeeds with --no-build argument with not being able to connect to docker daemon
