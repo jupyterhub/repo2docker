@@ -16,7 +16,7 @@ def registry():
     registry_image =  "registry:3.0.0-rc.3"
     subprocess.check_call(["docker", "pull", registry_image])
     cmd = [
-        "docker", "run", "-it", "-p", f"{port}:5000", registry_image
+        "docker", "run", "-p", f"{port}:5000", registry_image
     ]
     proc = subprocess.Popen(cmd)
     health_url = f'http://localhost:{port}/v2'
