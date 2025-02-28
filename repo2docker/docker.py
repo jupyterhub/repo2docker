@@ -10,10 +10,11 @@ import tarfile
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-import docker
 
 from iso8601 import parse_date
 from traitlets import Dict, List, Unicode
+
+import docker
 
 from .engine import Container, ContainerEngine, Image
 from .utils import execute_cmd
