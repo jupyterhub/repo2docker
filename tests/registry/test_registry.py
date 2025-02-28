@@ -12,8 +12,11 @@ HERE = Path(__file__).parent
 @pytest.fixture
 def registry():
     port = get_free_port()
+    # Explicitly pull the image first so it runs on time
+    registry_image =  "registry:3.0.0-rc.3"
+    subprocess.check_call(["docker", "pull", registry_image])
     cmd = [
-        "docker", "run", "-it", "-p", f"{port}:5000", "registry:3.0.0-rc.3"
+        "docker", "run", "-it", "-p", f"{port}:5000", registry_image
     ]
     proc = subprocess.Popen(cmd)
     health_url = f'http://localhost:{port}/v2'
