@@ -212,9 +212,9 @@ class ContainerEngine(LoggingConfigurable):
 
     def build(
         self,
+        *,
         push=False,
         load=False,
-        *,
         buildargs={},
         cache_from=[],
         container_limits={},

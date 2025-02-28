@@ -90,9 +90,9 @@ class DockerEngine(ContainerEngine):
 
     def build(
         self,
+        *,
         push=False,
         load=False,
-        *,
         buildargs=None,
         cache_from=None,
         container_limits=None,
