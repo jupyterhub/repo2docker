@@ -98,10 +98,8 @@ At the end of the assemble step, the docker image is ready to be used in various
 
 ### Push
 
-Optionally, repo2docker can **push** a built image to a [docker registry](https://docs.docker.com/registry/).
-This is done as a convenience only (since you can do the same with a `docker push` after using repo2docker
-only to build), and implemented in `Repo2Docker.push` method. It is only activated if using the
-`--push` commandline flag.
+Optionally, repo2docker can **push** a built image to a [docker registry](https://docs.docker.com/registry/),
+if you specify the `--push` flag.
 
 ### Run
 
