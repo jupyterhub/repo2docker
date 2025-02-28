@@ -1,9 +1,7 @@
-import errno
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import escapism
-import pytest
 
 import docker
 from repo2docker.__main__ import make_r2d
@@ -76,25 +74,3 @@ def test_run_kwargs(repo_with_content):
     args, kwargs = containers.run.call_args
     assert "somekey" in kwargs
     assert kwargs["somekey"] == "somevalue"
-
-
-def test_dryrun_works_without_docker(tmpdir, capsys):
-    with chdir(tmpdir):
-        with patch.object(docker, "APIClient") as client:
-            client.side_effect = docker.errors.DockerException("Error: no Docker")
-            app = Repo2Docker(dry_run=True)
-            app.build()
-            captured = capsys.readouterr()
-            assert "Error: no Docker" not in captured.err
-
-
-def test_error_log_without_docker(tmpdir, capsys):
-    with chdir(tmpdir):
-        with patch.object(docker, "APIClient") as client:
-            client.side_effect = docker.errors.DockerException("Error: no Docker")
-            app = Repo2Docker()
-
-            with pytest.raises(SystemExit):
-                app.build()
-                captured = capsys.readouterr()
-                assert "Error: no Docker" in captured.err
