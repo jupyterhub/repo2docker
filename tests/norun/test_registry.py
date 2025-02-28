@@ -19,7 +19,9 @@ HERE = Path(__file__).parent
 def dind(registry, host_ip):
     port = get_free_port()
 
-    # Generate CA certs here so we can securely connect to the docker daemon
+    # docker daemon will generate certs here, that we can then use to connect to it.
+    # put it in current dir than in /tmp because on macos, current dir is likely to
+    # shared with docker VM so it can be mounted, unlike /tmp
     cert_dir = HERE / f"tmp-certs-{secrets.token_hex(8)}"
     cert_dir.mkdir()
 
