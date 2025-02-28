@@ -212,6 +212,8 @@ class ContainerEngine(LoggingConfigurable):
 
     def build(
         self,
+        push=False,
+        load=False,
         *,
         buildargs={},
         cache_from=[],
@@ -230,6 +232,10 @@ class ContainerEngine(LoggingConfigurable):
 
         Parameters
         ----------
+        push: bool
+            Push the resulting image to a registry
+        load: bool
+            Load the resulting image into the container store ready to be run
         buildargs : dict
             Dictionary of build arguments
         cache_from : list[str]

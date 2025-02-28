@@ -2,13 +2,14 @@
 Docker container engine for repo2docker
 """
 
+from argparse import ArgumentError
 import json
 import os
 import shutil
 import subprocess
 import tarfile
 import tempfile
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from pathlib import Path
 
 from iso8601 import parse_date
@@ -89,6 +90,8 @@ class DockerEngine(ContainerEngine):
 
     def build(
         self,
+        push=False,
+        load=False,
         *,
         buildargs=None,
         cache_from=None,
@@ -104,7 +107,15 @@ class DockerEngine(ContainerEngine):
     ):
         if not shutil.which("docker"):
             raise RuntimeError("The docker commandline client must be installed")
-        args = ["docker", "buildx", "build", "--progress", "plain", "--load"]
+        args = ["docker", "buildx", "build", "--progress", "plain"]
+        if load:
+            if push:
+                raise ValueError("Setting push=True and load=True is currently not supported")
+            args.append("--load")
+
+        if push:
+            args.append("--push")
+
         if buildargs:
             for k, v in buildargs.items():
                 args += ["--build-arg", f"{k}={v}"]
@@ -129,19 +140,22 @@ class DockerEngine(ContainerEngine):
         # place extra args right *before* the path
         args += self.extra_buildx_build_args
 
-        if fileobj:
-            with tempfile.TemporaryDirectory() as d:
-                tarf = tarfile.open(fileobj=fileobj)
-                tarf.extractall(d)
+        with ExitStack() as stack:
+            if self.registry_credentials:
+                stack.enter_context(self.docker_login(**self.registry_credentials))
+            if fileobj:
+                with tempfile.TemporaryDirectory() as d:
+                    tarf = tarfile.open(fileobj=fileobj)
+                    tarf.extractall(d)
 
-                args += [d]
+                    args += [d]
+
+                    yield from execute_cmd(args, True)
+            else:
+                # Assume 'path' is passed in
+                args += [path]
 
                 yield from execute_cmd(args, True)
-        else:
-            # Assume 'path' is passed in
-            args += [path]
-
-            yield from execute_cmd(args, True)
 
     def inspect_image(self, image):
         """
@@ -193,13 +207,6 @@ class DockerEngine(ContainerEngine):
                     os.environ["DOCKER_CONFIG"] = old_dc_path
                 else:
                     del os.environ["DOCKER_CONFIG"]
-
-    def push(self, image_spec):
-        if self.registry_credentials:
-            with self.docker_login(**self.registry_credentials):
-                yield from execute_cmd(["docker", "push", image_spec], capture=True)
-        else:
-            yield from execute_cmd(["docker", "push", image_spec], capture=True)
 
     def run(
         self,
