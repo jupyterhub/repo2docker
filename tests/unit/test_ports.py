@@ -11,7 +11,6 @@ from getpass import getuser
 import pytest
 import requests
 
-import docker
 from repo2docker.__main__ import make_r2d
 from repo2docker.app import Repo2Docker
 
@@ -69,10 +68,7 @@ def read_port_mapping_response(
         container.reload()
         if container.status == "running":
             container.kill()
-        try:
             container.remove()
-        except docker.errors.NotFound:
-            pass
 
     request.addfinalizer(_cleanup)
 

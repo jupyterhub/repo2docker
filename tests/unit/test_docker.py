@@ -2,9 +2,6 @@
 
 import os
 from subprocess import check_output
-from unittest.mock import Mock, patch
-
-from repo2docker.docker import DockerEngine
 
 repo_root = os.path.abspath(
     os.path.join(os.path.dirname(__file__), os.pardir, os.pardir)

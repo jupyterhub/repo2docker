@@ -2,6 +2,7 @@
 Docker container engine for repo2docker
 """
 
+import json
 import os
 import shutil
 import subprocess
@@ -13,9 +14,7 @@ from pathlib import Path
 from iso8601 import parse_date
 from traitlets import Dict, List, Unicode
 
-import docker
-
-from .engine import Container, ContainerEngine, ContainerEngineException, Image
+from .engine import Container, ContainerEngine, Image
 from .utils import execute_cmd
 
 
@@ -86,16 +85,6 @@ class DockerEngine(ContainerEngine):
         config=True,
     )
 
-    def __init__(self, *, parent):
-        super().__init__(parent=parent)
-        try:
-            kwargs = docker.utils.kwargs_from_env()
-            kwargs.update(self.extra_init_args)
-            kwargs.setdefault("version", "auto")
-            self._apiclient = docker.APIClient(**kwargs)
-        except docker.errors.DockerException as e:
-            raise ContainerEngineException("Check if docker is running on the host.", e)
-
     def build(
         self,
         *,
@@ -152,13 +141,20 @@ class DockerEngine(ContainerEngine):
 
             yield from execute_cmd(args, True)
 
-    def images(self):
-        images = self._apiclient.images()
-        return [Image(tags=image["RepoTags"]) for image in images]
 
     def inspect_image(self, image):
-        image = self._apiclient.inspect_image(image)
-        return Image(tags=image["RepoTags"], config=image["Config"])
+        """
+        Return image configuration if it exists, otherwise None
+        """
+        proc = subprocess.run([
+            "docker", "image", "inspect", image
+        ], capture_output=True)
+
+        if proc.returncode != 0:
+            return None
+
+        config = json.loads(proc.stdout.decode())
+        return Image(tags=config["RepoTags"], config=config["Config"])
 
     @contextmanager
     def docker_login(self, username, password, registry):

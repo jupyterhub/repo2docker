@@ -1,4 +1,5 @@
 import os
+import shutil
 import secrets
 import socket
 import subprocess
@@ -17,18 +18,21 @@ HERE = Path(__file__).parent
 @pytest.fixture(scope="session")
 def dind(registry, host_ip):
     port = get_free_port()
+
+    # Generate CA certs here so we can securely connect to the docker daemon
+    cert_dir = HERE / f"tmp-certs-{secrets.token_hex(8)}"
+    cert_dir.mkdir()
+
     dind_image = "docker:dind"
     subprocess.check_call(["docker", "pull", dind_image])
-    # This is insecure, because I'm disabling all kinds of authentication on the docker daemon.
-    # FIXME: Use TLS verification.
-    # but also docker this is your own fucking fault for making technical choices that force dockerhub
-    # to be the primary registry, so your registry handling sucks and forces these kinds of difficulties.
+
     cmd = [
         "docker",
         "run",
         "-e",
-        "DOCKER_TLS_CERTDIR=",
+        "DOCKER_TLS_CERTDIR=/opt/certs",
         "--privileged",
+        "--mount", f"type=bind,src={cert_dir},dst=/opt/certs",
         "-p",
         f"{port}:2376",
         dind_image,
@@ -36,14 +40,14 @@ def dind(registry, host_ip):
         "0.0.0.0:2376",
         "--insecure-registry",
         registry,
-        "--tls=false",
     ]
     proc = subprocess.Popen(cmd)
     time.sleep(5)
 
     try:
-        yield f"tcp://{host_ip}:{port}"
+        yield f"tcp://127.0.0.1:{port}", cert_dir
     finally:
+        shutil.rmtree(cert_dir)
         proc.terminate()
         proc.wait()
 
@@ -100,7 +104,10 @@ def test_registry(registry, dind):
     image_name = f"{registry}/{secrets.token_hex(8)}:latest"
     r2d = make_r2d(["--image", image_name, "--push", "--no-run", str(HERE)])
 
-    os.environ["DOCKER_HOST"] = dind
+    docker_host, cert_dir = dind
+    os.environ["DOCKER_HOST"] = docker_host
+    os.environ["DOCKER_CERT_PATH"] = str(cert_dir / "client")
+    os.environ["DOCKER_TLS_VERIFY"] = "1"
     r2d.start()
 
     proc = subprocess.run(["docker", "manifest", "inspect", "--insecure", image_name])

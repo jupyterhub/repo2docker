@@ -254,19 +254,9 @@ class ContainerEngine(LoggingConfigurable):
         """
         raise NotImplementedError("build not implemented")
 
-    def images(self):
-        """
-        List images
-
-        Returns
-        -------
-        list[Image] : List of Image objects.
-        """
-        raise NotImplementedError("images not implemented")
-
     def inspect_image(self, image):
         """
-        Get information about an image
+        Get information about an image, or None if the image does not exist
 
         TODO: This is specific to the engine, can we convert it to a standard format?
 

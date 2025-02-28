@@ -50,7 +50,6 @@ setup(
     version=versioneer.get_version(),
     install_requires=[
         "chardet",
-        "docker!=5.0.0",
         "entrypoints",
         "escapism",
         "iso8601",

@@ -3,8 +3,6 @@
 
 import os
 
-import docker
-
 from .base import BuildPack
 
 

@@ -750,12 +750,8 @@ class Repo2Docker(Application):
         if self.dry_run:
             return False
         # check if we already have an image for this content
-        client = self.get_engine()
-        for image in client.images():
-            for tag in image.tags:
-                if tag == self.output_image_spec + ":latest":
-                    return True
-        return False
+        engine = self.get_engine()
+        return engine.inspect_image(self.output_image_spec) is not None
 
     def build(self):
         """
