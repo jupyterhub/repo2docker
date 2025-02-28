@@ -6,7 +6,7 @@ import json
 import os
 from abc import ABC, abstractmethod
 
-from traitlets import Dict, default
+from traitlets import Dict, TraitError, default, validate
 from traitlets.config import LoggingConfigurable
 
 # Based on https://docker-py.readthedocs.io/en/4.2.0/containers.html
@@ -175,6 +175,15 @@ class ContainerEngine(LoggingConfigurable):
                 )
                 raise
         return {}
+
+    @validate("registry_credentials")
+    def _registry_credentials_validate(self, proposal):
+        """
+        Validate form of registry credentials
+        """
+        new = proposal["value"]
+        if len({"registry", "username", "password"} & new.keys()) != 3:
+            raise TraitError("registry_credentials must have keys 'registry', 'username' and 'password'")
 
     string_output = True
     """
