@@ -2,13 +2,13 @@
 Docker container engine for repo2docker
 """
 
-from argparse import ArgumentError
 import json
 import os
 import shutil
 import subprocess
 import tarfile
 import tempfile
+from argparse import ArgumentError
 from contextlib import ExitStack, contextmanager
 from pathlib import Path
 
@@ -110,7 +110,9 @@ class DockerEngine(ContainerEngine):
         args = ["docker", "buildx", "build", "--progress", "plain"]
         if load:
             if push:
-                raise ValueError("Setting push=True and load=True is currently not supported")
+                raise ValueError(
+                    "Setting push=True and load=True is currently not supported"
+                )
             args.append("--load")
 
         if push:

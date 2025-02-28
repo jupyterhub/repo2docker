@@ -572,7 +572,6 @@ class Repo2Docker(Application):
         if self.volumes and not self.run:
             raise ValueError("Cannot mount volumes if container is not run")
 
-
     def run_image(self):
         """Run docker container from built image
 
