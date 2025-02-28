@@ -112,10 +112,17 @@ def test_registry(registry, dind):
     r2d = make_r2d(["--image", image_name, "--push", "--no-run", str(HERE)])
 
     docker_host, cert_dir = dind
-    os.environ["DOCKER_HOST"] = docker_host
-    os.environ["DOCKER_CERT_PATH"] = str(cert_dir / "client")
-    os.environ["DOCKER_TLS_VERIFY"] = "1"
-    r2d.start()
 
-    proc = subprocess.run(["docker", "manifest", "inspect", "--insecure", image_name])
-    assert proc.returncode == 0
+    old_environ = os.environ.copy()
+
+    try:
+        os.environ["DOCKER_HOST"] = docker_host
+        os.environ["DOCKER_CERT_PATH"] = str(cert_dir / "client")
+        os.environ["DOCKER_TLS_VERIFY"] = "1"
+        r2d.start()
+
+        proc = subprocess.run(["docker", "manifest", "inspect", "--insecure", image_name])
+        assert proc.returncode == 0
+    finally:
+        os.environ.clear()
+        os.environ.update(old_environ)
