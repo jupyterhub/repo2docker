@@ -2,16 +2,22 @@
 Docker container engine for repo2docker
 """
 
+import json
+import os
 import shutil
+import subprocess
 import tarfile
 import tempfile
+from argparse import ArgumentError
+from contextlib import ExitStack, contextmanager
+from pathlib import Path
 
 from iso8601 import parse_date
 from traitlets import Dict, List, Unicode
 
 import docker
 
-from .engine import Container, ContainerEngine, ContainerEngineException, Image
+from .engine import Container, ContainerEngine, Image
 from .utils import execute_cmd
 
 
@@ -58,7 +64,7 @@ class DockerEngine(ContainerEngine):
     https://docker-py.readthedocs.io/en/4.2.0/api.html#module-docker.api.build
     """
 
-    string_output = False
+    string_output = True
 
     extra_init_args = Dict(
         {},
@@ -82,19 +88,11 @@ class DockerEngine(ContainerEngine):
         config=True,
     )
 
-    def __init__(self, *, parent):
-        super().__init__(parent=parent)
-        try:
-            kwargs = docker.utils.kwargs_from_env()
-            kwargs.update(self.extra_init_args)
-            kwargs.setdefault("version", "auto")
-            self._apiclient = docker.APIClient(**kwargs)
-        except docker.errors.DockerException as e:
-            raise ContainerEngineException("Check if docker is running on the host.", e)
-
     def build(
         self,
         *,
+        push=False,
+        load=False,
         buildargs=None,
         cache_from=None,
         container_limits=None,
@@ -109,7 +107,17 @@ class DockerEngine(ContainerEngine):
     ):
         if not shutil.which("docker"):
             raise RuntimeError("The docker commandline client must be installed")
-        args = ["docker", "buildx", "build", "--progress", "plain", "--load"]
+        args = ["docker", "buildx", "build", "--progress", "plain"]
+        if load:
+            if push:
+                raise ValueError(
+                    "Setting push=True and load=True is currently not supported"
+                )
+            args.append("--load")
+
+        if push:
+            args.append("--push")
+
         if buildargs:
             for k, v in buildargs.items():
                 args += ["--build-arg", f"{k}={v}"]
@@ -134,38 +142,73 @@ class DockerEngine(ContainerEngine):
         # place extra args right *before* the path
         args += self.extra_buildx_build_args
 
-        if fileobj:
-            with tempfile.TemporaryDirectory() as d:
-                tarf = tarfile.open(fileobj=fileobj)
-                tarf.extractall(d)
+        with ExitStack() as stack:
+            if self.registry_credentials:
+                stack.enter_context(self.docker_login(**self.registry_credentials))
+            if fileobj:
+                with tempfile.TemporaryDirectory() as d:
+                    tarf = tarfile.open(fileobj=fileobj)
+                    tarf.extractall(d)
 
-                args += [d]
+                    args += [d]
 
-                for line in execute_cmd(args, True):
-                    # Simulate structured JSON output from buildx build, since we
-                    # do get structured json output from pushing and running
-                    yield {"stream": line}
-        else:
-            # Assume 'path' is passed in
-            args += [path]
+                    yield from execute_cmd(args, True)
+            else:
+                # Assume 'path' is passed in
+                args += [path]
 
-            for line in execute_cmd(args, True):
-                # Simulate structured JSON output from buildx build, since we
-                # do get structured json output from pushing and running
-                yield {"stream": line}
-
-    def images(self):
-        images = self._apiclient.images()
-        return [Image(tags=image["RepoTags"]) for image in images]
+                yield from execute_cmd(args, True)
 
     def inspect_image(self, image):
-        image = self._apiclient.inspect_image(image)
-        return Image(tags=image["RepoTags"], config=image["Config"])
+        """
+        Return image configuration if it exists, otherwise None
+        """
+        proc = subprocess.run(
+            ["docker", "image", "inspect", image], capture_output=True
+        )
 
-    def push(self, image_spec):
-        if self.registry_credentials:
-            self._apiclient.login(**self.registry_credentials)
-        return self._apiclient.push(image_spec, stream=True)
+        if proc.returncode != 0:
+            return None
+
+        config = json.loads(proc.stdout.decode())[0]
+        return Image(tags=config["RepoTags"], config=config["Config"])
+
+    @contextmanager
+    def docker_login(self, username, password, registry):
+        # Determine existing DOCKER_CONFIG
+        old_dc_path = os.environ.get("DOCKER_CONFIG")
+        if old_dc_path is None:
+            dc_path = Path("~/.docker/config.json").expanduser()
+        else:
+            dc_path = Path(old_dc_path)
+
+        with tempfile.TemporaryDirectory() as d:
+            new_dc_path = Path(d) / "config.json"
+            if dc_path.exists():
+                # If there is an existing DOCKER_CONFIG, copy it to new location so we inherit
+                # whatever configuration the user has already set
+                shutil.copy2(dc_path, new_dc_path)
+
+            os.environ["DOCKER_CONFIG"] = d
+            try:
+                subprocess.run(
+                    [
+                        "docker",
+                        "login",
+                        "--username",
+                        username,
+                        "--password-stdin",
+                        registry,
+                    ],
+                    input=password.encode(),
+                    check=True,
+                )
+                yield
+            finally:
+                if old_dc_path:
+                    os.environ["DOCKER_CONFIG"] = old_dc_path
+                else:
+                    del os.environ["DOCKER_CONFIG"]
 
     def run(
         self,

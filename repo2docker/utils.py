@@ -1,6 +1,7 @@
 import os
 import platform
 import re
+import socket
 import subprocess
 import warnings
 from contextlib import contextmanager
@@ -545,3 +546,14 @@ def get_platform():
     else:
         warnings.warn(f"Unexpected platform '{m}', defaulting to linux/amd64")
         return "linux/amd64"
+
+
+def get_free_port():
+    """
+    Hacky method to get a free random port on local host
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(("", 0))
+    port = s.getsockname()[1]
+    s.close()
+    return port

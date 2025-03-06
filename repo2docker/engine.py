@@ -6,7 +6,7 @@ import json
 import os
 from abc import ABC, abstractmethod
 
-from traitlets import Dict, default
+from traitlets import Dict, TraitError, default, validate
 from traitlets.config import LoggingConfigurable
 
 # Based on https://docker-py.readthedocs.io/en/4.2.0/containers.html
@@ -176,6 +176,17 @@ class ContainerEngine(LoggingConfigurable):
                 raise
         return {}
 
+    @validate("registry_credentials")
+    def _registry_credentials_validate(self, proposal):
+        """
+        Validate form of registry credentials
+        """
+        new = proposal["value"]
+        if len({"registry", "username", "password"} & new.keys()) != 3:
+            raise TraitError(
+                "registry_credentials must have keys 'registry', 'username' and 'password'"
+            )
+
     string_output = True
     """
     Whether progress events should be strings or an object.
@@ -202,6 +213,8 @@ class ContainerEngine(LoggingConfigurable):
     def build(
         self,
         *,
+        push=False,
+        load=False,
         buildargs={},
         cache_from=[],
         container_limits={},
@@ -219,6 +232,10 @@ class ContainerEngine(LoggingConfigurable):
 
         Parameters
         ----------
+        push: bool
+            Push the resulting image to a registry
+        load: bool
+            Load the resulting image into the container store ready to be run
         buildargs : dict
             Dictionary of build arguments
         cache_from : list[str]
@@ -254,19 +271,9 @@ class ContainerEngine(LoggingConfigurable):
         """
         raise NotImplementedError("build not implemented")
 
-    def images(self):
-        """
-        List images
-
-        Returns
-        -------
-        list[Image] : List of Image objects.
-        """
-        raise NotImplementedError("images not implemented")
-
     def inspect_image(self, image):
         """
-        Get information about an image
+        Get information about an image, or None if the image does not exist
 
         TODO: This is specific to the engine, can we convert it to a standard format?
 
@@ -280,27 +287,6 @@ class ContainerEngine(LoggingConfigurable):
         Image object with .config dict.
         """
         raise NotImplementedError("inspect_image not implemented")
-
-    def push(self, image_spec):
-        """
-        Push image to a registry
-
-        If the registry_credentials traitlets is set it should be used to
-        authenticate with the registry before pushing.
-
-        Parameters
-        ----------
-        image_spec : str
-            The repository spec to push to
-
-        Returns
-        -------
-        A generator of strings. If an error occurs an exception must be thrown.
-
-        If `string_output=True` this should instead be whatever Docker returns:
-        https://github.com/jupyter/repo2docker/blob/0.11.0/repo2docker/app.py#L469-L495
-        """
-        raise NotImplementedError("push not implemented")
 
     # Note this is different from the Docker client which has Client.containers.run
     def run(

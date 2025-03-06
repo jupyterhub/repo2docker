@@ -40,6 +40,7 @@ env:
   GIT_AUTHOR_EMAIL: ci-user@github.local
   GIT_AUTHOR_NAME: CI User
 
+
 jobs:
   test:
     # Don't run scheduled tests on forks
@@ -64,6 +65,7 @@ jobs:
           - unit
           - venv
           - contentproviders
+          - norun
           # Playwright test
           - ui
         include:
@@ -74,6 +76,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "${{ matrix.python_version }}"
