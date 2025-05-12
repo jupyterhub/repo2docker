@@ -1,4 +1,4 @@
-set -ex
+set -e
 
 # Setup conda
 CONDA_PROFILE="${CONDA_DIR}/etc/profile.d/conda.sh"
@@ -35,4 +35,4 @@ else
     mamba activate ${NB_PYTHON_PREFIX}
 fi
 
-set +ex
+set +e
