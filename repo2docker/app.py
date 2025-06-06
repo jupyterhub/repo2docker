@@ -459,7 +459,7 @@ class Repo2Docker(Application):
     )
 
     base_image = Unicode(
-        "docker.io/library/buildpack-deps:jammy",
+        "docker.io/library/buildpack-deps:24.04",
         config=True,
         help="""
         Base image to use when building docker images.
