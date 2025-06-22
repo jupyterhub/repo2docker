@@ -57,10 +57,9 @@ def test_unsupported_python(tmpdir, python_version, base_image):
     "runtime_txt, expected",
     [
         (None, (None, None, None)),
-        ("", (None, None, None)),
-        ("abc", ("abc", None, None)),
         ("abc-001", ("abc", "001", None)),
         ("abc-001-2025-06-22", ("abc", "001", date(2025, 6, 22))),
+        ("abc-2025-06-22", ("abc", None, date(2025, 6, 22))),
         ("a_b/c-0.0.1-2025-06-22", ("a_b/c", "0.0.1", date(2025, 6, 22))),
     ],
 )
@@ -73,3 +72,24 @@ def test_runtime(tmpdir, runtime_txt, expected, base_image):
 
     base = BaseImage(base_image)
     assert base.runtime == expected
+
+
+@pytest.mark.parametrize(
+    "runtime_txt",
+    [
+        "",
+        "abc",
+        "abc-001-25-06-22",
+    ],
+)
+def test_invalid_runtime(tmpdir, runtime_txt, base_image):
+    tmpdir.chdir()
+
+    if runtime_txt is not None:
+        with open("runtime.txt", "w") as f:
+            f.write(runtime_txt)
+
+    base = BaseImage(base_image)
+
+    with pytest.raises(ValueError, match=r"^Invalid runtime.txt.*"):
+        base.runtime

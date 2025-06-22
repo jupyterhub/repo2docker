@@ -759,6 +759,11 @@ class BaseImage(BuildPack):
 
         Returns (runtime, version, date), tuple components may be None.
         Returns (None, None, None) if runtime.txt not found.
+
+        Supported formats:
+          name-version
+          name-version-yyyy-mm-dd
+          name-yyyy-mm-dd
         """
         if hasattr(self, "_runtime"):
             return self._runtime
@@ -776,15 +781,19 @@ class BaseImage(BuildPack):
         version = None
         date = None
 
-        parts = runtime_txt.split("-", 2)
-        if len(parts) > 0 and parts[0]:
-            name = parts[0]
-        if len(parts) > 1 and parts[1]:
+        parts = runtime_txt.split("-")
+        if len(parts) not in (2, 4, 5) or any(not (p) for p in parts):
+            raise ValueError(f"Invalid runtime.txt: {runtime_txt}")
+
+        name = parts[0]
+
+        if len(parts) in (2, 5):
             version = parts[1]
-        if len(parts) > 2 and parts[2]:
-            date = parts[2]
+
+        if len(parts) in (4, 5):
+            date = "-".join(parts[-3:])
             if not re.match(r"\d\d\d\d-\d\d-\d\d", date):
-                raise ValueError(f"Invalid date, expected YYYY-MM-DD: {date}")
+                raise ValueError(f"Invalid runtime.txt date: {date}")
             date = datetime.datetime.fromisoformat(date).date()
 
         self._runtime = (name, version, date)
