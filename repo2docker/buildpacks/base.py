@@ -753,7 +753,7 @@ class BaseImage(BuildPack):
         return None
 
     @property
-    def runtime_info(self):
+    def runtime(self):
         """
         Return parsed contents of runtime.txt
 
@@ -772,13 +772,13 @@ class BaseImage(BuildPack):
         except FileNotFoundError:
             return self._runtime
 
-        runtime = None
+        name = None
         version = None
         date = None
 
         parts = runtime_txt.split("-", 2)
         if len(parts) > 0 and parts[0]:
-            runtime = parts[0]
+            name = parts[0]
         if len(parts) > 1 and parts[1]:
             version = parts[1]
         if len(parts) > 2 and parts[2]:
@@ -787,5 +787,5 @@ class BaseImage(BuildPack):
                 raise ValueError(f"Invalid date, expected YYYY-MM-DD: {date}")
             date = datetime.datetime.fromisoformat(date).date()
 
-        self._runtime = (runtime, version, date)
+        self._runtime = (name, version, date)
         return self._runtime

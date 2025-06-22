@@ -46,28 +46,6 @@ class RBuildPack(PythonBuildPack):
     """
 
     @property
-    def runtime(self):
-        """
-        Return contents of runtime.txt if it exists, '' otherwise
-
-        Deprecated, use `runtime_info` instead.
-        """
-        warnings.warn(
-            "`{self.__class__.__name__}.runtime` is deprecated. Use `runtime_info` instead",
-            DeprecationWarning,
-        )
-
-        if not hasattr(self, "_runtime"):
-            runtime_path = self.binder_path("runtime.txt")
-            try:
-                with open(runtime_path) as f:
-                    self._runtime = f.read().strip()
-            except FileNotFoundError:
-                self._runtime = ""
-
-        return self._runtime
-
-    @property
     def r_version(self):
         """Detect the R version for a given `runtime.txt`
 
@@ -97,7 +75,7 @@ class RBuildPack(PythonBuildPack):
         r_version = version_map["4.2"]
 
         if not hasattr(self, "_r_version"):
-            runtime, version, date = self.runtime_info
+            _, version, date = self.runtime
             # If runtime.txt is not set, or if it isn't of the form r-<version>-<yyyy>-<mm>-<dd>,
             # we don't use any of it in determining r version and just use the default
             if version and date:
@@ -123,8 +101,8 @@ class RBuildPack(PythonBuildPack):
         Returns '' if no date is specified
         """
         if not hasattr(self, "_checkpoint_date"):
-            runtime, version, date = self.runtime_info
-            if runtime == "r" and date:
+            name, version, date = self.runtime
+            if name == "r" and date:
                 self._checkpoint_date = date
             else:
                 self._checkpoint_date = False

@@ -64,7 +64,7 @@ def test_unsupported_python(tmpdir, python_version, base_image):
         ("a_b/c-0.0.1-2025-06-22", ("a_b/c", "0.0.1", date(2025, 6, 22))),
     ],
 )
-def test_runtime_txt(tmpdir, runtime_txt, expected, base_image):
+def test_runtime(tmpdir, runtime_txt, expected, base_image):
     tmpdir.chdir()
 
     if runtime_txt is not None:
@@ -72,4 +72,4 @@ def test_runtime_txt(tmpdir, runtime_txt, expected, base_image):
             f.write(runtime_txt)
 
     base = BaseImage(base_image)
-    assert base.runtime_info == expected
+    assert base.runtime == expected

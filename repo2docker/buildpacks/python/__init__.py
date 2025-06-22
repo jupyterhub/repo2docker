@@ -15,9 +15,9 @@ class PythonBuildPack(CondaBuildPack):
         if hasattr(self, "_python_version"):
             return self._python_version
 
-        runtime, version, _ = self.runtime_info
+        name, version, _ = self.runtime
 
-        if runtime != "python" or not version:
+        if name != "python" or not version:
             # Either not specified, or not a Python runtime (e.g. R, which subclasses this)
             # use the default Python
             self._python_version = self.major_pythons["3"]
@@ -136,8 +136,9 @@ class PythonBuildPack(CondaBuildPack):
         requirements_txt = self.binder_path("requirements.txt")
         setup_py = "setup.py"
 
-        if self.runtime_info[0]:
-            return self.runtime_info[0] == "python"
+        name = self.runtime[0]
+        if name:
+            return name == "python"
         if not self.binder_dir and os.path.exists(setup_py):
             return True
         return os.path.exists(requirements_txt)
