@@ -187,12 +187,9 @@ class PipfileBuildPack(CondaBuildPack):
     def detect(self):
         """Check if current repo should be built with the Pipfile buildpack."""
         # first make sure python is not explicitly unwanted
-        runtime_txt = self.binder_path("runtime.txt")
-        if os.path.exists(runtime_txt):
-            with open(runtime_txt) as f:
-                runtime = f.read().strip()
-            if not runtime.startswith("python-"):
-                return False
+        runtime = self.runtime_info[0]
+        if runtime and runtime != "python":
+            return False
 
         pipfile = self.binder_path("Pipfile")
         pipfile_lock = self.binder_path("Pipfile.lock")

@@ -1,6 +1,6 @@
 import datetime
 import os
-import re
+import warnings
 from functools import lru_cache
 
 import requests
@@ -49,7 +49,14 @@ class RBuildPack(PythonBuildPack):
     def runtime(self):
         """
         Return contents of runtime.txt if it exists, '' otherwise
+
+        Deprecated, use `runtime_info` instead.
         """
+        warnings.warn(
+            "`{self.__class__.__name__}.runtime` is deprecated. Use `runtime_info` instead",
+            DeprecationWarning,
+        )
+
         if not hasattr(self, "_runtime"):
             runtime_path = self.binder_path("runtime.txt")
             try:
@@ -90,11 +97,11 @@ class RBuildPack(PythonBuildPack):
         r_version = version_map["4.2"]
 
         if not hasattr(self, "_r_version"):
-            parts = self.runtime.split("-")
+            runtime, version, date = self.runtime_info
             # If runtime.txt is not set, or if it isn't of the form r-<version>-<yyyy>-<mm>-<dd>,
             # we don't use any of it in determining r version and just use the default
-            if len(parts) == 5:
-                r_version = parts[1]
+            if version and date:
+                r_version = version
                 # For versions of form x.y, we want to explicitly provide x.y.z - latest patchlevel
                 # available. Users can however explicitly specify the full version to get something specific
                 if r_version in version_map:
@@ -116,15 +123,11 @@ class RBuildPack(PythonBuildPack):
         Returns '' if no date is specified
         """
         if not hasattr(self, "_checkpoint_date"):
-            match = re.match(r"r-(\d.\d(.\d)?-)?(\d\d\d\d)-(\d\d)-(\d\d)", self.runtime)
-            if not match:
-                self._checkpoint_date = False
+            runtime, version, date = self.runtime_info
+            if runtime == "r" and date:
+                self._checkpoint_date = date
             else:
-                # turn the last three groups of the match into a date
-                self._checkpoint_date = datetime.date(
-                    *[int(s) for s in match.groups()[-3:]]
-                )
-
+                self._checkpoint_date = False
         return self._checkpoint_date
 
     def detect(self):
@@ -142,13 +145,9 @@ class RBuildPack(PythonBuildPack):
 
         description_R = "DESCRIPTION"
         if not self.binder_dir and os.path.exists(description_R):
-            if not self.checkpoint_date:
-                # no R snapshot date set through runtime.txt
-                # Set it to two days ago from today
-                self._checkpoint_date = datetime.date.today() - datetime.timedelta(
-                    days=2
-                )
-                self._runtime = f"r-{str(self._checkpoint_date)}"
+            # no R snapshot date set through runtime.txt
+            # Set it to two days ago from today
+            self._checkpoint_date = datetime.date.today() - datetime.timedelta(days=2)
             return True
 
     @lru_cache

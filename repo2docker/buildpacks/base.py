@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import io
 import logging
@@ -750,3 +751,41 @@ class BaseImage(BuildPack):
             # the only path evaluated at container start time rather than build time
             return os.path.join("${REPO_DIR}", start)
         return None
+
+    @property
+    def runtime_info(self):
+        """
+        Return parsed contents of runtime.txt
+
+        Returns (runtime, version, date), tuple components may be None.
+        Returns (None, None, None) if runtime.txt not found.
+        """
+        if hasattr(self, "_runtime"):
+            return self._runtime
+
+        self._runtime = (None, None, None)
+
+        runtime_path = self.binder_path("runtime.txt")
+        try:
+            with open(runtime_path) as f:
+                runtime_txt = f.read().strip()
+        except FileNotFoundError:
+            return self._runtime
+
+        runtime = None
+        version = None
+        date = None
+
+        parts = runtime_txt.split("-", 2)
+        if len(parts) > 0 and parts[0]:
+            runtime = parts[0]
+        if len(parts) > 1 and parts[1]:
+            version = parts[1]
+        if len(parts) > 2 and parts[2]:
+            date = parts[2]
+            if not re.match(r"\d\d\d\d-\d\d-\d\d", date):
+                raise ValueError(f"Invalid date, expected YYYY-MM-DD: {date}")
+            date = datetime.datetime.fromisoformat(date).date()
+
+        self._runtime = (runtime, version, date)
+        return self._runtime
