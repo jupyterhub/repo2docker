@@ -10,7 +10,7 @@ and the resulting actions that repo2docker takes is known
 as the **Reproducible Execution Environment Specification** (or REES).
 
 The goal of the REES is to automate and encourage existing community best practices
-for reproducible computational environments. This includes installing pacakges using
+for reproducible computational environments. This includes installing packages using
 community-standard specification files and their corresponding tools,
 such as ``requirements.txt`` (with ``pip``), ``Project.toml`` (with Julia), or
 ``apt.txt`` (with ``apt``). While repo2docker automates the
