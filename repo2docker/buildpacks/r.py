@@ -358,8 +358,8 @@ class RBuildPack(PythonBuildPack):
                 # Install a pinned version of devtools, IRKernel and shiny
                 rf"""
                 export EXPANDED_CRAN_MIRROR_URL="$(. /etc/os-release && echo {cran_mirror_url} | envsubst)" && \
-                R --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos=Sys.getenv(\"EXPANDED_CRAN_MIRROR_URL\"))" && \
-                R --quiet -e "IRkernel::installspec(prefix=Sys.getenv(\"NB_PYTHON_PREFIX\"))"
+                R --vanilla --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos=Sys.getenv(\"EXPANDED_CRAN_MIRROR_URL\"))" && \
+                R --vanilla --quiet -e "IRkernel::installspec(prefix=Sys.getenv(\"NB_PYTHON_PREFIX\"))"
                 """,
             ),
         ]
@@ -395,7 +395,7 @@ class RBuildPack(PythonBuildPack):
                     "${NB_USER}",
                     # Delete /tmp/downloaded_packages only if install.R fails, as the second
                     # invocation of install.R might be able to reuse them
-                    f"Rscript {installR_path} && touch /tmp/.preassembled || true && rm -rf /tmp/downloaded_packages",
+                    f"Rscript --vanilla {installR_path} && touch /tmp/.preassembled || true && rm -rf /tmp/downloaded_packages",
                 )
             ]
 
@@ -413,14 +413,17 @@ class RBuildPack(PythonBuildPack):
                     "${NB_USER}",
                     # only run install.R if the pre-assembly failed
                     # Delete any downloaded packages in /tmp, as they aren't reused by R
-                    f"""if [ ! -f /tmp/.preassembled ]; then Rscript {installR_path}; rm -rf /tmp/downloaded_packages; fi""",
+                    f"""if [ ! -f /tmp/.preassembled ]; then Rscript --vanilla {installR_path}; rm -rf /tmp/downloaded_packages; fi""",
                 )
             ]
 
         description_R = "DESCRIPTION"
         if not self.binder_dir and os.path.exists(description_R):
             assemble_scripts += [
-                ("${NB_USER}", 'R --quiet -e "devtools::install_local(getwd())"')
+                (
+                    "${NB_USER}",
+                    'R --vanilla --quiet -e "devtools::install_local(getwd())"',
+                )
             ]
 
         return assemble_scripts
