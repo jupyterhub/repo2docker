@@ -420,7 +420,10 @@ class RBuildPack(PythonBuildPack):
         description_R = "DESCRIPTION"
         if not self.binder_dir and os.path.exists(description_R):
             assemble_scripts += [
-                ("${NB_USER}", 'R --vanilla --quiet -e "devtools::install_local(getwd())"')
+                (
+                    "${NB_USER}",
+                    'R --vanilla --quiet -e "devtools::install_local(getwd())"',
+                )
             ]
 
         return assemble_scripts
