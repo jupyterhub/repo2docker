@@ -1,6 +1,5 @@
 # System-wide configuration
 
-
 (apt-txt)=
 
 ## `apt.txt` - Install packages with apt-get
@@ -10,8 +9,6 @@ version of Ubuntu.
 
 We use `apt.txt`, for example, to install LaTeX in our
 [example apt.txt for LaTeX](https://github.com/binder-examples/latex/blob/HEAD/apt.txt).
-
-
 
 (runtime-txt)=
 

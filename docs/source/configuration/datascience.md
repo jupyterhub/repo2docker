@@ -1,6 +1,5 @@
 # Configuration for datascience workflows
 
-
 (environment-yml)=
 
 ## `environment.yml` - Install a conda environment
@@ -30,7 +29,6 @@ If you include a Python version in a `runtime.txt` file in addition to your
 `environment.yml`, your `runtime.txt` will be ignored.
 :::
 
-
 (require)=
 
 ## `REQUIRE` - Install a Julia environment (legacy)
@@ -46,8 +44,6 @@ This is used to install R libraries pinned to a specific snapshot on
 [Posit Package Manager](https://packagemanager.posit.co/).
 To set the date of the snapshot add a [runtime.txt].
 For an example `install.R` file, visit our [example install.R file](https://github.com/binder-examples/r/blob/HEAD/install.R).
-
-
 
 (description)=
 

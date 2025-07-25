@@ -74,7 +74,6 @@ Python itself releases a new version every year now, and repo2docker will follow
 If you choose not to specify a Python version, your repository is _guaranteed_ to stop working, eventually.
 We **strongly** recommend specifying a Python version (in environment.yml, runtime.txt, Pipfile, etc.)
 
-
 ## The R Language
 
 repo2docker supports R, the open source [RStudio IDE](https://www.rstudio.com/) as well
@@ -90,7 +89,7 @@ installed by default for all R versions.
 
 [packagemanager.posit.co](https://packagemanager.posit.co/client/#/)
 will be used to provide much faster installations via [binary packages](https://www.rstudio.com/blog/package-manager-v1-1-no-interruptions/).
-For *some* packages, this might require you install underlying system libraries
+For _some_ packages, this might require you install underlying system libraries
 using [apt.txt](#apt-txt) - look at the page for the CRAN package you are interested in at
 [packagemanager.posit.co](https://packagemanager.posit.co/client/#/) to find
 a list.
@@ -104,7 +103,6 @@ R you want to use by specifying it in the [runtime.txt](#runtime-txt)
 file.
 
 We support R versions 3.4, 3.5, 3.6, 4.0, 4.1 and 4.2.
-
 
 ## Julia
 
@@ -121,7 +119,6 @@ All Julia versions since Julia 1.3 are supported via a [Project.toml](project-to
 file, and this is the recommended way to install Julia environments.
 
 Julia < 1.3 and the older Julia REQUIRE file is no longer supported because required infrastructure has been removed.
-
 
 ## Languages not covered here
 

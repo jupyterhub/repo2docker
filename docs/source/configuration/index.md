@@ -20,7 +20,6 @@ Python and R installation in a repository.
 A list of supported configuration files (roughly in the order of build priority)
 can be found on this page (and to the right).
 
-
 ```{toctree}
 :maxdepth: 2
 ./datascience

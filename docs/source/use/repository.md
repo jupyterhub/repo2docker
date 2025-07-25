@@ -6,8 +6,8 @@
 
 `repo2docker` will look for configuration files in the following order:
 
-* The root directory of the repository.
-* A folder named `binder/` or `.binder/` in the root of the repository.
+- The root directory of the repository.
+- A folder named `binder/` or `.binder/` in the root of the repository.
 
   If one of these folders exists, only configuration files in that folder are considered, configuration in the root directory will be ignored.
   Having both `binder/` and `.binder/` folders is not allowed.
@@ -16,6 +16,7 @@ Check the complete list of [configuration files](#config-files) supported
 by `repo2docker` to see how to configure the build process.
 
 (repository-providers)=
+
 ## Supported repository providers
 
 repo2docker can fetch repositories from a number of repositories. Here are the ones we support:
@@ -34,7 +35,6 @@ In each case you can build from these repository sources like so:
 ```bash
 jupyter-repo2docker <URL-ID-or-path>
 ```
-
 
 ## Supported version control systems
 

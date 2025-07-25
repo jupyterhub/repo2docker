@@ -34,7 +34,6 @@ repository
 ../howto/breaking_changes
 ```
 
-
 ```{toctree}
 :maxdepth: 2
 :caption: Learn about repo2docker
