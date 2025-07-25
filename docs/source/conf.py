@@ -73,12 +73,20 @@ html_logo = "_static/images/logo.png"
 html_favicon = "_static/images/favicon.ico"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+html_sidebars = {
+    "changelog": [],
+    "start": [],
+}
 
 # pydata_sphinx_theme reference: https://pydata-sphinx-theme.readthedocs.io/en/latest/
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "use_edit_page_button": True,
     "github_url": "https://github.com/jupyterhub/repo2docker",
+    "logo": {
+        "image_dark": "_static/images/logo-dark.png",
+        "image_light": "_static/images/logo.png",
+    },
 }
 html_context = {
     "github_user": "jupyterhub",

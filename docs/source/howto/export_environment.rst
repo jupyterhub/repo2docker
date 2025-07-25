@@ -1,8 +1,8 @@
 .. _export-environment:
 
-=============================================================================
-How to automatically create a ``environment.yml`` that works with repo2docker
-=============================================================================
+============================================================================
+Export your environment to a ``environment.yml`` that works with repo2docker
+============================================================================
 
 This how-to explains how to create a ``environment.yml`` that specifies all
 installed packages and their precise versions from your environment.
