@@ -1,6 +1,6 @@
 # Use a community-maintained image in a JupyterHub
 
-The simplest way to deploy environment images to a JupyterHub or BinderHub is to *find and re-use a pre-existing image maintained by a community*. In this case, you won't have to maintain anything - you'll simply use a community's image and contribute upstream if you wish.
+The simplest way to deploy environment images to a JupyterHub or BinderHub is to _find and re-use a pre-existing image maintained by a community_. In this case, you won't have to maintain anything - you'll simply use a community's image and contribute upstream if you wish.
 
 Here are some steps to follow.
 

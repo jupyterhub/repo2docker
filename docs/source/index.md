@@ -6,7 +6,6 @@
 constructed image of the repository, or as a means of building images that
 are pushed to a Docker registry. It is the tool used by [BinderHub](https://binderhub.readthedocs.io) to build images on demand.
 
-
 ::::{grid}
 :::{grid-item-card} 🔧 Build reproducible data science environments from repositories
 Build a reproducible data science environment as a Docker image and execute code interactively. Use many [configuration files](#config-files) to control language, tools, and setup instructions.
