@@ -150,7 +150,7 @@ according to black's style guide. You can activate it with `pre-commit install`.
 As part of our continuous integration tests we will check that code is
 formatted properly and the tests will fail if this is not the case.
 
-### Verify that docker is installed and running
+### Verify that Docker is installed and running
 
 If you do not already have [Docker](https://www.docker.com/), you should be able
 to download and install it for your operating system using the links from the

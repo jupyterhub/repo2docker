@@ -8,8 +8,8 @@ Here are some steps to follow.
 
 Many communities define their own user envionment images for re-use. Here are a few to look into.
 
-1. [jupyter docker-stacks](https://jupyter-docker-stacks.readthedocs.io/) has a number of user images for general data science workflows.
-2. [pangeo docker-stacks](https://github.com/pangeo-data/pangeo-docker-images) has images for geospatial workflows in the cloud
+1. [jupyter Docker-stacks](https://jupyter-docker-stacks.readthedocs.io/) has a number of user images for general data science workflows.
+2. [pangeo Docker-stacks](https://github.com/pangeo-data/pangeo-docker-images) has images for geospatial workflows in the cloud
 3. [rocker](https://rocker-project.org/) has images meant for reproducibility with the R computing language.
 
 For example, the [Jupyter Docker Stacks images](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#core-stacks) define images for several core datascience workflows. Each one points to a **hosted version of the image** on an image repository (such as [quay.io](https://quay.io)).
@@ -18,7 +18,7 @@ For example, the [Jupyter Docker Stacks images](https://jupyter-docker-stacks.re
 
 Tags are a way to checkpoint an image so that you know exactly what is inside. They are similar to released versions of software. Tags will be listed in the image provider used by the community. For example:
 
-[Here's the list of tags for the `docker-stacks-foundation` image](https://quay.io/repository/jupyter/docker-stacks-foundation?tab=tags).
+[Here's the list of tags for the `Docker-stacks-foundation` image](https://quay.io/repository/jupyter/docker-stacks-foundation?tab=tags).
 
 :::{admonition} Don't use the `latest` tag
 :class: warning

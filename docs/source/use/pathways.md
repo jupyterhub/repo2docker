@@ -10,7 +10,7 @@ A decision tree for the recommended way to get your reproducible user environmen
 
 The simplest thing to do is check whether another community already maintains and offers an image that you can simply re-use. This reduces the burden on you to keep the image up-to-date, and gives you an opportunity to collaborate and make contributions rather than building something yourself from scratch.
 
-See [](./community-maintained.md) for a brief how-to on using a community maintained image.
+See [](./community-image.md) for a brief how-to on using a community maintained image.
 
 ::::{grid} 2
 :::{grid-item-card} Benefits

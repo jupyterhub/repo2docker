@@ -20,11 +20,11 @@ with explicit **versions** is all that is needed.
 In repo2docker, a Buildpack does the following things:
 
 1. **Detect** if it can handle a given repository
-2. **Build** a base language environment in the docker image
-3. **Copy** the contents of the repository into the docker image
-4. **Assemble** a specific environment in the docker image based on repository contents
-5. **Push** the built docker image to a specific docker registry (optional)
-6. **Run** the build docker image as a docker container (optional)
+2. **Build** a base language environment in the Docker image
+3. **Copy** the contents of the repository into the Docker image
+4. **Assemble** a specific environment in the Docker image based on repository contents
+5. **Push** the built Docker image to a specific Docker registry (optional)
+6. **Run** the build Docker image as a Docker container (optional)
 
 ### Detect
 
@@ -56,9 +56,9 @@ repositories built with the same buildpack.
 For example, in `CondaBuildPack`, the base environment consists of installing [miniconda](https://conda.io/miniconda.html)
 and basic notebook packages (from `repo2docker/buildpacks/conda/environment.yml`). This is going
 to be the same for most repositories built with `CondaBuildPack`, so we want to use
-[docker layer caching](https://thenewstack.io/understanding-the-docker-cache-for-faster-builds/) as
+[Docker layer caching](https://thenewstack.io/understanding-the-docker-cache-for-faster-builds/) as
 much as possible for performance reasons. Next time a repository is built with `CondaBuildPack`,
-we can skip straight to the **copy** step (since the base environment docker image _layers_ have
+we can skip straight to the **copy** step (since the base environment Docker image _layers_ have
 already been built and cached).
 
 The `get_build_scripts` and `get_build_script_files` methods are primarily used for this.
@@ -91,20 +91,20 @@ This usually means installing required libraries specified in a format native to
 
 Most of this work is done in `get_assemble_scripts` method. It can return arbitrary bash script
 lines that can be run as different users, and has access to the repository contents (unlike
-`get_build_scripts`). The docker image layers produced by this usually can not be cached,
+`get_build_scripts`). The Docker image layers produced by this usually can not be cached,
 so less restrictions apply to this than to `get_build_scripts`.
 
-At the end of the assemble step, the docker image is ready to be used in various ways!
+At the end of the assemble step, the Docker image is ready to be used in various ways!
 
 ### Push
 
-Optionally, repo2docker can **push** a built image to a [docker registry](https://docs.docker.com/registry/),
+Optionally, repo2docker can **push** a built image to a [Docker registry](https://docs.docker.com/registry/),
 if you specify the `--push` flag.
 
 ### Run
 
 Optionally, repo2docker can **run** the built image and allow the user to access the Jupyter Notebook
-running inside by default. This is also done as a convenience only (since you can do the same with `docker run`
+running inside by default. This is also done as a convenience only (since you can do the same with `Docker run`
 after using repo2docker only to build), and implemented in `Repo2Docker.run`. It is activated by default
 unless the `--no-run` commandline flag is passed.
 

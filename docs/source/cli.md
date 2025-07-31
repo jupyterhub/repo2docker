@@ -17,7 +17,7 @@ jupyter-repo2docker https://github.com/norvig/pytudes
 
 Building the image may take a few minutes.
 
-[Pytudes] uses a [requirements.txt file](https://github.com/norvig/pytudes/blob/HEAD/requirements.txt) to specify its Python environment. Because of this, `repo2docker` will use `pip` to install dependencies listed in this `requirement.txt` file, and these will be present in the generated Docker image. To learn more about configuration files in `repo2docker` visit [](#config-files).
+[Pytudes] uses a [`requirements.txt` file](https://github.com/norvig/pytudes/blob/HEAD/requirements.txt) to specify its Python environment. Because of this, `repo2docker` will use `pip` to install dependencies listed in this `requirement.txt` file, and these will be present in the generated Docker image. To learn more about configuration files in `repo2docker` visit [](#config-files).
 
 When the image is built, a message will be output to your terminal:
 
@@ -32,7 +32,7 @@ dependencies and contents of the source repository in the built image.
 
 ## Debug repo2docker with `--debug` and `--no-build`
 
-To debug the docker image being built, pass the `--debug` parameter:
+To debug the container image being built, pass the `--debug` parameter:
 
 > ```bash
 > jupyter-repo2docker --debug https://github.com/norvig/pytudes
@@ -40,10 +40,8 @@ To debug the docker image being built, pass the `--debug` parameter:
 
 This will print the generated `Dockerfile`, build it, and run it.
 
-To see the generated `Dockerfile` without actually building it,
-pass `--no-build` to the commandline. This `Dockerfile` output
-is for **debugging purposes** of `repo2docker` only - it can not
-be used by docker directly.
+To see the generated `Dockerfile` without actually building it, pass `--no-build` to the commandline.
+This `Dockerfile` output is for **debugging purposes** of `repo2docker` only - it can not be used by Docker directly.
 
 > ```bash
 > jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
@@ -76,7 +74,7 @@ jupyter-repo2docker -e VAR1=val1 -e VAR2=val2 ...
 ```
 
 You can also configure environment variables for all users of a repository using the
-[](#start) configuration file.
+[](#config-start) configuration file.
 
 (command-line-api)=
 

@@ -53,7 +53,7 @@ jobs:
     steps:
 
     # For biggish images, github actions runs out of disk space.
-    # So we cleanup some unwanted things in the disk image, and reclaim that space for our docker use
+    # So we cleanup some unwanted things in the disk image, and reclaim that space for our Docker use
     # https://github.com/actions/virtual-environments/issues/2606#issuecomment-772683150
     # and https://github.com/easimon/maximize-build-space/blob/b4d02c14493a9653fe7af06cc89ca5298071c66e/action.yml#L104
     # This gives us a total of about 52G of free space, which should be enough for now

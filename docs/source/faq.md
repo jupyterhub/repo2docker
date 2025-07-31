@@ -10,7 +10,7 @@ and have found an answer, send a PR to add it here!
 If you used `conda env export` to generate your `environment.yml` it will
 generate a list of packages and versions of packages that is pinned to platform
 specific versions. These very specific versions are not available in the linux
-docker image used by `repo2docker`. A typical error message will look like
+Docker image used by `repo2docker`. A typical error message will look like
 the following:
 
 ```
@@ -44,13 +44,13 @@ a subsequent build step.)
 No, you can't.
 
 If you pass the `--debug` flag to `repo2docker`, it outputs the
-intermediate Dockerfile that is used to build the docker image. While
-it is tempting to copy this as a base for your own Dockerfile, that is
+intermediate `Dockerfile` that is used to build the Docker image. While
+it is tempting to copy this as a base for your own `Dockerfile`, that is
 not supported & in most cases will not work. The `--debug` output is
-just our intermediate generated Dockerfile, and is meant to be built
+just our intermediate generated `Dockerfile`, and is meant to be built
 in a very specific way. Hence the output of `--debug` can not be
 built with a normal `docker build -t .` or similar traditional
-docker command.
+Docker command.
 
 Check out the [binder-examples](http://github.com/binder-examples/) GitHub
 organization for example repositories you can copy & modify for your own use!
@@ -108,4 +108,4 @@ our own new tool. In the case of repo2docker, we spent time integrating with a p
 tool called [source2image](https://github.com/openshift/source-to-image/).
 This is an excellent open tool for containerization, but we
 ultimately decided that it did not fit the use-case we wanted to address. For more information,
-[here](https://github.com/yuvipanda/words/blob/fd096dd49d87e624acd8bdf6d13c0cecb930bb3f/content/post/why-not-s2i.md) is a short blog post about the decision and the reasoning behind it.
+read our [blog post about why we built repo2docker](https://github.com/yuvipanda/words/blob/fd096dd49d87e624acd8bdf6d13c0cecb930bb3f/content/post/why-not-s2i.md).

@@ -134,7 +134,7 @@
 - pre-commit update to fix ci [#1238](https://github.com/jupyterhub/repo2docker/pull/1238) ([@minrk](https://github.com/minrk))
 - Upgrade to mamba 1.1 and enable rich SAT error messages [#1232](https://github.com/jupyterhub/repo2docker/pull/1232) ([@SylvainCorlay](https://github.com/SylvainCorlay))
 - Upgrade to mamba 1.0 [#1213](https://github.com/jupyterhub/repo2docker/pull/1213) ([@SylvainCorlay](https://github.com/SylvainCorlay))
-- docker image: update alpine to 3.16 [#1212](https://github.com/jupyterhub/repo2docker/pull/1212) ([@consideRatio](https://github.com/consideRatio))
+- Docker image: update alpine to 3.16 [#1212](https://github.com/jupyterhub/repo2docker/pull/1212) ([@consideRatio](https://github.com/consideRatio))
 - reconcile CLI/config priority [#1211](https://github.com/jupyterhub/repo2docker/pull/1211) ([@minrk](https://github.com/minrk))
 - pipfile: pass --clear flag, and do it separetely to not be ignored [#1208](https://github.com/jupyterhub/repo2docker/pull/1208) ([@consideRatio](https://github.com/consideRatio))
 - run submodule test over https [#1204](https://github.com/jupyterhub/repo2docker/pull/1204) ([@minrk](https://github.com/minrk))
@@ -299,12 +299,12 @@ The repo2docker container image has moved to [quay.io/jupyterhub/repo2docker](ht
 
 - Workaround docker-py dependency's failure to import six {pr}`1066:` by {user}`consideratio`
 - fix: add chardet, a not explicitly declared dependency {pr}`1064` by {user}`johnhoman`
-- Add build-base to build stage of docker image {pr}`1051` by {user}`yuvipanda`
+- Add build-base to build stage of Docker image {pr}`1051` by {user}`yuvipanda`
 - Fix regression in hydroshare introduced after moving to requests {pr}`1034` by {user}`MridulS`
 
 ### Other merged PRs
 
-- Update README quay.io URL, Add docker latest tag {pr}`1075` by {user}`manics`
+- Update README quay.io URL, Add Docker latest tag {pr}`1075` by {user}`manics`
 - GitHub workflow build and push to Docker hub {pr}`1071` by {user}`manics`
 - Rename master branch to main {pr}`1068` by {user}`manics`
 - Remove Pipfile & Pipfile.lock {pr}`1054` by {user}`yuvipanda`
@@ -343,7 +343,7 @@ The repo2docker container image has moved to [quay.io/jupyterhub/repo2docker](ht
 ### Other merged PRs
 
 - Cleanup install_requires including duplicates {pr}`1020` by {user}`manics`
-- bump docker action version {pr}`1018` by {user}`minrk`
+- bump Docker action version {pr}`1018` by {user}`minrk`
 - bump python in circleci test {pr}`1013` by {user}`minrk`
 - Investigating the missing logs {pr}`1008` by {user}`betatim`
 - Experiment with different install mechanism to get code coverage stats again {pr}`982` by {user}`betatim`
@@ -376,7 +376,7 @@ The repo2docker container image has moved to [quay.io/jupyterhub/repo2docker](ht
 - chmod start script from repo2docker-entrypoint {pr}`886` by {user}`danlester`
 - pypi jupyter-offlinenotebook==0.1.0 {pr}`880` by {user}`manics`
 - Add support for Julia 1.4.1 {pr}`878` by {user}`davidanthoff`
-- Change --env option to work like docker's {pr}`874` by {user}`hwine`
+- Change --env option to work like Docker's {pr}`874` by {user}`hwine`
 - Add support for Julia 1.4.0 {pr}`870` by {user}`davidanthoff`
 - Update server proxy and rsession proxy {pr}`869` by {user}`betatim`
 - Use miniforge instead of miniconda to get conda {pr}`859` by {user}`yuvipanda`
@@ -549,7 +549,7 @@ Release date: 2019-02-21
 
 ### New features
 
-- Add additional metadata to docker images about how they were built {pr}`500` by
+- Add additional metadata to Docker images about how they were built {pr}`500` by
   {user}`jrbourbeau`.
 - Allow users to install global NPM packages: {pr}`573` by {user}`GladysNalvarte`.
 - Add documentation on switching the user interface presented by a
@@ -579,7 +579,7 @@ Release date: 2019-02-21
 - Fix quoting issue in `GIT_CREDENTIAL_ENV` environment variable by
   {user}`minrk` in {pr}`572`.
 - Change to using the first 8 characters of each Git commit, not the last 8,
-  to tag each built docker image of repo2docker itself. {user}`minrk` in {pr}`562`.
+  to tag each built Docker image of repo2docker itself. {user}`minrk` in {pr}`562`.
 - Allow users to select the Julia when using a `requirements.txt` by
   {user}`yuvipanda` in {pr}`557`.
 - Set `JULIA_DEPOT_PATH` to install packages outside the home directory by

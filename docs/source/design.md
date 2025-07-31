@@ -43,7 +43,7 @@ This provides a few advantages:
 
 Many ingredients go into making an image from a repository:
 
-1. version of the base docker image
+1. version of the base Docker image
 1. version of `repo2docker` itself
 1. versions of the libraries installed by the repository
 
@@ -62,7 +62,7 @@ explicitly in your dependencies.
 
 `repo2docker` should do one thing, and do it well. This one thing is:
 
-> Given a repository, deterministically build a docker image from
+> Given a repository, deterministically build a Docker image from
 > it.
 
 There's also some convenience code (to run the built image) for users, but

@@ -41,6 +41,7 @@ extlinks = {
 #
 myst_enable_extensions = [
     "colon_fence",
+    "substitution",
 ]
 
 
@@ -59,8 +60,11 @@ release = version
 
 from repo2docker.buildpacks.conda import CondaBuildPack
 
-default_python = CondaBuildPack.major_pythons["3"]
-
+default_python = f"`Python {CondaBuildPack.major_pythons['3']}`"
+myst_substitutions = {
+  "default_python":  default_python,
+  "default_python_version":  default_python,
+}
 rst_prolog = f"""
 .. |default_python| replace:: **Python {default_python}**
 .. |default_python_version| replace:: {default_python}

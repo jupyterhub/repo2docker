@@ -7,9 +7,6 @@ to determine how to build it. In general, `repo2docker` uses the same
 configuration files as other software installation tools,
 rather than creating new custom configuration files.
 
-A number of `repo2docker` configuration files can be combined to compose more
-complex setups.
-
 :::{seealso}
 The [binder examples](https://github.com/binder-examples) organization on
 GitHub contains a list of sample repositories for common configurations
@@ -22,7 +19,7 @@ can be found on this page (and to the right).
 
 ```{toctree}
 :maxdepth: 2
-./datascience
+./research
 ./development
 ./system
 ./actions
