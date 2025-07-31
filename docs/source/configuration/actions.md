@@ -1,6 +1,6 @@
 # Configuration files for post-build actions
 
-These files control behavior that happens *after* the image is initially built (AKA, after the packages and languages have been installed). It's useful if you need to ensure files are in a particular place, or certain commands are run when a new session launches.
+These files control behavior that happens _after_ the image is initially built (AKA, after the packages and languages have been installed). It's useful if you need to ensure files are in a particular place, or certain commands are run when a new session launches.
 
 :::{note}
 After building the image, all actions are run as a user named `jovyan`.

@@ -62,8 +62,8 @@ from repo2docker.buildpacks.conda import CondaBuildPack
 
 default_python = f"`Python {CondaBuildPack.major_pythons['3']}`"
 myst_substitutions = {
-  "default_python":  default_python,
-  "default_python_version":  default_python,
+    "default_python": default_python,
+    "default_python_version": default_python,
 }
 rst_prolog = f"""
 .. |default_python| replace:: **Python {default_python}**
