@@ -6,13 +6,13 @@ Repo2docker occasionally has to make breaking changes in how repositories are bu
 
 The base image used by repo2docker was [upgraded from Ubuntu 18.04 to Ubuntu 22.04](https://github.com/jupyterhub/repo2docker/pull/1287) in version 2023.10.0 due to Ubuntu 18.04 going out of support.
 
-This is unlikely to affect you unless you are using {ref}`apt.txt <apt.txt>`.
+This is unlikely to affect you unless you are using {ref}`apt.txt <apt-txt>`.
 
-{ref}`apt.txt <apt.txt>` installs packages from the official Ubuntu package repositories, and is intrinsically tied to the Ubuntu version.
+{ref}`apt.txt <apt-txt>` installs packages from the official Ubuntu package repositories, and is intrinsically tied to the Ubuntu version.
 Many packages will be available in both Ubuntu 18.04 and Ubuntu 22.04, however some may be renamed (for example if multiple incompatible versions are available).
 
 Some packages may be removed, or may not be compatible with the previous version.
-In this case you should see if your packages can be installed using a {ref}`Conda environment.yml file <environment.yml>` using either the default [conda-forge channel](https://conda-forge.org/feedstock-outputs/) or in one of the many [third-party channels](https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/channels.html).
+In this case you should see if your packages can be installed using a {ref}`Conda environment.yml file <environment-yml>` using either the default [conda-forge channel](https://conda-forge.org/feedstock-outputs/) or in one of the many [third-party channels](https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/channels.html).
 
 Alternatively you can try installing the packages from source, using a {ref}`postBuild <postBuild>` script.
 

@@ -22,6 +22,7 @@ extensions = [
     "sphinxcontrib.autoprogram",
     "sphinxext.opengraph",
     "sphinxext.rediraffe",
+    "sphinx_design",
 ]
 root_doc = "index"
 source_suffix = [".md", ".rst"]

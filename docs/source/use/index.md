@@ -7,8 +7,9 @@ Information about configuring your repository to work with repo2docker,
 and controlling elements of the built environment using configuration files.
 
 ```{toctree}
-:caption: Configuration basics
+:caption: Image building basics
 :maxdepth: 1
+pathways
 ../configuration/index
 repository
 ../cli
@@ -27,10 +28,13 @@ repository
 
 ```{toctree}
 :maxdepth: 1
-:caption: Deploy into production
+:caption: Deploy images into production
 
 ../howto/deploy
+./community-image
+./extend-community-image
 ../howto/jupyterhub_images
+./action
 ../howto/breaking_changes
 ```
 
