@@ -30,7 +30,7 @@ A local `Dockerfile` does the following things:
 - Copies your local `environment.yml` file into a directory in the image.
 - Updates the `conda` environment with it to install the extra packages.
 
- For example, the following inherits the `scipy-notebook` image with the `2023-05-01` tag and takes the above steps. (you could follow a similar workflow with other package managers).
+For example, the following inherits the `scipy-notebook` image with the `2023-05-01` tag and takes the above steps. (you could follow a similar workflow with other package managers).
 
 ```{code-block} Dockerfile
 :caption: Dockerfile

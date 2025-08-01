@@ -6,6 +6,7 @@ In this case, you won't have to maintain anything -- you'll simply use a communi
 Here are some steps to follow.
 
 ## First, find a community-maintained image for your workflow
+
 Many communities define their own user envionment images for re-use. Here are a few to look into:
 
 1. [jupyter Docker-stacks](https://jupyter-docker-stacks.readthedocs.io/) has a number of user images for general data science workflows.

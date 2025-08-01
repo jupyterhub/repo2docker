@@ -3,6 +3,7 @@
 Many users of `repo2docker` primarily wish to define the environment for a Binder or a JupyterHub. Here are four ways to accomplish this, from least-to-most work.
 
 % TO EDIT THIS FIGURE: Load the linked SVG into excalidraw.com, make edits, and re-export.
+
 ```{figure} ../_static/images/whentouse.svg
 A decision tree for the recommended way to get your reproducible user environment using `repo2docker` or a community image built with `repo2docker`.
 ```
