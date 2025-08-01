@@ -16,12 +16,9 @@ This is the most robust for reproducibility, but it does bake in potential
 platform-specific packages, so you can only use an exported environment on the
 same platform.
 
-``repo2docker`` uses a linux based image as the starting point for every Docker
-image it creates. However a lot of people use OSX or Windows as their day to
-day operating system. This means that the ``environment.yml`` created by a strict
-export will not work with error messages saying that certain packages can not
-be resolved (``ResolvePackageNotFound``).
-
+``repo2docker`` uses a Linux-based image as the starting point for every Docker image it creates.
+However a lot of people use OSX or Windows as their day to day operating system.
+This means that the ``environment.yml`` created by a strict export will not work with error messages saying that certain packages can not be resolved (``ResolvePackageNotFound``).
 
 The solution
 ============

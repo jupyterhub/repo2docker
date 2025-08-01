@@ -6,7 +6,7 @@ To do this, you should define a `Dockerfile` that "inherits" the community image
 
 [Here's a repository that demonstrates how to do this using the `repo2docker` github action](https://github.com/2i2c-org/example-inherit-from-community-image). Below is a summary of the most important parts.
 
-An [`environment.yml` file](https://github.com/2i2c-org/example-inherit-from-community-image/blob/main/environment.yml) defines **only the extra things to install** in addition to the upstream image.
+A [local `environment.yml` file](https://github.com/2i2c-org/example-inherit-from-community-image/blob/main/environment.yml) defines **only the extra things to install** in addition to the upstream image.
 
 ```{code-block}
 :caption: environment.yml
@@ -24,7 +24,13 @@ dependencies:
     - otter-grader
 ```
 
-A repository `Dockerfile` inherits from the upstream image. For example, the following inherits the scipy-notebook image with the `2023-05-01` tag, and copies
+A local `Dockerfile` does the following things:
+
+- Inherits from the upstream image.
+- Copies your local `environment.yml` file into a directory in the image.
+- Updates the `conda` environment with it to install the extra packages.
+
+ For example, the following inherits the `scipy-notebook` image with the `2023-05-01` tag and takes the above steps. (you could follow a similar workflow with other package managers).
 
 ```{code-block} Dockerfile
 :caption: Dockerfile

@@ -104,9 +104,7 @@ if you specify the `--push` flag.
 ### Run
 
 Optionally, repo2docker can **run** the built image and allow the user to access the Jupyter Notebook
-running inside by default. This is also done as a convenience only (since you can do the same with `Docker run`
-after using repo2docker only to build), and implemented in `Repo2Docker.run`. It is activated by default
-unless the `--no-run` commandline flag is passed.
+running inside by default. This is also done as a convenience only (since you can do the same with `docker run` after using repo2docker only to build), and implemented in `Repo2Docker.run`. It is activated by default unless the `--no-run` commandline flag is passed.
 
 ## ContentProviders
 

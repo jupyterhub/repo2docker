@@ -304,7 +304,7 @@ The repo2docker container image has moved to [quay.io/jupyterhub/repo2docker](ht
 
 ### Other merged PRs
 
-- Update README quay.io URL, Add Docker latest tag {pr}`1075` by {user}`manics`
+- Update README quay.io URL, add Docker latest tag {pr}`1075` by {user}`manics`
 - GitHub workflow build and push to Docker hub {pr}`1071` by {user}`manics`
 - Rename master branch to main {pr}`1068` by {user}`manics`
 - Remove Pipfile & Pipfile.lock {pr}`1054` by {user}`yuvipanda`

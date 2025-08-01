@@ -1,6 +1,6 @@
 # Welcome to `repo2docker`'s documentation
 
-`repo2docker` lets you **reproducibly build, run, and deploy user environment images for data science from source code repositories**.
+`repo2docker` lets you **reproducibly build, run, and deploy user environment images for research and computing workflows from source code repositories**.
 
 `repo2docker` can be used to explore a repository locally by building and executing the
 constructed image of the repository, or as a means of building images that
@@ -37,15 +37,15 @@ In short, `repo2docker` is a tool to reproducibly build, run, and deploy these u
 When you call `repo2docker` like so:
 
 ```
-jupyter-repo2docker <URL of repository>
+jupyter-repo2docker <source-repository>
 ```
 
 It performs these steps:
 
 1. Inspects the repository for [configuration files](#config-files). These will be used to build the environment needed to run the repository.
 2. Builds a Docker image with an environment specified in these [configuration files](#config-files).
-3. Runs the image to let you explore the repository interactively via Jupyter notebooks, RStudio, or many other interfaces (this is optional)
-4. Pushes the images to a Docker registry so that it may be accessed remotely (this is optional)
+3. Runs the image to let you explore the repository interactively via Jupyter notebooks, RStudio, or many other interfaces (this is optional).
+4. Pushes the images to a Docker registry so that it may be accessed remotely (this is optional).
 
 [swhid]: https://docs.softwareheritage.org/devel/swh-model/persistent-identifiers.html
 
@@ -55,7 +55,7 @@ Please report [Bugs](https://github.com/jupyterhub/repo2docker/issues),
 
 ## Get started with repo2docker
 
-This tutorial walks you setting up repo2docker, building your first environment image, and running it locally with Docker.
+This tutorial walks you through setting up repo2docker, building your first environment image, and running it locally with Docker.
 
 ```{toctree}
 :maxdepth: 2
@@ -74,7 +74,7 @@ use/index
 
 ## Contribute to repo2docker
 
-Our contirbutor guide describes how you can follow along with the project, learn how to collaborate with our open team, and learn developer workflows and information.
+Our contributor guide describes how you can follow along with the project, learn how to collaborate with our open team, and learn developer workflows and information.
 
 ```{toctree}
 :maxdepth: 2

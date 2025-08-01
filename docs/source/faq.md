@@ -7,11 +7,8 @@ and have found an answer, send a PR to add it here!
 
 ## Why is my repository failing to build with `ResolvePackageNotFound` ?
 
-If you used `conda env export` to generate your `environment.yml` it will
-generate a list of packages and versions of packages that is pinned to platform
-specific versions. These very specific versions are not available in the linux
-Docker image used by `repo2docker`. A typical error message will look like
-the following:
+If you used `conda env export` to generate your `environment.yml` it will generate a list of packages and versions of packages that is pinned to platform specific versions.
+These very specific versions are not available in the Linux Docker image used by `repo2docker`. A typical error message will look like the following:
 
 ```
 Step 39/44 : RUN conda env update -n root -f "environment.yml" && conda clean -tipsy && conda list -n root
@@ -34,12 +31,10 @@ your environment that will work with `repo2docker`.
 
 ## Can I add executable files to the user's PATH?
 
-Yes! With a {ref}`postBuild` file, you can place any files that should be called
-from the command line in the folder `~/.local/`. This folder will be
-available in a user's PATH, and can be run from the command line (or as
-a subsequent build step.)
+Yes! With a [](#postBuild) file, you can place any files that should be called from the command line in the folder `~/.local/bin`.
+This folder will be available in a user's PATH, and can be run from the command line (or as a subsequent build step.)
 
-## Can I use repo2docker to bootstrap my own Dockerfile?
+## Can I use repo2docker to bootstrap my own `Dockerfile` to edit by hand?
 
 No, you can't.
 

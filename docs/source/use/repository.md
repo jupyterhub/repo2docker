@@ -19,7 +19,7 @@ by `repo2docker` to see how to configure the build process.
 
 ## Supported repository providers
 
-repo2docker can fetch repositories from a number of repositories. Here are the ones we support:
+`repo2docker` can fetch repositories from a number of repositories. Here are the various types of _repository references_ we support:
 
 - A URL of a Git repository (`https://github.com/binder-examples/requirements`),
 - A Zenodo DOI (`10.5281/zenodo.1211089`),
@@ -33,7 +33,7 @@ repo2docker can fetch repositories from a number of repositories. Here are the o
 In each case you can build from these repository sources like so:
 
 ```bash
-jupyter-repo2docker <URL-ID-or-path>
+jupyter-repo2docker <repository-reference>
 ```
 
 ## Supported version control systems
