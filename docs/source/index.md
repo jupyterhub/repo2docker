@@ -1,6 +1,6 @@
 # Welcome to `repo2docker`'s documentation
 
-`repo2docker` lets you **reproducibly build, run, and deploy user environment images for research and computing workflows from source code repositories**.
+`repo2docker` lets you **reproducibly build, run, and deploy user environment images for interactive data and computing workflows from source code repositories**.
 
 `repo2docker` can be used to explore a repository locally by building and executing the
 constructed image of the repository, or as a means of building images that
