@@ -64,7 +64,7 @@ already been built and cached).
 The `get_build_scripts` and `get_build_script_files` methods are primarily used for this.
 `get_build_scripts` can return arbitrary bash script lines that can be run as different users,
 and `get_build_script_files` is used to copy specific scripts (such as a conda installer) into
-the image to be run as pat of `get_build_scripts`. Code in either has following constraints:
+the image to be run as part of `get_build_scripts`. Code in either has following constraints:
 
 1. You can _not_ use the contents of repository in them, since this happens before the repository
    is copied into the image. For example, `pip install -r requirements.txt` will not work,
@@ -103,8 +103,8 @@ if you specify the `--push` flag.
 
 ### Run
 
-Optionally, repo2docker can **run** the built image and allow the user to access the Jupyter Notebook
-running inside by default. This is also done as a convenience only (since you can do the same with `docker run` after using repo2docker only to build), and implemented in `Repo2Docker.run`. It is activated by default unless the `--no-run` commandline flag is passed.
+Optionally, repo2docker can **run** the built image and allow the user to access the Jupyter Notebook running inside by default.
+This is also done as a convenience only (since you can do the same with `docker run` after using repo2docker only to build), and implemented in `Repo2Docker.run`. It is activated by default unless the `--no-run` commandline flag is passed.
 
 ## ContentProviders
 

@@ -46,7 +46,7 @@ When you use this config file all other configuration files (like `requirements.
 that specify packages are ignored. When using `nix` you have to specify all
 packages and dependencies explicitly, including the Jupyter notebook package that
 `repo2docker` expects to be installed. If you do not install Jupyter explicitly
-`repo2docker` will no be able to start your container.
+`repo2docker` will not be able to start your container.
 
 [nix-shell](https://nixos.org/nix/manual/#sec-nix-shell) is used to evaluate
 a `nix` expression written in a `default.nix` file. Make sure to

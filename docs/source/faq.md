@@ -90,7 +90,7 @@ url option, but the launch returns "The application exited during initialization
 there might be something wrong with the specification of the app. One way of debugging
 the app in the container is by running the `rstudio` url, open either the ui or
 server file for the app, and run the app in the container rstudio. This way you can
-see the rstudio logs as it tries to initialise the shiny app. If you a missing a
+see the rstudio logs as it tries to initialize the shiny app. If you are missing a
 package or other dependency for the container, this will be obvious at this stage.
 
 ## Why does repo2docker need to exist? Why not use tool like source2image?

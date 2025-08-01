@@ -66,7 +66,7 @@ The notebook server will run in the default {{ default_python }} environment.
 That is, your _notebooks_ will run with Python 3.6, while your notebook _server_ will run with {{ default_python }}.
 
 These two environments can be distinguished with `$NB_PYTHON_PREFIX/bin/python` for the server and `$KERNEL_PYTHON_PREFIX/bin/python` for the kernel.
-Both of these environment variables area always defined, even when they are the same.
+Both of these environment variables are always defined, even when they are the same.
 
 Starting in 2023, the default version of Python used when Python version is unspecified will be updated more often.
 Python itself releases a new version every year now, and repo2docker will follow, with the default Python version generally trailing the latest stable version of Python itself by 1-2 versions.

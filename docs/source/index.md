@@ -21,7 +21,7 @@ Host repositories in a provider like GitHub, an open science repository like [Ze
 
 ## What is a user image and why would I build one with `repo2docker`?
 
-A **user image** contains the entire software environment that a user may access from an interactive data science session. For example, it might contain many **programming languages**, **software for data analysis**, or even **contenet files and datasets** available to anybody that accesses that environment. User images are built with [Docker](https://www.docker.com/), a standard open source tool for defining, building, and deploying images.
+A **user image** contains the entire software environment that a user may access from an interactive data science session. For example, it might contain many **programming languages**, **software for data analysis**, or even **content files and datasets** available to anybody that accesses that environment. User images are built with [Docker](https://www.docker.com/), a standard open source tool for defining, building, and deploying images.
 
 Many data science platforms and services like [JupyterHub](https://jupyterhub.readthedocs.io) and [Binder](https://mybinder.org) launch interactive data science sessions **with a user image attached**, meaning that the user gains access to whatever is in the image. In short, this allows somebody to define and build the user image one time, in a way that users can reproducibly re-use many times.
 

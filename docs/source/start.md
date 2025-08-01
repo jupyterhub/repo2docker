@@ -10,7 +10,7 @@ repo2docker requires Python 3.6 or above on Linux and macOS.
 
 :::{admonition} Windows support is experimental
 
-This [article about using Windows and the WSL](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly) (Windows Subsytem for Linux or
+This [article about using Windows and the WSL](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly) (Windows Subsystem for Linux or
 Bash on Windows) provides additional information about Windows and Docker.
 :::
 

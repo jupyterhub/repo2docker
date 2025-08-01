@@ -17,7 +17,7 @@ jupyter-repo2docker https://github.com/norvig/pytudes
 
 Building the image may take a few minutes.
 
-[Pytudes] uses a [`requirements.txt` file](https://github.com/norvig/pytudes/blob/HEAD/requirements.txt) to specify its Python environment. Because of this, `repo2docker` will use `pip` to install dependencies listed in this `requirement.txt` file, and these will be present in the generated Docker image. To learn more about configuration files in `repo2docker` visit [](#config-files).
+[Pytudes] uses a [`requirements.txt` file](https://github.com/norvig/pytudes/blob/HEAD/requirements.txt) to specify its Python environment. Because of this, `repo2docker` will use `pip` to install dependencies listed in this `requirements.txt` file, and these will be present in the generated Docker image. To learn more about configuration files in `repo2docker` visit [](#config-files).
 
 When the image is built, a message will be output to your terminal:
 
