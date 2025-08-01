@@ -22,6 +22,7 @@ extensions = [
     "sphinxcontrib.autoprogram",
     "sphinxext.opengraph",
     "sphinxext.rediraffe",
+    "sphinx_design",
 ]
 root_doc = "index"
 source_suffix = [".md", ".rst"]
@@ -40,6 +41,7 @@ extlinks = {
 #
 myst_enable_extensions = [
     "colon_fence",
+    "substitution",
 ]
 
 
@@ -58,8 +60,11 @@ release = version
 
 from repo2docker.buildpacks.conda import CondaBuildPack
 
-default_python = CondaBuildPack.major_pythons["3"]
-
+default_python = f"`Python {CondaBuildPack.major_pythons['3']}`"
+myst_substitutions = {
+    "default_python": default_python,
+    "default_python_version": default_python,
+}
 rst_prolog = f"""
 .. |default_python| replace:: **Python {default_python}**
 .. |default_python_version| replace:: {default_python}
@@ -73,12 +78,20 @@ html_logo = "_static/images/logo.png"
 html_favicon = "_static/images/favicon.ico"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+html_sidebars = {
+    "changelog": [],
+    "start": [],
+}
 
 # pydata_sphinx_theme reference: https://pydata-sphinx-theme.readthedocs.io/en/latest/
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "use_edit_page_button": True,
     "github_url": "https://github.com/jupyterhub/repo2docker",
+    "logo": {
+        "image_dark": "_static/images/logo-dark.png",
+        "image_light": "_static/images/logo.png",
+    },
 }
 html_context = {
     "github_user": "jupyterhub",

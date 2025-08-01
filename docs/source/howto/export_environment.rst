@@ -1,7 +1,7 @@
 .. _export-environment:
 
 =============================================================================
-How to automatically create a ``environment.yml`` that works with repo2docker
+Export your environment to an ``environment.yml`` that works with repo2docker
 =============================================================================
 
 This how-to explains how to create a ``environment.yml`` that specifies all
@@ -16,12 +16,9 @@ This is the most robust for reproducibility, but it does bake in potential
 platform-specific packages, so you can only use an exported environment on the
 same platform.
 
-``repo2docker`` uses a linux based image as the starting point for every docker
-image it creates. However a lot of people use OSX or Windows as their day to
-day operating system. This means that the ``environment.yml`` created by a strict
-export will not work with error messages saying that certain packages can not
-be resolved (``ResolvePackageNotFound``).
-
+``repo2docker`` uses a Linux-based image as the starting point for every Docker image it creates.
+However a lot of people use OSX or Windows as their day to day operating system.
+This means that the ``environment.yml`` created by a strict export will not work with error messages saying that certain packages can not be resolved (``ResolvePackageNotFound``).
 
 The solution
 ============
@@ -48,7 +45,7 @@ Strict version export
 Follow this procedure to create a strict export of your environment that will
 work with ``repo2docker`` and sites like `mybinder.org <https://mybinder.org/>`_.
 
-We will launch a terminal inside a basic docker image, install the packages
+We will launch a terminal inside a basic Docker image, install the packages
 you need and then perform a strict export of the environment.
 
 #. install repo2docker on your computer by following :ref:`install`
