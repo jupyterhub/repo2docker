@@ -112,47 +112,26 @@ See the subsections below for more detailed instructions.
 
 ## Creating a Release
 
-We make a release of whatever is on `main` every month. We use "calendar versioning".
-Monthly releases give users a predictable pattern for when releases are going to
-happen and prevents locking up improvements for fixes for long periods of time.
+We encourage a release of whatever is on `main` every month. We use "[calendar versioning](https://calver.org/)".
 
 A new release will automatically be created when a new git tag is created
-and pushed to the repository.
+and pushed to the repository. See [previous releases](https://github.com/jupyterhub/repo2docker/releases) for examples.
 
 To create a new release, follow these steps:
 
-### Create a new tag and push it
+- Go to the [GitHub repository](https://github.com/jupyterhub/repo2docker)
+- Click `Draft a new release`
+- Click `Tag`
+   - Type in a new tag like `YYYY.MM.N` (where `N` is the release number this month, usually it is `0`)
+- Title: `<Month> <Year>` (E.g., `August 2025`)
+- Body: Paste the output of `github-activity` since the date of the last release.
+   - E.g. `github-activity jupyterhub/repo2docker -s 2025-08-01
+- Click `Publish release`
 
-First, tag a new release locally:
+This will create a new release **and a new tag**.
+The creation of the tag will trigger the `.github/workflows/release.yml` action to publish the latest repo2docker package to PyPI.
 
-```bash
-V=YYYY.MM.0; git tag -am "release $V" $V
-```
-
-> If you need to make a second (or third) release in a month increment the
-> trailing 0 of the version to 1 (or 2).
-
-Then push this change up to the main repository
-
-```
-git push origin --tags
-```
-
-GitHub Actions should create a
-new release on the [repo2docker PyPI](https://pypi.org/project/jupyter-repo2docker/).
-Once this has completed, make sure that the new version has been updated.
-
-### Create a new release on the GitHub repository
-
-Once the new release has been pushed to PyPI, we need to create a new
-release on the [GitHub repository releases page](https://github.com/jupyterhub/repo2docker/releases). Once on that page, follow these steps:
-
-- Click "Draft a new release"
-- Choose a tag version using the same tag you just created above
-- The release name is simply the tag version
-- Finally, click "Publish release"
-
-That's it!
+You can confirm the new package is released [in our PyPI page](https://pypi.org/project/jupyter-repo2docker/#history).
 
 # Uncommon tasks
 
