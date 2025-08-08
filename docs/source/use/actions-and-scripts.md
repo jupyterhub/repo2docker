@@ -3,6 +3,7 @@
 In addition to installing using [standard configuration files](#config-files), you can run your own custom actions and commands as part of the build or user session launch process.
 
 (commands-jovyan)=
+
 ## Commands are run as the `jovyan` user and not root
 
 Whenever you run a custom command, it is run as a special user called `jovyan`.
@@ -13,7 +14,7 @@ For example, if you're using a `postBuild` script to install and use a new envir
 
 - ✅ `$CONDA_BIN` would work, because `conda` puts its binary folder in a user-accessible space.
 - ✅ `~/.local/bin` would work, because it's in the home directory.
-- ❌ `/usr/bin` would *NOT* work, because it requires root privileges to write to.
+- ❌ `/usr/bin` would _NOT_ work, because it requires root privileges to write to.
 
 ## Run commands before finalizing your environment image
 
