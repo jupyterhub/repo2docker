@@ -16,7 +16,7 @@ The use cases for `repo2docker` which drive most design decisions are:
 1. Automated image building used by projects like
    [BinderHub](http://github.com/jupyterhub/binderhub)
 2. Manual image building and running the image from the command line client,
-   `jupyter-repo2docker`, by users interactively on their workstations
+   `repo2docker`, by users interactively on their workstations
 
 ## Deterministic output
 

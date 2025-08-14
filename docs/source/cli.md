@@ -3,7 +3,7 @@
 `repo2docker` is called with this command:
 
 ```
-jupyter-repo2docker <source-repository>
+repo2docker <source-repository>
 ```
 
 where `<source-repository>` is a repository in one of [the supported repository providers](#repository-providers).
@@ -12,7 +12,7 @@ For example, the following command will build an image of Peter Norvig's
 [Pytudes] repository:
 
 ```
-jupyter-repo2docker https://github.com/norvig/pytudes
+repo2docker https://github.com/norvig/pytudes
 ```
 
 Building the image may take a few minutes.
@@ -35,7 +35,7 @@ dependencies and contents of the source repository in the built image.
 To debug the container image being built, pass the `--debug` parameter:
 
 > ```bash
-> jupyter-repo2docker --debug https://github.com/norvig/pytudes
+> repo2docker --debug https://github.com/norvig/pytudes
 > ```
 
 This will print the generated `Dockerfile`, build it, and run it.
@@ -44,7 +44,7 @@ To see the generated `Dockerfile` without actually building it, pass `--no-build
 This `Dockerfile` output is for **debugging purposes** of `repo2docker` only - it can not be used by Docker directly.
 
 > ```bash
-> jupyter-repo2docker --no-build --debug https://github.com/norvig/pytudes
+> repo2docker --no-build --debug https://github.com/norvig/pytudes
 > ```
 
 ## Build from a branch, commit or tag
@@ -53,7 +53,7 @@ To build a particular branch and commit, use the argument `--ref` and
 specify the `branch-name` or `commit-hash`. For example:
 
 ```
-jupyter-repo2docker --ref 9ced85dd9a84859d0767369e58f33912a214a3cf https://github.com/norvig/pytudes
+repo2docker --ref 9ced85dd9a84859d0767369e58f33912a214a3cf https://github.com/norvig/pytudes
 ```
 
 :::{tip}
@@ -70,7 +70,7 @@ flag for each variable that you want to define.
 For example:
 
 ```bash
-jupyter-repo2docker -e VAR1=val1 -e VAR2=val2 ...
+repo2docker -e VAR1=val1 -e VAR2=val2 ...
 ```
 
 You can also configure environment variables for all users of a repository using the
@@ -81,7 +81,7 @@ You can also configure environment variables for all users of a repository using
 ## Command-line API
 
 ```{autoprogram} repo2docker.__main__:argparser
-:prog: jupyter-repo2docker
+:prog: repo2docker
 ```
 
 [pytudes]: https://github.com/norvig/pytudes
