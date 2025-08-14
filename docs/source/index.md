@@ -37,7 +37,7 @@ In short, `repo2docker` is a tool to reproducibly build, run, and deploy these u
 When you call `repo2docker` like so:
 
 ```
-jupyter-repo2docker <source-repository>
+repo2docker <source-repository>
 ```
 
 It performs these steps:

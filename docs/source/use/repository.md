@@ -33,7 +33,7 @@ by `repo2docker` to see how to configure the build process.
 In each case you can build from these repository sources like so:
 
 ```bash
-jupyter-repo2docker <repository-reference>
+repo2docker <repository-reference>
 ```
 
 ## Supported version control systems
