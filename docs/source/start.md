@@ -6,7 +6,7 @@ This tutorial guides you through installing `repo2docker` and building your firs
 
 ## Install `repo2docker`
 
-repo2docker requires Python 3.6 or above on Linux and macOS.
+`repo2docker` requires Python 3.6 or above on Linux and macOS.
 
 :::{admonition} Windows support is experimental
 
@@ -22,6 +22,10 @@ The [Community Edition](https://docs.docker.com/install/) is available for free.
 Recent versions of Docker are recommended.
 
 ### Install `repo2docker` with `pip`
+
+```{warning}
+The name of the package on [PyPI](https://pypi.org/) is [`jupyter-repo2docker`](https://pypi.org/project/jupyter-repo2docker/) instead of `repo2docker`.
+```
 
 We recommend installing `repo2docker` with the `pip` tool:
 
