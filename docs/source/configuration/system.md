@@ -35,7 +35,18 @@ See our [Python2 example repository](https://github.com/binder-examples/python2_
 
 Add the line `r-x.y-YYYY-MM-DD` in `runtime.txt` to run the repository with R version `x.y` and libraries from a `YYYY-MM-DD` snapshot of the [Posit Package Manager](https://packagemanager.posit.co/client/#/repos/2/overview).
 
-The version of R, i.e. `x.y`, can be set to 3.4, 3.5, 3.6, or to patch releases for the 3.5 and 3.6 series.
+The version of R, i.e. `x.y`, can be set to
+
+- `4.4`
+- `4.3`
+- `4.2`
+- `4.1`
+- `4.0`
+- `3.6`
+- `3.5`
+- `3.4`
+- `3.3`
+
 If you do not specify a version, the latest release will be used.
 
 See our [R example repository](https://github.com/binder-examples/r/blob/HEAD/runtime.txt).
