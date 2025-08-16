@@ -41,21 +41,21 @@ This is not the same thing as forking the repository for the community image, mo
 :::{grid-item-card} Benefits
 
 - Only need to maintain the changes you make
-- Update the FROM tag to keep up with upstream changes
-- You must manage a GH repo
-- Works well with mybinder.org
+- Update the `FROM` tag to keep up with upstream changes
+- You must manage a Git repository
+- Works well with [mybinder.org]
   :::
   :::{grid-item-card} Drawbacks
 - Need to understand how upstream image is built so you can customize
 - Documentation for this method currently sucks (but can be fixed!)
 - Removing existing packages might break things
-- You must manage a GH repo
+- You must manage a Git repository
   :::
   ::::
 
 See [](./extend-community-image.md) for a how-to guide.
 
-## 3. Use repo2docker to build your environment image
+## 3. Use `repo2docker` to build your environment image
 
 If your needs differ far enough from the community-maintained images that you find, you can use `repo2docker` to build your environment image using [supported configuration files](#config-files).
 To learn how to do this, follow the [getting started with repo2docker guide](../start.md) and look at the [list of supported configuration files](#config-files).
@@ -64,7 +64,7 @@ Check out the other sections under "Image building basics" for more useful how-t
 ::::{grid} 2
 :::{grid-item-card} Benefits
 
-- Works well with mybinder.org
+- Works well with [mybinder.org]
 - No need to learn Dockerfile syntax
 - Use language specific, well understood file formats
 - Only get whatever packages you want
@@ -79,7 +79,7 @@ Check out the other sections under "Image building basics" for more useful how-t
 
 ## 4. Use a full fledged custom Dockerfile
 
-If you need full control over the entire computational environment, you can always create your own `Dockerfile` from scratch, and repo2docker will build an image out of it.
+If you need full control over the entire computational environment, you can always create your own `Dockerfile` from scratch, and `repo2docker` will build an image out of it.
 
 This is for advanced users only that know what they're doing - full guidance on how to use `Dockerfiles` is out of scope for this tutorial.
 
@@ -90,13 +90,15 @@ This is for advanced users only that know what they're doing - full guidance on 
 
 - Get exactly what you want
 - Can be optimized for small image size & fast build times
-- Lots of existing documentation in the SRE world on how to use these
+- Lots of existing documentation in the site reliability engineer world on how to use these
 
 :::
 :::{grid-item-card} Drawbacks
 
 - Requires a lot of knowledge for ongoing maintenance
 - Might have to solve problems yourself that were solved in upstream images / repo2docker
-- Need to adapt existing documentation from the SRE use case to interactive computing use case
+- Need to adapt existing documentation from the site reliability engineer use case to interactive computing use case
   :::
   ::::
+
+[mybinder.org]: https://mybinder.org

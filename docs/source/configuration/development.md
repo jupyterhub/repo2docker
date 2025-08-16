@@ -21,7 +21,7 @@ both kinds.
 
 This specifies a list of Python packages that should be installed in your
 environment. Our
-[requirements.txt example](https://github.com/binder-examples/requirements/blob/HEAD/requirements.txt)
+[example `requirements.txt` file](https://github.com/binder-examples/requirements/blob/HEAD/requirements.txt)
 on GitHub shows a typical requirements file.
 
 (setup-py)=

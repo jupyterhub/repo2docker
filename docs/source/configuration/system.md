@@ -2,20 +2,23 @@
 
 (apt-txt)=
 
-## `apt.txt` - Install packages with apt-get
+## `apt.txt` - Install packages with `apt-get`
 
-A list of Debian packages that should be installed. The base image used is usually the latest released
-version of Ubuntu.
+A list of packages in the [`.deb`](<https://en.wikipedia.org/wiki/Deb_(file_format)>) format that should be installed. The `.deb` files are downloaded from the server configured in the Docker base image.
+
+```{note}
+If a `Dockerfile` is not used to change the Docker base image, the base image  is [Ubuntu](https://ubuntu.com/) [22.04 LTS (Jammy Jellyfish)](https://releases.ubuntu.com/jammy/). All `.deb` files availables are listed in [Ubuntu Packages](https://packages.ubuntu.com/jammy/).
+```
 
 We use `apt.txt`, for example, to install LaTeX in our
-[example apt.txt for LaTeX](https://github.com/binder-examples/latex/blob/HEAD/apt.txt).
+[example `apt.txt` file for LaTeX](https://github.com/binder-examples/latex/blob/HEAD/apt.txt).
 
 (runtime-txt)=
 
 ## `runtime.txt` - Specifying runtimes
 
 Sometimes you want to specify the version of the runtime (e.g. the version of Python or R), but the environment specification format will not let you specify this information (e.g. `requirements.txt` or `install.R`).
-For these cases, we have a special file, `runtime.txt`.
+For these cases, we have a special `runtime.txt` file.
 
 :::{warning}
 `runtime.txt` is only supported when used with environment specifications
@@ -25,23 +28,34 @@ that do not already support specifying the runtime
 
 ### Set the Python version
 
-Add the line `python-x.y` in `runtime.txt` to run the repository with Python version x.y.
+Add the line `python-x.y` in `runtime.txt` to run the repository with Python version `x.y`.
 See our [Python2 example repository](https://github.com/binder-examples/python2_runtime/blob/HEAD/runtime.txt).
 
 ### Set the R version
 
-Add the line `r-<RVERSION>-<YYYY>-<MM>-<DD>` in `runtime.txt` to run the repository with R version `RVERSION` and libraries from a `YYYY-MM-DD` snapshot of the [Posit Package Manager](https://packagemanager.posit.co/client/#/repos/2/overview).
+Add the line `r-x.y-YYYY-MM-DD` in `runtime.txt` to run the repository with R version `x.y` and libraries from a `YYYY-MM-DD` snapshot of the [Posit Package Manager](https://packagemanager.posit.co/client/#/repos/2/overview).
 
-`RVERSION` can be set to 3.4, 3.5, 3.6, or to patch releases for the 3.5 and 3.6 series.
+The version of R, i.e. `x.y`, can be set to
+
+- `4.4`
+- `4.3`
+- `4.2`
+- `4.1`
+- `4.0`
+- `3.6`
+- `3.5`
+- `3.4`
+- `3.3`
+
 If you do not specify a version, the latest release will be used.
 
 See our [R example repository](https://github.com/binder-examples/r/blob/HEAD/runtime.txt).
 
 (default-nix)=
 
-## `default.nix` - the nix package manager
+## `default.nix` - the `nix` package manager
 
-Specify packages to be installed by the [nix package manager](https://github.com/NixOS/nixpkgs).
+Specify packages to be installed by the [`nix` package manager](https://github.com/NixOS/nixpkgs).
 When you use this config file all other configuration files (like `requirements.txt`)
 that specify packages are ignored. When using `nix` you have to specify all
 packages and dependencies explicitly, including the Jupyter notebook package that
@@ -54,7 +68,7 @@ a `nix` expression written in a `default.nix` file. Make sure to
 to produce a reproducible environment.
 
 To see an example repository visit
-[nix binder example](https://github.com/binder-examples/nix).
+[nix example repository](https://github.com/binder-examples/nix).
 
 (dockerfile)=
 
