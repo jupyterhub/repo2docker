@@ -1,5 +1,4 @@
-"""Generates a variety of Dockerfiles based on an input matrix
-"""
+"""Generates a variety of Dockerfiles based on an input matrix"""
 
 import os
 
