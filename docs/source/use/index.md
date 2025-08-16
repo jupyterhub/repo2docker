@@ -22,6 +22,7 @@ repository
 ../howto/user_interface
 ../howto/languages
 ../howto/lab_workspaces
+./actions-and-scripts
 ../howto/export_environment
 ../howto/base_image
 ```
