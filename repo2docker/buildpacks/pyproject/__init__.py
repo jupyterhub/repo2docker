@@ -34,7 +34,7 @@ class PyprojectBuildPack(CondaBuildPack):
         if "project" in pyproject_toml:
             if "requires-python" in pyproject_toml["project"]:
                 raw_version = pyproject_toml["project"]["requires-python"]
-                
+
                 match = VERSION_PAT.match(raw_version)
                 if match:
                     return match.group()
