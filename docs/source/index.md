@@ -1,10 +1,8 @@
 # Welcome to `repo2docker`'s documentation
 
-`repo2docker` lets you **reproducibly build, run, and deploy user environment images for interactive computing and data workflows from source code repositories**.
+`repo2docker` lets you **reproducibly build and run user environment container images for interactive computing and data workflows from source code repositories**. Optionally, the container image can be pushed to a Docker registry.
 
-`repo2docker` can be used to explore a repository locally by building and executing the
-constructed image of the repository, or as a means of building images that
-are pushed to a Docker registry. It is the tool used by [BinderHub](https://binderhub.readthedocs.io) to build images on demand.
+Also, `repo2docker` is the tool used to build container images for [JupyterHub](https://jupyterhub.readthedocs.io/en/stable/) and the tool used by [BinderHub](https://binderhub.readthedocs.io) to build images on demand.
 
 ::::{grid}
 :::{grid-item-card} 🔧 Build reproducible data science environments from repositories
@@ -14,23 +12,25 @@ Build a reproducible data science environment as a Docker image and execute code
 Push environment images to a Docker registry for re-use in data science environment services like [JupyterHub](https://jupyterhub.readthedocs.io) or [a Binder instance](https://mybinder.org), or for other communities to build upon your base environment.
 :::
 :::{grid-item-card} ☁️ Host repositories in many providers
-Host repositories in a provider like GitHub, an open science repository like [Zenodo](https://zenodo.org) or [Figshare](https://figshare.com), a hosted data platform like a [Dataverse installation](https://dataverse.org/), an archive like the
+Host repositories in: a Git server like [GitHub](https://github.com/) or [GitLab](https://gitlab.com/), an open science repository like [Zenodo](https://zenodo.org) or [Figshare](https://figshare.com), a hosted data platform like a [Dataverse installation](https://dataverse.org/), an archive like the
 [Software Heritage Archive](https://archive.softwareheritage.org).
 :::
 ::::
 
-## What is a user image and why would I build one with `repo2docker`?
+## What is a user environment container image and why would I build one with `repo2docker`?
 
-A **user image** contains the entire software environment that a user may access from an interactive data science session. For example, it might contain many **programming languages**, **software for data analysis**, or even **content files and datasets** available to anybody that accesses that environment. User images are built with [Docker](https://www.docker.com/), a standard open source tool for defining, building, and deploying images.
+A **user environment container image** contains the entire software environment that a user may access from an interactive data science session. For example, it might contain many **programming languages**, **software for data analysis**, or even **content files and datasets** available to anybody that accesses that environment. Container images are built with [Docker](https://www.docker.com/), a standard open source tool for defining, building, and deploying images.
 
-Many data science platforms and services like [JupyterHub](https://jupyterhub.readthedocs.io) and [Binder](https://mybinder.org) launch interactive data science sessions **with a user image attached**, meaning that the user gains access to whatever is in the image. In short, this allows somebody to define and build the user image one time, in a way that users can reproducibly re-use many times.
+Many data science platforms and services like [JupyterHub](https://jupyterhub.readthedocs.io) and [Binder](https://mybinder.org) launch interactive data science sessions **with a user environment container image attached**, meaning that the user gains access to whatever is in the container image. In short, this allows somebody to define and build the user image one time, in a way that users can reproducibly re-use many times.
 
-Dockerfiles are the standard way that Docker images are defined[^use-dockerfile].
-However, **building images with Dockerfiles takes expertise and time** that is outside the scope of a data scientist or researcher. `repo2docker` makes this workflow more accessible by using community-standard configuration files for computational reproducibility to build user images.
+`Dockerfile`s are the standard way that Docker container images are defined.
+However, **building images with `Dockerfile`s takes expertise and time** that is outside the scope of a data scientist or researcher. `repo2docker` makes this workflow more accessible by using community-standard configuration files for computational reproducibility to build user environment container images.
 
-In short, `repo2docker` is a tool to reproducibly build, run, and deploy these user environment Docker images for data science from source code repositories.
+```{note}
+You can still use a `Dockerfile` with `repo2docker` if you really want to!
+```
 
-[^use-dockerfile]: That said, you can still use a Dockerfile if you really want to!
+In short, `repo2docker` is a tool to reproducibly build and run these user environment container images for data science from source code repositories.
 
 ## How `repo2docker` works
 
@@ -49,13 +49,13 @@ It performs these steps:
 
 [swhid]: https://docs.softwareheritage.org/devel/swh-model/persistent-identifiers.html
 
-Please report [Bugs](https://github.com/jupyterhub/repo2docker/issues),
+Please report [bugs](https://github.com/jupyterhub/repo2docker/issues),
 [ask questions](https://gitter.im/jupyterhub/binder) or
 [contribute to the project](https://github.com/jupyterhub/repo2docker/blob/HEAD/CONTRIBUTING.md).
 
-## Get started with repo2docker
+## Get started with `repo2docker`
 
-This tutorial walks you through setting up repo2docker, building your first environment image, and running it locally with Docker.
+This tutorial walks you through setting up `repo2docker`, building your first environment image, and running it locally with Docker.
 
 ```{toctree}
 :maxdepth: 2
@@ -63,7 +63,7 @@ This tutorial walks you through setting up repo2docker, building your first envi
 start
 ```
 
-## Learn how to use repo2docker
+## Learn how to use `repo2docker`
 
 Our user guide provides all of the information you need to configure and deploy the environment image you want.
 
@@ -72,7 +72,7 @@ Our user guide provides all of the information you need to configure and deploy 
 use/index
 ```
 
-## Contribute to repo2docker
+## Contribute to `repo2docker`
 
 Our contributor guide describes how you can follow along with the project, learn how to collaborate with our open team, and learn developer workflows and information.
 
