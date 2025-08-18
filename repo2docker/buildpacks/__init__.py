@@ -5,5 +5,6 @@ from .julia import JuliaProjectTomlBuildPack, JuliaRequireBuildPack
 from .legacy import LegacyBinderDockerBuildPack
 from .nix import NixBuildPack
 from .pipfile import PipfileBuildPack
+from .pyproject import PyprojectBuildPack
 from .python import PythonBuildPack
 from .r import RBuildPack
