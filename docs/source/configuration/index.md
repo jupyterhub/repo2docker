@@ -1,6 +1,6 @@
 (config-files)=
 
-# Configuration files supported by repo2docker
+# Configuration files supported by `repo2docker`
 
 `repo2docker` looks for configuration files in the repository being built
 to determine how to build it. In general, `repo2docker` uses the same
@@ -15,7 +15,7 @@ Python and R installation in a repository.
 :::
 
 A list of supported configuration files (roughly in the order of build priority)
-can be found on this page (and to the right).
+can be found in the next sections.
 
 ```{toctree}
 :maxdepth: 2
