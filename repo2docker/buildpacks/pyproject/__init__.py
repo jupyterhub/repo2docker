@@ -28,19 +28,58 @@ class PyprojectBuildPack(CondaBuildPack):
         if hasattr(self, "_python_version"):
             return self._python_version
 
+        try:
+            with open(self.binder_path("runtime.txt")) as f:
+                runtime = f.read().strip()
+        except FileNotFoundError:
+            runtime = ""
+
+        if runtime.startswith("python-"):
+            runtime_python_version = runtime.split("-", 1)[1]
+        else:
+            # not a Python runtime (e.g. R, which subclasses this)
+            # use the default Python
+            runtime_python_version = self.major_pythons["3"]
+            self.log.warning(
+                f"Python version unspecified in runtime.txt, using current default Python version {runtime_python_version}. This will change in the future."
+            )
+
+        runtime_python_version_info = runtime_python_version.split(".")
+        if len(runtime_python_version_info) == 1:
+            runtime_python_version = self.major_pythons[runtime_python_version_info[0]]
+            runtime_python_version_info = runtime_python_version.split(".")
+
         pyproject_file = self.binder_path("pyproject.toml")
         with open(pyproject_file, "rb") as _pyproject_file:
             pyproject_toml = tomllib.load(_pyproject_file)
 
         if "project" in pyproject_toml:
             if "requires-python" in pyproject_toml["project"]:
-                raw_version = pyproject_toml["project"]["requires-python"]
+                # This is the minumum version!
+                raw_pyproject_minimum_version = pyproject_toml["project"][
+                    "requires-python"
+                ]
 
-                match = VERSION_PAT.match(raw_version)
+                match = VERSION_PAT.match(raw_pyproject_minimum_version)
                 if match:
-                    return match.group()
+                    pyproject_minimum_version = match.group()
+                    pyproject_minimum_version_info = pyproject_minimum_version.split(
+                        "."
+                    )
 
-        return ""
+                    if (
+                        runtime_python_version_info[0]
+                        < pyproject_minimum_version_info[0]
+                    ) or (
+                        runtime_python_version_info[1]
+                        < pyproject_minimum_version_info[1]
+                    ):
+                        raise RuntimeError(
+                            "runtime.txt version not supported by pyproject.toml."
+                        )
+
+        self._python_version = runtime_python_version
+        return self._python_version
 
     @lru_cache
     def get_preassemble_script_files(self):
@@ -55,18 +94,6 @@ class PyprojectBuildPack(CondaBuildPack):
     def get_preassemble_scripts(self):
         """scripts to run prior to staging the repo contents"""
         scripts = super().get_preassemble_scripts()
-        # install pipenv to install dependencies within Pipfile.lock or Pipfile
-        if V(self.python_version) < V("3.6"):
-            # last pipenv version to support 2.7, 3.5
-            pipenv_version = "2021.5.29"
-        else:
-            pipenv_version = "2022.1.8"
-        scripts.append(
-            (
-                "${NB_USER}",
-                f"${{KERNEL_PYTHON_PREFIX}}/bin/pip install --no-cache-dir pipenv=={pipenv_version}",
-            )
-        )
         return scripts
 
     @lru_cache
@@ -99,12 +126,9 @@ class PyprojectBuildPack(CondaBuildPack):
         assemble_scripts.append(
             (
                 "${NB_USER}",
-                """(cd  && \\
-                    PATH="${{KERNEL_PYTHON_PREFIX}}/bin:$PATH" \\
-                        pip install --no-cache-dir --editable {working_directory}
-                )""".format(
-                    working_directory=working_directory,
-                ),
+                """PATH="${KERNEL_PYTHON_PREFIX}/bin:$PATH" \\
+                    pip install --no-cache-dir --editable .
+                """,
             )
         )
 
