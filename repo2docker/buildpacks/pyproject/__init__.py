@@ -126,9 +126,7 @@ class PyprojectBuildPack(CondaBuildPack):
         assemble_scripts.append(
             (
                 "${NB_USER}",
-                """PATH="${KERNEL_PYTHON_PREFIX}/bin:$PATH" \\
-                    pip install --no-cache-dir --editable .
-                """,
+                "${KERNEL_PYTHON_PREFIX}/bin/pip install --no-cache-dir --editable .",
             )
         )
 
