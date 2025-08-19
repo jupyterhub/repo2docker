@@ -1,6 +1,6 @@
 # Run scripts, commands, and actions as part of environment building
 
-In addition to installing using [standard configuration files](#config-files), you can run your own custom actions and commands as part of the build or user session launch process.
+In addition to installing packages using the [standard configuration files](#config-files), you can run your own custom actions and commands as part of the build or user session launch process.
 
 (commands-jovyan)=
 
