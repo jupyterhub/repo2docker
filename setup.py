@@ -62,7 +62,7 @@ setup(
         "toml",
         "traitlets",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.11",
     author="Project Jupyter Contributors",
     author_email="jupyter@googlegroups.com",
     url="https://repo2docker.readthedocs.io/en/latest/",
