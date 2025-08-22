@@ -1,5 +1,44 @@
 # Changelog
 
+## 2024.09.0
+
+([full changelog](https://github.com/jupyterhub/repo2docker/compare/2024.07.0...2024.09.0))
+
+### API and Breaking Changes
+
+- notebook 7 [#1363](https://github.com/jupyterhub/repo2docker/pull/1363) ([@minrk](https://github.com/minrk), [@manics](https://github.com/manics))
+- Major version bump node (18->20) and jupyterhub-singleuser (3->5) [#1359](https://github.com/jupyterhub/repo2docker/pull/1359) ([@consideRatio](https://github.com/consideRatio), [@yuvipanda](https://github.com/yuvipanda))
+
+### Enhancements made
+
+- exclude defaults channel by default [#1365](https://github.com/jupyterhub/repo2docker/pull/1365) ([@minrk](https://github.com/minrk), [@rgaiacs](https://github.com/rgaiacs))
+
+### Bugs fixed
+
+- TarFile.add: don't add recursively [#1371](https://github.com/jupyterhub/repo2docker/pull/1371) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+
+### Maintenance and upkeep improvements
+
+- Update to mamba 1.5.9 [#1370](https://github.com/jupyterhub/repo2docker/pull/1370) ([@SylvainCorlay](https://github.com/SylvainCorlay), [@manics](https://github.com/manics))
+- update import of shlex.quote [#1364](https://github.com/jupyterhub/repo2docker/pull/1364) ([@minrk](https://github.com/minrk), [@manics](https://github.com/manics))
+
+### Other merged PRs
+
+- Refreeze conda packages (JupyterLab 4.2.3 -> 4.2.5) [#1369](https://github.com/jupyterhub/repo2docker/pull/1369) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+- Update for mamba 1.5.8 [#1367](https://github.com/jupyterhub/repo2docker/pull/1367) ([@jjerphan](https://github.com/jjerphan), [@manics](https://github.com/manics), [@SylvainCorlay](https://github.com/SylvainCorlay))
+- [pre-commit.ci] pre-commit autoupdate [#1362](https://github.com/jupyterhub/repo2docker/pull/1362) ([@minrk](https://github.com/minrk))
+- [pre-commit.ci] pre-commit autoupdate [#1358](https://github.com/jupyterhub/repo2docker/pull/1358) ([@minrk](https://github.com/minrk))
+- Add changelog for 2024.07.0 [#1356](https://github.com/jupyterhub/repo2docker/pull/1356) ([@yuvipanda](https://github.com/yuvipanda), [@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyterhub/repo2docker/graphs/contributors?from=2024-07-01&to=2024-09-25&type=c))
+
+@AliMirlou ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AAliMirlou+updated%3A2024-07-01..2024-09-25&type=Issues)) | @consideRatio ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AconsideRatio+updated%3A2024-07-01..2024-09-25&type=Issues)) | @d70-t ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ad70-t+updated%3A2024-07-01..2024-09-25&type=Issues)) | @felder ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Afelder+updated%3A2024-07-01..2024-09-25&type=Issues)) | @Hind-M ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AHind-M+updated%3A2024-07-01..2024-09-25&type=Issues)) | @hiroyuki-sato ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ahiroyuki-sato+updated%3A2024-07-01..2024-09-25&type=Issues)) | @jjerphan ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ajjerphan+updated%3A2024-07-01..2024-09-25&type=Issues)) | @manics ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Amanics+updated%3A2024-07-01..2024-09-25&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aminrk+updated%3A2024-07-01..2024-09-25&type=Issues)) | @rgaiacs ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Argaiacs+updated%3A2024-07-01..2024-09-25&type=Issues)) | @SylvainCorlay ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3ASylvainCorlay+updated%3A2024-07-01..2024-09-25&type=Issues)) | @yuvipanda ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ayuvipanda+updated%3A2024-07-01..2024-09-25&type=Issues))
+
 ## 2024.07.0
 
 ([full changelog](https://github.com/jupyterhub/repo2docker/compare/2024.03.0...2024.07.0))
