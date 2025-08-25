@@ -1,9 +1,5 @@
-from ._version import get_versions
-
-__version__ = get_versions()["version"]
-del get_versions
-
-from . import _version
+from ._version import __version__
 from .app import Repo2Docker
 
-__version__ = _version.get_versions()["version"]
+# You can add this if you want an __all__ variable to control imports
+__all__ = ["__version__", "Repo2Docker"]
