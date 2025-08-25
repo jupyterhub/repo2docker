@@ -69,6 +69,7 @@ class RBuildPack(PythonBuildPack):
         """
         # Available versions at https://cran.r-project.org/src/base/
         version_map = {
+            "4.5": "4.5.1",
             "4.4": "4.4.2",
             "4.3": "4.3.3",
             "4.2": "4.2.3",
