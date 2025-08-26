@@ -1,9 +1,9 @@
 #!/usr/bin/env Rscript
 library('digest')
 
-# Fail if version is not 4.0
+# Fail if version is not 4.5
 print(version)
-if (!(version$major == "4" && as.double(version$minor) >= 4 && as.double(version$minor) < 5)) {
+if (!(version$major == "4" && as.double(version$minor) >= 5 && as.double(version$minor) < 6)) {
   quit("yes", 1)
 }
 
