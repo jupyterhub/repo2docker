@@ -36,7 +36,7 @@
 - Add a test for runtime.txt with full R version specified [#1416](https://github.com/jupyterhub/repo2docker/pull/1416) ([@yuvipanda](https://github.com/yuvipanda), [@minrk](https://github.com/minrk))
 - Bump alpine docker to 3.21 [#1412](https://github.com/jupyterhub/repo2docker/pull/1412) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
 - Refreeze base environment for package upgrades [#1407](https://github.com/jupyterhub/repo2docker/pull/1407) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics))
-- Remove unused _urlopen method [#1392](https://github.com/jupyterhub/repo2docker/pull/1392) ([@yuvipanda](https://github.com/yuvipanda), [@minrk](https://github.com/minrk))
+- Remove unused \_urlopen method [#1392](https://github.com/jupyterhub/repo2docker/pull/1392) ([@yuvipanda](https://github.com/yuvipanda), [@minrk](https://github.com/minrk))
 - Upgraded to micromamba 2.0.5 [#1387](https://github.com/jupyterhub/repo2docker/pull/1387) ([@JohanMabille](https://github.com/JohanMabille), [@yuvipanda](https://github.com/yuvipanda), [@SylvainCorlay](https://github.com/SylvainCorlay))
 - Use self.log.warning instead of warnings.warn [#1384](https://github.com/jupyterhub/repo2docker/pull/1384) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics))
 - call close_handlers before garbage collection [#1380](https://github.com/jupyterhub/repo2docker/pull/1380) ([@minrk](https://github.com/minrk), [@manics](https://github.com/manics))
