@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased breaking changes
+
+`RBuildPack.runtime` previously returned the contents of `runtime.txt` as a string.
+It has been replaced by `BuildPack.runtime` which returns a tuple `(name, version, date)`.
+
 ## 2025.08.0
 
 ([full changelog](https://github.com/jupyterhub/repo2docker/compare/4da768765372c602c06606cb79d21a398fcc2987...6cf91e45d5b03f79e365cd82eda09d1178d03327))
