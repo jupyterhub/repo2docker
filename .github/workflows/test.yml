@@ -68,11 +68,6 @@ jobs:
           - norun
           # Playwright test
           - ui
-        include:
-          # The earliest actions/setup-python versions depend on the runner.
-          - ubuntu_version: "22.04"
-            python_version: "3.9"
-            repo_type: venv
 
     steps:
       - uses: actions/checkout@v4
