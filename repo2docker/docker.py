@@ -107,6 +107,13 @@ class DockerEngine(ContainerEngine):
     ):
         if not shutil.which("docker"):
             raise RuntimeError("The docker commandline client must be installed")
+
+        # docker buildx is based in a plugin that might not be installed
+        # https://github.com/docker/buildx
+        docker_buildx_version = subprocess.run(["docker", "buildx", "version"])
+        if docker_buildx_version.returncode:
+            raise RuntimeError("The docker buildx plugin must be installed")
+
         args = ["docker", "buildx", "build", "--progress", "plain"]
         if load:
             if push:

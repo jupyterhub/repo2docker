@@ -15,14 +15,10 @@ class PythonBuildPack(CondaBuildPack):
         if hasattr(self, "_python_version"):
             return self._python_version
 
-        try:
-            with open(self.binder_path("runtime.txt")) as f:
-                runtime = f.read().strip()
-        except FileNotFoundError:
-            runtime = ""
+        name, version, _ = self.runtime
 
-        if not runtime.startswith("python-"):
-            # not a Python runtime (e.g. R, which subclasses this)
+        if name != "python" or not version:
+            # Either not specified, or not a Python runtime (e.g. R, which subclasses this)
             # use the default Python
             self._python_version = self.major_pythons["3"]
             self.log.warning(
@@ -30,7 +26,7 @@ class PythonBuildPack(CondaBuildPack):
             )
             return self._python_version
 
-        py_version_info = runtime.split("-", 1)[1].split(".")
+        py_version_info = version.split(".")
         py_version = ""
         if len(py_version_info) == 1:
             py_version = self.major_pythons[py_version_info[0]]
@@ -138,16 +134,11 @@ class PythonBuildPack(CondaBuildPack):
     def detect(self):
         """Check if current repo should be built with the Python buildpack."""
         requirements_txt = self.binder_path("requirements.txt")
-        runtime_txt = self.binder_path("runtime.txt")
         setup_py = "setup.py"
 
-        if os.path.exists(runtime_txt):
-            with open(runtime_txt) as f:
-                runtime = f.read().strip()
-            if runtime.startswith("python-"):
-                return True
-            else:
-                return False
+        name = self.runtime[0]
+        if name:
+            return name == "python"
         if not self.binder_dir and os.path.exists(setup_py):
             return True
         return os.path.exists(requirements_txt)
