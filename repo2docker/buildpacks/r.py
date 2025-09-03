@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 import warnings
 from functools import lru_cache
 
@@ -85,9 +86,23 @@ class RBuildPack(PythonBuildPack):
                 # available. Users can however explicitly specify the full version to get something specific
                 if r_version in version_map:
                     r_version = version_map[r_version]
-                elif len(r_version.split(".")) == 2:
-                    # must have x.y.z version, add .0 for unrecognized (future) R versions
-                    r_version += ".0"
+                else:
+                    r_version_parts = r_version.split(".")
+                    if len(r_version_parts) == 3:
+                        warnings.warn(
+                            f"Using R full version, {r_version}, provided by user."
+                        )
+                    else:
+                        # repo2docker fails earlier with a meaningful message to the user.
+                        # If repo2docker doesn't fail here, repo2docker might fail later
+                        # without a meaningul message to the user.
+                        raise RuntimeError(
+                            f"R version {r_version} is not supported. Please open an issue using https://github.com/jupyterhub/repo2docker/issues/new?template=BLANK_ISSUE.",
+                        )
+            else:
+                warnings.warn(
+                    f"Using R version {r_version} instead of full version, i.e. MAJOR.MINOR.PATCH."
+                )
 
             # translate to the full version string
             self._r_version = r_version
