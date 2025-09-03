@@ -733,7 +733,10 @@ class Repo2Docker(Application):
         try:
             self.fetch(self.repo, self.ref, checkout_path)
 
-            if self.find_image():
+            if self.find_image() and not self.push:
+                # If push is requested we don't have a general way to query the registry.
+                # ContainerEngine.build() also handles pushing, so always "build" and
+                # rely on the implementation to decide whether to rebuild.
                 self.log.info(
                     f"Reusing existing image ({self.output_image_spec}), not building."
                 )
