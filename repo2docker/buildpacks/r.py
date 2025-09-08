@@ -97,7 +97,7 @@ class RBuildPack(PythonBuildPack):
                         # If repo2docker doesn't fail here, repo2docker might fail later
                         # without a meaningful message to the user.
                         raise RuntimeError(
-                            f"R version {r_version} is not supported. Please open an issue using https://github.com/jupyterhub/repo2docker/issues/new/choose.",
+                            f"R version {r_version} is not supported. Please open an issue at https://github.com/jupyterhub/repo2docker/issues/new/choose.",
                         )
             else:
                 self.log.warning(
