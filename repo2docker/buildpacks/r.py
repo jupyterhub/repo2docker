@@ -89,7 +89,7 @@ class RBuildPack(PythonBuildPack):
                 else:
                     r_version_parts = r_version.split(".")
                     if len(r_version_parts) == 3:
-                        warnings.warn(
+                        self.log.warning(
                             f"Using R full version, {r_version}, provided by user."
                         )
                     else:
@@ -97,11 +97,11 @@ class RBuildPack(PythonBuildPack):
                         # If repo2docker doesn't fail here, repo2docker might fail later
                         # without a meaningul message to the user.
                         raise RuntimeError(
-                            f"R version {r_version} is not supported. Please open an issue using https://github.com/jupyterhub/repo2docker/issues/new?template=BLANK_ISSUE.",
+                            f"R version {r_version} is not supported. Please open an issue using https://github.com/jupyterhub/repo2docker/issues/new/choose.",
                         )
             else:
-                warnings.warn(
-                    f"Using R version {r_version} instead of full version, i.e. MAJOR.MINOR.PATCH."
+                self.log.warning(
+                    f"R version unspecified, using default R version {r_version}. You can specify the R version in runtime.txt."
                 )
 
             # translate to the full version string
