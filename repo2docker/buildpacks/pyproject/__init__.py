@@ -28,26 +28,17 @@ class PyprojectBuildPack(CondaBuildPack):
         if hasattr(self, "_python_version"):
             return self._python_version
 
-        try:
-            with open(self.binder_path("runtime.txt")) as f:
-                runtime = f.read().strip()
-        except FileNotFoundError:
-            runtime = ""
+        name, version, _ = self.runtime
 
-        if runtime.startswith("python-"):
-            runtime_python_version = runtime.split("-", 1)[1]
+        if name == "python":
+            runtime_python_version = version
         else:
-            # not a Python runtime (e.g. R, which subclasses this)
-            # use the default Python
             runtime_python_version = self.major_pythons["3"]
             self.log.warning(
                 f"Python version unspecified in runtime.txt, using current default Python version {runtime_python_version}. This will change in the future."
             )
 
         runtime_python_version_info = runtime_python_version.split(".")
-        if len(runtime_python_version_info) == 1:
-            runtime_python_version = self.major_pythons[runtime_python_version_info[0]]
-            runtime_python_version_info = runtime_python_version.split(".")
 
         pyproject_file = self.binder_path("pyproject.toml")
         with open(pyproject_file, "rb") as _pyproject_file:
@@ -135,12 +126,9 @@ class PyprojectBuildPack(CondaBuildPack):
     def detect(self):
         """Check if current repo should be built with the pyproject.toml buildpack."""
         # first make sure python is not explicitly unwanted
-        runtime_txt = self.binder_path("runtime.txt")
-        if os.path.exists(runtime_txt):
-            with open(runtime_txt) as f:
-                runtime = f.read().strip()
-            if not runtime.startswith("python-"):
-                return False
+        name, _, _ = self.runtime
+        if name != "python":
+            return False
 
         pyproject_file = self.binder_path("pyproject.toml")
 
