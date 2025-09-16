@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 import warnings
 from functools import lru_cache
 
@@ -77,17 +78,31 @@ class RBuildPack(PythonBuildPack):
 
         if not hasattr(self, "_r_version"):
             _, version, date = self.runtime
-            # If runtime.txt is not set, or if it isn't of the form r-<version>-<yyyy>-<mm>-<dd>,
+            # If runtime.txt is not set, or if it isn't of the form r-<version>-*,
             # we don't use any of it in determining r version and just use the default
-            if version and date:
+            if version:
                 r_version = version
                 # For versions of form x.y, we want to explicitly provide x.y.z - latest patchlevel
                 # available. Users can however explicitly specify the full version to get something specific
                 if r_version in version_map:
                     r_version = version_map[r_version]
-                elif len(r_version.split(".")) == 2:
-                    # must have x.y.z version, add .0 for unrecognized (future) R versions
-                    r_version += ".0"
+                else:
+                    r_version_parts = r_version.split(".")
+                    if len(r_version_parts) == 3:
+                        self.log.info(
+                            f"Using R full version, {r_version}, provided by user."
+                        )
+                    else:
+                        # repo2docker fails earlier with a meaningful message to the user.
+                        # If repo2docker doesn't fail here, repo2docker might fail later
+                        # without a meaningful message to the user.
+                        raise RuntimeError(
+                            f"R version {r_version} is not supported. Please open an issue at https://github.com/jupyterhub/repo2docker/issues/new/choose.",
+                        )
+            else:
+                self.log.warning(
+                    f"R version unspecified, using default R version {r_version}. You can specify the R version in runtime.txt."
+                )
 
             # translate to the full version string
             self._r_version = r_version
