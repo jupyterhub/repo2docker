@@ -13,7 +13,7 @@ from contextlib import ExitStack, contextmanager
 from pathlib import Path
 
 from iso8601 import parse_date
-from traitlets import Dict, List, Unicode
+from traitlets import Dict, List, Unicode, default
 
 import docker
 
@@ -66,6 +66,35 @@ class DockerEngine(ContainerEngine):
 
     string_output = True
 
+    cli = Unicode(
+        "",
+        help="""
+        The commandline for Docker.
+        """,
+        config=True,
+    )
+
+    @default("cli")
+    def _default_cli(self):
+        for cli in ["docker", "podman"]:
+            docker_version = subprocess.run([cli, "version"])
+            if docker_version.returncode == 0:
+                docker_cli = cli
+                break
+        else:
+            raise RuntimeError("The docker or podman commandline client must be installed")
+
+        # docker buildx is based in a plugin that might not be installed
+        # https://github.com/docker/buildx
+        # 
+        # podman buildx command is an alias of podman build.
+        # Not all buildx build features are available in Podman.
+        docker_buildx_version = subprocess.run([docker_cli, "buildx", "version"])
+        if docker_buildx_version.returncode:
+            raise RuntimeError("The docker buildx plugin must be installed")
+        
+        return docker_cli
+
     extra_init_args = Dict(
         {},
         help="""
@@ -105,16 +134,7 @@ class DockerEngine(ContainerEngine):
         platform=None,
         **kwargs,
     ):
-        if not shutil.which("docker"):
-            raise RuntimeError("The docker commandline client must be installed")
-
-        # docker buildx is based in a plugin that might not be installed
-        # https://github.com/docker/buildx
-        docker_buildx_version = subprocess.run(["docker", "buildx", "version"])
-        if docker_buildx_version.returncode:
-            raise RuntimeError("The docker buildx plugin must be installed")
-
-        args = ["docker", "buildx", "build", "--progress", "plain"]
+        args = [self.cli, "buildx", "build", "--progress", "plain"]
         if load:
             if push:
                 raise ValueError(
@@ -171,7 +191,7 @@ class DockerEngine(ContainerEngine):
         Return image configuration if it exists, otherwise None
         """
         proc = subprocess.run(
-            ["docker", "image", "inspect", image], capture_output=True
+            [self.cli, "image", "inspect", image], capture_output=True
         )
 
         if proc.returncode != 0:
@@ -200,7 +220,7 @@ class DockerEngine(ContainerEngine):
             try:
                 subprocess.run(
                     [
-                        "docker",
+                        self.cli,
                         "login",
                         "--username",
                         username,
