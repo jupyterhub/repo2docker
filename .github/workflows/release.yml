@@ -31,7 +31,7 @@ jobs:
   build-n-publish:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -86,7 +86,7 @@ jobs:
           echo "Publishing to $REGISTRY"
 
       # versioneer requires the full git history for non-tags
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
