@@ -82,17 +82,19 @@ class DockerEngine(ContainerEngine):
                 docker_cli = cli
                 break
         else:
-            raise RuntimeError("The docker or podman commandline client must be installed")
+            raise RuntimeError(
+                "The docker or podman commandline client must be installed"
+            )
 
         # docker buildx is based in a plugin that might not be installed
         # https://github.com/docker/buildx
-        # 
+        #
         # podman buildx command is an alias of podman build.
         # Not all buildx build features are available in Podman.
         docker_buildx_version = subprocess.run([docker_cli, "buildx", "version"])
         if docker_buildx_version.returncode:
             raise RuntimeError("The docker buildx plugin must be installed")
-        
+
         return docker_cli
 
     extra_init_args = Dict(
