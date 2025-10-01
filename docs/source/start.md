@@ -2,34 +2,39 @@
 
 This tutorial guides you through installing `repo2docker` and building your first environment image.
 
+## Prerequisite
+
+### Python
+
+`repo2docker` requires Python 3.6 or above.
+
+### Container Engine
+
+`repo2docker` requires a container engine compatible with the specification published by the [Open Container Initiative](https://opencontainers.org/).
+
+#### Docker
+
+```{important}
+Only the [Docker Engine](https://docs.docker.com/engine/) is an open source. [Docker Desktop](https://docs.docker.com/get-started/get-docker/) requires a license.
+```
+
+Follow [Docker's official installation steps](https://docs.docker.com/get-started/get-docker/).
+
+#### Podman
+
+Follow [Podman's official installation steps](https://podman.io/docs/installation).
+
+And configure the `DOCKER_HOST` environment variable following [Podman's official procedure](https://podman-desktop.io/docs/migrating-from-docker/using-the-docker_host-environment-variable#procedure).
+
 (install)=
 
 ## Install `repo2docker`
 
-`repo2docker` requires Python 3.6 or above on Linux and macOS.
-
-:::{admonition} Windows support is experimental
-
-This [article about using Windows and the WSL](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly) (Windows Subsystem for Linux or
-Bash on Windows) provides additional information about Windows and Docker.
-:::
-
-### Prerequisite: Install Docker
-
-Install [Docker](https://www.docker.com), as it is required to build Docker images.
-The [Community Edition](https://docs.docker.com/install/) is available for free.
-
-Recent versions of Docker are recommended.
-
 ### Install `repo2docker` with `pip`
 
-```{warning}
-The name of the package on [PyPI](https://pypi.org/) is [`jupyter-repo2docker`](https://pypi.org/project/jupyter-repo2docker/) instead of `repo2docker`.
-```
+It is recommend to install `repo2docker` with the `pip` tool:
 
-We recommend installing `repo2docker` with the `pip` tool:
-
-```
+```bash
 python3 -m pip install jupyter-repo2docker
 ```
 
@@ -37,12 +42,24 @@ python3 -m pip install jupyter-repo2docker
 
 ## Build a repository with `repo2docker`
 
-Now that you've installed Docker and `repo2docker`, we can build a repository.
-To do so, follow these steps.
+Now that you've installed a container engine and `repo2docker`, you can build a repository.
+To do so, continue following this guide.
 
-### Start Docker
+### Start the container engine
 
-Follow the [instructions for starting Docker](https://docs.docker.com/engine/daemon/start/) to start a Docker process.
+Ensure that the container engine is running.
+
+#### Docker
+
+Follow the [offcial instructions for starting Docker](https://docs.docker.com/engine/daemon/start/).
+
+#### Podman
+
+Run
+
+```bash
+podman info
+```
 
 ### Build an image from a URL
 
@@ -55,7 +72,7 @@ jupyter-repo2docker https://github.com/binder-examples/requirements
 You'll see `repo2docker` take the following actions:
 
 1. Inspect the repository for [configuration files](#config-files). It will detect the `requirements.txt` file in the repository.
-2. Build a Docker image using the configuration files. In this case, the `requirements.txt` file will correspond to a Python environment.
+2. Build a container image using the configuration files. In this case, the `requirements.txt` file will correspond to a Python environment.
 3. Run the image to let you explore the repository interactively.
 
 Click the link provided and you'll be taken to an interactive Jupyter Notebook interface where you can run commands interactively inside the environment.
@@ -63,4 +80,4 @@ Click the link provided and you'll be taken to an interactive Jupyter Notebook i
 ## Learn more
 
 This is a simple example building an environment image for your repository.
-To learn more about the kinds of source repositories, environments, and use-cases that repo2docker supports, see [the `repo2docker` user guide](./use/index.md).
+To learn more about the kinds of source repositories, environments, and use-cases that `repo2docker` supports, see [the `repo2docker` user guide](./use/index.md).
