@@ -113,7 +113,7 @@ if __name__ == "__main__":
         "py",
         nargs="*",
         help="Python version(s) to update and freeze",
-        default=("3.8", "3.9", "3.10", "3.11", "3.12"),
+        default=("3.8", "3.9", "3.10", "3.11", "3.12", "3.13"),
     )
     parser.add_argument(
         "platform",

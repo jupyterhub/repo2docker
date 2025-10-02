@@ -1,4 +1,5 @@
 #!/bin/bash
-set -euo pipefail
-jupyter server extension list 2>&1 | grep 'jupyter_collaboration' | grep disabled
+set -xeuo pipefail
+jupyter server extension list
+jupyter server extension list 2>&1 | grep 'jupyter_keepalive' | grep disabled
 which configurable-http-proxy 
