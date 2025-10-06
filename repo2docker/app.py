@@ -588,7 +588,7 @@ class Repo2Docker(Application):
         client = self.get_engine()
 
         docker_host = os.environ.get("DOCKER_HOST")
-        if docker_host:
+        if docker_host and docker_host.find("podman") != -1:
             host_name = urlparse(docker_host).hostname
         else:
             host_name = "127.0.0.1"
