@@ -53,6 +53,9 @@ jobs:
       matrix:
         ubuntu_version: ["24.04"]
         python_version: ["3.13"]
+        container_cli:
+          - docker
+          - podman
         repo_type:
           - base
           - conda
@@ -104,6 +107,10 @@ jobs:
 
       - name: Run pytest
         run: |
+          if [ "${{ matrix.container_cli }}" = "podman" ]
+          then
+          export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
+          fi
           pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
 
       - uses: codecov/codecov-action@v5
