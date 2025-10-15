@@ -12,11 +12,12 @@ python freeze.py [3.8]
 import os
 import pathlib
 from argparse import ArgumentParser
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from subprocess import check_call
 
 from ruamel.yaml import YAML
 
+UTC = timezone.utc
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
 ENV_FILE = HERE / "environment.yml"
