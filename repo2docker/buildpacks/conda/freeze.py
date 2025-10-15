@@ -12,11 +12,12 @@ python freeze.py [3.8]
 import os
 import pathlib
 from argparse import ArgumentParser
-from datetime import datetime
+from datetime import datetime, timezone
 from subprocess import check_call
 
 from ruamel.yaml import YAML
 
+UTC = timezone.utc
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
 ENV_FILE = HERE / "environment.yml"
@@ -68,7 +69,7 @@ def freeze(env_file, frozen_file, platform="linux-64"):
         f.write(
             f"# AUTO GENERATED FROM {env_file.relative_to(HERE)}, DO NOT MANUALLY MODIFY\n"
         )
-        f.write(f"# Frozen on {datetime.utcnow():%Y-%m-%d %H:%M:%S UTC}\n")
+        f.write(f"# Frozen on {datetime.now(UTC):%Y-%m-%d %H:%M:%S UTC}\n")
         with frozen_tempfile.open() as temp:
             f.write(temp.read())
 
@@ -98,7 +99,7 @@ def set_python(py_env_file, py):
         f.write(
             f"# AUTO GENERATED FROM {ENV_FILE.relative_to(HERE)}, DO NOT MANUALLY MODIFY\n"
         )
-        f.write(f"# Generated on {datetime.utcnow():%Y-%m-%d %H:%M:%S UTC}\n")
+        f.write(f"# Generated on {datetime.now(UTC):%Y-%m-%d %H:%M:%S UTC}\n")
         yaml.dump(env, f)
 
 
@@ -113,7 +114,7 @@ if __name__ == "__main__":
         "py",
         nargs="*",
         help="Python version(s) to update and freeze",
-        default=("3.8", "3.9", "3.10", "3.11", "3.12"),
+        default=("3.8", "3.9", "3.10", "3.11", "3.12", "3.13"),
     )
     parser.add_argument(
         "platform",

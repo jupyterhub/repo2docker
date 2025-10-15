@@ -1,4 +1,6 @@
 #!/bin/bash
-jupyter server extension disable --sys-prefix jupyter_collaboration
+set -ex
+
+jupyter server extension disable --sys-prefix jupyter_keepalive
 npm install --global configurable-http-proxy
 npm cache clean --force
