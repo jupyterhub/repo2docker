@@ -201,7 +201,15 @@ class DockerEngine(ContainerEngine):
             return None
 
         config = json.loads(proc.stdout.decode())[0]
-        return Image(tags=config["RepoTags"], config=config["Config"])
+        tags = config["RepoTags"]
+        oci_image_configuration = config["Config"]
+
+        # WorkingDir is optional but docker always include it.
+        # https://github.com/containers/podman/discussions/27313
+        if "WorkingDir" not in oci_image_configuration:
+            oci_image_configuration["WorkingDir"] = ""
+
+        return Image(tags=config["RepoTags"], config=oci_image_configuration)
 
     @contextmanager
     def docker_login(self, username, password, registry):
