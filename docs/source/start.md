@@ -24,7 +24,14 @@ Follow [Docker's official installation steps](https://docs.docker.com/get-starte
 
 Follow [Podman's official installation steps](https://podman.io/docs/installation).
 
-And configure the `DOCKER_HOST` environment variable following [Podman's official procedure](https://podman-desktop.io/docs/migrating-from-docker/using-the-docker_host-environment-variable#procedure).
+After complete the installation of Podman,
+
+1. creates a [listening service for Podman](https://docs.podman.io/en/latest/markdown/podman-system-service.1.html) by running
+
+   ```bash
+   systemctl --user start podman.socket
+   ```
+1. configure the `DOCKER_HOST` environment variable following [Podman's official procedure](https://podman-desktop.io/docs/migrating-from-docker/using-the-docker_host-environment-variable#procedure). You might want to configure the `DOCKER_HOST` environment variable to persist in your `~/.bashrc`.
 
 (install)=
 
