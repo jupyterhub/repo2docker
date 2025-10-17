@@ -109,6 +109,7 @@ jobs:
         run: |
           if [ "${{ matrix.container_cli }}" = "podman" ]
           then
+          systemctl --user start podman.socket
           export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
           fi
           pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
