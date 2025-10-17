@@ -38,7 +38,11 @@ def test_editable_by_host():
     container = app.start_container()
 
     # give the container a chance to start
+    waiting_container_counter = 0
     while container.status != "running":
+        if waiting_container_counter >= 60:
+            assert container.status == "running"
+        waiting_container_counter = waiting_container_counter + 1
         time.sleep(1)
 
     try:
