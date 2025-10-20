@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+try:
+    import mwt
+except ImportError:
+    raise Exception("'mwt' shouldn't have been installed!")
