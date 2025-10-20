@@ -135,5 +135,14 @@ class PyprojectBuildPack(CondaBuildPack):
             return False
 
         pyproject_file = self.binder_path("pyproject.toml")
+        with open(pyproject_file, "rb") as _pyproject_file:
+            pyproject_toml = tomllib.load(_pyproject_file)
 
-        return os.path.exists(pyproject_file)
+        if (
+            ("project" in pyproject_toml)
+            and ("build-system" in pyproject_toml)
+            and ("requires" in pyproject_toml["build-system"])
+        ):
+            return os.path.exists(pyproject_file)
+
+        return False
