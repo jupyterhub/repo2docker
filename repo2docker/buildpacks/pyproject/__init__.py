@@ -6,8 +6,12 @@ see https://pip.pypa.io/en/latest/reference/build-system/pyproject-toml/.
 
 import os
 import re
-import tomllib
 from functools import lru_cache
+
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
 
 from ..conda import CondaBuildPack
 
