@@ -1,6 +1,6 @@
 """Buildpack for Git repositories with pyproject.toml
 
-Support to pyproject.toml was added to pip v10.0,
+Support for pyproject.toml was added to pip v10.0,
 see https://pip.pypa.io/en/latest/reference/build-system/pyproject-toml/.
 """
 

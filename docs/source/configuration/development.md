@@ -28,8 +28,8 @@ on GitHub shows a typical requirements file.
 
 ## `pyproject.toml` - Install Python packages
 
-To install your reprository like a Python package, you may include a
-`pyproject.toml` file. `repo2docker`install `pyproject.toml` files by running
+To install your repository like a Python package, you may include a
+`pyproject.toml` file. `repo2docker`installs `pyproject.toml` files by running
 `pip install -e .`.
 
 (setup-py)=
