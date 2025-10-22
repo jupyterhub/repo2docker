@@ -46,7 +46,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://repo2docker.readthedocs.io"
 Documentation = "https://repo2docker.readthedocs.io"
-Funding = "https://jupyter.org/about"
+Funding = "https://jupyter.org/about#donate"
 Source = "https://github.com/jupyterhub/repo2docker"
 Tracker = "https://github.com/jupyterhub/repo2docker/issues"
 
