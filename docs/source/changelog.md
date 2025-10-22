@@ -1,5 +1,80 @@
 # Changelog
 
+## Unreleased breaking changes
+
+`RBuildPack.runtime` previously returned the contents of `runtime.txt` as a string.
+It has been replaced by `BuildPack.runtime` which returns a tuple `(name, version, date)`.
+
+## 2025.08.0
+
+([full changelog](https://github.com/jupyterhub/repo2docker/compare/4da768765372c602c06606cb79d21a398fcc2987...6cf91e45d5b03f79e365cd82eda09d1178d03327))
+
+### API and Breaking Changes
+
+- Switch to using CLI for everything except running the container [#1421](https://github.com/jupyterhub/repo2docker/pull/1421) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+- Require Python 3.9 to run repo2docker [#1411](https://github.com/jupyterhub/repo2docker/pull/1411) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk), [@yuvipanda](https://github.com/yuvipanda))
+- Shell out to `docker buildx build` to build images [#1402](https://github.com/jupyterhub/repo2docker/pull/1402) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+- notebook 7 [#1363](https://github.com/jupyterhub/repo2docker/pull/1363) ([@minrk](https://github.com/minrk), [@manics](https://github.com/manics))
+- Major version bump node (18->20) and jupyterhub-singleuser (3->5) [#1359](https://github.com/jupyterhub/repo2docker/pull/1359) ([@consideRatio](https://github.com/consideRatio), [@yuvipanda](https://github.com/yuvipanda))
+
+### Enhancements made
+
+- add triplets for r versions 4.3, 4.4 [#1403](https://github.com/jupyterhub/repo2docker/pull/1403) ([@minrk](https://github.com/minrk), [@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics))
+- Upgrade Shiny server to 2024.12 [#1400](https://github.com/jupyterhub/repo2docker/pull/1400) ([@rgaiacs](https://github.com/rgaiacs), [@manics](https://github.com/manics))
+- Upgrade RStudio to 2024.12 [#1399](https://github.com/jupyterhub/repo2docker/pull/1399) ([@rgaiacs](https://github.com/rgaiacs), [@manics](https://github.com/manics))
+- Use REST APIs to resolve DOIs + cleanup dataverse provider [#1390](https://github.com/jupyterhub/repo2docker/pull/1390) ([@yuvipanda](https://github.com/yuvipanda), [@minrk](https://github.com/minrk), [@pdurbin](https://github.com/pdurbin))
+- exclude defaults channel by default [#1365](https://github.com/jupyterhub/repo2docker/pull/1365) ([@minrk](https://github.com/minrk), [@rgaiacs](https://github.com/rgaiacs))
+
+### Bugs fixed
+
+- [MRG] Disable bash trace output in conda activation script [#1425](https://github.com/jupyterhub/repo2docker/pull/1425) ([@mfisher87](https://github.com/mfisher87), [@manics](https://github.com/manics))
+- Simulate json output from docker buildx build [#1413](https://github.com/jupyterhub/repo2docker/pull/1413) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+- `set -e` should not be set after conda environment is sourced [#1409](https://github.com/jupyterhub/repo2docker/pull/1409) ([@manics](https://github.com/manics), [@yuvipanda](https://github.com/yuvipanda))
+- Use self.log rather than logging module directly [#1378](https://github.com/jupyterhub/repo2docker/pull/1378) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics))
+- julia_project.py: fix Pkg REPL api warning [#1376](https://github.com/jupyterhub/repo2docker/pull/1376) ([@fonsp](https://github.com/fonsp), [@GeorgianaElena](https://github.com/GeorgianaElena), [@agoose77](https://github.com/agoose77))
+- TarFile.add: don't add recursively [#1371](https://github.com/jupyterhub/repo2docker/pull/1371) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+
+### Maintenance and upkeep improvements
+
+- Bump mamba from 2.0.5 to 2.1.0 [#1423](https://github.com/jupyterhub/repo2docker/pull/1423) ([@weiji14](https://github.com/weiji14), [@yuvipanda](https://github.com/yuvipanda))
+- maint: Adapt mamba activation [#1419](https://github.com/jupyterhub/repo2docker/pull/1419) ([@jjerphan](https://github.com/jjerphan), [@yuvipanda](https://github.com/yuvipanda), [@minrk](https://github.com/minrk))
+- Add a test for runtime.txt with full R version specified [#1416](https://github.com/jupyterhub/repo2docker/pull/1416) ([@yuvipanda](https://github.com/yuvipanda), [@minrk](https://github.com/minrk))
+- Bump alpine docker to 3.21 [#1412](https://github.com/jupyterhub/repo2docker/pull/1412) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+- Refreeze base environment for package upgrades [#1407](https://github.com/jupyterhub/repo2docker/pull/1407) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics))
+- Remove unused \_urlopen method [#1392](https://github.com/jupyterhub/repo2docker/pull/1392) ([@yuvipanda](https://github.com/yuvipanda), [@minrk](https://github.com/minrk))
+- Upgraded to micromamba 2.0.5 [#1387](https://github.com/jupyterhub/repo2docker/pull/1387) ([@JohanMabille](https://github.com/JohanMabille), [@yuvipanda](https://github.com/yuvipanda), [@SylvainCorlay](https://github.com/SylvainCorlay))
+- Use self.log.warning instead of warnings.warn [#1384](https://github.com/jupyterhub/repo2docker/pull/1384) ([@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics))
+- call close_handlers before garbage collection [#1380](https://github.com/jupyterhub/repo2docker/pull/1380) ([@minrk](https://github.com/minrk), [@manics](https://github.com/manics))
+- [pre-commit.ci] pre-commit autoupdate [#1377](https://github.com/jupyterhub/repo2docker/pull/1377) ([@minrk](https://github.com/minrk))
+- Update to mamba 1.5.9 [#1370](https://github.com/jupyterhub/repo2docker/pull/1370) ([@SylvainCorlay](https://github.com/SylvainCorlay), [@manics](https://github.com/manics))
+- Refreeze conda packages (JupyterLab 4.2.3 -> 4.2.5) [#1369](https://github.com/jupyterhub/repo2docker/pull/1369) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+- Update for mamba 1.5.8 [#1367](https://github.com/jupyterhub/repo2docker/pull/1367) ([@jjerphan](https://github.com/jjerphan), [@manics](https://github.com/manics), [@SylvainCorlay](https://github.com/SylvainCorlay))
+- update import of shlex.quote [#1364](https://github.com/jupyterhub/repo2docker/pull/1364) ([@minrk](https://github.com/minrk), [@manics](https://github.com/manics))
+- [pre-commit.ci] pre-commit autoupdate [#1362](https://github.com/jupyterhub/repo2docker/pull/1362) ([@minrk](https://github.com/minrk))
+
+### Documentation improvements
+
+- Revamp our documentation and refactor a bit [#1433](https://github.com/jupyterhub/repo2docker/pull/1433) ([@choldgraf](https://github.com/choldgraf), [@chuckwondo](https://github.com/chuckwondo), [@rgaiacs](https://github.com/rgaiacs), [@yuvipanda](https://github.com/yuvipanda))
+- bug report.rst [#1429](https://github.com/jupyterhub/repo2docker/pull/1429) ([@nadiaguiffant](https://github.com/nadiaguiffant), [@manics](https://github.com/manics))
+- Add changelog for 2024.07.0 [#1356](https://github.com/jupyterhub/repo2docker/pull/1356) ([@yuvipanda](https://github.com/yuvipanda), [@consideRatio](https://github.com/consideRatio), [@manics](https://github.com/manics))
+
+### Continuous integration improvements
+
+- Add basic UI Playwright tests [#1410](https://github.com/jupyterhub/repo2docker/pull/1410) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk))
+- Don't run scheduled workflows on forks [#1408](https://github.com/jupyterhub/repo2docker/pull/1408) ([@manics](https://github.com/manics), [@yuvipanda](https://github.com/yuvipanda))
+- build(deps): bump codecov/codecov-action from 4 to 5 [#1381](https://github.com/jupyterhub/repo2docker/pull/1381) ([@minrk](https://github.com/minrk))
+- [pre-commit.ci] pre-commit autoupdate [#1358](https://github.com/jupyterhub/repo2docker/pull/1358) ([@minrk](https://github.com/minrk))
+- build(deps): bump docker/build-push-action from 5 to 6 [#1357](https://github.com/jupyterhub/repo2docker/pull/1357) ([@manics](https://github.com/manics))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyterhub/repo2docker/graphs/contributors?from=2024-07-01&to=2025-08-03&type=c))
+
+@agoose77 ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aagoose77+updated%3A2024-07-01..2025-08-03&type=Issues)) | @AliMirlou ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AAliMirlou+updated%3A2024-07-01..2025-08-03&type=Issues)) | @betatim ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Abetatim+updated%3A2024-07-01..2025-08-03&type=Issues)) | @choldgraf ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Acholdgraf+updated%3A2024-07-01..2025-08-03&type=Issues)) | @chuckwondo ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Achuckwondo+updated%3A2024-07-01..2025-08-03&type=Issues)) | @consideRatio ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AconsideRatio+updated%3A2024-07-01..2025-08-03&type=Issues)) | @d70-t ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ad70-t+updated%3A2024-07-01..2025-08-03&type=Issues)) | @felder ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Afelder+updated%3A2024-07-01..2025-08-03&type=Issues)) | @fonsp ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Afonsp+updated%3A2024-07-01..2025-08-03&type=Issues)) | @GeorgianaElena ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AGeorgianaElena+updated%3A2024-07-01..2025-08-03&type=Issues)) | @Hind-M ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AHind-M+updated%3A2024-07-01..2025-08-03&type=Issues)) | @hiroyuki-sato ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ahiroyuki-sato+updated%3A2024-07-01..2025-08-03&type=Issues)) | @jjerphan ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ajjerphan+updated%3A2024-07-01..2025-08-03&type=Issues)) | @JohanMabille ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3AJohanMabille+updated%3A2024-07-01..2025-08-03&type=Issues)) | @manics ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Amanics+updated%3A2024-07-01..2025-08-03&type=Issues)) | @mfisher87 ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Amfisher87+updated%3A2024-07-01..2025-08-03&type=Issues)) | @minrk ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aminrk+updated%3A2024-07-01..2025-08-03&type=Issues)) | @nadiaguiffant ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Anadiaguiffant+updated%3A2024-07-01..2025-08-03&type=Issues)) | @pdurbin ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Apdurbin+updated%3A2024-07-01..2025-08-03&type=Issues)) | @rgaiacs ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Argaiacs+updated%3A2024-07-01..2025-08-03&type=Issues)) | @ryanlovett ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aryanlovett+updated%3A2024-07-01..2025-08-03&type=Issues)) | @SylvainCorlay ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3ASylvainCorlay+updated%3A2024-07-01..2025-08-03&type=Issues)) | @weiji14 ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Aweiji14+updated%3A2024-07-01..2025-08-03&type=Issues)) | @yuvipanda ([activity](https://github.com/search?q=repo%3Ajupyterhub%2Frepo2docker+involves%3Ayuvipanda+updated%3A2024-07-01..2025-08-03&type=Issues))
+
 ## 2024.07.0
 
 ([full changelog](https://github.com/jupyterhub/repo2docker/compare/2024.03.0...2024.07.0))

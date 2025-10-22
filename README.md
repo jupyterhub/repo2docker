@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/jupyterhub/repo2docker/workflows/Test/badge.svg)](https://github.com/jupyterhub/repo2docker/actions)
 [![Documentation Status](https://readthedocs.org/projects/repo2docker/badge/?version=latest)](http://repo2docker.readthedocs.io/en/latest/?badge=latest)
-[![Contribute](https://img.shields.io/badge/I_want_to_contribute!-grey?logo=jupyter)](https://repo2docker.readthedocs.io/en/latest/contributing/contributing.html)
+[![Contribute](https://img.shields.io/badge/I_want_to_contribute!-grey?logo=jupyter)](https://repo2docker.readthedocs.io/en/latest/contribute/)
 [![Docker Repository on Quay](https://img.shields.io/badge/quay.io-container-green "Docker Repository on Quay")](https://quay.io/repository/jupyterhub/repo2docker?tab=tags)
 
 `repo2docker` fetches a git repository and builds a container image based on
@@ -38,11 +38,11 @@ For more information, please visit
    is recommended.
 2. Python 3.9+.
 
-Supported on Linux and macOS. [See documentation note about Windows support.](http://repo2docker.readthedocs.io/en/latest/install.html#note-about-windows-support)
+Supported on Linux and macOS. [See documentation note about Windows support.](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly)
 
 ### Installation
 
-This a quick guide to installing `repo2docker`, see our documentation for [a full guide](https://repo2docker.readthedocs.io/en/latest/install.html).
+This a quick guide to installing `repo2docker`, see our documentation for [a full guide](https://repo2docker.readthedocs.io/en/latest/start/#install-repo2docker).
 
 To install from PyPI:
 
@@ -85,14 +85,14 @@ If you copy paste that URL into your browser you will see a Jupyter Notebook
 with the contents of the repository you had just built!
 
 For more information on how to use `repo2docker`, see the
-[usage guide](http://repo2docker.readthedocs.io/en/latest/usage.html).
+[user guide](https://repo2docker.readthedocs.io/en/latest/use/).
 
 ## Repository specifications
 
 Repo2Docker looks for configuration files in the source repository to
 determine how the Docker image should be built. For a list of the configuration
 files that `repo2docker` can use, see the
-[complete list of configuration files](https://repo2docker.readthedocs.io/en/latest/config_files.html).
+[complete list of configuration files](https://repo2docker.readthedocs.io/en/latest/configuration/).
 
 The philosophy of repo2docker is inspired by
 [Heroku Build Packs](https://devcenter.heroku.com/articles/buildpacks).

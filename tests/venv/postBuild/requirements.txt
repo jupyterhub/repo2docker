@@ -1,1 +1,1 @@
-jupyter-collaboration
+jupyter-keepalive
