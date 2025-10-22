@@ -61,7 +61,8 @@ docker = "repo2docker.docker:DockerEngine"
 include-package-data = true
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = [""]
+include = ["repo2docker"]
 
 
 [tool.setuptools_scm]
