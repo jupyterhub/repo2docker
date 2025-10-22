@@ -85,7 +85,7 @@ jobs:
           echo "REGISTRY=$REGISTRY" >> $GITHUB_ENV
           echo "Publishing to $REGISTRY"
 
-      # versioneer requires the full git history for non-tags
+      # git requires the full git history for non-tags
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
@@ -111,7 +111,8 @@ jobs:
       # also push jupyter/repo2docker:1.2.3-3.abcd1234 (replace + with -)
       - name: Get list of repo2docker docker tags
         run: |
-          VERSION=$(python3 -c 'import versioneer; print(versioneer.get_version().replace("+", "-"))')
+          pip install setuptools-scm
+          VERSION=$(python3 -m setuptools_scm | sed s@+@-@g)
           TAGS="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$VERSION"
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
             TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main"
