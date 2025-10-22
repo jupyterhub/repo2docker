@@ -27,7 +27,7 @@ classifiers = [
     "Topic :: Software Development",
     "Topic :: System :: Systems Administration",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "chardet",
     "docker!=5.0.0",
@@ -64,6 +64,8 @@ include-package-data = true
 where = [""]
 include = ["repo2docker"]
 
-
 [tool.setuptools_scm]
 write_to = "repo2docker/_version.py"
+
+[tool.isort]
+profile = "black"
