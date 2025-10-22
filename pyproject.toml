@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "jupyter-repo2docker"
 dynamic = ["version"]
-description = "Repo2docker: Turn code repositories into Jupyter enabled Docker Images"
+description = "repo2docker: Turn code repositories into Jupyter enabled Docker Images"
 readme = "README.md"
-license = {text = "BSD"}
+license = "BSD-3-Clause"
 authors = [
     {name = "Project Jupyter Contributors", email = "jupyter@googlegroups.com"}
 ]
@@ -21,13 +21,8 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: BSD License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development",
     "Topic :: System :: Systems Administration",
@@ -49,10 +44,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://repo2docker.readthedocs.io/en/latest/"
+Homepage = "https://repo2docker.readthedocs.io"
 Documentation = "https://repo2docker.readthedocs.io"
 Funding = "https://jupyter.org/about"
-Source = "https://github.com/jupyterhub/repo2docker/"
+Source = "https://github.com/jupyterhub/repo2docker"
 Tracker = "https://github.com/jupyterhub/repo2docker/issues"
 
 [project.scripts]
@@ -69,12 +64,5 @@ include-package-data = true
 where = ["."]
 
 
-[tool.wheel]
-universal = 1
-
-
 [tool.setuptools_scm]
-# 这个配置会让 setuptools-scm 自动创建一个 my_awesome_project/_version.py 文件，
-# 并在里面写入版本号。这样你的项目代码在运行时可以通过 my_awesome_project._version
-# 来获取自身的版本。
 write_to = "repo2docker/_version.py"
