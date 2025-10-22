@@ -7,7 +7,11 @@
 A list of packages in the [`.deb`](<https://en.wikipedia.org/wiki/Deb_(file_format)>) format that should be installed. The `.deb` files are downloaded from the server configured in the Docker base image.
 
 ```{note}
-If a `Dockerfile` is not used to change the Docker base image, the base image  is [Ubuntu](https://ubuntu.com/) [22.04 LTS (Jammy Jellyfish)](https://releases.ubuntu.com/jammy/). All `.deb` files availables are listed in [Ubuntu Packages](https://packages.ubuntu.com/jammy/).
+If a `Dockerfile` is not used to change the Docker base image, the base image  is [Ubuntu](https://ubuntu.com/) [24.04 LTS (Noble Numbat)](https://releases.ubuntu.com/noble/). All `.deb` files availables are listed in [Ubuntu Packages](https://packages.ubuntu.com/noble/).
+```
+
+```{versionchanged}
+Base ubuntu image upgraded from 22.04 to 24.04 in October, 2025
 ```
 
 We use `apt.txt`, for example, to install LaTeX in our
