@@ -1,7 +1,13 @@
 """Generates Dockerfiles based on an input matrix based on Python."""
 
 import os
+import re
 from functools import lru_cache
+
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
 
 from ...utils import is_local_pip_requirement, open_guess_encoding
 from ..conda import CondaBuildPack
@@ -34,6 +40,35 @@ class PythonBuildPack(CondaBuildPack):
             # get major.minor
             py_version = ".".join(py_version_info[:2])
         self._python_version = py_version
+
+        pyproject_toml = "pyproject.toml"
+        if not self.binder_dir and os.path.exists(pyproject_toml):
+            with open(pyproject_toml, "rb") as _pyproject_file:
+                pyproject = tomllib.load(_pyproject_file)
+
+            if "project" in pyproject:
+                if "requires-python" in pyproject["project"]:
+                    # This is the minumum version!
+                    raw_pyproject_minimum_version = pyproject["project"][
+                        "requires-python"
+                    ]
+
+                    match = re.compile(r"\d+(\.\d+)*").match(
+                        raw_pyproject_minimum_version
+                    )
+                    if match:
+                        pyproject_minimum_version = match.group()
+                        pyproject_minimum_version_info = (
+                            pyproject_minimum_version.split(".")
+                        )
+
+                        if (py_version_info[0] < pyproject_minimum_version_info[0]) or (
+                            py_version_info[1] < pyproject_minimum_version_info[1]
+                        ):
+                            raise RuntimeError(
+                                "runtime.txt version not supported by pyproject.toml."
+                            )
+
         return self._python_version
 
     def _get_pip_scripts(self):
@@ -78,9 +113,11 @@ class PythonBuildPack(CondaBuildPack):
         If there are any local references, e.g. `-e .`,
         stage the whole repo prior to installation.
         """
-        if not os.path.exists("binder") and os.path.exists("setup.py"):
-            # can't install from subset if we're using setup.py
-            return False
+        # can't install from subset
+        for _configuration_file in ("pyproject.toml", "setup.py"):
+            if not os.path.exists("binder") and os.path.exists(_configuration_file):
+                return False
+
         for name in ("requirements.txt", "requirements3.txt"):
             requirements_txt = self.binder_path(name)
             if not os.path.exists(requirements_txt):
@@ -119,26 +156,41 @@ class PythonBuildPack(CondaBuildPack):
         # and requirements3.txt (if it exists)
         # will be installed in the python 3 notebook server env.
         assemble_scripts = super().get_assemble_scripts()
-        setup_py = "setup.py"
         # KERNEL_PYTHON_PREFIX is the env with the kernel,
         # whether it's distinct from the notebook or the same.
         pip = "${KERNEL_PYTHON_PREFIX}/bin/pip"
         if not self._should_preassemble_pip:
             assemble_scripts.extend(self._get_pip_scripts())
 
-        # setup.py exists *and* binder dir is not used
-        if not self.binder_dir and os.path.exists(setup_py):
-            assemble_scripts.append(("${NB_USER}", f"{pip} install --no-cache-dir ."))
+        for _configuration_file in ("pyproject.toml", "setup.py"):
+            if not self.binder_dir and os.path.exists(_configuration_file):
+                assemble_scripts.append(
+                    ("${NB_USER}", f"{pip} install --no-cache-dir .")
+                )
+                break
+
         return assemble_scripts
 
     def detect(self):
         """Check if current repo should be built with the Python buildpack."""
         requirements_txt = self.binder_path("requirements.txt")
+        pyproject_toml = "pyproject.toml"
         setup_py = "setup.py"
 
         name = self.runtime[0]
         if name:
             return name == "python"
+        if not self.binder_dir and os.path.exists(pyproject_toml):
+            with open(pyproject_toml, "rb") as _pyproject_file:
+                pyproject = tomllib.load(_pyproject_file)
+
+            if (
+                ("project" in pyproject)
+                and ("build-system" in pyproject)
+                and ("requires" in pyproject["build-system"])
+            ):
+                return True
+
         if not self.binder_dir and os.path.exists(setup_py):
             return True
         return os.path.exists(requirements_txt)
