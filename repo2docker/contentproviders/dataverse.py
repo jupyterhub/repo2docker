@@ -1,9 +1,9 @@
-import hashlib
-import json
 import os
 import shutil
 from typing import List, Tuple
 from urllib.parse import parse_qs, urlparse
+
+import requests
 
 from ..utils import copytree, deep_get, is_doi
 from .doi import DoiProvider
@@ -13,17 +13,27 @@ class Dataverse(DoiProvider):
     """
     Provide contents of a Dataverse dataset.
 
-    This class loads a a list of existing Dataverse installations from the internal
-    file dataverse.json. This file is manually updated with the following command:
-
-        python setup.py generate_dataverse_file
+    Dataverse installations are downloaded from
+    https://iqss.github.io/dataverse-installations/data/data.json
+    or $R2D_DATAVERSE_INSTALLATIONS_URL if specified.
     """
 
-    def __init__(self):
-        data_file = os.path.join(os.path.dirname(__file__), "dataverse.json")
-        with open(data_file) as fp:
-            self.hosts = json.load(fp)["installations"]
-        super().__init__()
+    dataverse_installations_url = (
+        os.environ.get("R2D_DATAVERSE_INSTALLATIONS_URL")
+        or "https://iqss.github.io/dataverse-installations/data/data.json"
+    )
+
+    hosts = None
+
+    def load_hosts(self):
+        if self.hosts is None:
+            self.log.info(
+                "Retrieving dataverse installations from %s",
+                self.dataverse_installations_url,
+            )
+            r = requests.get(self.dataverse_installations_url)
+            r.raise_for_status()
+            self.hosts = r.json()["installations"]
 
     def detect(self, spec, ref=None, extra_args=None):
         """
@@ -47,12 +57,9 @@ class Dataverse(DoiProvider):
         parsed_url = urlparse(url)
 
         # Check if the url matches any known Dataverse installation, bail if not.
+        self.load_hosts()
         host = next(
-            (
-                host
-                for host in self.hosts
-                if urlparse(host["url"]).netloc == parsed_url.netloc
-            ),
+            (host for host in self.hosts if host["hostname"] == parsed_url.netloc),
             None,
         )
         if host is None:
