@@ -70,8 +70,8 @@ jobs:
           - ui
         include:
           # The earliest actions/setup-python versions depend on the runner.
-          - ubuntu_version: "22.04"
-            python_version: "3.9"
+          - ubuntu_version: "24.04"
+            python_version: "3.10"
             repo_type: venv
 
     steps:
