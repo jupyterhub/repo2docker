@@ -14,8 +14,6 @@ repos:
     rev: v3.20.0
     hooks:
       - id: pyupgrade
-        args:
-          - --py38-plus
         # check-tmp is a Python based test script run in created environments
         # that can be Python 3.5, older than the Python version required to run
         # repo2docker.
@@ -26,24 +24,16 @@ repos:
     rev: 25.9.0
     hooks:
       - id: black
-        args:
-          - --target-version=py39
-          - --target-version=py310
-          - --target-version=py311
-          - --target-version=py312
-          - --target-version=py313
 
   # Autoformat: Python code
   - repo: https://github.com/pycqa/isort
     rev: 6.1.0
     hooks:
       - id: isort
-        args:
-          - --profile=black
 
   # Autoformat: markdown
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: v3.6.2
     hooks:
       - id: prettier
         files: ".md"
