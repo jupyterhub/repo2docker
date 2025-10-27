@@ -44,17 +44,30 @@ ARG NB_UID
 ENV USER=${NB_USER} \
     HOME=/home/${NB_USER}
 
-RUN groupadd \
-        --gid ${NB_UID} \
-        ${NB_USER} && \
-    useradd \
+# Ubuntu 24.04 has a predefined uid/gid 1000, older Ubuntu versions don't
+RUN if getent group ${NB_UID}; then \
+      GROUP_1000="$(getent group ${NB_UID} | cut -d: -f1)"; \
+      if [ "$GROUP_1000" != "$NB_USER" ]; then \
+        groupmod --new-name ${NB_USER} "$GROUP_1000"; \
+      fi; \
+    else \
+      groupadd --gid ${NB_UID} ${NB_USER}; \
+    fi
+RUN if id ${NB_UID}; then \
+      USER_1000="$(id ${NB_UID} -un)"; \
+      if [ "$USER_1000" != "$NB_USER" ]; then \
+        usermod --home "/home/$NB_USER" --login "$NB_USER" --move-home "$USER_1000"; \
+      fi; \
+    else \
+      useradd \
         --comment "Default user" \
         --create-home \
         --gid ${NB_UID} \
         --no-log-init \
         --shell /bin/bash \
         --uid ${NB_UID} \
-        ${NB_USER}
+        ${NB_USER}; \
+    fi
 
 # Base package installs are not super interesting to users, so hide their outputs
 # If install fails for some reason, errors will still be printed
