@@ -24,7 +24,7 @@ assert pkgs["xeus-cling"]["version"] == "0.6.0"
 # this may be brittle, but it's unlikely any of these old versions
 # of packages will be rebuilt
 # xeus-cling 0.6.0 pins xeus 0.20, which pins openssl 1.1.1,
-# which in turn downgrades Python from >=3.9.16 to 3.9.6
+# which in turn downgrades Python from >=3.9.16 to 3.9.0
 
 assert pkgs["openssl"]["version"].startswith("1.1.1"), pkgs["openssl"]["version"]
 assert pkgs["python"]["version"] == "3.9.0", pkgs["python"]["version"]
