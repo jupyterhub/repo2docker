@@ -8,6 +8,7 @@ import string
 import sys
 import tarfile
 import textwrap
+from enum import Enum
 from functools import lru_cache
 
 import escapism
@@ -204,6 +205,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 # Also used for the group
 DEFAULT_NB_UID = 1000
+
+
+class ExcludesStrategy(Enum):
+    THEIRS = "theirs"
+    OURS = "ours"
+    MERGE = "merge"
+
+    @classmethod
+    def values(cls):
+        return [item.value for item in cls]
 
 
 class BuildPack:
@@ -583,6 +594,8 @@ class BuildPack:
         cache_from,
         extra_build_kwargs,
         platform=None,
+        extra_ignore_file=None,
+        ignore_file_strategy=ExcludesStrategy.THEIRS,
     ):
         tarf = io.BytesIO()
         tar = tarfile.open(fileobj=tarf, mode="w")
@@ -610,24 +623,35 @@ class BuildPack:
         for fname in ("repo2docker-entrypoint", "python3-login"):
             tar.add(os.path.join(HERE, fname), fname, filter=_filter_tar)
 
-        exclude = []
+        def _read_excludes(filepath):
+            with open(filepath) as ignore_file:
+                cleaned_lines = [
+                    line.strip() for line in ignore_file.read().splitlines()
+                ]
+                return [line for line in cleaned_lines if line != "" and line[0] != "#"]
 
+        extra_excludes = []
+        if extra_ignore_file:
+            extra_excludes = _read_excludes(extra_ignore_file)
+
+        excludes = []
         for ignore_file_name in [".dockerignore", ".containerignore"]:
             ignore_file_name = self.binder_path(ignore_file_name)
             if os.path.exists(ignore_file_name):
-                with open(ignore_file_name) as ignore_file:
-                    cleaned_lines = [
-                        line.strip() for line in ignore_file.read().splitlines()
-                    ]
-                    exclude.extend(
-                        [
-                            line
-                            for line in cleaned_lines
-                            if line != "" and line[0] != "#"
-                        ]
-                    )
+                excludes.extend(_read_excludes(ignore_file_name))
 
-        files_to_add = exclude_paths(".", exclude)
+        if extra_ignore_file is not None:
+            if ignore_file_strategy == ExcludesStrategy.OURS:
+                excludes = extra_excludes
+            elif ignore_file_strategy == ExcludesStrategy.MERGE:
+                excludes.extend(extra_excludes)
+            else:
+                # ignore means that if an ignore file exist, its content is used
+                # otherwise, the extra exclude
+                if not excludes:
+                    excludes = extra_excludes
+
+        files_to_add = exclude_paths(".", excludes)
 
         if files_to_add:
             for item in files_to_add:
