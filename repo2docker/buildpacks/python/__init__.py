@@ -9,6 +9,9 @@ try:
 except ImportError:
     import tomli as tomllib
 
+from packaging.specifiers import SpecifierSet, InvalidSpecifier
+from packaging.version import Version
+
 from ...utils import is_local_pip_requirement, open_guess_encoding
 from ..conda import CondaBuildPack
 
@@ -23,8 +26,8 @@ class PythonBuildPack(CondaBuildPack):
 
         name, version, _ = self.runtime
 
-        if name != "python" or not version:
-            # Either not specified, or not a Python runtime (e.g. R, which subclasses this)
+        if name is not None and name != "python":
+            # Either not a Python runtime (e.g. R, which subclasses this)
             # use the default Python
             self._python_version = self.major_pythons["3"]
             self.log.warning(
@@ -32,42 +35,31 @@ class PythonBuildPack(CondaBuildPack):
             )
             return self._python_version
 
-        py_version_info = version.split(".")
-        py_version = ""
-        if len(py_version_info) == 1:
-            py_version = self.major_pythons[py_version_info[0]]
+        if name is None or version is None:
+            self._python_version = self.major_pythons["3"]
+            runtime_version = Version(self.major_pythons["3"])
+            self.log.warning(
+                f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
+            )
         else:
-            # get major.minor
-            py_version = ".".join(py_version_info[:2])
-        self._python_version = py_version
+            self._python_version = version
+            runtime_version = Version(version)
 
         pyproject_toml = "pyproject.toml"
         if not self.binder_dir and os.path.exists(pyproject_toml):
             with open(pyproject_toml, "rb") as _pyproject_file:
                 pyproject = tomllib.load(_pyproject_file)
 
-            if "project" in pyproject:
-                if "requires-python" in pyproject["project"]:
-                    # This is the minumum version!
-                    raw_pyproject_minimum_version = pyproject["project"][
-                        "requires-python"
-                    ]
+            if "project" in pyproject and "requires-python" in pyproject["project"]:
+                # This is the minumum version!
+                # https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#python-requires
+                pyproject_python_specifier = SpecifierSet(pyproject["project"]["requires-python"])
 
-                    match = re.compile(r"\d+(\.\d+)*").match(
-                        raw_pyproject_minimum_version
-                    )
-                    if match:
-                        pyproject_minimum_version = match.group()
-                        pyproject_minimum_version_info = (
-                            pyproject_minimum_version.split(".")
+
+                if runtime_version not in pyproject_python_specifier:
+                        raise RuntimeError(
+                            "runtime.txt version not supported by pyproject.toml."
                         )
-
-                        if (py_version_info[0] < pyproject_minimum_version_info[0]) or (
-                            py_version_info[1] < pyproject_minimum_version_info[1]
-                        ):
-                            raise RuntimeError(
-                                "runtime.txt version not supported by pyproject.toml."
-                            )
 
         return self._python_version
 
