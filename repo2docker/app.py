@@ -625,7 +625,7 @@ class Repo2Docker(Application):
                 "notebook",
                 "--ip=0.0.0.0",
                 f"--port={container_port}",
-                f"--ServerApp.custom_display_url=http://{host_name}:{host_port}",
+                f"--ServerApp.custom_display_url=http://{self.hostname}:{self.port}",
                 "--ServerApp.default_url=/lab",
             ]
         else:
