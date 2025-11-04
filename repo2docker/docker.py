@@ -209,7 +209,7 @@ class DockerEngine(ContainerEngine):
         if "WorkingDir" not in oci_image_configuration:
             oci_image_configuration["WorkingDir"] = ""
 
-        return Image(tags=config["RepoTags"], config=oci_image_configuration)
+        return Image(tags=tags, config=oci_image_configuration)
 
     @contextmanager
     def docker_login(self, username, password, registry):
