@@ -5,6 +5,13 @@
 A collection of frequently asked questions with answers. If you have a question
 and have found an answer, send a PR to add it here!
 
+## Is rootless container runtime supported?
+
+To to mitigate potential vulnerabilities in the daemon and the container runtime, security experts recommend run Docker in [rootless mode](https://docs.docker.com/engine/security/rootless/). Rootless mode is supported by `repo2docker` but it has some limitations:
+
+- `repo2docker` does not allow the primary user in the image to be `root`.
+- the `--editable` feature will not work because of permission issues.
+
 ## Why is my repository failing to build with `ResolvePackageNotFound` ?
 
 If you used `conda env export` to generate your `environment.yml` it will generate a list of packages and versions of packages that is pinned to platform specific versions.
