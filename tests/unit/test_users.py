@@ -9,7 +9,10 @@ import time
 from getpass import getuser
 from unittest import mock
 
+import pytest
+
 from repo2docker import Repo2Docker
+from repo2docker.docker import DOCKER_CLI
 
 
 def test_automatic_username_deduction():
@@ -22,6 +25,7 @@ def test_automatic_username_deduction():
         assert r2d.user_name == expected
 
 
+@pytest.mark.skipif(DOCKER_CLI == "podman", reason="Podman does NOT support bind mount")
 def test_user():
     """
     Validate user id and name setting
