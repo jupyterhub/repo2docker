@@ -20,6 +20,12 @@ import docker
 from .engine import Container, ContainerEngine, Image
 from .utils import execute_cmd
 
+DOCKER_HOST = os.getenv("DOCKER_HOST")
+if DOCKER_HOST is not None and DOCKER_HOST.find("podman") != -1:
+    DOCKER_CLI = "podman"
+else:
+    DOCKER_CLI = "docker"
+
 
 class DockerContainer(Container):
     def __init__(self, container):
@@ -73,11 +79,7 @@ class DockerEngine(ContainerEngine):
         if self._container_cli is not None:
             return self._container_cli
 
-        docker_host = os.getenv("DOCKER_HOST")
-        if docker_host is not None and docker_host.find("podman") != -1:
-            cli = "podman"
-        else:
-            cli = "docker"
+        cli = DOCKER_CLI
 
         docker_version = subprocess.run([cli, "version"], stdout=subprocess.DEVNULL)
         if docker_version.returncode:
