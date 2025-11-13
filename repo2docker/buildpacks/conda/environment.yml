@@ -11,3 +11,4 @@ dependencies:
   - jupyterhub-singleuser==5.*   # https://github.com/jupyterhub/jupyterhub
   - jupyterlab==4.*   # https://github.com/jupyterlab/jupyterlab
   - notebook==7.*   # https://github.com/jupyter/notebook
+  - jupyterlab-myst  # https://github.com/jupyter-book/jupyterlab-myst
