@@ -1,5 +1,5 @@
 # AUTO GENERATED FROM environment.yml, DO NOT MANUALLY MODIFY
-# Generated on 2025-10-16 07:18:17 UTC
+# Generated on 2025-11-13 14:59:18 UTC
 channels:
 - conda-forge
 dependencies:
@@ -13,3 +13,4 @@ dependencies:
 - jupyterhub-singleuser==5.*     # https://github.com/jupyterhub/jupyterhub
 - jupyterlab==4.*     # https://github.com/jupyterlab/jupyterlab
 - notebook==7.*     # https://github.com/jupyter/notebook
+- jupyterlab-myst    # https://github.com/jupyter-book/jupyterlab-myst
