@@ -76,6 +76,27 @@ jobs:
           - ubuntu_version: "24.04"
             python_version: "3.10"
             repo_type: venv
+        exclude:
+          # Run all tests for both Docker and Podman is expensive.
+          # We only run the "smoke" test for Podman.
+          - container_cli: podman
+            repo_type: external
+          - container_cli: podman
+            repo_type: julia
+          - container_cli: podman
+            repo_type: nix
+          - container_cli: podman
+            repo_type: pipfile
+          - container_cli: podman
+            repo_type: r
+          - container_cli: podman
+            repo_type: venv
+          - container_cli: podman
+            repo_type: contentproviders
+          - container_cli: podman
+            repo_type: norun
+          - container_cli: podman
+            repo_type: ui
 
     steps:
       - uses: actions/checkout@v6
