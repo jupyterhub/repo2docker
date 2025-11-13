@@ -9,7 +9,7 @@ try:
 except ImportError:
     import tomli as tomllib
 
-from packaging.specifiers import SpecifierSet, InvalidSpecifier
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
 from ...utils import is_local_pip_requirement, open_guess_encoding
@@ -37,13 +37,16 @@ class PythonBuildPack(CondaBuildPack):
 
         if name is None or version is None:
             self._python_version = self.major_pythons["3"]
-            runtime_version = Version(self.major_pythons["3"])
             self.log.warning(
                 f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
             )
         else:
-            self._python_version = version
-            runtime_version = Version(version)
+            if len(Version(version).release) <= 1:
+                self._python_version = self.major_pythons[version]
+            else:
+                self._python_version = version
+
+        runtime_version = Version(self._python_version)
 
         pyproject_toml = "pyproject.toml"
         if not self.binder_dir and os.path.exists(pyproject_toml):
@@ -53,13 +56,14 @@ class PythonBuildPack(CondaBuildPack):
             if "project" in pyproject and "requires-python" in pyproject["project"]:
                 # This is the minumum version!
                 # https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#python-requires
-                pyproject_python_specifier = SpecifierSet(pyproject["project"]["requires-python"])
-
+                pyproject_python_specifier = SpecifierSet(
+                    pyproject["project"]["requires-python"]
+                )
 
                 if runtime_version not in pyproject_python_specifier:
-                        raise RuntimeError(
-                            "runtime.txt version not supported by pyproject.toml."
-                        )
+                    raise RuntimeError(
+                        "runtime.txt version not supported by pyproject.toml."
+                    )
 
         return self._python_version
 
