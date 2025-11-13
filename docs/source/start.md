@@ -15,7 +15,7 @@ This tutorial guides you through installing `repo2docker` and building your firs
 #### Docker
 
 ```{important}
-Only the [Docker Engine](https://docs.docker.com/engine/) is an open source. [Docker Desktop](https://docs.docker.com/get-started/get-docker/) requires a license.
+Only the [Docker Engine](https://docs.docker.com/engine/) is open source. [Docker Desktop](https://docs.docker.com/get-started/get-docker/) requires a license.
 ```
 
 Follow [Docker's official installation steps](https://docs.docker.com/get-started/get-docker/).
@@ -24,9 +24,9 @@ Follow [Docker's official installation steps](https://docs.docker.com/get-starte
 
 Follow [Podman's official installation steps](https://podman.io/docs/installation).
 
-After complete the installation of Podman,
+After completing the installation of Podman,
 
-1. creates a [listening service for Podman](https://docs.podman.io/en/latest/markdown/podman-system-service.1.html) by running
+1. create a [listening service for Podman](https://docs.podman.io/en/latest/markdown/podman-system-service.1.html) by running
 
    ```bash
    systemctl --user start podman.socket
