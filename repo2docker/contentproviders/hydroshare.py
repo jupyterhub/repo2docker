@@ -66,9 +66,8 @@ class Hydroshare(DoiProvider):
         # bag downloads are prepared on demand and may need some time
         conn = self.urlopen(bag_url)
         total_wait_time = 0
-        while (
-            conn.status_code == 200
-            and not conn.url.startswith(f"https://s3.hydroshare.org/bags/{resource_id}.zip")
+        while conn.status_code == 200 and not conn.url.startswith(
+            f"https://s3.hydroshare.org/bags/{resource_id}.zip"
         ):
             wait_time = 10
             total_wait_time += wait_time

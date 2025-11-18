@@ -106,8 +106,10 @@ def test_fetch_bag():
             Hydroshare,
             "urlopen",
             side_effect=[
-                MockResponse("https://www.hydroshare.org/django_s3/download/bags/123456789.zip",
-                             200),
+                MockResponse(
+                    "https://www.hydroshare.org/django_s3/download/bags/123456789.zip",
+                    200,
+                ),
                 MockResponse("https://s3.hydroshare.org/bags/123456789.zip", 200),
             ],
         ):
