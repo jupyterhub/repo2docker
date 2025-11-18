@@ -1,4 +1,3 @@
-import json
 import os
 import shutil
 import time
@@ -33,8 +32,10 @@ class Hydroshare(DoiProvider):
                 "hostname": [
                     "https://www.hydroshare.org/resource/",
                     "http://www.hydroshare.org/resource/",
+                    "https://hydroshare.org/resource/",
+                    "http://hydroshare.org/resource/",
                 ],
-                "django_irods": "https://www.hydroshare.org/django_irods/download/bags/",
+                "django_s3": "https://www.hydroshare.org/django_s3/download/bags/",
                 "version": "https://www.hydroshare.org/hsapi/resource/{}/scimeta/elements",
             }
         ]
@@ -58,7 +59,7 @@ class Hydroshare(DoiProvider):
         resource_id = spec["resource"]
         host = spec["host"]
 
-        bag_url = f'{host["django_irods"]}{resource_id}'
+        bag_url = f'{host["django_s3"]}{resource_id}.zip'
 
         yield f"Downloading {bag_url}.\n"
 
@@ -67,7 +68,7 @@ class Hydroshare(DoiProvider):
         total_wait_time = 0
         while (
             conn.status_code == 200
-            and conn.headers["content-type"] != "application/zip"
+            and not conn.url.startswith(f"https://s3.hydroshare.org/bags/{resource_id}.zip")
         ):
             wait_time = 10
             total_wait_time += wait_time
