@@ -1,3 +1,4 @@
+import os
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
@@ -57,7 +58,11 @@ def test_extra_buildx_build_args(repo_with_content):
 
     args, kwargs = execute_cmd.call_args
     cmd = args[0]
-    assert cmd[:3] == ["docker", "buildx", "build"]
+    docker_host = os.environ.get("DOCKER_HOST")
+    if docker_host and docker_host.find("podman") != -1:
+        assert cmd[:3] == ["podman", "buildx", "build"]
+    else:
+        assert cmd[:3] == ["docker", "buildx", "build"]
     # make sure it's inserted before the end
     assert "--check" in cmd[:-1]
 

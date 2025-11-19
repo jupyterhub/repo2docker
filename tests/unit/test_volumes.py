@@ -8,7 +8,12 @@ import tempfile
 import time
 from getpass import getuser
 
+import pytest
 
+from repo2docker.docker import DOCKER_CLI
+
+
+@pytest.mark.skipif(DOCKER_CLI == "podman", reason="Podman does NOT support bind mount")
 def test_volume_abspath():
     """
     Validate that you can bind mount a volume onto an absolute dir & write to it
@@ -39,6 +44,7 @@ def test_volume_abspath():
             assert f.read() == ts
 
 
+@pytest.mark.skipif(DOCKER_CLI == "podman", reason="Podman does NOT support bind mount")
 def test_volume_relpath():
     """
     Validate that you can bind mount a volume onto an relative path & write to it

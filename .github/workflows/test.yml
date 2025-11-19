@@ -53,6 +53,9 @@ jobs:
       matrix:
         ubuntu_version: ["24.04"]
         python_version: ["3.13"]
+        container_cli:
+          - docker
+          - podman
         repo_type:
           - base
           - conda
@@ -73,6 +76,27 @@ jobs:
           - ubuntu_version: "24.04"
             python_version: "3.10"
             repo_type: venv
+        exclude:
+          # Run all tests for both Docker and Podman is expensive.
+          # We only run the "smoke" test for Podman.
+          - container_cli: podman
+            repo_type: external
+          - container_cli: podman
+            repo_type: julia
+          - container_cli: podman
+            repo_type: nix
+          - container_cli: podman
+            repo_type: pipfile
+          - container_cli: podman
+            repo_type: r
+          - container_cli: podman
+            repo_type: venv
+          - container_cli: podman
+            repo_type: contentproviders
+          - container_cli: podman
+            repo_type: norun
+          - container_cli: podman
+            repo_type: ui
 
     steps:
       - uses: actions/checkout@v5
@@ -104,6 +128,11 @@ jobs:
 
       - name: Run pytest
         run: |
+          if [ "${{ matrix.container_cli }}" = "podman" ]
+          then
+          systemctl --user start podman.socket
+          export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
+          fi
           pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
 
       - uses: codecov/codecov-action@v5
