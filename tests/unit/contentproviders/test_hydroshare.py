@@ -1,5 +1,4 @@
 import os
-import re
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest.mock import patch
@@ -48,8 +47,10 @@ def test_detect_hydroshare():
             "hostname": [
                 "https://www.hydroshare.org/resource/",
                 "http://www.hydroshare.org/resource/",
+                "https://hydroshare.org/resource/",
+                "http://hydroshare.org/resource/",
             ],
-            "django_irods": "https://www.hydroshare.org/django_irods/download/bags/",
+            "django_s3": "https://www.hydroshare.org/django_s3/download/bags/",
             "version": "https://www.hydroshare.org/hsapi/resource/{}/scimeta/elements",
         },
         "resource": "b8f6eae9d89241cf8b5904033460af61",
@@ -58,7 +59,7 @@ def test_detect_hydroshare():
 
     assert (
         Hydroshare().detect(
-            "https://www.hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
+            "https://hydroshare.org/resource/b8f6eae9d89241cf8b5904033460af61"
         )
         == expected
     )
@@ -83,7 +84,7 @@ def test_detect_hydroshare():
 
 
 @contextmanager
-def hydroshare_archive(prefix="b8f6eae9d89241cf8b5904033460af61/data/contents"):
+def hydroshare_archive(prefix="123456789/data/contents"):
     with NamedTemporaryFile(suffix=".zip") as zfile:
         with ZipFile(zfile.name, mode="w") as zip:
             zip.writestr(f"{prefix}/some-file.txt", "some content")
@@ -93,10 +94,9 @@ def hydroshare_archive(prefix="b8f6eae9d89241cf8b5904033460af61/data/contents"):
 
 
 class MockResponse:
-    def __init__(self, content_type, status_code):
+    def __init__(self, url, status_code):
         self.status_code = status_code
-        self.headers = dict()
-        self.headers["content-type"] = content_type
+        self.url = url
 
 
 def test_fetch_bag():
@@ -106,22 +106,27 @@ def test_fetch_bag():
             Hydroshare,
             "urlopen",
             side_effect=[
-                MockResponse("application/html", 200),
-                MockResponse("application/zip", 200),
+                MockResponse(
+                    "https://www.hydroshare.org/django_s3/download/bags/123456789.zip",
+                    200,
+                ),
+                MockResponse("https://s3.hydroshare.org/bags/123456789.zip", 200),
             ],
         ):
             with patch.object(
                 Hydroshare, "_urlretrieve", side_effect=[(hydro_path, None)]
             ):
                 hydro = Hydroshare()
-                hydro.resource_id = "b8f6eae9d89241cf8b5904033460af61"
+                hydro.resource_id = "123456789"
                 spec = {
                     "host": {
                         "hostname": [
                             "https://www.hydroshare.org/resource/",
                             "http://www.hydroshare.org/resource/",
+                            "https://hydroshare.org/resource/",
+                            "http://hydroshare.org/resource/",
                         ],
-                        "django_irods": "https://www.hydroshare.org/django_irods/download/bags/",
+                        "django_s3": "https://www.hydroshare.org/django_s3/download/bags/",
                     },
                     "resource": "123456789",
                 }
@@ -147,8 +152,10 @@ def test_fetch_bag_failure():
                     "hostname": [
                         "https://www.hydroshare.org/resource/",
                         "http://www.hydroshare.org/resource/",
+                        "https://hydroshare.org/resource/",
+                        "http://hydroshare.org/resource/",
                     ],
-                    "django_irods": "https://www.hydroshare.org/django_irods/download/bags/",
+                    "django_s3": "https://www.hydroshare.org/django_s3/download/bags/",
                 },
                 "resource": "123456789",
             }
@@ -173,8 +180,10 @@ def test_fetch_bag_timeout():
                     "hostname": [
                         "https://www.hydroshare.org/resource/",
                         "http://www.hydroshare.org/resource/",
+                        "https://hydroshare.org/resource/",
+                        "http://hydroshare.org/resource/",
                     ],
-                    "django_irods": "https://www.hydroshare.org/django_irods/download/bags/",
+                    "django_s3": "https://www.hydroshare.org/django_s3/download/bags/",
                 },
                 "resource": "123456789",
             }
