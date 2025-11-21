@@ -27,7 +27,7 @@ class PythonBuildPack(CondaBuildPack):
         name, version, _ = self.runtime
 
         if name is not None and name != "python":
-            # Either not a Python runtime (e.g. R, which subclasses this)
+            # Runtime specified, but not Python (e.g. R, which subclasses this)
             # use the default Python
             self._python_version = self.major_pythons["3"]
             self.log.warning(
