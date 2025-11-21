@@ -128,6 +128,20 @@ class PythonBuildPack(CondaBuildPack):
         return True
 
     @lru_cache
+    def _is_python_package(self):
+        if self.binder_dir:
+            return False
+        if os.path.exists("setup.py"):
+            return True
+        if os.path.exists("pyproject.toml"):
+            with open("pyproject_toml", "rb") as _pyproject_file:
+                pyproject = tomllib.load(_pyproject_file)
+
+            if ("project" in pyproject) and ("build-system" in pyproject):
+                return True
+        return False
+
+    @lru_cache
     def get_preassemble_script_files(self):
         assemble_files = super().get_preassemble_script_files()
         for name in ("requirements.txt", "requirements3.txt"):
@@ -158,12 +172,8 @@ class PythonBuildPack(CondaBuildPack):
         if not self._should_preassemble_pip:
             assemble_scripts.extend(self._get_pip_scripts())
 
-        for _configuration_file in ("pyproject.toml", "setup.py"):
-            if not self.binder_dir and os.path.exists(_configuration_file):
-                assemble_scripts.append(
-                    ("${NB_USER}", f"{pip} install --no-cache-dir .")
-                )
-                break
+        if self._is_python_package():
+            assemble_scripts.append(("${NB_USER}", f"{pip} install --no-cache-dir ."))
 
         return assemble_scripts
 
