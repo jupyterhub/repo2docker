@@ -17,6 +17,8 @@ from subprocess import check_call
 
 from ruamel.yaml import YAML
 
+from .supported_python_version import SUPPORTED_PYTHON_VERSION
+
 UTC = timezone.utc
 HERE = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
 
@@ -114,7 +116,7 @@ if __name__ == "__main__":
         "py",
         nargs="*",
         help="Python version(s) to update and freeze",
-        default=("3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"),
+        default=SUPPORTED_PYTHON_VERSION,
     )
     parser.add_argument(
         "platform",

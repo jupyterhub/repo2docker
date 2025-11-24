@@ -1,7 +1,6 @@
 """Generates Dockerfiles based on an input matrix based on Python."""
 
 import os
-import re
 from functools import lru_cache
 
 try:
@@ -9,11 +8,12 @@ try:
 except ImportError:
     import tomli as tomllib
 
-from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
 from ...utils import is_local_pip_requirement, open_guess_encoding
 from ..conda import CondaBuildPack
+from ..conda.supported_python_version import SUPPORTED_PYTHON_VERSION
 
 
 class PythonBuildPack(CondaBuildPack):
@@ -39,9 +39,6 @@ class PythonBuildPack(CondaBuildPack):
         if name is None or version is None:
             self._python_version = self.major_pythons["3"]
             self._python_version_source = "default"
-            self.log.warning(
-                f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
-            )
         else:
             if len(Version(version).release) <= 1:
                 self._python_version = self.major_pythons[version]
@@ -52,6 +49,8 @@ class PythonBuildPack(CondaBuildPack):
 
         runtime_version = Version(self._python_version)
 
+        # pyproject.toml can be used by some tools for minimum version of Python
+        # even if the Git repository is not a Python package.
         pyproject_toml = "pyproject.toml"
         if not self.binder_dir and os.path.exists(pyproject_toml):
             with open(pyproject_toml, "rb") as _pyproject_file:
@@ -65,9 +64,28 @@ class PythonBuildPack(CondaBuildPack):
                 )
 
                 if runtime_version not in pyproject_python_specifier:
-                    raise RuntimeError(
-                        "runtime.txt version not supported by pyproject.toml."
-                    )
+                    # repo2docker MUST honor the user decision in runtime.txt
+                    if self._python_version_source == "runtime":
+                        raise RuntimeError(
+                            "runtime.txt version not supported by pyproject.toml."
+                        )
+                    # repo2docker tries to find a new suitable version
+                    else:
+                        possible_python_versions = list(
+                            pyproject_python_specifier.filter(SUPPORTED_PYTHON_VERSION)
+                        )
+                        if possible_python_versions:
+                            self._python_version = possible_python_versions[-1]
+                            self._python_version_source = "fallback"
+                        else:
+                            raise RuntimeError(
+                                "repo2docker does not support a Python version compatible with pyproject.toml."
+                            )
+
+        if self._python_version_source in ["default", "fallback"]:
+            self.log.warning(
+                f"Python version unspecified, using Python version {self._python_version}. This will change in the future."
+            )
 
         return self._python_version
 
