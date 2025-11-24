@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mwt"
+version = "1.0.0"
+dependencies = [
+  "numpy",
+]
+requires-python = ">=3.10"
+authors = [
+  {name = "Project Jupyter Contributors", email = "jupyter@googlegroups.com"},
+]
+maintainers = [
+  {name = "Project Jupyter Contributors", email = "jupyter@googlegroups.com"},
+]
+description = "Test for repo2docker"
+readme = "README.rst"
+license = "MIT"
+
+[project.urls]
+Homepage = "https://repo2docker.readthedocs.io/"
+Documentation = "https://repo2docker.readthedocs.io/"
+Repository = "https://github.com/jupyterhub/repo2docker.git"
+"Bug Tracker" = "https://github.com/jupyterhub/repo2docker/issues"

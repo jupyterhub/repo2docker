@@ -3,8 +3,17 @@
 import os
 from functools import lru_cache
 
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
+
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
+
 from ...utils import is_local_pip_requirement, open_guess_encoding
 from ..conda import CondaBuildPack
+from ..conda.supported_python_version import SUPPORTED_PYTHON_VERSION
 
 
 class PythonBuildPack(CondaBuildPack):
@@ -17,23 +26,67 @@ class PythonBuildPack(CondaBuildPack):
 
         name, version, _ = self.runtime
 
-        if name != "python" or not version:
-            # Either not specified, or not a Python runtime (e.g. R, which subclasses this)
+        if name is not None and name != "python":
+            # Runtime specified, but not Python (e.g. R, which subclasses this)
             # use the default Python
             self._python_version = self.major_pythons["3"]
+            self._python_version_source = "default"
             self.log.warning(
                 f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
             )
             return self._python_version
 
-        py_version_info = version.split(".")
-        py_version = ""
-        if len(py_version_info) == 1:
-            py_version = self.major_pythons[py_version_info[0]]
+        if name is None or version is None:
+            self._python_version = self.major_pythons["3"]
+            self._python_version_source = "default"
         else:
-            # get major.minor
-            py_version = ".".join(py_version_info[:2])
-        self._python_version = py_version
+            if len(Version(version).release) <= 1:
+                self._python_version = self.major_pythons[version]
+                self._python_version_source = "default"
+            else:
+                self._python_version = version
+                self._python_version_source = "runtime"
+
+        runtime_version = Version(self._python_version)
+
+        # pyproject.toml can be used by some tools for minimum version of Python
+        # even if the Git repository is not a Python package.
+        pyproject_toml = "pyproject.toml"
+        if not self.binder_dir and os.path.exists(pyproject_toml):
+            with open(pyproject_toml, "rb") as _pyproject_file:
+                pyproject = tomllib.load(_pyproject_file)
+
+            if "project" in pyproject and "requires-python" in pyproject["project"]:
+                # This is the minumum version!
+                # https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#python-requires
+                pyproject_python_specifier = SpecifierSet(
+                    pyproject["project"]["requires-python"]
+                )
+
+                if runtime_version not in pyproject_python_specifier:
+                    # repo2docker MUST honor the user decision in runtime.txt
+                    if self._python_version_source == "runtime":
+                        raise RuntimeError(
+                            "runtime.txt version not supported by pyproject.toml."
+                        )
+                    # repo2docker tries to find a new suitable version
+                    else:
+                        possible_python_versions = list(
+                            pyproject_python_specifier.filter(SUPPORTED_PYTHON_VERSION)
+                        )
+                        if possible_python_versions:
+                            self._python_version = possible_python_versions[-1]
+                            self._python_version_source = "fallback"
+                        else:
+                            raise RuntimeError(
+                                "repo2docker does not support a Python version compatible with pyproject.toml."
+                            )
+
+        if self._python_version_source in ["default", "fallback"]:
+            self.log.warning(
+                f"Python version unspecified, using Python version {self._python_version}. This will change in the future."
+            )
+
         return self._python_version
 
     def _get_pip_scripts(self):
@@ -78,9 +131,10 @@ class PythonBuildPack(CondaBuildPack):
         If there are any local references, e.g. `-e .`,
         stage the whole repo prior to installation.
         """
-        if not os.path.exists("binder") and os.path.exists("setup.py"):
-            # can't install from subset if we're using setup.py
+        # can't install from subset
+        if self._is_python_package():
             return False
+
         for name in ("requirements.txt", "requirements3.txt"):
             requirements_txt = self.binder_path(name)
             if not os.path.exists(requirements_txt):
@@ -93,6 +147,20 @@ class PythonBuildPack(CondaBuildPack):
         # didn't find any local references,
         # allow assembly from subset
         return True
+
+    @lru_cache
+    def _is_python_package(self):
+        if self.binder_dir:
+            return False
+        if os.path.exists("setup.py"):
+            return True
+        if os.path.exists("pyproject.toml"):
+            with open("pyproject_toml", "rb") as _pyproject_file:
+                pyproject = tomllib.load(_pyproject_file)
+
+            if ("project" in pyproject) and ("build-system" in pyproject):
+                return True
+        return False
 
     @lru_cache
     def get_preassemble_script_files(self):
@@ -119,26 +187,26 @@ class PythonBuildPack(CondaBuildPack):
         # and requirements3.txt (if it exists)
         # will be installed in the python 3 notebook server env.
         assemble_scripts = super().get_assemble_scripts()
-        setup_py = "setup.py"
         # KERNEL_PYTHON_PREFIX is the env with the kernel,
         # whether it's distinct from the notebook or the same.
         pip = "${KERNEL_PYTHON_PREFIX}/bin/pip"
         if not self._should_preassemble_pip:
             assemble_scripts.extend(self._get_pip_scripts())
 
-        # setup.py exists *and* binder dir is not used
-        if not self.binder_dir and os.path.exists(setup_py):
+        if self._is_python_package():
             assemble_scripts.append(("${NB_USER}", f"{pip} install --no-cache-dir ."))
+
         return assemble_scripts
 
     def detect(self):
         """Check if current repo should be built with the Python buildpack."""
         requirements_txt = self.binder_path("requirements.txt")
-        setup_py = "setup.py"
 
         name = self.runtime[0]
         if name:
             return name == "python"
-        if not self.binder_dir and os.path.exists(setup_py):
+
+        if self._is_python_package():
             return True
+
         return os.path.exists(requirements_txt)
