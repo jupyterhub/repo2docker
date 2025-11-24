@@ -114,9 +114,8 @@ class PythonBuildPack(CondaBuildPack):
         stage the whole repo prior to installation.
         """
         # can't install from subset
-        for _configuration_file in ("pyproject.toml", "setup.py"):
-            if not os.path.exists("binder") and os.path.exists(_configuration_file):
-                return False
+        if self._is_python_package():
+            return False
 
         for name in ("requirements.txt", "requirements3.txt"):
             requirements_txt = self.binder_path(name)
