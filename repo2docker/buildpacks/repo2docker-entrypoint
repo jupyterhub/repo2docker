@@ -6,6 +6,7 @@
 # - preserve signal handling of subprocess (kill -TERM and friends)
 # - tee output to a log file
 
+import errno
 import fcntl
 import os
 import select
@@ -30,21 +31,20 @@ def main():
     #  2. current working directory: "."
     #  3. default temp directory for the OS (e.g. /tmp for linux)
     log_dirs = [".", tempfile.gettempdir()]
-    log_file = None
+    # list of valid log files, in order of preference
+    valid_log_files = []
     if "REPO_DIR" in os.environ:
         log_dirs.insert(0, os.environ["REPO_DIR"])
     for d in log_dirs:
         log_path = os.path.join(d, ".jupyter-server-log.txt")
         try:
             log_file = open(log_path, "ab")
+            valid_log_files.append(log_file)
         except Exception:
             continue
-        else:
-            # success
-            break
-    # raise Exception if log_file could not be set
-    if log_file is None:
-        raise Exception("Could not open '.jupyter-server-log.txt' log file " )
+    # raise Exception if no log_file could be set
+    if not log_file:
+        raise Exception("Could not open '.jupyter-server-log.txt' log file")
 
     # build the command
     # like `exec "$@"`
@@ -73,12 +73,28 @@ def main():
     for signum in SIGNALS:
         signal.signal(signum, relay_signal)
 
-    # tee output from child to both our stdout and the log file
+    # tee output from child to both our stdout and the most preferred log file
     def tee(chunk):
-        """Tee output from child to both our stdout and the log file"""
-        for f in [sys.stdout.buffer, log_file]:
-            f.write(chunk)
-            f.flush()
+        """
+        Tee output from child to both our stdout and the most preferred
+        log file
+        """
+        valid_log_files.insert(0, sys.stdout.buffer)
+        for log_file_idx, f in enumerate(valid_log_files):
+            try:
+                f.write(chunk)
+                f.flush()
+            except OSError as e:
+                # if we cannot write to the most preferred log file because of
+                # lack of space, continue with the other options and don't
+                # error out
+                if e.errno == errno.ENOSPC:
+                    continue
+            else:
+                # if this is the second location we're writing the logs too,
+                # break, as we've found our preferred log file
+                if log_file_idx > 0:
+                    break
 
     # make stdout pipe non-blocking
     # this means child.stdout.read(nbytes)
