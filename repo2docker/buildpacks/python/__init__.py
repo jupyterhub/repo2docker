@@ -30,6 +30,7 @@ class PythonBuildPack(CondaBuildPack):
             # Runtime specified, but not Python (e.g. R, which subclasses this)
             # use the default Python
             self._python_version = self.major_pythons["3"]
+            self._python_version_source = "default"
             self.log.warning(
                 f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
             )
@@ -37,14 +38,17 @@ class PythonBuildPack(CondaBuildPack):
 
         if name is None or version is None:
             self._python_version = self.major_pythons["3"]
+            self._python_version_source = "default"
             self.log.warning(
                 f"Python version unspecified, using current default Python version {self._python_version}. This will change in the future."
             )
         else:
             if len(Version(version).release) <= 1:
                 self._python_version = self.major_pythons[version]
+                self._python_version_source = "default"
             else:
                 self._python_version = version
+                self._python_version_source = "runtime"
 
         runtime_version = Version(self._python_version)
 
@@ -180,23 +184,12 @@ class PythonBuildPack(CondaBuildPack):
     def detect(self):
         """Check if current repo should be built with the Python buildpack."""
         requirements_txt = self.binder_path("requirements.txt")
-        pyproject_toml = "pyproject.toml"
-        setup_py = "setup.py"
 
         name = self.runtime[0]
         if name:
             return name == "python"
-        if not self.binder_dir and os.path.exists(pyproject_toml):
-            with open(pyproject_toml, "rb") as _pyproject_file:
-                pyproject = tomllib.load(_pyproject_file)
 
-            if (
-                ("project" in pyproject)
-                and ("build-system" in pyproject)
-                and ("requires" in pyproject["build-system"])
-            ):
-                return True
-
-        if not self.binder_dir and os.path.exists(setup_py):
+        if self._is_python_package():
             return True
+
         return os.path.exists(requirements_txt)
