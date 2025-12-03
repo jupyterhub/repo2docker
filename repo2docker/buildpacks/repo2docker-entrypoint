@@ -6,6 +6,7 @@
 # - preserve signal handling of subprocess (kill -TERM and friends)
 # - tee output to a log file
 
+import errno
 import fcntl
 import os
 import select
@@ -44,7 +45,7 @@ def main():
             break
     # raise Exception if log_file could not be set
     if log_file is None:
-        raise Exception("Could not open '.jupyter-server-log.txt' log file " )
+        raise Exception("Could not open '.jupyter-server-log.txt' log file")
 
     # build the command
     # like `exec "$@"`
@@ -73,12 +74,27 @@ def main():
     for signum in SIGNALS:
         signal.signal(signum, relay_signal)
 
+    # keep a record of the output streams that ran out space
+    writable = {
+        sys.stdout.buffer: True,
+        log_file: True
+    }
+
     # tee output from child to both our stdout and the log file
     def tee(chunk):
         """Tee output from child to both our stdout and the log file"""
         for f in [sys.stdout.buffer, log_file]:
-            f.write(chunk)
-            f.flush()
+            if writable[f]:
+                try:
+                    f.write(chunk)
+                    f.flush()
+                except OSError as e:
+                    if e.errno == errno.ENOSPC:
+                        # mark the stream as not writable anymore
+                        writable[f] = False
+                        continue
+                    else:
+                        raise
 
     # make stdout pipe non-blocking
     # this means child.stdout.read(nbytes)
@@ -105,6 +121,8 @@ def main():
     while chunk:
         tee(chunk)
         chunk = child.stdout.read()
+
+    log_file.close()
 
     # make our returncode match the child's returncode
     sys.exit(child.returncode)
