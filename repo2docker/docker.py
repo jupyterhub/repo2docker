@@ -90,20 +90,38 @@ class DockerEngine(ContainerEngine):
 
         cli = DOCKER_CLI
 
-        docker_version = subprocess.run([cli, "version"], stdout=subprocess.DEVNULL)
+        cli_version_call = [cli, "version"]
+        try:
+            docker_version = subprocess.run(
+                cli_version_call, stdout=subprocess.DEVNULL, check=True
+            )
+        except (subprocess.CalledProcessError, OSError) as e:
+            raise RuntimeError(
+                f"The {cli} commandline client must be installed: {e}"
+            ) from None
+
         if docker_version.returncode:
-            raise RuntimeError(f"The {cli} commandline client must be installed")
+            raise RuntimeError(
+                f"'{" ".join(cli_version_call)}' failed and returned the code {docker_version.returncode}"
+            )
 
         # docker buildx is based in a plugin that might not be installed
         # https://github.com/docker/buildx
         #
         # podman buildx command is an alias of podman build.
         # Not all buildx build features are available in Podman.
-        docker_buildx_version = subprocess.run(
-            [cli, "buildx", "version"], stdout=subprocess.DEVNULL
-        )
+        cli_buildx_version_call = [cli, "buildx", "version"]
+        try:
+            docker_buildx_version = subprocess.run(
+                cli_buildx_version_call, stdout=subprocess.DEVNULL, check=True
+            )
+        except (subprocess.CalledProcessError, OSError) as e:
+            raise RuntimeError(f"The buildx plugin must be installed: {e}") from None
+
         if docker_buildx_version.returncode:
-            raise RuntimeError("The docker buildx plugin must be installed")
+            raise RuntimeError(
+                f"'{" ".join(cli_buildx_version_call)}' failed and returned the code {docker_buildx_version.returncode}"
+            )
 
         self._container_cli = cli
 
