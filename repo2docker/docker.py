@@ -20,7 +20,16 @@ import docker
 from .engine import Container, ContainerEngine, Image
 from .utils import execute_cmd
 
+# The DOCKER_HOST environment variable is used by Docker to set a remote host.
+# The same DOCKER_HOST environment variable is also used
+# by the official Software Development Kit (SDK) and other libraries
+# as a way to select the socket to communicate with.
+# Because repo2docker uses the official Docker SDK,
+# Podman users MUST configure the DOCKER_HOST environment variable.
 DOCKER_HOST = os.getenv("DOCKER_HOST")
+# It is possible for a user to create a Podman socket
+# that does not include the string "podman"
+# but expect the string "podman" is good enough for repo2docker use case.
 if DOCKER_HOST is not None and DOCKER_HOST.find("podman") != -1:
     DOCKER_CLI = "podman"
 else:
