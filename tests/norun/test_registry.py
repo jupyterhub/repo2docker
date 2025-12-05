@@ -14,6 +14,7 @@ import pytest
 import requests
 
 from repo2docker.__main__ import make_r2d
+from repo2docker.docker import DOCKER_CLI
 from repo2docker.utils import get_free_port
 
 HERE = Path(__file__).parent
@@ -140,6 +141,7 @@ def registry(host_ip):
         proc.wait()
 
 
+@pytest.mark.skipif(DOCKER_CLI == "podman", reason="Test specific for Docker")
 def test_registry_explicit_creds(registry, dind):
     """
     Test that we can push to registry when given explicit credentials
@@ -202,6 +204,7 @@ def test_registry_explicit_creds(registry, dind):
         os.environ.update(old_environ)
 
 
+@pytest.mark.skipif(DOCKER_CLI == "podman", reason="Test specific for Docker")
 def test_registry_no_explicit_creds(registry, dind):
     """
     Test that we can push to registry *without* explicit credentials but reading from a DOCKER_CONFIG
