@@ -100,11 +100,6 @@ class DockerEngine(ContainerEngine):
                 f"The {cli} commandline client must be installed: {e}"
             ) from None
 
-        if docker_version.returncode:
-            raise RuntimeError(
-                f"'{" ".join(cli_version_call)}' failed and returned the code {docker_version.returncode}"
-            )
-
         # docker buildx is based in a plugin that might not be installed
         # https://github.com/docker/buildx
         #
@@ -117,11 +112,6 @@ class DockerEngine(ContainerEngine):
             )
         except (subprocess.CalledProcessError, OSError) as e:
             raise RuntimeError(f"The buildx plugin must be installed: {e}") from None
-
-        if docker_buildx_version.returncode:
-            raise RuntimeError(
-                f"'{" ".join(cli_buildx_version_call)}' failed and returned the code {docker_buildx_version.returncode}"
-            )
 
         self._container_cli = cli
 
