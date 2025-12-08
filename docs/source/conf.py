@@ -138,4 +138,14 @@ ogp_use_first_image = True
 rediraffe_branch = "main"
 rediraffe_redirects = {
     # "old-file": "new-folder/new-file-name",
+    "config_files.rst": "configuration/index.md",
+    "install.rst": "start.md",
+    "usage.rst": "use/index.md",
+    "contributing/buildpack.md": "contribute/buildpack.md",
+    "contributing/contentprovider.rst": "contribute/contentprovider.rst",
+    "contributing/contributing.md": "contribute/contributing.md",
+    "contributing/index.md": "contribute/index.md",
+    "contributing/roadmap.md": "contribute/roadmap.md",
+    "contributing/tasks.md": "contribute/tasks.md",
+    "getting-started/index.md": "use/index.md",
 }
