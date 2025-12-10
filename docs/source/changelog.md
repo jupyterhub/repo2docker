@@ -1,10 +1,5 @@
 # Changelog
 
-## Unreleased breaking changes
-
-`RBuildPack.runtime` previously returned the contents of `runtime.txt` as a string.
-It has been replaced by `BuildPack.runtime` which returns a tuple `(name, version, date)`.
-
 ## 2025.12.0
 
 ([full changelog](https://github.com/jupyterhub/repo2docker/compare/6cf91e45d5b03f79e365cd82eda09d1178d03327...b796c5a6189f70cabc3c7be1d206b752c515fa2b))
@@ -15,6 +10,7 @@ It has been replaced by `BuildPack.runtime` which returns a tuple `(name, versio
 - Support pyproject.toml for pip install in Python buildpack [#1444](https://github.com/jupyterhub/repo2docker/pull/1444) ([@rgaiacs](https://github.com/rgaiacs), [@minrk](https://github.com/minrk), [@manics](https://github.com/manics), [@yuvipanda](https://github.com/yuvipanda))
 - Add --vanilla to R call [#1432](https://github.com/jupyterhub/repo2docker/pull/1432) ([@rgaiacs](https://github.com/rgaiacs), [@manics](https://github.com/manics), [@consideRatio](https://github.com/consideRatio))
 - Change default R version from 4.2 to 4.4 [#1401](https://github.com/jupyterhub/repo2docker/pull/1401) ([@rgaiacs](https://github.com/rgaiacs), [@yuvipanda](https://github.com/yuvipanda), [@manics](https://github.com/manics))
+- Move `runtime.txt` parsing into base class [#1428](https://github.com/jupyterhub/repo2docker/pull/1428) ([@manics](https://github.com/manics), [@minrk](https://github.com/minrk), [@rgaiacs](https://github.com/rgaiacs))
 
 ## Enhancements made
 
