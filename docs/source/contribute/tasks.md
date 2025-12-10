@@ -119,13 +119,14 @@ and pushed to the repository. See [previous releases](https://github.com/jupyter
 
 To create a new release, follow these steps:
 
+- Add the output of `github-activity` between now and last release, to the changelog and open a PR with this content
+  - E.g. the activity since the date of the last release: `github-activity jupyterhub/repo2docker -s 2025-08-01`
 - Go to the [GitHub repository](https://github.com/jupyterhub/repo2docker)
 - Click `Draft a new release`
 - Click `Tag`
   - Type in a new tag like `YYYY.MM.N` (where `N` is the release number this month, usually it is `0`)
 - Title: `<Month> <Year>` (E.g., `August 2025`)
-- Body: Paste the output of `github-activity` since the date of the last release.
-  - E.g. `github-activity jupyterhub/repo2docker -s 2025-08-01
+- Body: Paste the `github-activity` output from the changelog
 - Click `Publish release`
 
 This will create a new release **and a new tag**.
