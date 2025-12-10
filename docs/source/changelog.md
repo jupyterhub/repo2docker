@@ -5,7 +5,7 @@
 `RBuildPack.runtime` previously returned the contents of `runtime.txt` as a string.
 It has been replaced by `BuildPack.runtime` which returns a tuple `(name, version, date)`.
 
-## 2025.12.09
+## 2025.12.0
 
 ([full changelog](https://github.com/jupyterhub/repo2docker/compare/6cf91e45d5b03f79e365cd82eda09d1178d03327...b796c5a6189f70cabc3c7be1d206b752c515fa2b))
 
