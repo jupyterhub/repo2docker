@@ -155,7 +155,7 @@ class PythonBuildPack(CondaBuildPack):
         if os.path.exists("setup.py"):
             return True
         if os.path.exists("pyproject.toml"):
-            with open("pyproject_toml", "rb") as _pyproject_file:
+            with open("pyproject.toml", "rb") as _pyproject_file:
                 pyproject = tomllib.load(_pyproject_file)
 
             if ("project" in pyproject) and ("build-system" in pyproject):
