@@ -28,12 +28,12 @@ import requests
 import yaml
 
 import docker
-
 from repo2docker.__main__ import make_r2d
 
 TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 
 DOCKER_CLIENT = client = docker.from_env()
+
 
 def pytest_collect_file(parent, file_path):
     if file_path.name == "verify":
@@ -98,7 +98,6 @@ def make_test_func(args, skip_build=False, extra_run_kwargs=None, external_scrip
             except:
                 pass
             DOCKER_CLIENT.images.remove(image=app.output_image_spec)
-
 
     return test
 
