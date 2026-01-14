@@ -27,9 +27,12 @@ import pytest
 import requests
 import yaml
 
+import docker
 from repo2docker.__main__ import make_r2d
 
 TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
+
+DOCKER_CLIENT = client = docker.from_env()
 
 
 def pytest_collect_file(parent, file_path):
@@ -90,6 +93,11 @@ def make_test_func(args, skip_build=False, extra_run_kwargs=None, external_scrip
             # stop the container
             container.stop()
             app.wait_for_container(container)
+            try:
+                container.remove()
+            except:
+                pass
+            DOCKER_CLIENT.images.remove(image=app.output_image_spec)
 
     return test
 
