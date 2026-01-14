@@ -11,7 +11,7 @@ If a `Dockerfile` is not used to change the Docker base image, the base image  i
 ```
 
 ```{versionchanged}
-Base ubuntu image upgraded from 22.04 to 24.04 in October, 2025
+Base ubuntu image upgraded from 22.04 to 24.04 in January, 2026
 ```
 
 We use `apt.txt`, for example, to install LaTeX in our
