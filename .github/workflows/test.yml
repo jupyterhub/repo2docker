@@ -84,10 +84,12 @@ jobs:
             python_version: "3.13"
             container_cli: podman
             repo_type: base
-          - ubuntu_version: "24.04"
-            python_version: "3.13"
-            container_cli: podman
-            repo_type: conda
+          # We are observing "no space left on device" on GitHub Actions,
+          # https://github.com/jupyterhub/repo2docker/pull/1471#issuecomment-3744990787
+          # - ubuntu_version: "24.04"
+          #   python_version: "3.13"
+          #   container_cli: podman
+          #   repo_type: conda
           - ubuntu_version: "24.04"
             python_version: "3.13"
             container_cli: podman
