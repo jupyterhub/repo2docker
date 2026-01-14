@@ -29,5 +29,5 @@ def test_nb_user():
     assert home.owner() == user
     with (home / "testfile").open("w") as f:
         f.write("canwrite")
-    for p in home.rglob():
+    for p in home.rglob("*"):
         assert p.owner() == user
