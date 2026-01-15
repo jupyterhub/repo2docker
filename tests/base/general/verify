@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -ex
+
+# install pytest here because we want to invoke the Base BuildPack
+pip install pytest
+pytest -v --color=yes tests.py
