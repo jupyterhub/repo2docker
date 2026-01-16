@@ -236,10 +236,13 @@ class CondaBuildPack(BaseImage):
         if self._environment_yaml is not None:
             return self._environment_yaml
 
-        environment_yml = self.binder_path("environment.yml")
-        if not os.path.exists(environment_yml):
-            self._environment_yaml = {}
-            return self._environment_yaml
+        for filename in ["environment.yml", "environment.yaml"]:
+            environment_yml = self.binder_path(filename)
+            if not os.path.exists(environment_yml):
+                self._environment_yaml = {}
+                return self._environment_yaml
+            else:
+                break
 
         with open(environment_yml) as f:
             env = YAML().load(f)
@@ -249,7 +252,9 @@ class CondaBuildPack(BaseImage):
             # check if the env file provided a dict-like thing not a list or other data structure.
             if not isinstance(env, Mapping):
                 raise TypeError(
-                    "environment.yml should contain a dictionary. Got %r" % type(env)
+                    "{} should contain a dictionary. Got {!r}".format(
+                        environment_yml, type(env)
+                    )
                 )
             self._environment_yaml = env
 
@@ -383,36 +388,41 @@ class CondaBuildPack(BaseImage):
         """
         assemble_files = super().get_preassemble_script_files()
         if self._should_preassemble_env:
-            environment_yml = self.binder_path("environment.yml")
-            if os.path.exists(environment_yml):
-                assemble_files[environment_yml] = environment_yml
+            for filename in ["environment.yml", "environment.yaml"]:
+                environment_yml = self.binder_path(filename)
+                if os.path.exists(environment_yml):
+                    assemble_files[environment_yml] = environment_yml
+                    break
         return assemble_files
 
     @lru_cache
     def get_env_scripts(self):
         """Return series of build-steps specific to this source repository."""
         scripts = []
-        environment_yml = self.binder_path("environment.yml")
         env_prefix = (
             "${KERNEL_PYTHON_PREFIX}"
             if self.separate_kernel_env
             else "${NB_PYTHON_PREFIX}"
         )
-        if os.path.exists(environment_yml):
-            # TODO: when using micromamba, we call $MAMBA_EXE install -p ...
-            # whereas mamba/conda need `env update -p ...` when it's an env.yaml file
-            scripts.append(
-                (
-                    "${NB_USER}",
-                    rf"""
-                TIMEFORMAT='time: %3R' \
-                bash -c 'time ${{MAMBA_EXE}} env update -p {env_prefix} --file "{environment_yml}" && \
-                time ${{MAMBA_EXE}} clean --all -f -y && \
-                ${{MAMBA_EXE}} list -p {env_prefix} \
-                '
-                """,
+
+        for filename in ["environment.yml", "environment.yaml"]:
+            environment_yml = self.binder_path(filename)
+            if os.path.exists(environment_yml):
+                # TODO: when using micromamba, we call $MAMBA_EXE install -p ...
+                # whereas mamba/conda need `env update -p ...` when it's an env.yaml file
+                scripts.append(
+                    (
+                        "${NB_USER}",
+                        rf"""
+                    TIMEFORMAT='time: %3R' \
+                    bash -c 'time ${{MAMBA_EXE}} env update -p {env_prefix} --file "{environment_yml}" && \
+                    time ${{MAMBA_EXE}} clean --all -f -y && \
+                    ${{MAMBA_EXE}} list -p {env_prefix} \
+                    '
+                    """,
+                    )
                 )
-            )
+                break
 
         if self.uses_r:
             if self.r_version:
