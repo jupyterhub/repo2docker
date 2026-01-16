@@ -252,7 +252,9 @@ class CondaBuildPack(BaseImage):
             # check if the env file provided a dict-like thing not a list or other data structure.
             if not isinstance(env, Mapping):
                 raise TypeError(
-                    "%s should contain a dictionary. Got %r" % (environment_yml, type(env))
+                    "{} should contain a dictionary. Got {!r}".format(
+                        environment_yml, type(env)
+                    )
                 )
             self._environment_yaml = env
 
