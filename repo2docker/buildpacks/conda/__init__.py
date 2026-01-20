@@ -229,6 +229,21 @@ class CondaBuildPack(BaseImage):
         files.update(super().get_build_script_files())
         return files
 
+    _environment_yaml_path = None
+
+    @property
+    def environment_yaml_path(self):
+        if self._environment_yaml_path is not None:
+            return self._environment_yaml_path
+
+        for filename in ["environment.yml", "environment.yaml"]:
+            environment_yaml_path = self.binder_path(filename)
+            if not os.path.exists(environment_yaml_path):
+                self._environment_yaml_path = environment_yaml_path
+                break
+
+        return self._environment_yaml
+
     _environment_yaml = None
 
     @property
@@ -236,15 +251,11 @@ class CondaBuildPack(BaseImage):
         if self._environment_yaml is not None:
             return self._environment_yaml
 
-        for filename in ["environment.yml", "environment.yaml"]:
-            environment_yml = self.binder_path(filename)
-            if not os.path.exists(environment_yml):
-                self._environment_yaml = {}
-                return self._environment_yaml
-            else:
-                break
+        if self.environment_yaml_path is None:
+            self._environment_yaml = {}
+            return self._environment_yaml
 
-        with open(environment_yml) as f:
+        with open(self.environment_yaml_path) as f:
             env = YAML().load(f)
             # check if the env file is empty, if so instantiate an empty dictionary.
             if env is None:
@@ -253,7 +264,7 @@ class CondaBuildPack(BaseImage):
             if not isinstance(env, Mapping):
                 raise TypeError(
                     "{} should contain a dictionary. Got {!r}".format(
-                        environment_yml, type(env)
+                        self.environment_yaml_path, type(env)
                     )
                 )
             self._environment_yaml = env
@@ -387,12 +398,8 @@ class CondaBuildPack(BaseImage):
         repo contents change
         """
         assemble_files = super().get_preassemble_script_files()
-        if self._should_preassemble_env:
-            for filename in ["environment.yml", "environment.yaml"]:
-                environment_yml = self.binder_path(filename)
-                if os.path.exists(environment_yml):
-                    assemble_files[environment_yml] = environment_yml
-                    break
+        if self._should_preassemble_env and self.environment_yaml_path:
+            assemble_files[self.environment_yaml_path] = self.environment_yaml_path
         return assemble_files
 
     @lru_cache
@@ -405,24 +412,21 @@ class CondaBuildPack(BaseImage):
             else "${NB_PYTHON_PREFIX}"
         )
 
-        for filename in ["environment.yml", "environment.yaml"]:
-            environment_yml = self.binder_path(filename)
-            if os.path.exists(environment_yml):
-                # TODO: when using micromamba, we call $MAMBA_EXE install -p ...
-                # whereas mamba/conda need `env update -p ...` when it's an env.yaml file
-                scripts.append(
-                    (
-                        "${NB_USER}",
-                        rf"""
-                    TIMEFORMAT='time: %3R' \
-                    bash -c 'time ${{MAMBA_EXE}} env update -p {env_prefix} --file "{environment_yml}" && \
-                    time ${{MAMBA_EXE}} clean --all -f -y && \
-                    ${{MAMBA_EXE}} list -p {env_prefix} \
-                    '
-                    """,
-                    )
+        if self.environment_yml:
+            # TODO: when using micromamba, we call $MAMBA_EXE install -p ...
+            # whereas mamba/conda need `env update -p ...` when it's an env.yaml file
+            scripts.append(
+                (
+                    "${NB_USER}",
+                    rf"""
+                TIMEFORMAT='time: %3R' \
+                bash -c 'time ${{MAMBA_EXE}} env update -p {env_prefix} --file "{self.environment_yml}" && \
+                time ${{MAMBA_EXE}} clean --all -f -y && \
+                ${{MAMBA_EXE}} list -p {env_prefix} \
+                '
+                """,
                 )
-                break
+            )
 
         if self.uses_r:
             if self.r_version:
@@ -481,4 +485,4 @@ class CondaBuildPack(BaseImage):
 
     def detect(self):
         """Check if current repo should be built with the Conda BuildPack."""
-        return os.path.exists(self.binder_path("environment.yml")) and super().detect()
+        return bool(self.environment_yaml_path) and super().detect()
