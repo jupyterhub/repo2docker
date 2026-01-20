@@ -412,7 +412,7 @@ class CondaBuildPack(BaseImage):
             else "${NB_PYTHON_PREFIX}"
         )
 
-        if self.environment_yml:
+        if self.environment_yaml_path:
             # TODO: when using micromamba, we call $MAMBA_EXE install -p ...
             # whereas mamba/conda need `env update -p ...` when it's an env.yaml file
             scripts.append(
@@ -420,7 +420,7 @@ class CondaBuildPack(BaseImage):
                     "${NB_USER}",
                     rf"""
                 TIMEFORMAT='time: %3R' \
-                bash -c 'time ${{MAMBA_EXE}} env update -p {env_prefix} --file "{self.environment_yml}" && \
+                bash -c 'time ${{MAMBA_EXE}} env update -p {env_prefix} --file "{self.environment_yaml_path}" && \
                 time ${{MAMBA_EXE}} clean --all -f -y && \
                 ${{MAMBA_EXE}} list -p {env_prefix} \
                 '
