@@ -1,15 +1,19 @@
 # Welcome to `repo2docker`'s documentation
 
+```{important}
+Despite the name, `repo2docker` can be used by container technology other than [Docker](https://docs.docker.com/engine/), for example [Podman](https://podman.io/).
+```
+
 `repo2docker` lets you **reproducibly build and run user environment container images for interactive computing and data workflows from source code repositories**. Optionally, the container image can be pushed to a Docker registry.
 
 Also, `repo2docker` is the tool used to build container images for [JupyterHub](https://jupyterhub.readthedocs.io/en/stable/) and the tool used by [BinderHub](https://binderhub.readthedocs.io) to build images on demand.
 
 ::::{grid}
 :::{grid-item-card} 🔧 Build reproducible data science environments from repositories
-Build a reproducible data science environment as a Docker image and execute code interactively. Use many [configuration files](#config-files) to control language, tools, and setup instructions.
+Build a reproducible data science environment as a container image and execute code interactively. Use many [configuration files](#config-files) to control language, tools, and setup instructions.
 :::
 :::{grid-item-card} 🚀 Deploy environments in JupyterHub or Binder
-Push environment images to a Docker registry for re-use in data science environment services like [JupyterHub](https://jupyterhub.readthedocs.io) or [a Binder instance](https://mybinder.org), or for other communities to build upon your base environment.
+Push environment images to a container registry for re-use in data science environment services like [JupyterHub](https://jupyterhub.readthedocs.io) or [a Binder instance](https://mybinder.org), or for other communities to build upon your base environment.
 :::
 :::{grid-item-card} ☁️ Host repositories in many providers
 Host repositories in: a Git server like [GitHub](https://github.com/) or [GitLab](https://gitlab.com/), an open science repository like [Zenodo](https://zenodo.org) or [Figshare](https://figshare.com), a hosted data platform like a [Dataverse installation](https://dataverse.org/), an archive like the
@@ -19,7 +23,7 @@ Host repositories in: a Git server like [GitHub](https://github.com/) or [GitLab
 
 ## What is a user environment container image and why would I build one with `repo2docker`?
 
-A **user environment container image** contains the entire software environment that a user may access from an interactive data science session. For example, it might contain many **programming languages**, **software for data analysis**, or even **content files and datasets** available to anybody that accesses that environment. Container images are built with [Docker](https://www.docker.com/), a standard open source tool for defining, building, and deploying images.
+A **user environment container image** contains the entire software environment that a user may access from an interactive data science session. For example, it might contain many **programming languages**, **software for data analysis**, or even **content files and datasets** available to anybody that accesses that environment. Container images are built in accordance with the spectifications published by the [Open Container Initiative](https://opencontainers.org/).
 
 Many data science platforms and services like [JupyterHub](https://jupyterhub.readthedocs.io) and [Binder](https://mybinder.org) launch interactive data science sessions **with a user environment container image attached**, meaning that the user gains access to whatever is in the container image. In short, this allows somebody to define and build the user image one time, in a way that users can reproducibly re-use many times.
 
@@ -43,9 +47,9 @@ repo2docker <source-repository>
 It performs these steps:
 
 1. Inspects the repository for [configuration files](#config-files). These will be used to build the environment needed to run the repository.
-2. Builds a Docker image with an environment specified in these [configuration files](#config-files).
+2. Builds a container image with an environment specified in these [configuration files](#config-files).
 3. Runs the image to let you explore the repository interactively via Jupyter notebooks, RStudio, or many other interfaces (this is optional).
-4. Pushes the images to a Docker registry so that it may be accessed remotely (this is optional).
+4. Pushes the images to a container registry so that it may be accessed remotely (this is optional).
 
 [swhid]: https://docs.softwareheritage.org/devel/swh-model/persistent-identifiers.html
 
@@ -55,7 +59,7 @@ Please report [bugs](https://github.com/jupyterhub/repo2docker/issues),
 
 ## Get started with `repo2docker`
 
-This tutorial walks you through setting up `repo2docker`, building your first environment image, and running it locally with Docker.
+This tutorial walks you through setting up `repo2docker`, building your first environment image, and running it locally with a container engine.
 
 ```{toctree}
 :maxdepth: 2

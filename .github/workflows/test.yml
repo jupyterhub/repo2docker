@@ -53,6 +53,8 @@ jobs:
       matrix:
         ubuntu_version: ["24.04"]
         python_version: ["3.13"]
+        container_cli:
+          - docker
         repo_type:
           - base
           - conda
@@ -68,11 +70,34 @@ jobs:
           - norun
           # Playwright test
           - ui
+        # If the item to be include would overwrite a value,
+        # it must have all the fields!
         include:
           # The earliest actions/setup-python versions depend on the runner.
           - ubuntu_version: "24.04"
             python_version: "3.10"
+            container_cli: docker
             repo_type: venv
+          # Run all tests for both Docker and Podman is expensive.
+          # We only run the "smoke" test for Podman.
+          - ubuntu_version: "24.04"
+            python_version: "3.13"
+            container_cli: podman
+            repo_type: base
+          # We are observing "no space left on device" on GitHub Actions,
+          # https://github.com/jupyterhub/repo2docker/pull/1471#issuecomment-3744990787
+          # - ubuntu_version: "24.04"
+          #   python_version: "3.13"
+          #   container_cli: podman
+          #   repo_type: conda
+          - ubuntu_version: "24.04"
+            python_version: "3.13"
+            container_cli: podman
+            repo_type: dockerfile
+          - ubuntu_version: "24.04"
+            python_version: "3.13"
+            container_cli: podman
+            repo_type: unit
 
     steps:
       - uses: actions/checkout@v6
@@ -104,6 +129,11 @@ jobs:
 
       - name: Run pytest
         run: |
+          if [ "${{ matrix.container_cli }}" = "podman" ]
+          then
+          systemctl --user start podman.socket
+          export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
+          fi
           pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
 
       - uses: codecov/codecov-action@v5

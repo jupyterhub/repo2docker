@@ -3,11 +3,15 @@ import re
 import tempfile
 import time
 
+import pytest
+
 from repo2docker.__main__ import make_r2d
+from repo2docker.docker import DOCKER_CLI
 
 DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dockerfile", "editable")
 
 
+@pytest.mark.skipif(DOCKER_CLI == "podman", reason="Podman does NOT support bind mount")
 def test_editable(run_repo2docker):
     """Run a local repository in edit mode. Verify a new file has been
     created afterwards"""
@@ -28,6 +32,7 @@ def test_editable(run_repo2docker):
         os.remove(newfile)
 
 
+@pytest.mark.skipif(DOCKER_CLI == "podman", reason="Podman does NOT support bind mount")
 def test_editable_by_host():
     """Test whether a new file created by the host environment, is
     detected in the container"""
@@ -38,7 +43,11 @@ def test_editable_by_host():
     container = app.start_container()
 
     # give the container a chance to start
+    waiting_container_counter = 0
     while container.status != "running":
+        if waiting_container_counter >= 60:
+            assert container.status == "running"
+        waiting_container_counter = waiting_container_counter + 1
         time.sleep(1)
 
     try:

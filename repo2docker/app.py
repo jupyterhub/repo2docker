@@ -589,7 +589,11 @@ class Repo2Docker(Application):
 
         docker_host = os.environ.get("DOCKER_HOST")
         if docker_host:
-            host_name = urlparse(docker_host).hostname
+            docker_host_parsed = urlparse(docker_host)
+            if docker_host_parsed.scheme == "unix":
+                host_name = "127.0.0.1"
+            else:
+                host_name = docker_host_parsed.hostname
         else:
             host_name = "127.0.0.1"
         self.hostname = host_name
@@ -621,7 +625,7 @@ class Repo2Docker(Application):
                 "notebook",
                 "--ip=0.0.0.0",
                 f"--port={container_port}",
-                f"--ServerApp.custom_display_url=http://{host_name}:{host_port}",
+                f"--ServerApp.custom_display_url=http://{self.hostname}:{self.port}",
                 "--ServerApp.default_url=/lab",
             ]
         else:
