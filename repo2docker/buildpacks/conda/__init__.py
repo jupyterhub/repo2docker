@@ -238,7 +238,7 @@ class CondaBuildPack(BaseImage):
 
         for filename in ["environment.yml", "environment.yaml"]:
             environment_yaml_path = self.binder_path(filename)
-            if not os.path.exists(environment_yaml_path):
+            if os.path.exists(environment_yaml_path):
                 self._environment_yaml_path = environment_yaml_path
                 break
 
