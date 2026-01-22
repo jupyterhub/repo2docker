@@ -242,7 +242,9 @@ class CondaBuildPack(BaseImage):
                 self._environment_yaml_path = environment_yaml_path
                 break
 
-        return self._environment_yaml
+        # Because of backward compatibility, we return None
+        # instead of raise RuntimeError().
+        return self._environment_yaml_path
 
     _environment_yaml = None
 
