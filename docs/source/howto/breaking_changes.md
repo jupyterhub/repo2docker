@@ -2,6 +2,12 @@
 
 Repo2docker occasionally has to make breaking changes in how repositories are built.
 
+## Upgrade of base image from Ubuntu 22.04 to 24.04
+
+The base image used by repo2docker was [upgraded from Ubuntu 22.04 to Ubuntu 24.04](https://github.com/jupyterhub/repo2docker/pull/1287) Janyary 2026 (2026.1).
+
+This is unlikely to affect you unless you are using {ref}`apt.txt <apt-txt>`.
+
 ## Upgrade of base image from Ubuntu 18.04 to 22.04
 
 The base image used by repo2docker was [upgraded from Ubuntu 18.04 to Ubuntu 22.04](https://github.com/jupyterhub/repo2docker/pull/1287) in version 2023.10.0 due to Ubuntu 18.04 going out of support.

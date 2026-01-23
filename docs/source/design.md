@@ -49,7 +49,8 @@ Many ingredients go into making an image from a repository:
 
 `repo2docker` controls the first two, the user controls the third one. The current
 policy for the version of the base image is that we will use the current LTS
-version Jammy Jellyfish (22.04) for the foreseeable future.
+version (24.04) until the start to be build challenges associated with the age of the base system,
+at which point it will be increased to the 'current' LTS when that occurs - typically between 2-5 years from the age of release.
 
 The version of `repo2docker` used to build an image can influence which packages
 are installed by default and which features are supported during the build

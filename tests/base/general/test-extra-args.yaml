@@ -1,0 +1,4 @@
+# make sure we run as uid 1000, user jovyan
+# not the default host uid and username, which vary
+- --user-id=1000
+- --user-name=jovyan
