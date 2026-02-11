@@ -41,7 +41,7 @@ class Zenodo(DoiProvider):
                     "https://zenodo.org/records/",
                     "http://zenodo.org/records/",
                     "https://zenodo.org/doi/",
-                    "http://zenodo.org/doi/"
+                    "http://zenodo.org/doi/",
                 ],
                 "api": "https://zenodo.org/api/records/",
                 "files": "links.files",
@@ -75,7 +75,11 @@ class Zenodo(DoiProvider):
 
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Zenodo record"""
-        record_id = spec["record"]
+        # Simple heuristic until repoproviders is ready.
+        if "." in spec["record"]:
+            record_id = spec["record"].split(".")[1]
+        else:
+            record_id = spec["record"]
         host = spec["host"]
 
         yield f"Fetching Zenodo record {record_id}.\n"
