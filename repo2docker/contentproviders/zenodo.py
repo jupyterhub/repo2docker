@@ -22,7 +22,10 @@ class Zenodo(DoiProvider):
                 "hostname": [
                     "https://sandbox.zenodo.org/record/",
                     "http://sandbox.zenodo.org/record/",
+                    "https://sandbox.zenodo.org/records/",
                     "http://sandbox.zenodo.org/records/",
+                    "https://sandbox.zenodo.org/doi/",
+                    "http://sandbox.zenodo.org/doi/",
                 ],
                 "api": "https://sandbox.zenodo.org/api/records/",
                 "files": "links.files",
@@ -36,6 +39,9 @@ class Zenodo(DoiProvider):
                     "https://zenodo.org/record/",
                     "http://zenodo.org/record/",
                     "https://zenodo.org/records/",
+                    "http://zenodo.org/records/",
+                    "https://zenodo.org/doi/",
+                    "http://zenodo.org/doi/"
                 ],
                 "api": "https://zenodo.org/api/records/",
                 "files": "links.files",
