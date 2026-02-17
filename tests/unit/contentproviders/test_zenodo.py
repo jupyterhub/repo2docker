@@ -14,6 +14,7 @@ from repo2docker.contentproviders import Zenodo
 
 doi_responses = {
     "https://doi.org/10.5281/zenodo.3232985": ("https://zenodo.org/record/3232985"),
+    "https://doi.org/10.5281/zenodo.18553140": ("https://zenodo.org/records/18553140"),
     "https://doi.org/10.22002/d1.1235": ("https://data.caltech.edu/records/1235"),
     "https://doi.org/10.21105/joss.01277": (
         "https://joss.theoj.org/papers/10.21105/joss.01277"
@@ -36,6 +37,14 @@ test_hosts = [
             "https://doi.org/10.5281/zenodo.3232985",
         ],
         {"host": test_zen.hosts[1], "record": "3232985"},
+    ),
+    (
+        [
+            "https://zenodo.org/records/18553140",
+            "10.5281/zenodo.18553140",
+            "https://doi.org/10.5281/zenodo.18553140",
+        ],
+        {"host": test_zen.hosts[1], "record": "zenodo.18553140"},
     ),
     (
         [
