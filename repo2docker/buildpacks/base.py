@@ -730,9 +730,7 @@ class BaseImage(BuildPack):
                 apt-get -qq purge && \
                 apt-get -qq clean && \
                 rm -rf /var/lib/apt/lists/*
-                """.format(
-                        " ".join(sorted(extra_apt_packages))
-                    ),
+                """.format(" ".join(sorted(extra_apt_packages))),
                 )
             )
 
