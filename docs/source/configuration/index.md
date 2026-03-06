@@ -2,10 +2,10 @@
 
 # Configuration files supported by `repo2docker`
 
-`repo2docker` looks for configuration files in the repository being built
-to determine how to build it. In general, `repo2docker` uses the same
-configuration files as other software installation tools,
-rather than creating new custom configuration files.
+`repo2docker` [looks for configuration files](#usage-config-file-location) in
+the repository being built to determine how to build it. In general,
+`repo2docker` uses the same configuration files as other software installation
+tools, rather than creating new custom configuration files.
 
 :::{seealso}
 The [binder examples](https://github.com/binder-examples) organization on

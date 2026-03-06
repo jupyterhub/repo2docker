@@ -6,11 +6,13 @@
 
 `repo2docker` will look for configuration files in the following order:
 
-- The root directory of the repository.
 - A folder named `binder/` or `.binder/` in the root of the repository.
+- The root directory of the repository.
 
-  If one of these folders exists, only configuration files in that folder are considered, configuration in the root directory will be ignored.
-  Having both `binder/` and `.binder/` folders is not allowed.
+If one of the folders `binder/` or `.binder/` exists, only configuration files
+in that folder are considered, and configuration files in the root directory
+will be ignored. Having both `binder/` and `.binder/` folders is not allowed,
+and will result in an error.
 
 Check the complete list of [configuration files](#config-files) supported
 by `repo2docker` to see how to configure the build process.
@@ -51,12 +53,12 @@ For [Mercurial](https://www.mercurial-scm.org) repositories, Mercurial and
 [hg-evolve](https://www.mercurial-scm.org/doc/evolution/) need to be
 installed. For example, on Debian based distributions, one can do:
 
-```
+```bash
 sudo apt install mercurial
 $(hg debuginstall --template "{pythonexe}") -m pip install hg-evolve --user
 ```
 
-To install Mercurial on other systems, see [here](https://www.mercurial-scm.org/download).
+Alternatively, see [how to install Mercurial on other systems](https://www.mercurial-scm.org/download).
 
 Note that for old Mercurial versions, you may need to specify a version for
 hg-evolve. For example, `hg-evolve==9.2` for hg 4.5 (which is installed with
