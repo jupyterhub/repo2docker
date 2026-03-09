@@ -3,11 +3,11 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import escapism
+import pytest
 
 import docker
 from repo2docker.__main__ import make_r2d
 from repo2docker.app import Repo2Docker
-from repo2docker.utils import chdir
 
 
 def test_image_name_remains_unchanged():
@@ -79,3 +79,14 @@ def test_run_kwargs(repo_with_content):
     args, kwargs = containers.run.call_args
     assert "somekey" in kwargs
     assert kwargs["somekey"] == "somevalue"
+
+
+def test_no_default(tmp_path, capsys):
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    argv = ["--Repo2Docker.default_buildpack=None", str(empty)]
+    app = make_r2d(argv)
+    with pytest.raises(SystemExit):
+        app.build()
+    captured = capsys.readouterr()
+    assert "No environment specification found" in captured.err
