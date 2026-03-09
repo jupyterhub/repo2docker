@@ -97,7 +97,7 @@ def open_guess_encoding(path):
     Open a file in text mode, specifying its encoding,
     that we guess using chardet.
     """
-    detector = chardet.universaldetector.UniversalDetector()
+    detector = chardet.UniversalDetector()
     with open(path, "rb") as f:
         for line in f.readlines():
             detector.feed(line)
