@@ -28,6 +28,8 @@ classifiers = [
     "Topic :: System :: Systems Administration",
 ]
 requires-python = ">=3.10"
+# after changing dependencies, run ./scripts/refreeze
+# so that the Dockerfile reflects the changes
 dependencies = [
     "charset-normalizer",
     "docker!=5.0.0",

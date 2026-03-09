@@ -1,0 +1,2 @@
+# freeze current requirements, used in Dockerfile
+.
