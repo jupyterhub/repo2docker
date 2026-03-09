@@ -9,7 +9,7 @@ from enum import Enum
 from functools import partial
 from shutil import copy2, copystat
 
-import chardet
+import charset_normalizer
 from traitlets import Integer, TraitError
 
 
@@ -95,21 +95,13 @@ def chdir(path):
 def open_guess_encoding(path):
     """
     Open a file in text mode, specifying its encoding,
-    that we guess using chardet.
+    that we guess using charset_normalizer.
     """
-    detector = chardet.UniversalDetector()
     with open(path, "rb") as f:
-        for line in f.readlines():
-            detector.feed(line)
-            if detector.done:
-                break
-    detector.close()
+        detector = charset_normalizer.from_fp(f)
 
-    file = open(path, encoding=detector.result["encoding"])
-    try:
+    with open(path, encoding=detector.best().encoding) as file:
         yield file
-    finally:
-        file.close()
 
 
 def validate_and_generate_port_mapping(port_mappings):

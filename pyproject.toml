@@ -29,7 +29,7 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "chardet<7",
+    "charset-normalizer",
     "docker!=5.0.0",
     "entrypoints",
     "escapism",
