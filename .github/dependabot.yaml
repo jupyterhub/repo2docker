@@ -20,5 +20,6 @@ updates:
       # need this to upgrade requirements.txt
       # otherwise only direct dependencies in requirements.in will be updated
       - dependency-type: all
+    labels: [dependencies]
     schedule:
       interval: monthly
