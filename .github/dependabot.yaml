@@ -13,5 +13,13 @@ updates:
     labels: [ci]
     schedule:
       interval: monthly
-      time: "05:00"
-      timezone: Etc/UTC
+  # Update frozen requirements in repo2docker Dockerfile
+  - package-ecosystem: pip
+    directory: /
+    allow:
+      # need this to upgrade requirements.txt
+      # otherwise only direct dependencies in requirements.in will be updated
+      - dependency-type: all
+    labels: [dependencies]
+    schedule:
+      interval: monthly
