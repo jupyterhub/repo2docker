@@ -765,9 +765,15 @@ class Repo2Docker(Application):
                         picked_buildpack = bp
                         break
                 else:
-                    picked_buildpack = self.default_buildpack(
-                        base_image=self.base_image
-                    )
+                    if self.default_buildpack:
+                        picked_buildpack = self.default_buildpack(
+                            base_image=self.base_image
+                        )
+                    else:
+                        self.log.error(
+                            "No environment specification found. See https://repo2docker.readthedocs.io/en/latest/configuration/ for supported files.\n"
+                        )
+                        self.exit(1)
 
                 picked_buildpack.platform = self.platform
                 picked_buildpack.appendix = self.appendix

@@ -487,4 +487,4 @@ class CondaBuildPack(BaseImage):
 
     def detect(self):
         """Check if current repo should be built with the Conda BuildPack."""
-        return bool(self.environment_yaml_path) and super().detect()
+        return bool(self.environment_yaml_path)
