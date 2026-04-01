@@ -136,4 +136,4 @@ jobs:
           fi
           pytest --verbose --color=yes --durations=10 --cov=repo2docker tests/${{ matrix.repo_type }}
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
