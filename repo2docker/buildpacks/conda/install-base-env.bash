@@ -5,8 +5,8 @@ set -ex
 
 cd $(dirname $0)
 
-export MAMBA_VERSION="2.3.3"
-export CONDA_VERSION="25.9.1"
+export MAMBA_VERSION="2.6.0.rc0"
+export CONDA_VERSION="26.1"
 
 URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/${CONDA_PLATFORM}/micromamba-${MAMBA_VERSION}-0.tar.bz2"
 
@@ -30,13 +30,14 @@ export PATH="${PWD}/bin:$PATH"
 cat <<EOT >> ${CONDA_DIR}/.condarc
 channels:
   - conda-forge
+  - conda-forge/label/mamba_prerelease
 auto_update_conda: false
 show_channel_urls: true
 update_dependencies: false
 # channel_priority: flexible
 EOT
 
-micromamba install conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
+micromamba install conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} libmsgpack-c -y
 
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
