@@ -29,15 +29,15 @@ export PATH="${PWD}/bin:$PATH"
 
 cat <<EOT >> ${CONDA_DIR}/.condarc
 channels:
-  - conda-forge/label/mamba_prerelease
   - conda-forge
+  - conda-forge/label/mamba_prerelease
 auto_update_conda: false
 show_channel_urls: true
 update_dependencies: false
 # channel_priority: flexible
 EOT
 
-micromamba install conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} -y
+micromamba install conda=${CONDA_VERSION} mamba=${MAMBA_VERSION} libmsgpack-c -y
 
 echo "installing notebook env:"
 cat "${NB_ENVIRONMENT_FILE}"
