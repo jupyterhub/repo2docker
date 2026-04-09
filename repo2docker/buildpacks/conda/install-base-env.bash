@@ -29,6 +29,7 @@ export PATH="${PWD}/bin:$PATH"
 
 cat <<EOT >> ${CONDA_DIR}/.condarc
 channels:
+  - conda-forge/label/mamba_prerelease
   - conda-forge
 auto_update_conda: false
 show_channel_urls: true
