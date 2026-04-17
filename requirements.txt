@@ -6,7 +6,7 @@
 #
 certifi==2026.2.25
     # via requests
-charset-normalizer==3.4.5
+charset-normalizer==3.4.7
     # via
     #   jupyter-repo2docker
     #   requests
@@ -22,7 +22,7 @@ iso8601==2.1.0
     # via jupyter-repo2docker
 jinja2==3.1.6
     # via jupyter-repo2docker
-jupyter-repo2docker @ file:///tmp/src
+jupyter-repo2docker @ file:///home/dependabot/dependabot-updater/tmp/20260417-1084-gve2uk/dependabot_20260417-1084-mdtlpf
     # via -r requirements.in
 markupsafe==3.0.3
     # via jinja2
