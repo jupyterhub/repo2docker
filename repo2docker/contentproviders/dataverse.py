@@ -27,8 +27,8 @@ class Dataverse(DoiProvider):
 
     def load_hosts(self):
         if self.hosts is None:
-            self.log.info(
-                "Retrieving dataverse installations from %s",
+            self.log.debug(
+                "Retrieving dataverse installations from %s\n",
                 self.dataverse_installations_url,
             )
             r = requests.get(self.dataverse_installations_url)
