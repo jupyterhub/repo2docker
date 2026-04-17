@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+"""
+Run pip-compile in docker to generate requirements.txt
+
+Should only need running when requirements change in pyproject.toml, which is uncommon.
+Dependabot should handle updating requirements.txt most of the time.
+"""
+
+from pathlib import Path
+from subprocess import run
+
+repo = Path(__file__).parents[1].resolve()
+
+
+def get_alpine_version():
+    """
+    Get the alpine version from our dockerfile
+
+    make sure we're running with the same version as the docker image.
+    """
+    dockerfile = repo / "Dockerfile"
+    with dockerfile.open() as f:
+        for line in f:
+            if "ALPINE_VERSION" in line:
+                return line.partition("=")[2].strip()
+    raise ValueError(f"Couldn't find ALPINE_VERSION= in {dockerfile}")
+
+
+def refreeze():
+    """
+    Run pip-compile in docker to generate requirements.txt
+    """
+
+    alpine_version = get_alpine_version()
+    run(
+        [
+            "docker",
+            "run",
+            "--rm",
+            f"-v{repo}:/tmp/src",
+            "-w/tmp/src",
+            "-eCUSTOM_COMPILE_COMMAND=./scripts/refreeze",
+            f"alpine:{alpine_version}",
+            "sh",
+            "-c",
+            """
+        apk add py3-pip git
+        python3 -m venv /tmp/venv
+        source /tmp/venv/bin/activate
+        pip install pip-tools
+        pip-compile
+        """,
+        ]
+    )
+
+
+if __name__ == "__main__":
+    refreeze()
