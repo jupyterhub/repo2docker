@@ -15,7 +15,7 @@ RUN cd /tmp/src && git clean -xfd && git status
 RUN mkdir /tmp/wheelhouse \
  && cd /tmp/wheelhouse \
  && pip install wheel \
- && pip wheel --no-cache-dir -r /tmp/src/requirements.txt \
+ && pip wheel --no-cache-dir -r /tmp/src/requirements.txt /tmp/src \
  && ls -l /tmp/wheelhouse
 
 FROM alpine:${ALPINE_VERSION}

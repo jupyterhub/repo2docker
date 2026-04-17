@@ -22,8 +22,6 @@ iso8601==2.1.0
     # via jupyter-repo2docker
 jinja2==3.1.6
     # via jupyter-repo2docker
-jupyter-repo2docker @ file:///tmp/src
-    # via -r requirements.in
 markupsafe==3.0.3
     # via jinja2
 packaging==26.0
@@ -46,3 +44,6 @@ urllib3==2.6.3
     # via
     #   docker
     #   requests
+
+# The following packages are considered to be unsafe in a requirements file:
+# jupyter-repo2docker

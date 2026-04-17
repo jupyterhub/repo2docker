@@ -32,6 +32,7 @@ def refreeze():
     """
 
     alpine_version = get_alpine_version()
+
     run(
         [
             "docker",
@@ -48,7 +49,8 @@ def refreeze():
         python3 -m venv /tmp/venv
         source /tmp/venv/bin/activate
         pip install pip-tools
-        pip-compile
+        # exclude repo2docker itself because dependabot messes it up
+        pip-compile --unsafe-package=jupyter-repo2docker
         """,
         ]
     )
