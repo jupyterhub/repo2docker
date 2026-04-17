@@ -415,7 +415,7 @@ class RBuildPack(PythonBuildPack):
             assemble_scripts += [
                 (
                     "${NB_USER}",
-                    'R --no-save --no-restore --no-init-file --no-environ --quiet -e "pak::local_install()"',
+                    'R --no-save --no-restore --no-init-file --no-environ --quiet -e "pak::local_install()" && rm -rf $HOME/.cache/R',
                 )
             ]
 
