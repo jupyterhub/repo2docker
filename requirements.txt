@@ -22,13 +22,13 @@ iso8601==2.1.0
     # via jupyter-repo2docker
 jinja2==3.1.6
     # via jupyter-repo2docker
-jupyter-repo2docker @ file:///tmp/src
+jupyter-repo2docker @ file:///home/dependabot/dependabot-updater/tmp/20260417-1084-gve2uk/dependabot_20260417-1084-j3oh8c
     # via -r requirements.in
 markupsafe==3.0.3
     # via jinja2
 packaging==26.0
     # via jupyter-repo2docker
-python-json-logger==4.0.0
+python-json-logger==4.1.0
     # via jupyter-repo2docker
 requests==2.32.5
     # via
