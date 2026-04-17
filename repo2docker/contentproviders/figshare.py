@@ -41,7 +41,9 @@ class Figshare(DoiProvider):
     # We may need to add other item types in future, see
     # https://github.com/jupyterhub/repo2docker/pull/1001#issuecomment-760107436
     # for a list
-    url_regex = re.compile(r"(.*)/articles/(code/|dataset/)?([^/]+)/(\d+)(/)?(\d+)?")
+    url_regex = re.compile(
+        r"(.*)/articles/(code/|dataset/|software/)?([^/]+)/(\d+)(/)?(\d+)?"
+    )
 
     def detect(self, doi, ref=None, extra_args=None):
         """Trigger this provider for things that resolve to a Figshare article"""
