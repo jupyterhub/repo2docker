@@ -348,10 +348,10 @@ class RBuildPack(PythonBuildPack):
             ),
             (
                 "${NB_USER}",
-                # Install a pinned version of pak, devtools, IRKernel and shiny
+                # Install a pinned version of remotes, devtools, IRKernel and shiny
                 rf"""
                 export EXPANDED_CRAN_MIRROR_URL="$(. /etc/os-release && echo {cran_mirror_url} | envsubst)" && \
-                R --no-save --no-restore --no-init-file --no-environ --quiet -e "install.packages(c('pak', 'devtools', 'IRkernel', 'shiny'), repos=Sys.getenv(\"EXPANDED_CRAN_MIRROR_URL\"))" && \
+                R --no-save --no-restore --no-init-file --no-environ --quiet -e "install.packages(c('remotes', 'devtools', 'IRkernel', 'shiny'), repos=Sys.getenv(\"EXPANDED_CRAN_MIRROR_URL\"))" && \
                 R --no-save --no-restore --no-init-file --no-environ --quiet -e "IRkernel::installspec(prefix=Sys.getenv(\"NB_PYTHON_PREFIX\"))"
                 """,
             ),
@@ -415,10 +415,7 @@ class RBuildPack(PythonBuildPack):
             assemble_scripts += [
                 (
                     "${NB_USER}",
-                    # pak doesn't seem to cleanup after itself.
-                    # pak::cache_clean() doesn't empty the cache,
-                    # it leaves files in /tmp/Rabc123.../ and ~/.cache/R/pkg/...
-                    'R --no-save --no-restore --no-init-file --no-environ --quiet -e "pak::install_local()"; rm -rf $HOME/.cache/R; rm -rf /tmp/R*',
+                    'R --no-save --no-restore --no-init-file --no-environ --quiet -e "remotes::install_local()"',
                 )
             ]
 
