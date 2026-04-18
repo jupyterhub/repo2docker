@@ -50,7 +50,7 @@ def refreeze():
         source /tmp/venv/bin/activate
         pip install pip-tools
         # exclude repo2docker itself because dependabot messes it up
-        pip-compile --unsafe-package=jupyter-repo2docker
+        pip-compile --upgrade --unsafe-package=jupyter-repo2docker
         """,
         ]
     )
