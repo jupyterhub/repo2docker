@@ -348,10 +348,10 @@ class RBuildPack(PythonBuildPack):
             ),
             (
                 "${NB_USER}",
-                # Install a pinned version of devtools, IRKernel and shiny
+                # Install a pinned version of remotes, devtools, IRKernel and shiny
                 rf"""
                 export EXPANDED_CRAN_MIRROR_URL="$(. /etc/os-release && echo {cran_mirror_url} | envsubst)" && \
-                R --no-save --no-restore --no-init-file --no-environ --quiet -e "install.packages(c('devtools', 'IRkernel', 'shiny'), repos=Sys.getenv(\"EXPANDED_CRAN_MIRROR_URL\"))" && \
+                R --no-save --no-restore --no-init-file --no-environ --quiet -e "install.packages(c('remotes', 'devtools', 'IRkernel', 'shiny'), repos=Sys.getenv(\"EXPANDED_CRAN_MIRROR_URL\"))" && \
                 R --no-save --no-restore --no-init-file --no-environ --quiet -e "IRkernel::installspec(prefix=Sys.getenv(\"NB_PYTHON_PREFIX\"))"
                 """,
             ),
@@ -415,7 +415,7 @@ class RBuildPack(PythonBuildPack):
             assemble_scripts += [
                 (
                     "${NB_USER}",
-                    'R --no-save --no-restore --no-init-file --no-environ --quiet -e "devtools::install_local(getwd())"',
+                    'R --no-save --no-restore --no-init-file --no-environ --quiet -e "remotes::install_local()"',
                 )
             ]
 

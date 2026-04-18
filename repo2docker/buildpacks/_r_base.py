@@ -12,7 +12,7 @@ def rstudio_base_scripts(r_version):
 
     # Shiny server (not the package!) seems to be the same version for all R versions
     shiny_server_url = "https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.22.1017-amd64.deb"
-    shiny_proxy_version = "1.3"
+    shiny_proxy_version = "1.4"
     shiny_sha256sum = "0fa40054f038de464a26f3f8c40180a072228454762b7a12ed50568b3256c236"
 
     # RStudio server has different builds based on wether OpenSSL 3 or 1.1 is available.
