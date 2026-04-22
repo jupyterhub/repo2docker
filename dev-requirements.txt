@@ -2,7 +2,7 @@ build
 conda-lock
 pre-commit
 pytest-cov
-pytest>=7
+pytest>=9.0.3
 pyyaml
 requests_mock
 bcrypt
