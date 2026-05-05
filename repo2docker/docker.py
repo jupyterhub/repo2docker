@@ -164,9 +164,6 @@ class DockerEngine(ContainerEngine):
                 )
             args.append("--load")
 
-        if push:
-            args.append("--push")
-
         if buildargs:
             for k, v in buildargs.items():
                 args += ["--build-arg", f"{k}={v}"]
@@ -207,6 +204,9 @@ class DockerEngine(ContainerEngine):
                 args += [path]
 
                 yield from execute_cmd(args, True)
+
+            if push:
+                yield from execute_cmd([self.container_cli, "push", tag], True)
 
     def inspect_image(self, image):
         """
