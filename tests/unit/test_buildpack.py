@@ -93,3 +93,53 @@ def test_invalid_runtime(tmpdir, runtime_txt, base_image):
 
     with pytest.raises(ValueError, match=r"^Invalid runtime.txt.*"):
         base.runtime
+
+
+@pytest.mark.parametrize(
+    "label_value",
+    [
+        "hello\nRUN echo pwned",
+        'value with "double" quotes',
+        "backtick `$(id)` and $VAR",
+        "semicolon; pipe | newline\nstill same value",
+    ],
+)
+def test_labels_with_special_chars_do_not_break_dockerfile(
+    tmpdir, label_value, base_image
+):
+    """Operator-supplied label values containing newlines, quotes, or shell
+    metacharacters must not introduce extra Dockerfile directives.
+
+    The previous template rendered ``LABEL k="{{v}}"`` with no escaping, so a
+    value containing a literal newline followed by ``RUN ...`` produced a real
+    Dockerfile RUN directive at build time. Apply ``shlex.quote`` to both key
+    and value so that the value lands as a single quoted token regardless of
+    its contents.
+    """
+    tmpdir.chdir()
+    bp = BaseImage(base_image)
+    bp.labels = {"my.label": label_value}
+    dockerfile = bp.render()
+
+    # Find the single LABEL directive that carries our key.
+    label_lines = [
+        line
+        for line in dockerfile.splitlines()
+        if line.startswith("LABEL ") and "my.label" in line
+    ]
+    assert len(label_lines) == 1, (
+        f"expected exactly one LABEL line for my.label, found "
+        f"{len(label_lines)}: {label_lines!r}"
+    )
+
+    # No subsequent top-level directive should appear that wasn't there
+    # before. In particular, no `RUN echo pwned` injected as its own line.
+    top_level_runs = [
+        line
+        for line in dockerfile.splitlines()
+        if line.startswith("RUN ") and "pwned" in line
+    ]
+    assert not top_level_runs, (
+        f"label value broke out of LABEL directive and produced an extra "
+        f"top-level RUN: {top_level_runs!r}"
+    )

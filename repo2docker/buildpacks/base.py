@@ -4,6 +4,7 @@ import io
 import logging
 import os
 import re
+import shlex
 import string
 import sys
 import tarfile
@@ -13,6 +14,24 @@ from functools import lru_cache
 import escapism
 import jinja2
 from docker.utils.build import exclude_paths
+
+
+def _quote_dockerfile_token(value):
+    """Quote a label key/value for inclusion in a Dockerfile LABEL directive.
+
+    Wraps :func:`shlex.quote` with an explicit escape of backslash, ``\\n`` and
+    ``\\r`` so the result occupies a single Dockerfile directive line.
+    Dockerfile single-quoted strings (which :func:`shlex.quote` produces for
+    values containing shell metacharacters) do not span newlines the way shell
+    does, so a label value containing a literal newline -- e.g., a multi-line
+    ``git commit`` message piped through ``--Repo2Docker.labels`` in CI --
+    would otherwise break out of the LABEL directive.
+    """
+    if not isinstance(value, str):
+        value = str(value)
+    escaped = value.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r")
+    return shlex.quote(escaped)
+
 
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
@@ -178,7 +197,7 @@ COPY --chown={{ user }}:{{ user }} src/ ${REPO_DIR}/
 # Put these at the end, since we don't want to rebuild everything
 # when these change! Did I mention I hate Dockerfile cache semantics?
 {% for k, v in labels|dictsort %}
-LABEL {{k}}="{{v}}"
+LABEL {{ k|sh_quote }}={{ v|sh_quote }}
 {%- endfor %}
 
 # We always want containers to run as non-root
@@ -492,7 +511,9 @@ class BuildPack:
         """
         build_args = build_args or {}
 
-        t = jinja2.Template(TEMPLATE)
+        env = jinja2.Environment()
+        env.filters["sh_quote"] = _quote_dockerfile_token
+        t = env.from_string(TEMPLATE)
 
         build_script_directives = []
         last_user = "root"
