@@ -6,9 +6,9 @@ set -ex
 cd $(dirname $0)
 
 # mamba version checked in tests/conda/py35-binder-dir/verify
-export MAMBA_VERSION="2.5.0"
+export MAMBA_VERSION="2.7.0.alpha0"
 export CONDA_VERSION="26.3.2"
-MICROMAMBA_BUILD=2
+MICROMAMBA_BUILD=0
 
 URL="https://anaconda.org/conda-forge/micromamba/${MAMBA_VERSION}/download/${CONDA_PLATFORM}/micromamba-${MAMBA_VERSION}-${MICROMAMBA_BUILD}.tar.bz2"
 
@@ -31,6 +31,7 @@ export PATH="${PWD}/bin:$PATH"
 
 cat <<EOT >> ${CONDA_DIR}/.condarc
 channels:
+  - conda-forge/label/mamba_prerelease
   - conda-forge
 auto_update_conda: false
 show_channel_urls: true
