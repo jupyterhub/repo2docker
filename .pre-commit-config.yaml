@@ -33,7 +33,7 @@ repos:
 
   # Autoformat: markdown
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.8.3
+    rev: v3.9.4
     hooks:
       - id: prettier
         files: ".md"
