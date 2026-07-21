@@ -54,6 +54,8 @@ class Zenodo(DoiProvider):
                 "hostname": [
                     "https://data.caltech.edu/records/",
                     "http://data.caltech.edu/records/",
+                    # data.caltech.edu was stripped of the endpoint /record/
+                    # data.caltech.edu was stripped of the endpoint /doi/
                 ],
                 "api": "https://data.caltech.edu/api/record/",
                 "files": "",
@@ -70,16 +72,16 @@ class Zenodo(DoiProvider):
 
         for host in self.hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
-                self.record_id = url.rsplit("/", maxsplit=1)[1]
+                url_basename = url.rsplit("/", maxsplit=1)[1]
+
+                # This is required because some DOI will resolve to /record/ and others to /doi/ endpoint.
+                self.record_id = url_basename.replace("zenodo.", "")
                 return {"record": self.record_id, "host": host}
 
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Zenodo record"""
         # Simple heuristic until repoproviders is ready.
-        if "." in spec["record"]:
-            record_id = spec["record"].split(".")[1]
-        else:
-            record_id = spec["record"]
+        record_id = spec["record"]
         host = spec["host"]
 
         yield f"Fetching Zenodo record {record_id}.\n"

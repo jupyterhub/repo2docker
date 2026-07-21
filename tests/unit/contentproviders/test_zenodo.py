@@ -32,7 +32,9 @@ test_zen = Zenodo()
 test_hosts = [
     (
         [
+            "https://zenodo.org/records/3232985",
             "https://zenodo.org/record/3232985",
+            "https://zenodo.org/doi/10.5281/zenodo.3232985",
             "10.5281/zenodo.3232985",
             "https://doi.org/10.5281/zenodo.3232985",
         ],
@@ -41,14 +43,18 @@ test_hosts = [
     (
         [
             "https://zenodo.org/records/18553140",
+            "https://zenodo.org/record/18553140",
+            "https://zenodo.org/doi/10.5281/zenodo.18553140",
             "10.5281/zenodo.18553140",
             "https://doi.org/10.5281/zenodo.18553140",
         ],
-        {"host": test_zen.hosts[1], "record": "zenodo.18553140"},
+        {"host": test_zen.hosts[1], "record": "18553140"},
     ),
     (
         [
             "https://data.caltech.edu/records/1235",
+            # data.caltech.edu was stripped of the endpoint /record/
+            # data.caltech.edu was stripped of the endpoint /doi/
             "10.22002/d1.1235",
             "https://doi.org/10.22002/d1.1235",
         ],
@@ -60,9 +66,8 @@ test_hosts = [
 @pytest.mark.parametrize("test_input,expected", test_hosts)
 def test_detect_zenodo(test_input, expected):
     # valid Zenodo DOIs trigger this content provider
-    assert Zenodo().detect(test_input[0]) == expected
-    assert Zenodo().detect(test_input[1]) == expected
-    assert Zenodo().detect(test_input[2]) == expected
+    for str_input in test_input:
+        assert Zenodo().detect(str_input) == expected
 
     # Don't trigger the Zenodo content provider
     assert Zenodo().detect("/some/path/here") is None
