@@ -74,12 +74,13 @@ def test_get_persistent_id(url, persistent_id, is_ambiguous):
     [
         (
             (
-                "doi:10.7910/DVN/TJCLKP",
+                "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/TJCLKP&version=5.0",
                 "https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/TJCLKP",
+                "doi:10.7910/DVN/TJCLKP",
             ),
             {
-                "data/primary/primary-data.zip": "a8f6fc3fc58f503cd48e23fa8b088694",
-                "data/2023-01-03.tsv": "6fd497bf13dab9a06fe737ebc22f1917",
+                "data/primary/primary-data.zip": "f24541c5f89a09bc6db2781220cbbe70",
+                "data/2026-06-24.tsv": "0165275ec1437dd2bcb1c6b4b56ef233",
                 "code/language.py": "9d61582bcf497c83bbd1ed0eed3c772e",
             },
         ),
