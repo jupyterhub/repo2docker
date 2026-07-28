@@ -23,15 +23,16 @@ def rstudio_base_scripts(r_version):
     # You can find these URLs in https://posit.co/download/rstudio-server/,
     # toggling between Ubuntu 22 (for openssl3) vs earlier versions (openssl 1.1)
     # you may forget about openssl, but openssl never forgets you.
-    rstudio_openssl3_url = "https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.12.0-467-amd64.deb"
+    rstudio_openssl3_url = "https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2026.07.1-147-amd64.deb"
     rstudio_openssl3_sha256sum = (
-        "1493188cdabcc1047db27d1bd0e46947e39562cbd831158c7812f88d80e742b3"
+        "118e3fce4cf58ad3bfff1dc6eea3e07f294d51d28fefcc5e1cc559292c0dd06c"
     )
-
+    # If only OpenSSL 1.1 is present, an older version of RStudio Server is installed.
     rstudio_openssl1_url = "https://download2.rstudio.org/server/focal/amd64/rstudio-server-2024.12.0-467-amd64.deb"
     rstudio_openssl1_sha256sum = (
         "052540a8df135d9ce7569ddc2fc9637671103934179691bc3e43298336fc3a8e"
     )
+    # The proxy is implemented by jupyter-rsession-proxy
     rsession_proxy_version = "2.3.0"
 
     return [
