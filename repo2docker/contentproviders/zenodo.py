@@ -22,7 +22,10 @@ class Zenodo(DoiProvider):
                 "hostname": [
                     "https://sandbox.zenodo.org/record/",
                     "http://sandbox.zenodo.org/record/",
+                    "https://sandbox.zenodo.org/records/",
                     "http://sandbox.zenodo.org/records/",
+                    "https://sandbox.zenodo.org/doi/",
+                    "http://sandbox.zenodo.org/doi/",
                 ],
                 "api": "https://sandbox.zenodo.org/api/records/",
                 "files": "links.files",
@@ -36,6 +39,9 @@ class Zenodo(DoiProvider):
                     "https://zenodo.org/record/",
                     "http://zenodo.org/record/",
                     "https://zenodo.org/records/",
+                    "http://zenodo.org/records/",
+                    "https://zenodo.org/doi/",
+                    "http://zenodo.org/doi/",
                 ],
                 "api": "https://zenodo.org/api/records/",
                 "files": "links.files",
@@ -48,6 +54,8 @@ class Zenodo(DoiProvider):
                 "hostname": [
                     "https://data.caltech.edu/records/",
                     "http://data.caltech.edu/records/",
+                    # data.caltech.edu was stripped of the endpoint /record/
+                    # data.caltech.edu was stripped of the endpoint /doi/
                 ],
                 "api": "https://data.caltech.edu/api/record/",
                 "files": "",
@@ -64,11 +72,15 @@ class Zenodo(DoiProvider):
 
         for host in self.hosts:
             if any([url.startswith(s) for s in host["hostname"]]):
-                self.record_id = url.rsplit("/", maxsplit=1)[1]
+                url_basename = url.rsplit("/", maxsplit=1)[1]
+
+                # This is required because some DOI will resolve to /record/ and others to /doi/ endpoint.
+                self.record_id = url_basename.replace("zenodo.", "")
                 return {"record": self.record_id, "host": host}
 
     def fetch(self, spec, output_dir, yield_output=False):
         """Fetch and unpack a Zenodo record"""
+        # Simple heuristic until repoproviders is ready.
         record_id = spec["record"]
         host = spec["host"]
 
