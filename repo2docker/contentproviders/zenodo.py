@@ -14,9 +14,6 @@ class Zenodo(DoiProvider):
 
     def __init__(self):
         super().__init__()
-        # We need the hostname (url where records are), api url (for metadata),
-        # filepath (path to files in metadata), filename (path to filename in
-        # metadata), download (path to file download URL), and type (path to item type in metadata)
         self.hosts = [
             {
                 "hostname": [
@@ -30,12 +27,13 @@ class Zenodo(DoiProvider):
                 "filename": "key",
                 "download": "links.content",
                 "type": "metadata.upload_type",
+                "is_caltech": False,
             },
             {
                 "hostname": [
                     "https://zenodo.org/record/",
-                    "http://zenodo.org/record/",
                     "https://zenodo.org/records/",
+                    "http://zenodo.org/record/",
                 ],
                 "api": "https://zenodo.org/api/records/",
                 "files": "links.files",
@@ -43,18 +41,20 @@ class Zenodo(DoiProvider):
                 "filename": "key",
                 "download": "links.content",
                 "type": "metadata.upload_type",
+                "is_caltech": False,
             },
             {
                 "hostname": [
                     "https://data.caltech.edu/records/",
                     "http://data.caltech.edu/records/",
                 ],
-                "api": "https://data.caltech.edu/api/record/",
-                "files": "",
-                "filepath": "metadata.electronic_location_and_access",
-                "filename": "electronic_name.0",
-                "download": "uniform_resource_identifier",
-                "type": "metadata.resourceType.resourceTypeGeneral",
+                "api": "https://data.caltech.edu/api/records/",
+                "files": "links.files",
+                "filepath": "entries",
+                "filename": "key",
+                "download": "links.content",
+                "type": "metadata.upload_type",
+                "is_caltech": True,
             },
         ]
 
@@ -92,6 +92,37 @@ class Zenodo(DoiProvider):
         only_one_file = len(files) == 1
         for file_ref in files:
             yield from self.fetch_file(file_ref, host, output_dir, unzip=only_one_file)
+
+    def fetch_file(self, file_ref, host, output_dir, unzip=True):
+        """Fetch and save a file from Zenodo."""
+        filename = deep_get(file_ref, host["filename"])
+        if host["is_caltech"]:
+            # Construct the direct download URL for Caltech Data
+            download_url = (
+                f"https://data.caltech.edu/records/{self.record_id}/files/{filename}"
+            )
+        else:
+            # Use the standard Zenodo download URL structure
+            download_url = deep_get(file_ref, host["download"])
+
+        # Create output directory
+        makedirs(output_dir, exist_ok=True)
+
+        output_path = path.join(output_dir, filename)
+        yield f"Downloading {filename} to {output_path}\n"
+
+        # Get file using a streaming approach
+        response = self.urlopen(download_url)
+        content = response.content  # Get the binary content
+
+        # Write the content to file
+        with open(output_path, "wb") as fp:
+            fp.write(content)
+
+        if unzip and filename.endswith(".zip"):
+            yield f"Extracting {filename} to {output_dir}\n"
+            shutil.unpack_archive(output_path, output_dir)
+            os.remove(output_path)
 
     @property
     def content_id(self):
