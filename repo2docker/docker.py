@@ -164,9 +164,6 @@ class DockerEngine(ContainerEngine):
                 )
             args.append("--load")
 
-        if push:
-            args.append("--push")
-
         if buildargs:
             for k, v in buildargs.items():
                 args += ["--build-arg", f"{k}={v}"]
@@ -192,8 +189,6 @@ class DockerEngine(ContainerEngine):
         args += self.extra_buildx_build_args
 
         with ExitStack() as stack:
-            if self.registry_credentials:
-                stack.enter_context(self.docker_login(**self.registry_credentials))
             if fileobj:
                 with tempfile.TemporaryDirectory() as d:
                     tarf = tarfile.open(fileobj=fileobj)
@@ -207,6 +202,12 @@ class DockerEngine(ContainerEngine):
                 args += [path]
 
                 yield from execute_cmd(args, True)
+
+            if push and tag:
+                if self.registry_credentials:
+                    stack.enter_context(self.docker_login(**self.registry_credentials))
+
+                yield from execute_cmd([self.container_cli, "push", tag], True)
 
     def inspect_image(self, image):
         """
