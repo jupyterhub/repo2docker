@@ -458,7 +458,9 @@ class CondaBuildPack(BaseImage):
                     echo auth-minimum-user-id=0 >> /etc/rstudio/rserver.conf && \
                     echo "rsession-which-r={env_prefix}/bin/R" >> /etc/rstudio/rserver.conf && \
                     echo "rsession-ld-library-path={env_prefix}/lib" >> /etc/rstudio/rserver.conf && \
-                    echo www-frame-origin=same >> /etc/rstudio/rserver.conf
+                    echo www-frame-origin=same >> /etc/rstudio/rserver.conf && \
+                    echo server-user=jovyan >> /etc/rstudio/rserver.conf && \
+                    echo server-daemonize=0 >> /etc/rstudio/rserver.conf
                     """,
                 ),
                 (
