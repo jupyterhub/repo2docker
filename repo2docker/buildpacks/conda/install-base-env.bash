@@ -6,7 +6,7 @@ set -ex
 cd $(dirname $0)
 
 # mamba version checked in tests/conda/py35-binder-dir/verify
-export MAMBA_VERSION="2.8.1"
+export MAMBA_VERSION="2.9.0.rc0"
 export CONDA_VERSION="26.3.2"
 MICROMAMBA_BUILD=0
 
@@ -31,6 +31,7 @@ export PATH="${PWD}/bin:$PATH"
 
 cat <<EOT >> ${CONDA_DIR}/.condarc
 channels:
+  - conda-forge/label/mamba_prerelease
   - conda-forge
 auto_update_conda: false
 show_channel_urls: true
