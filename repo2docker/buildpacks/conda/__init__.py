@@ -460,7 +460,9 @@ class CondaBuildPack(BaseImage):
                     echo "rsession-ld-library-path={env_prefix}/lib" >> /etc/rstudio/rserver.conf && \
                     echo www-frame-origin=same >> /etc/rstudio/rserver.conf && \
                     echo server-user=jovyan >> /etc/rstudio/rserver.conf && \
-                    echo server-daemonize=0 >> /etc/rstudio/rserver.conf
+                    echo server-daemonize=0 >> /etc/rstudio/rserver.conf && \
+                    echo secure-cookie-key-file=/home/jovyan/.local/share/rstudio/vault/secure-cookie-key >> /etc/rstudio/rserver.conf && \
+                    echo server-data-dir=/home/jovyan/.local/share/rstudio/data >> /etc/rstudio/rserver.conf
                     """,
                 ),
                 (
