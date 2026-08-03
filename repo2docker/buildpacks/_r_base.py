@@ -11,9 +11,10 @@ def rstudio_base_scripts(r_version):
     """Base steps to install RStudio and shiny-server."""
 
     # Shiny server (not the package!) seems to be the same version for all R versions
-    shiny_server_url = "https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.22.1017-amd64.deb"
+    shiny_server_url = "https://download3.rstudio.org/ubuntu-20.04/x86_64/shiny-server-1.5.23.1030-amd64.deb"
+    shiny_sha256sum = "4a3d063a06ccd1b6c53eb1d7f4fb59965bced10d1c5c87e8c476b58dd6fd35ee"
+    # The proxy is implemented by jupyter-shiny-proxy
     shiny_proxy_version = "1.4"
-    shiny_sha256sum = "0fa40054f038de464a26f3f8c40180a072228454762b7a12ed50568b3256c236"
 
     # RStudio server has different builds based on wether OpenSSL 3 or 1.1 is available.
     # OpenSSL 3 is present from Ubuntu 22.04 LTS (Jammy).
@@ -23,15 +24,16 @@ def rstudio_base_scripts(r_version):
     # You can find these URLs in https://posit.co/download/rstudio-server/,
     # toggling between Ubuntu 22 (for openssl3) vs earlier versions (openssl 1.1)
     # you may forget about openssl, but openssl never forgets you.
-    rstudio_openssl3_url = "https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.12.0-467-amd64.deb"
+    rstudio_openssl3_url = "https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2026.07.1-147-amd64.deb"
     rstudio_openssl3_sha256sum = (
-        "1493188cdabcc1047db27d1bd0e46947e39562cbd831158c7812f88d80e742b3"
+        "118e3fce4cf58ad3bfff1dc6eea3e07f294d51d28fefcc5e1cc559292c0dd06c"
     )
-
+    # If only OpenSSL 1.1 is present, an older version of RStudio Server is installed.
     rstudio_openssl1_url = "https://download2.rstudio.org/server/focal/amd64/rstudio-server-2024.12.0-467-amd64.deb"
     rstudio_openssl1_sha256sum = (
         "052540a8df135d9ce7569ddc2fc9637671103934179691bc3e43298336fc3a8e"
     )
+    # The proxy is implemented by jupyter-rsession-proxy
     rsession_proxy_version = "2.3.0"
 
     return [
