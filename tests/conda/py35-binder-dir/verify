@@ -15,7 +15,7 @@ out = sh([kernel_python, "--version"], stderr=STDOUT)
 v = out.split()[1]
 assert v[:3] == "3.5", out
 
-mamba_version = "2.9.0.rc0"
+mamba_version = "2.9.0.rc1"
 
 out = sh(["micromamba", "--version"])
 assert out == mamba_version, out
