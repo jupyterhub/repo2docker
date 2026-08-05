@@ -22,9 +22,11 @@ assert envs["envs"] == [
     "/srv/conda/envs/notebook",
 ], envs
 
-pkgs = json.loads(
+pkgs_json = json.loads(
     check_output(["micromamba", "list", "-n", "kernel", "--json"]).decode("utf8")
 )
+# micromamba >=2.9 wraps the package array as {"packages": [...], "log_history": ...}.
+pkgs = pkgs_json["packages"] if isinstance(pkgs_json, dict) else pkgs_json
 pkg_names = [pkg["name"] for pkg in pkgs]
 assert "ipykernel" in pkg_names, pkg_names
 assert "numpy" in pkg_names
