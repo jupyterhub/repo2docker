@@ -15,9 +15,12 @@ import json
 from subprocess import check_output
 
 envs = json.loads(check_output(["micromamba", "env", "list", "--json"]).decode("utf8"))
-assert envs == {
-    "envs": ["/srv/conda", "/srv/conda/envs/kernel", "/srv/conda/envs/notebook"]
-}, envs
+# Compare env paths only: micromamba >=2.9 also emits "log_history" in --json output.
+assert envs["envs"] == [
+    "/srv/conda",
+    "/srv/conda/envs/kernel",
+    "/srv/conda/envs/notebook",
+], envs
 
 pkgs = json.loads(
     check_output(["micromamba", "list", "-n", "kernel", "--json"]).decode("utf8")
