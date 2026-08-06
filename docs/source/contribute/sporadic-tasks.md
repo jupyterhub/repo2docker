@@ -13,9 +13,9 @@ A new version of Ubuntu LTS is released every two years in May, more details at 
 repo2docker will upgrade to a newer version of Ubuntu LTS approximately one year after its release.
 
 | Ubuntu LTS version | Ubuntu LTS release date | repo2docker version | repo2docker release date |
-| --- | --- | --- | --- |
-| 26.04 LTS | April 2026 | 2027.4 (estimated) | April 2027 (estimated) |
-| 24.04 LTS | April 2024 | 2025.8 | August 2025 |
+| ------------------ | ----------------------- | ------------------- | ------------------------ |
+| 26.04 LTS          | April 2026              | 2027.4 (estimated)  | April 2027 (estimated)   |
+| 24.04 LTS          | April 2024              | 2025.8              | August 2025              |
 
 ### Previous pull request
 
