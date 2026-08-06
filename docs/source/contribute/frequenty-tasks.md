@@ -1,6 +1,6 @@
-# Common tasks
+# Frequent tasks
 
-These are some common tasks to be done as a part of developing
+These are some frequent tasks to be done as a part of developing
 and maintaining repo2docker. If you'd like more guidance for how
 to do these things, reach out in the [JupyterHub Gitter channel](https://gitter.im/jupyterhub/jupyterhub).
 
@@ -133,58 +133,3 @@ This will create a new release **and a new tag**.
 The creation of the tag will trigger the `.github/workflows/release.yml` action to publish the latest repo2docker package to PyPI.
 
 You can confirm the new package is released [in our PyPI page](https://pypi.org/project/jupyter-repo2docker/#history).
-
-# Uncommon tasks
-
-## Compare generated Dockerfiles between repo2docker versions
-
-For larger refactorings it can be useful to check that the generated Dockerfiles match
-between an older version of r2d and the current version. The following shell script
-automates this test.
-
-```bash
-#! /bin/bash -e
-
-current_version=$(repo2docker --version | sed s@+@-@)
-echo "Comparing $(pwd) (local $current_version vs. $R2D_COMPARE_TO)"
-basename="dockerfilediff"
-
-diff_r2d_dockerfiles_with_version () {
-    docker run --rm -t -v "$(pwd)":"$(pwd)" --user 1000 jupyterhub/repo2docker:"$1" repo2docker --no-build --debug "$(pwd)" &> "$basename"."$1"
-    repo2docker --no-build --debug "$(pwd)" &> "$basename"."$current_version"
-
-    # remove first line logging the path
-    sed -i '/^\[Repo2Docker\]/d' "$basename"."$1"
-    sed -i '/^\[Repo2Docker\]/d' "$basename"."$current_version"
-
-    diff --strip-trailing-cr "$basename"."$1" "$basename"."$current_version" | colordiff
-    rm "$basename"."$current_version" "$basename"."$1"
-}
-
-startdir="$(pwd)"
-cd "$1"
-
-#diff_r2d_dockerfiles 0.10.0-22.g4f428c3.dirty
-diff_r2d_dockerfiles_with_version "$R2D_COMPARE_TO"
-
-cd "$startdir"
-```
-
-Put the code above in a file `tests/dockerfile_diff.sh` and make it executable: `chmod +x dockerfile_diff.sh`.
-
-Configure the repo2docker version you want to compare with your local version in the environment variable `R2D_COMPARE_TO`.
-The scripts takes one input: the directory where repo2docker should be executed.
-
-```bash
-cd tests/
-R2D_COMPARE_TO=0.10.0 ./dockerfile_diff.sh venv/py35/
-```
-
-Run it for all directories where there is a `verify` file:
-
-```bash
-cd tests/
-R2D_COMPARE_TO=0.10.0 CMD=$(pwd)/dockerfile_diff.sh find . -name 'verify' -execdir bash -c '$CMD $(pwd)' \;
-```
-
-To keep the created Dockefilers for further inspection, comment out the deletion line in the script.

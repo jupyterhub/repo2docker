@@ -12,7 +12,8 @@ repo2docker package.
 
    contributing
    roadmap
-   tasks
+   frequenty-tasks
+   sporadic-tasks
 
 .. toctree::
    :caption: Developer guide
