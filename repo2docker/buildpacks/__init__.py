@@ -1,4 +1,5 @@
 from .base import BaseImage, BuildPack
+from .extended import ExtendImageBuildPack
 from .conda import CondaBuildPack
 from .docker import DockerBuildPack
 from .julia import JuliaProjectTomlBuildPack, JuliaRequireBuildPack

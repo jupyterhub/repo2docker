@@ -1,0 +1,41 @@
+# other editors, pagers, tools
+micro
+nano
+
+# for timing builds
+time
+
+libspatialindex-dev
+
+graphviz
+
+
+# for notebook-as-pdf
+libx11-xcb1
+libxtst6
+libpangocairo-1.0-0
+libatk1.0-0
+libgtk-3-0
+libxss1
+fonts-noto-color-emoji
+
+# R package qpdf
+libpoppler-cpp-dev
+
+# R package imager
+libx11-dev
+libglpk-dev
+libgmp3-dev
+libxml2-dev
+
+# R package units
+libudunits2-dev
+
+musescore3
+
+libuv1-dev
+libuv1
+
+libgeos-dev
+libproj-dev
+libmysqlclient-dev

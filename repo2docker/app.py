@@ -26,6 +26,7 @@ from traitlets.config import Application
 
 from . import __version__, contentproviders
 from .buildpacks import (
+    ExtendImageBuildPack,
     CondaBuildPack,
     DockerBuildPack,
     JuliaProjectTomlBuildPack,
@@ -91,7 +92,7 @@ class Repo2Docker(Application):
     )
 
     buildpacks = List(
-        [
+        [   ExtendImageBuildPack,
             LegacyBinderDockerBuildPack,
             DockerBuildPack,
             JuliaProjectTomlBuildPack,
