@@ -454,6 +454,7 @@ class CondaBuildPack(BaseImage):
                 (
                     "root",
                     rf"""
+                    echo export CONDA_DIR="/srv/conda" >> /etc/profile.d/00-rstudio.sh && \
                     echo auth-none=1 >> /etc/rstudio/rserver.conf && \
                     echo auth-minimum-user-id=0 >> /etc/rstudio/rserver.conf && \
                     echo "rsession-which-r={env_prefix}/bin/R" >> /etc/rstudio/rserver.conf && \
