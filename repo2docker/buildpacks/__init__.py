@@ -1,4 +1,4 @@
-from .base import BaseImage, BuildPack
+from .base import BaseImage, BuildPack, ExcludesStrategy
 from .conda import CondaBuildPack
 from .docker import DockerBuildPack
 from .julia import JuliaProjectTomlBuildPack, JuliaRequireBuildPack

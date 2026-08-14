@@ -1,0 +1,5 @@
+# This file is respected by repo2docker's test suite, but not repo2docker
+# itself. It is used solely to help us test repo2docker's command line flags.
+#
+- --extra-ignore-file=tests/conda/ignore-file
+- --ignore-file-strategy=theirs
