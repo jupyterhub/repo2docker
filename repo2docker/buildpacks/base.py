@@ -4,7 +4,6 @@ import io
 import logging
 import os
 import re
-import shlex
 import string
 import sys
 import tarfile
@@ -16,21 +15,36 @@ import jinja2
 from docker.utils.build import exclude_paths
 
 
-def _quote_dockerfile_token(value):
-    """Quote a label key/value for inclusion in a Dockerfile LABEL directive.
+def _dockerfile_quote(value):
+    """Encode a string as a double-quoted word for a Dockerfile LABEL directive.
 
-    Wraps :func:`shlex.quote` with an explicit escape of backslash, ``\\n`` and
-    ``\\r`` so the result occupies a single Dockerfile directive line.
-    Dockerfile single-quoted strings (which :func:`shlex.quote` produces for
-    values containing shell metacharacters) do not span newlines the way shell
-    does, so a label value containing a literal newline -- e.g., a multi-line
+    A LABEL line is processed in two passes: the parser splits it into words,
+    keeping quotes and escapes verbatim, and the shell lexer then strips the
+    quotes and resolves the escapes. Inside double quotes that lexer unescapes
+    only ``\\``, ``"`` and ``$`` (every other backslash is left alone) and
+    expands ``$VAR``, so escaping exactly those three characters is what makes
+    an arbitrary value survive unchanged.
+
+    A Dockerfile word cannot carry a newline at all: the parser is line
+    oriented and ``\\n`` is not an escape sequence. Newlines are therefore
+    flattened to a literal backslash-n, so that a multi-line value -- e.g. a
     ``git commit`` message piped through ``--Repo2Docker.labels`` in CI --
-    would otherwise break out of the LABEL directive.
+    lands as a single token instead of breaking out of the LABEL directive and
+    injecting further directives.
+
+    Note this assumes the default ``\\`` escape token; the template does not
+    set a ``# escape=`` parser directive.
     """
     if not isinstance(value, str):
         value = str(value)
-    escaped = value.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r")
-    return shlex.quote(escaped)
+    escaped = (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("$", "\\$")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+    )
+    return f'"{escaped}"'
 
 
 # Only use syntax features supported by Docker 17.09
@@ -197,7 +211,7 @@ COPY --chown={{ user }}:{{ user }} src/ ${REPO_DIR}/
 # Put these at the end, since we don't want to rebuild everything
 # when these change! Did I mention I hate Dockerfile cache semantics?
 {% for k, v in labels|dictsort %}
-LABEL {{ k|sh_quote }}={{ v|sh_quote }}
+LABEL {{ k|dockerfile_quote }}={{ v|dockerfile_quote }}
 {%- endfor %}
 
 # We always want containers to run as non-root
@@ -512,7 +526,7 @@ class BuildPack:
         build_args = build_args or {}
 
         env = jinja2.Environment()
-        env.filters["sh_quote"] = _quote_dockerfile_token
+        env.filters["dockerfile_quote"] = _dockerfile_quote
         t = env.from_string(TEMPLATE)
 
         build_script_directives = []
