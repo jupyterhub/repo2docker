@@ -28,6 +28,7 @@ from . import __version__, contentproviders
 from .buildpacks import (
     CondaBuildPack,
     DockerBuildPack,
+    ExtendImageBuildPack,
     JuliaProjectTomlBuildPack,
     JuliaRequireBuildPack,
     LegacyBinderDockerBuildPack,
@@ -92,6 +93,7 @@ class Repo2Docker(Application):
 
     buildpacks = List(
         [
+            ExtendImageBuildPack,
             LegacyBinderDockerBuildPack,
             DockerBuildPack,
             JuliaProjectTomlBuildPack,
