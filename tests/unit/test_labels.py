@@ -16,10 +16,12 @@ URL = "https://github.com/binderhub-ci-repos/repo2docker-ci-clone-depth"
 def test_buildpack_labels_rendered(base_image):
     bp = BuildPack(base_image)
     assert "LABEL" not in bp.render()
+    # Keys are quoted too, so that a key containing whitespace or a Dockerfile
+    # metacharacter cannot start a directive of its own.
     bp.labels["first_label"] = "firstlabel"
-    assert 'LABEL first_label="firstlabel"\n' in bp.render()
+    assert 'LABEL "first_label"="firstlabel"\n' in bp.render()
     bp.labels["second_label"] = "anotherlabel"
-    assert 'LABEL second_label="anotherlabel"\n' in bp.render()
+    assert 'LABEL "second_label"="anotherlabel"\n' in bp.render()
 
 
 @pytest.mark.parametrize(
