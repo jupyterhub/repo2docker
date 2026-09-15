@@ -24,9 +24,9 @@ def rstudio_base_scripts(r_version):
     # You can find these URLs in https://posit.co/download/rstudio-server/,
     # toggling between Ubuntu 22 (for openssl3) vs earlier versions (openssl 1.1)
     # you may forget about openssl, but openssl never forgets you.
-    rstudio_openssl3_url = "https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2026.07.1-147-amd64.deb"
+    rstudio_openssl3_url = "https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2026.09.0-174-amd64.deb"
     rstudio_openssl3_sha256sum = (
-        "118e3fce4cf58ad3bfff1dc6eea3e07f294d51d28fefcc5e1cc559292c0dd06c"
+        "168bc577ef2f68abab1ad2ed684e830da1d244618b25b69fd20448e60716c5ba"
     )
     # If only OpenSSL 1.1 is present, an older version of RStudio Server is installed.
     rstudio_openssl1_url = "https://download2.rstudio.org/server/focal/amd64/rstudio-server-2024.12.0-467-amd64.deb"
