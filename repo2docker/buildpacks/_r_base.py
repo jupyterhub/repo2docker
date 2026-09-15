@@ -34,7 +34,7 @@ def rstudio_base_scripts(r_version):
         "052540a8df135d9ce7569ddc2fc9637671103934179691bc3e43298336fc3a8e"
     )
     # The proxy is implemented by jupyter-rsession-proxy
-    rsession_proxy_version = "2.3.0"
+    rsession_proxy_version = "2.5.1"
 
     return [
         (
