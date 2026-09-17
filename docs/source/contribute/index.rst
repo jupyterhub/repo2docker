@@ -12,7 +12,7 @@ repo2docker package.
 
    contributing
    roadmap
-   frequenty-tasks
+   frequent-tasks
    sporadic-tasks
 
 .. toctree::
