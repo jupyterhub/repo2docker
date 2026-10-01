@@ -150,3 +150,39 @@ def test_fetch_directory(tmpdir, gen_tarfile):
     for log in provider.fetch(provider.detect(swhid), tmpdir):
         print(log)
     assert provider.content_id == swhid
+
+
+def _tar_bytes(members):
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w") as tarf:
+        for name, data in members:
+            info = tarfile.TarInfo(name=name)
+            payload = data if isinstance(data, bytes) else data.encode()
+            info.size = len(payload)
+            tarf.addfile(info, io.BytesIO(payload))
+    return buf.getvalue()
+
+
+def test_fetch_rejects_path_escape(tmpdir):
+    dir_id = NULLID
+    outside = tmpdir.mkdir("outside")
+    tar_buf = _tar_bytes(
+        [
+            (f"{dir_id}/ok.txt", b"kept"),
+            ("../outside/escaped.txt", b"nope"),
+        ]
+    )
+    provider = mocked_provider(tmpdir, dir_id, tar_buf)
+    swhid = "swh:1:dir:" + dir_id
+    with pytest.raises(ContentProviderException, match="escapes the destination"):
+        list(provider.fetch(provider.detect(swhid), tmpdir.join("checkout")))
+    assert not outside.join("escaped.txt").exists()
+
+
+def test_fetch_rejects_absolute_member(tmpdir):
+    dir_id = NULLID
+    tar_buf = _tar_bytes([(f"/{dir_id}/abs.txt", b"nope")])
+    provider = mocked_provider(tmpdir, dir_id, tar_buf)
+    swhid = "swh:1:dir:" + dir_id
+    with pytest.raises(ContentProviderException, match="escapes the destination"):
+        list(provider.fetch(provider.detect(swhid), tmpdir.join("checkout")))
