@@ -21,19 +21,19 @@ repos:
 
   # Autoformat: Python code
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.5.1
+    rev: 26.10.0
     hooks:
       - id: black
 
   # Autoformat: Python code
   - repo: https://github.com/pycqa/isort
-    rev: 9.0.1
+    rev: 9.0.2
     hooks:
       - id: isort
 
   # Autoformat: markdown
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.9.6
+    rev: v3.9.9
     hooks:
       - id: prettier
         files: ".md"
