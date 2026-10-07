@@ -1,0 +1,19 @@
+#!/bin/bash
+set -exuo pipefail
+
+# apt.txt package was installed
+which nano
+
+# environment.yaml packages were installed/pinned into the base image's
+# existing "notebook" conda env (normalized from environment.yaml to
+# environment.yml by the buildpack)
+python3 -c "
+import ipywidgets, sympy, ipympl
+assert ipywidgets.__version__ == '8.1.5', ipywidgets.__version__
+assert sympy.__version__ == '1.13.3', sympy.__version__
+"
+python3 -c "import prob140"
+python3 -c "import jupytutor"
+
+# requirements.txt package was installed via pip
+python3 -c "import simplejson"
