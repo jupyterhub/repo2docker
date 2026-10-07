@@ -14,6 +14,39 @@ import escapism
 import jinja2
 from docker.utils.build import exclude_paths
 
+
+def _dockerfile_quote(value):
+    """Encode a string as a double-quoted word for a Dockerfile LABEL directive.
+
+    A LABEL line is processed in two passes: the parser splits it into words,
+    keeping quotes and escapes verbatim, and the shell lexer then strips the
+    quotes and resolves the escapes. Inside double quotes that lexer unescapes
+    only ``\\``, ``"`` and ``$`` (every other backslash is left alone) and
+    expands ``$VAR``, so escaping exactly those three characters is what makes
+    an arbitrary value survive unchanged.
+
+    A Dockerfile word cannot carry a newline at all: the parser is line
+    oriented and ``\\n`` is not an escape sequence. Newlines are therefore
+    flattened to a literal backslash-n, so that a multi-line value -- e.g. a
+    ``git commit`` message piped through ``--Repo2Docker.labels`` in CI --
+    lands as a single token instead of breaking out of the LABEL directive and
+    injecting further directives.
+
+    Note this assumes the default ``\\`` escape token; the template does not
+    set a ``# escape=`` parser directive.
+    """
+    if not isinstance(value, str):
+        value = str(value)
+    escaped = (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("$", "\\$")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+    )
+    return f'"{escaped}"'
+
+
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
 FROM {{base_image}}
@@ -178,7 +211,7 @@ COPY --chown={{ user }}:{{ user }} src/ ${REPO_DIR}/
 # Put these at the end, since we don't want to rebuild everything
 # when these change! Did I mention I hate Dockerfile cache semantics?
 {% for k, v in labels|dictsort %}
-LABEL {{k}}="{{v}}"
+LABEL {{ k|dockerfile_quote }}={{ v|dockerfile_quote }}
 {%- endfor %}
 
 # We always want containers to run as non-root
@@ -492,7 +525,9 @@ class BuildPack:
         """
         build_args = build_args or {}
 
-        t = jinja2.Template(TEMPLATE)
+        env = jinja2.Environment()
+        env.filters["dockerfile_quote"] = _dockerfile_quote
+        t = env.from_string(TEMPLATE)
 
         build_script_directives = []
         last_user = "root"
