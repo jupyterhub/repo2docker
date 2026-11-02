@@ -11,7 +11,7 @@
 repos:
   # Autoformat: Python code, syntax patterns are modernized
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.2
+    rev: v3.22.0
     hooks:
       - id: pyupgrade
         # check-tmp is a Python based test script run in created environments
@@ -21,19 +21,19 @@ repos:
 
   # Autoformat: Python code
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.5.1
+    rev: 26.10.1
     hooks:
       - id: black
 
   # Autoformat: Python code
   - repo: https://github.com/pycqa/isort
-    rev: 9.0.1
+    rev: 10.0.0b2
     hooks:
       - id: isort
 
   # Autoformat: markdown
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.9.6
+    rev: v3.9.10
     hooks:
       - id: prettier
         files: ".md"
