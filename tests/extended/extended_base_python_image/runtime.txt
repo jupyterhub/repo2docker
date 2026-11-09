@@ -1,0 +1,1 @@
+oci-image:ucbdatahub/jupyterlab-extended-base-python-image:latest

@@ -1,0 +1,14 @@
+# This file is respected by repo2docker's test suite, but not repo2docker
+# itself. It is used solely to help us test repo2docker's command line flags.
+#
+# ExtendImageBuildPack assumes the base image already provides its own user
+# (it skips repo2docker's normal user/group creation), so the build must be
+# run as that user rather than repo2docker's default (the host user).
+# ucbdatahub/jupyterlab-extended-base-python-image provides "jovyan" (uid 1000).
+- --user-id=1000
+- --user-name=jovyan
+# The base image is only published for linux/amd64; on other host
+# architectures (e.g. arm64) building without pinning the platform causes
+# repo2docker to target the host's arch, which then mismatches the actual
+# (amd64) image and breaks under QEMU emulation.
+- --Repo2Docker.platform=linux/amd64

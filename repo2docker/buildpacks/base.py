@@ -21,6 +21,7 @@ FROM {{base_image}}
 # Avoid prompts from apt
 ENV DEBIAN_FRONTEND=noninteractive
 
+{% if not skip_base_setup -%}
 # Set up locales properly
 RUN apt-get -qq update && \
     apt-get -qq install --yes --no-install-recommends locales > /dev/null && \
@@ -34,7 +35,7 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
 ENV LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
-
+{% endif %}
 # Use bash as default shell, rather than sh
 ENV SHELL=/bin/bash
 
@@ -44,6 +45,7 @@ ARG NB_UID
 ENV USER=${NB_USER} \
     HOME=/home/${NB_USER}
 
+{% if not skip_base_setup -%}
 # Ubuntu 24.04 has a predefined uid/gid 1000, older Ubuntu versions don't
 RUN if getent group ${NB_UID}; then \
       GROUP_1000="$(getent group ${NB_UID} | cut -d: -f1)"; \
@@ -91,6 +93,7 @@ RUN apt-get -qq update && \
     apt-get -qq purge && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
+{% endif -%}
 {% endif -%}
 
 EXPOSE 8888
@@ -249,6 +252,11 @@ class BuildPack:
                 "support is experimental in repo2docker."
             )
         self.platform = ""
+        self.template = TEMPLATE
+        # When True, skip locale setup, user/group creation, and base apt
+        # package installs for buildpacks whose base image already provides
+        # these (see ExtendImageBuildPack).
+        self.skip_base_setup = False
 
     @lru_cache
     def get_packages(self):
@@ -492,7 +500,7 @@ class BuildPack:
         """
         build_args = build_args or {}
 
-        t = jinja2.Template(TEMPLATE)
+        t = jinja2.Template(self.template)
 
         build_script_directives = []
         last_user = "root"
@@ -556,6 +564,7 @@ class BuildPack:
             # For docker 17.09 `COPY --chown`, 19.03 would allow using $NBUSER
             user=build_args.get("NB_UID", DEFAULT_NB_UID),
             base_image=self.base_image,
+            skip_base_setup=self.skip_base_setup,
         )
 
     @staticmethod
