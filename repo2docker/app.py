@@ -623,7 +623,8 @@ class Repo2Docker(Application):
             run_cmd = [
                 "jupyter",
                 "notebook",
-                "--ip=0.0.0.0",
+                # Listen on all ipv4 and ipv6 interfaces
+                "--ip=",
                 f"--port={container_port}",
                 f"--ServerApp.custom_display_url=http://{self.hostname}:{self.port}",
                 "--ServerApp.default_url=/lab",
