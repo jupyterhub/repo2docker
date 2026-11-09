@@ -98,8 +98,15 @@ class PipfileBuildPack(CondaBuildPack):
         if V(self.python_version) < V("3.6"):
             # last pipenv version to support 2.7, 3.5
             pipenv_version = "2021.5.29"
-        else:
+        elif V(self.python_version) < V("3.10"):
+            # last pipenv version to support 3.6 - 3.9
             pipenv_version = "2022.1.8"
+        elif V(self.python_version) < V("3.11"):
+            # last pipenv version to support 3.10
+            pipenv_version = "2026.10.4"
+        else:
+            # python 3.11 and above
+            pipenv_version = "2026.11.0"
         scripts.append(
             (
                 "${NB_USER}",
