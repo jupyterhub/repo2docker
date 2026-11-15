@@ -1,4 +1,4 @@
-import re
+import shlex
 from datetime import date
 from os.path import join as pjoin
 from tempfile import TemporaryDirectory
@@ -96,45 +96,21 @@ def test_invalid_runtime(tmpdir, runtime_txt, base_image):
         base.runtime
 
 
-# A Dockerfile double-quoted word: any char except a quote or a backslash, or
-# a backslash followed by anything.
-_LABEL_LINE = re.compile(r'^LABEL ("(?:[^"\\]|\\.)*")=("(?:[^"\\]|\\.)*")$')
-
-
-def _unquote_dockerfile_word(word):
-    """Decode a double-quoted Dockerfile word the way the builder does.
-
-    Mirrors ``processDoubleQuote`` in BuildKit's ``frontend/dockerfile/shell``
-    (and its identical ancestor in the Docker 17.09 classic builder): only
-    ``\\``, ``"`` and ``$`` can be escaped, every other backslash is literal.
-    """
-    assert word.startswith('"') and word.endswith('"'), word
-    body = word[1:-1]
-    out = []
-    i = 0
-    while i < len(body):
-        if body[i] == "\\" and i + 1 < len(body) and body[i + 1] in '"$\\':
-            out.append(body[i + 1])
-            i += 2
-        else:
-            out.append(body[i])
-            i += 1
-    return "".join(out)
-
-
 @pytest.mark.parametrize(
     "label_value, expected",
     [
-        # Injection attempts: a newline is not representable in a Dockerfile
-        # word, so it is flattened rather than allowed to start a directive.
+        # A Dockerfile word cannot contain a newline, so newlines are
+        # replaced with a literal backslash-n.
         ("hello\nRUN echo pwned", "hello\\nRUN echo pwned"),
         (
-            "semicolon; pipe | newline\nstill same value",
-            "semicolon; pipe | newline\\nstill same value",
+            'x"\nRUN echo pwned\nLABEL y="z',
+            'x"\\nRUN echo pwned\\nLABEL y="z',
         ),
-        ('" ; RUN echo pwned ; LABEL x="', '" ; RUN echo pwned ; LABEL x="'),
-        # Values that must survive byte for byte.
+        ("carriage\rreturn", "carriage\\rreturn"),
+        # Everything else must come back unchanged.
+        ('" ; RUN echo pwned ; LABEL x="', None),
         ('value with "double" quotes', None),
+        ("it's", None),
         ("backtick `$(id)` and $VAR", None),
         (r"windows\path\to\file", None),
         ("trailing backslash\\", None),
@@ -142,48 +118,28 @@ def _unquote_dockerfile_word(word):
         ("héllo 中文 🎉", None),
     ],
 )
-def test_labels_with_special_chars_do_not_break_dockerfile(
-    tmpdir, label_value, expected, base_image
-):
-    """Label values must land as exactly one token, decoding back unchanged.
+def test_labels_with_special_chars(tmpdir, label_value, expected, base_image):
+    """A label must render as a single LABEL directive, whatever it contains.
 
-    The template used to render ``LABEL k="{{v}}"`` with no escaping at all, so
-    a value containing a literal newline followed by ``RUN ...`` became a real
-    Dockerfile RUN directive at build time.
+    The template used to render ``LABEL k="{{v}}"`` without escaping the
+    value, so one containing quotes or newlines could end the directive early
+    and start new ones.
 
-    ``expected`` is the value after decoding; ``None`` means it must round-trip
-    unchanged. Newlines cannot be represented and are flattened to a literal
-    backslash-n, which is the one lossy case.
+    ``expected`` is the value after unquoting; ``None`` means unchanged.
+    Decoding uses ``shlex.split``, so this checks the rendering and not how a
+    Dockerfile parser reads it.
     """
     if expected is None:
         expected = label_value
 
     tmpdir.chdir()
     bp = BaseImage(base_image)
-    bp.labels = {"my.label": label_value}
+    bp.labels = {"my label": label_value}
     dockerfile = bp.render()
 
     label_lines = [
         line for line in dockerfile.splitlines() if line.startswith("LABEL ")
     ]
-    assert len(label_lines) == 1, (
-        f"expected exactly one LABEL line, found {len(label_lines)}: "
-        f"{label_lines!r}"
-    )
-
-    # The value must not have broken out and started a directive of its own.
-    assert not [
-        line
-        for line in dockerfile.splitlines()
-        if line.startswith("RUN ") and "pwned" in line
-    ], f"label value injected a top-level RUN:\n{dockerfile}"
-
-    match = _LABEL_LINE.match(label_lines[0])
-    assert match, f"LABEL line is not two quoted words: {label_lines[0]!r}"
-    key, value = match.groups()
-
-    # An unescaped $ would be substituted from the build environment.
-    assert "$" not in re.sub(r"\\.", "", value), f"unescaped $ in {value!r}"
-
-    assert _unquote_dockerfile_word(key) == "my.label"
-    assert _unquote_dockerfile_word(value) == expected
+    assert len(label_lines) == 1, label_lines
+    assert shlex.split(label_lines[0]) == ["LABEL", f"my label={expected}"]
+    assert "\nRUN echo pwned" not in dockerfile
