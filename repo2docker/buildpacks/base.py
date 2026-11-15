@@ -4,6 +4,7 @@ import io
 import logging
 import os
 import re
+import shlex
 import string
 import sys
 import tarfile
@@ -13,6 +14,23 @@ from functools import lru_cache
 import escapism
 import jinja2
 from docker.utils.build import exclude_paths
+
+
+def _quote_label(value):
+    """Quote a label key or value for a Dockerfile LABEL directive.
+
+    ``shlex.quote`` keeps line breaks as they are, and a line break inside a
+    LABEL line changes how the Dockerfile is parsed. LF and CR are therefore
+    replaced with a literal backslash-n and backslash-r first, so that a
+    multi-line value (e.g. a commit message passed via
+    ``--Repo2Docker.labels``) stays on one line.
+
+    Not handled: a key that starts with ``--`` is read as an instruction
+    flag, and a key containing ``=`` is split at the first ``=``.
+    """
+    value = str(value).replace("\n", "\\n").replace("\r", "\\r")
+    return shlex.quote(value)
+
 
 # Only use syntax features supported by Docker 17.09
 TEMPLATE = r"""
@@ -178,7 +196,7 @@ COPY --chown={{ user }}:{{ user }} src/ ${REPO_DIR}/
 # Put these at the end, since we don't want to rebuild everything
 # when these change! Did I mention I hate Dockerfile cache semantics?
 {% for k, v in labels|dictsort %}
-LABEL {{k}}="{{v}}"
+LABEL {{ k|quote_label }}={{ v|quote_label }}
 {%- endfor %}
 
 # We always want containers to run as non-root
@@ -492,7 +510,9 @@ class BuildPack:
         """
         build_args = build_args or {}
 
-        t = jinja2.Template(TEMPLATE)
+        env = jinja2.Environment()
+        env.filters["quote_label"] = _quote_label
+        t = env.from_string(TEMPLATE)
 
         build_script_directives = []
         last_user = "root"
