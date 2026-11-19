@@ -36,7 +36,7 @@ installation. If you didn't list a version constraint during installation, it
 will also not be listed in your ``environment.yml``.
 
 While this approach doesn't lead to perfect reproducibilty, it will contain
-just the same packages as if you would recreate the enviroment with the same
+just the same packages as if you would recreate the environment with the same
 commands again today.
 
 Strict version export
