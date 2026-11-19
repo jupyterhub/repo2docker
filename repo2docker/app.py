@@ -766,7 +766,23 @@ class Repo2Docker(Application):
                         picked_buildpack = bp
                         break
                 else:
-                    if self.default_buildpack:
+                    if (
+                        os.path.isfile(os.path.join(checkout_path, "apt.txt"))
+                        or os.path.isfile(os.path.join(checkout_path, "postBuild"))
+                        or os.path.isfile(
+                            os.path.join(checkout_path, "binder", "apt.txt")
+                        )
+                        or os.path.isfile(
+                            os.path.join(checkout_path, "binder", "postBuild")
+                        )
+                        or os.path.isfile(
+                            os.path.join(checkout_path, ".binder", "apt.txt")
+                        )
+                        or os.path.isfile(
+                            os.path.join(checkout_path, ".binder", "postBuild")
+                        )
+                        or self.default_buildpack
+                    ):
                         picked_buildpack = self.default_buildpack(
                             base_image=self.base_image
                         )
