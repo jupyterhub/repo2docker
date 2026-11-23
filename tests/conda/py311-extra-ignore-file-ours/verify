@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+import pathlib
+
+assert pathlib.Path("from-dockerignore").exists()
+assert not pathlib.Path("from-extra-ignore").exists()
