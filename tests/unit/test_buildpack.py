@@ -1,3 +1,4 @@
+import shlex
 from datetime import date
 from os.path import join as pjoin
 from tempfile import TemporaryDirectory
@@ -93,3 +94,52 @@ def test_invalid_runtime(tmpdir, runtime_txt, base_image):
 
     with pytest.raises(ValueError, match=r"^Invalid runtime.txt.*"):
         base.runtime
+
+
+@pytest.mark.parametrize(
+    "label_value, expected",
+    [
+        # A Dockerfile word cannot contain a newline, so newlines are
+        # replaced with a literal backslash-n.
+        ("hello\nRUN echo pwned", "hello\\nRUN echo pwned"),
+        (
+            'x"\nRUN echo pwned\nLABEL y="z',
+            'x"\\nRUN echo pwned\\nLABEL y="z',
+        ),
+        ("carriage\rreturn", "carriage\\rreturn"),
+        # Everything else must come back unchanged.
+        ('" ; RUN echo pwned ; LABEL x="', None),
+        ('value with "double" quotes', None),
+        ("it's", None),
+        ("backtick `$(id)` and $VAR", None),
+        (r"windows\path\to\file", None),
+        ("trailing backslash\\", None),
+        ("", None),
+        ("héllo 中文 🎉", None),
+    ],
+)
+def test_labels_with_special_chars(tmpdir, label_value, expected, base_image):
+    """A label must render as a single LABEL directive, whatever it contains.
+
+    The template used to render ``LABEL k="{{v}}"`` without escaping the
+    value, so one containing quotes or newlines could end the directive early
+    and start new ones.
+
+    ``expected`` is the value after unquoting; ``None`` means unchanged.
+    Decoding uses ``shlex.split``, so this checks the rendering and not how a
+    Dockerfile parser reads it.
+    """
+    if expected is None:
+        expected = label_value
+
+    tmpdir.chdir()
+    bp = BaseImage(base_image)
+    bp.labels = {"my label": label_value}
+    dockerfile = bp.render()
+
+    label_lines = [
+        line for line in dockerfile.splitlines() if line.startswith("LABEL ")
+    ]
+    assert len(label_lines) == 1, label_lines
+    assert shlex.split(label_lines[0]) == ["LABEL", f"my label={expected}"]
+    assert "\nRUN echo pwned" not in dockerfile

@@ -17,9 +17,9 @@ def test_buildpack_labels_rendered(base_image):
     bp = BuildPack(base_image)
     assert "LABEL" not in bp.render()
     bp.labels["first_label"] = "firstlabel"
-    assert 'LABEL first_label="firstlabel"\n' in bp.render()
+    assert "LABEL first_label=firstlabel\n" in bp.render()
     bp.labels["second_label"] = "anotherlabel"
-    assert 'LABEL second_label="anotherlabel"\n' in bp.render()
+    assert "LABEL second_label=anotherlabel\n" in bp.render()
 
 
 @pytest.mark.parametrize(
