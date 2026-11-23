@@ -1,0 +1,31 @@
+#!/bin/bash
+set -exuo pipefail
+
+# apt.txt packages were installed
+which nano
+which dot  # from graphviz
+dpkg -s libspatialindex-dev
+dpkg -s libarmadillo-dev
+
+# environment.yml packages were installed/pinned into the base image's
+# existing "notebook" conda env (a mix of conda and pip entries)
+python3 -c "
+import requests, traitlets, spacy, geopandas, gspread
+assert requests.__version__ == '2.32.3', requests.__version__
+assert traitlets.__version__ == '5.14.3', traitlets.__version__
+assert spacy.__version__ == '3.8.2', spacy.__version__
+assert geopandas.__version__ == '1.1.1', geopandas.__version__
+assert gspread.__version__ == '5.12.4', gspread.__version__
+"
+python3 -c "import pycountry_convert"
+python3 -c "import gensim; assert gensim.__version__ == '4.4.0', gensim.__version__"
+
+# install.R packages were installed via Rscript, including a Bioconductor
+# package installed through BiocManager.
+Rscript -e '
+library(remotes)
+library(dplyr)
+library(ggplot2)
+library(arrow)
+library(rhdf5)
+'

@@ -1,0 +1,131 @@
+name: datahub
+# This is the standard conda configuration file. Use this file to list
+# the conda packages that you need installed in your environment.
+channels:
+  - conda-forge
+  
+dependencies:
+  - appmode==1.0.0
+  - ipykernel = 6.29.5
+  - jupyterlab-geojson==3.4.0
+  - requests==2.32.3
+  - traitlets=5.14.3
+
+  # jupyterbook
+  - mystmd==1.3.19
+
+  - decorator=5.1.1
+  - networkx=3.4.2
+  - nltk=3.9.1
+  - spacy==3.8.2
+
+  # [DH-384], L&S 22, Fall 2024
+  # Packages listed below will be used during SP 25
+  - typing_extensions==4.12.2
+  - spacy-model-en_core_web_sm=3.8.0
+  - spacy-model-en_core_web_md=3.8.0
+
+  # ls 88-3; neuro
+  - pillow=11.1.0
+
+  # modules
+  - beautifulsoup4==4.12.3
+
+  # PS88, Fall '21 and "future iterations of the class."
+  # https://github.com/berkeley-dsep-infra/datahub/issues/2925
+  - linearmodels==6.1
+
+  # INDENG 142 Spring 2021 (future semesters as well) - https://github.com/berkeley-dsep-infra/datahub/issues/2314
+  - fancyimpute==0.7.0
+
+  # 2024-08 workshop, #5908
+  - tree==2.2.1
+  - ruff==0.8.5
+
+  # Stat 165/265 requires prophet, Spring, 2024
+  - prophet==1.1.6
+
+  # ENERES 131, Fall '24 and "Fall semesters for the foreseeable future"
+  # [DH-364] https://github.com/berkeley-dsep-infra/datahub/issues/6155
+  - openpyxl==3.1.5
+  # [DH-393] https://github.com/berkeley-dsep-infra/datahub/issues/6346
+  - pyogrio==0.10.0
+
+  # Google spreadsheets, Eric Van Dusen / Keeley Takimoto / Modules
+  - gspread-pandas==2.2.3
+  - gspread==5.12.4
+
+  # issue #929, SW 282 - fall 2019
+  # sknapp 2024-08-12:  keeping this package as i believe it's still useful
+  - pyreadstat==1.2.8
+
+  # issue 954, EPS24 - fall 2019
+  # sknapp 2024-08-12:  keeping this package as i believe it's still useful
+  - xarray==2025.1.1
+
+  # issue 1847; LS 22 spring 2021; "likely will need it yearly"
+  - python-graphviz==0.20.3
+
+  # [DH-243] https://github.com/berkeley-dsep-infra/datahub/issues/5571, Legal Studies 123, Spring 24; each Spring
+  - geopandas==1.1.1
+  - rtree==1.3.0
+
+  # eps 109; fall 2019
+  # sknapp 2024-08-12:  keeping this package as i believe it's still useful
+  - ffmpeg-python==0.2.0
+
+  # issue #875, global 150Q/pacs 190 - fall 2019
+  # sknapp 2024-08-12:  keeping this package as i believe it's still useful
+  - wordcloud==1.9.4
+
+  # https://github.com/berkeley-dsep-infra/datahub/issues/2950
+  # Needed to work with a new enough version of httplib2
+  - httplib2==0.22.0
+
+  # Engineering 7 https://github.com/berkeley-dsep-infra/datahub/issues/5337
+  - pydantic==2.10.5
+  
+  # Econ 148, https://github.com/berkeley-dsep-infra/datahub/issues/6791
+  - jupysql==0.10.17
+
+  # Econ 148; Spring 2025; https://github.com/berkeley-dsep-infra/datahub/issues/6872
+  - lifelines==0.30.0
+
+  # French 80, Fall 2025; https://github.com/berkeley-dsep-infra/datahub/issues/7501
+  - geojson==3.2.0
+  - pyproj==3.7.2
+
+  # CYPLAN 101; Fall 2026; https://github.com/berkeley-dsep-infra/datahub/issues/8372
+  - osmnx==2.1.1
+  - lonboard==0.16.0
+  - overturemaps==1.0.1
+  - palettable==3.3.3
+  - contextily==1.7.1
+  - geodatasets==2026.5.1
+  - pysal==25.7
+  - highlight_text==0.2
+
+  - pip:
+      # Econ 148, Spring 2023 https://github.com/berkeley-dsep-infra/datahub/issues/4093
+      - pycountry-convert==0.7.2
+
+      # https://github.com/berkeley-dsep-infra/datahub/issues/5497
+      - ottr-force-save-labextension==0.1.1
+
+      # [DH-540], Physics 77/88, Fall 2025
+      - otter-grader-labextension==0.1.1
+
+      # [DH-319] https://github.com/berkeley-dsep-infra/datahub/issues/5827, ESPM 157
+      - ibis-framework[pandas,duckdb]==9.2.0
+
+      # [DH-384], L&S 22, Fall 2024
+      # The 0.2.2 conda-forge package is 3y old as of 2025-01 and cannot be
+      # installed with newer numpy.
+      - lemminflect==0.2.3
+
+      # Adding a11y-checker package to datahub image since it is required for demoing the extension in workshop hub to non Berkeley folks
+      - jupyterlab-a11y-checker==0.2.2
+
+      # [DH-488], Legal Studies 123, https://github.com/berkeley-dsep-infra/datahub/issues/6964
+      - gensim==4.4.0
+
