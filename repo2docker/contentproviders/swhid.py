@@ -86,7 +86,10 @@ class Swhid(ContentProvider):
             raise Exception()
         resp = self._request(resp.json()["fetch_url"])
         archive = tarfile.open(fileobj=io.BytesIO(resp.content))
-        archive.extractall(path=output_dir)
+        if hasattr(tarfile, "data_filter"):
+            archive.extractall(path=output_dir, filter="data")
+        else:
+            archive.extractall(path=output_dir)
         # the output_dir should have only one subdir named after the dir_hash
         # move its content one level up
         copytree(path.join(output_dir, dir_hash), output_dir)

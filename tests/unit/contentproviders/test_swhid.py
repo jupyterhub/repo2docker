@@ -150,3 +150,26 @@ def test_fetch_directory(tmpdir, gen_tarfile):
     for log in provider.fetch(provider.detect(swhid), tmpdir):
         print(log)
     assert provider.content_id == swhid
+
+
+def test_fetch_directory_rejects_escaping_member(tmpdir):
+    dir_id = "b" * 40
+    buf = io.BytesIO()
+    tarf = tarfile.open(fileobj=buf, mode="w")
+    payload = b"escaped\n"
+    info = tarfile.TarInfo(name="../escape-swhid-test.txt")
+    info.size = len(payload)
+    tarf.addfile(info, io.BytesIO(payload))
+    tarf.close()
+    provider = mocked_provider(tmpdir, dir_id, buf.getvalue())
+    swhid = "swh:1:dir:" + dir_id
+    escape_path = join(os.path.dirname(str(tmpdir)), "escape-swhid-test.txt")
+    assert not os.path.exists(escape_path)
+    if hasattr(tarfile, "data_filter"):
+        with pytest.raises(tarfile.TarError):
+            for log in provider.fetch(provider.detect(swhid), tmpdir):
+                print(log)
+    else:
+        for log in provider.fetch(provider.detect(swhid), tmpdir):
+            print(log)
+    assert not os.path.exists(escape_path)
